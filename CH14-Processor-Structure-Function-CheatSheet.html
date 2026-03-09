@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH14 – Processor Structure and Function</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent2);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent2);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent2);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .formula{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-left:3px solid var(--accent);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:6px;}
+  .formula-g{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-left:3px solid var(--accent2);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent2);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent2);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:18px;text-align:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  /* Pipeline cells */
+  .pipe-row{display:flex;gap:2px;margin-bottom:3px;align-items:center;}
+  .pipe-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);width:80px;flex-shrink:0;text-align:right;padding-right:6px;}
+  .pipe-cell{width:28px;height:22px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:600;flex-shrink:0;}
+  .pipe-cell.empty{background:transparent;}
+  .pc-fi{background:rgba(88,166,255,0.25);color:var(--accent);}
+  .pc-di{background:rgba(63,185,80,0.25);color:var(--accent2);}
+  .pc-co{background:rgba(210,168,255,0.25);color:var(--accent4);}
+  .pc-fo{background:rgba(255,166,87,0.25);color:var(--accent5);}
+  .pc-ei{background:rgba(247,129,102,0.25);color:var(--accent3);}
+  .pc-wo{background:rgba(227,179,65,0.25);color:var(--yellow);}
+  .pc-flush{background:rgba(247,129,102,0.1);color:rgba(247,129,102,0.4);font-size:8px;border:1px dashed rgba(247,129,102,0.3);}
+  .pipe-time{display:flex;gap:2px;margin-bottom:4px;padding-left:86px;}
+  .pipe-time span{width:28px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);flex-shrink:0;}
+  /* Register boxes */
+  .reg-row{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:4px;}
+  .reg-box{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 8px;border-radius:3px;border:1px solid;}
+  .r-gp{background:rgba(88,166,255,0.1);border-color:rgba(88,166,255,0.3);color:var(--accent);}
+  .r-ctrl{background:rgba(247,129,102,0.1);border-color:rgba(247,129,102,0.3);color:var(--accent3);}
+  .r-stat{background:rgba(63,185,80,0.1);border-color:rgba(63,185,80,0.3);color:var(--accent2);}
+  .r-seg{background:rgba(210,168,255,0.1);border-color:rgba(210,168,255,0.3);color:var(--accent4);}
+  .r-flt{background:rgba(255,166,87,0.1);border-color:rgba(255,166,87,0.3);color:var(--accent5);}
+  /* Cycle flow */
+  .cycle-flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:8px 0;}
+  .cycle-box{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;padding:6px 10px;border-radius:4px;}
+  .cx-f{background:rgba(88,166,255,0.2);color:var(--accent);border:1px solid rgba(88,166,255,0.4);}
+  .cx-i{background:rgba(210,168,255,0.2);color:var(--accent4);border:1px solid rgba(210,168,255,0.4);}
+  .cx-e{background:rgba(255,166,87,0.2);color:var(--accent5);border:1px solid rgba(255,166,87,0.4);}
+  .cx-n{background:rgba(247,129,102,0.2);color:var(--accent3);border:1px solid rgba(247,129,102,0.4);}
+  .cx-arr{color:var(--text-dim);font-size:14px;}
+  /* DF boxes */
+  .df-box{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;margin-bottom:6px;}
+  .df-title{color:var(--accent2);font-size:10px;font-weight:600;margin-bottom:5px;text-transform:uppercase;letter-spacing:0.5px;}
+  .df-line{display:flex;align-items:center;gap:5px;margin-bottom:3px;color:var(--text-muted);}
+  .df-r{color:var(--accent);font-weight:600;}
+  .df-a{color:var(--text-dim);}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>Processor Structure and Function — Ch. 14</h1>
+    <h2>Computer Organization &amp; Architecture, 11th Edition &nbsp;|&nbsp; Textbook pp. 488–530 &nbsp;|&nbsp; Complete Study Reference</h2>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+    <span class="badge">COA11e · CH14</span>
+    <div class="toc">
+      <span class="toc-item">§14.1 Processor Org</span><span class="toc-item">§14.2 Registers</span><span class="toc-item">PSW/EFLAGS</span>
+      <span class="toc-item">§14.3 Instruction Cycle</span><span class="toc-item">Data Flow</span><span class="toc-item">§14.4 Pipelining</span>
+      <span class="toc-item">Pipeline Performance</span><span class="toc-item">Hazards (RAW/WAR/WAW)</span><span class="toc-item">Branch Strategies</span>
+      <span class="toc-item">80486 Pipeline</span><span class="toc-item">§14.5 x86</span><span class="toc-item">x86 Interrupts</span>
+      <span class="toc-item">§14.6 ARM</span><span class="toc-item">ARM Modes</span><span class="toc-item">ARM Registers</span>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 1: PROCESSOR ORG + REGISTER TYPES + CONTROL/STATUS -->
+<div class="grid">
+
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§14.1 Processor Organization</h3></div>
+    <div class="card-body">
+      <p>The processor must: fetch instructions, interpret/decode, fetch data, process data (ALU), write results. Requires small internal memory — <strong>registers</strong> — to hold state between steps.</p>
+      <div class="label">Key Internal Components (Fig 14.1 / 14.2)</div>
+      <ul class="items">
+        <li><strong>ALU:</strong> performs all arithmetic and logic operations on data</li>
+        <li><strong>Control Unit (CU):</strong> directs movement of data &amp; instructions; controls ALU operation</li>
+        <li><strong>Registers:</strong> top of memory hierarchy — above cache; small and fast</li>
+        <li><strong>Internal processor bus:</strong> moves data between registers and ALU (ALU only works on data in registers)</li>
+        <li><strong>System bus:</strong> connects processor to memory and I/O via Control / Data / Address buses</li>
+      </ul>
+      <div class="label">ALU Elements (Fig 14.2)</div>
+      <ul class="items">
+        <li>Complementer (subtraction support) &nbsp;|&nbsp; Arithmetic &amp; Boolean logic unit</li>
+        <li>Shifter &nbsp;|&nbsp; Status flags (carry, zero, overflow, sign)</li>
+      </ul>
+      <div class="tip">
+        <div class="t-title">Structural Analogy</div>
+        Processor internal structure mirrors the whole computer: {CU, ALU, registers} connected by buses — just as the computer has {processor, memory, I/O} connected by a system bus.
+      </div>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§14.2 User-Visible Registers</h3></div>
+    <div class="card-body">
+      <p>Registers accessible to the programmer via machine-language instructions. Four categories:</p>
+      <ul class="items">
+        <li><strong>General-purpose:</strong> may hold data or addresses; orthogonal = any register with any opcode; some architectures impose restrictions (dedicated FP, stack regs)</li>
+        <li><strong>Data registers:</strong> hold data only; cannot be used for address computation</li>
+        <li><strong>Address registers:</strong> hold addresses — includes index registers, segment base registers, stack pointers</li>
+        <li><strong>Condition codes (flags):</strong> bits set by hardware after operations; read implicitly; programmer cannot write directly; typically part of the PSW control register</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Optimal Register Count</div>
+        Studies show 8–32 user-visible registers is optimal. Fewer → more memory references. More → diminishing returns on reference reduction. RISC uses hundreds (Ch. 15).
+      </div>
+      <div class="label">Register Length Constraints</div>
+      <ul class="items">
+        <li>Address registers: must be ≥ largest possible address</li>
+        <li>Data registers: wide enough for most data types; two adjacent regs may hold double-width values</li>
+      </ul>
+      <div class="label">MC68000 vs Intel 8086 (Fig 14.3)</div>
+      <ul class="items">
+        <li><strong>MC68000:</strong> clean split — 8 data regs (D0–D7) + 9 address regs (A0–A7); orthogonal; two A7 SPs (user/OS)</li>
+        <li><strong>8086:</strong> every register special-purpose; AX=accumulator, CX=count, BX=base, DX=data; compact encoding but less flexible</li>
+        <li><strong>80386:</strong> 32-bit widening of 8086 embedded original layout for backward compatibility</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Control &amp; Status Registers + PSW</h3></div>
+    <div class="card-body">
+      <div class="label">4 Essential Registers</div>
+      <div class="reg-row">
+        <div class="reg-box r-ctrl">PC — Program Counter</div>
+        <div class="reg-box r-ctrl">IR — Instruction Register</div>
+      </div>
+      <div class="reg-row">
+        <div class="reg-box r-ctrl">MAR — Memory Address Reg</div>
+        <div class="reg-box r-ctrl">MBR — Memory Buffer Reg</div>
+      </div>
+      <ul class="items" style="margin-top:6px;">
+        <li><strong>PC:</strong> address of next instruction; auto-incremented after each fetch; modified by branches/jumps</li>
+        <li><strong>IR:</strong> holds the currently fetched instruction for opcode/operand analysis</li>
+        <li><strong>MAR → Address Bus:</strong> holds address for any memory read/write operation</li>
+        <li><strong>MBR ↔ Data Bus:</strong> buffers data going to/from memory; user regs exchange data with MBR</li>
+      </ul>
+      <div class="label">Program Status Word (PSW)</div>
+      <table class="tbl">
+        <thead><tr><th>Flag</th><th>Set When…</th></tr></thead>
+        <tbody>
+          <tr><td>Sign</td><td>Result is negative (MSB=1)</td></tr>
+          <tr><td>Zero</td><td>Result = 0</td></tr>
+          <tr><td>Carry</td><td>Carry/borrow out of MSB (multiword arithmetic)</td></tr>
+          <tr><td>Equal</td><td>Logical compare result is equality</td></tr>
+          <tr><td>Overflow</td><td>Arithmetic overflow (signed result wrong sign)</td></tr>
+          <tr><td>Interrupt E/D</td><td>Enable or disable maskable interrupts</td></tr>
+          <tr><td>Supervisor</td><td>Processor in supervisor (privileged) mode</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROW 2: INSTRUCTION CYCLE + DATA FLOW -->
+<div class="grid section-gap">
+
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§14.3 Instruction Cycle — Stages</h3></div>
+    <div class="card-body">
+      <div class="label">4-Stage Cycle (Fig 14.4)</div>
+      <div class="cycle-flow">
+        <div class="cycle-box cx-f">FETCH</div><div class="cx-arr">→</div>
+        <div class="cycle-box cx-i">INDIRECT</div><div class="cx-arr">→</div>
+        <div class="cycle-box cx-e">EXECUTE</div><div class="cx-arr">→</div>
+        <div class="cycle-box cx-n">INTERRUPT</div><div class="cx-arr">↺</div>
+      </div>
+      <ul class="items">
+        <li><strong>Fetch:</strong> PC → MAR → address bus → memory → data bus → MBR → IR; PC incremented</li>
+        <li><strong>Indirect:</strong> only if indirect addressing is used; extra memory cycle to resolve final operand address from MBR bits → MAR → memory → MBR (actual address)</li>
+        <li><strong>Execute:</strong> varies per instruction — data transfer, ALU operation, memory read/write, branch. Can have many sub-stages (Fig 14.5 shows up to 10 tasks)</li>
+        <li><strong>Interrupt:</strong> if enabled &amp; pending — save PC (PC → MBR → memory at SP); load ISR address into PC; next fetch begins ISR</li>
+      </ul>
+      <div class="label">6-Stage Pipeline Decomposition (§14.4)</div>
+      <div class="pipe-row" style="padding-left:0;flex-wrap:wrap;gap:6px;">
+        <div class="pipe-cell pc-fi" style="width:auto;padding:0 8px;">FI</div><span style="font-size:11px;color:var(--text-muted);">Fetch Instruction</span>
+        <div class="pipe-cell pc-di" style="width:auto;padding:0 8px;">DI</div><span style="font-size:11px;color:var(--text-muted);">Decode Instruction</span>
+        <div class="pipe-cell pc-co" style="width:auto;padding:0 8px;">CO</div><span style="font-size:11px;color:var(--text-muted);">Calc Operand Addresses</span>
+        <div class="pipe-cell pc-fo" style="width:auto;padding:0 8px;">FO</div><span style="font-size:11px;color:var(--text-muted);">Fetch Operands (mem)</span>
+        <div class="pipe-cell pc-ei" style="width:auto;padding:0 8px;">EI</div><span style="font-size:11px;color:var(--text-muted);">Execute Instruction</span>
+        <div class="pipe-cell pc-wo" style="width:auto;padding:0 8px;">WO</div><span style="font-size:11px;color:var(--text-muted);">Write Operand to mem</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Data Flow — Each Cycle (Fig 14.6–14.8)</h3></div>
+    <div class="card-body">
+      <div class="df-box">
+        <div class="df-title">Fetch Cycle</div>
+        <div class="df-line"><span class="df-r">PC</span><span class="df-a">→</span><span class="df-r">MAR</span><span class="df-a">→ address bus → Memory read</span></div>
+        <div class="df-line"><span>Memory</span><span class="df-a"> → data bus → </span><span class="df-r">MBR</span><span class="df-a"> → </span><span class="df-r">IR</span></div>
+        <div class="df-line"><span class="df-r">PC</span><span class="df-a"> ← PC + 1</span><span style="color:var(--text-dim);"> (next instruction address)</span></div>
+      </div>
+      <div class="df-box">
+        <div class="df-title">Indirect Cycle</div>
+        <div class="df-line"><span class="df-r">MBR</span><span style="color:var(--text-dim);">[addr bits]</span><span class="df-a"> → </span><span class="df-r">MAR</span><span class="df-a"> → address bus → Memory read</span></div>
+        <div class="df-line"><span>Memory</span><span class="df-a"> → data bus → </span><span class="df-r">MBR</span><span style="color:var(--text-dim);"> (now holds actual operand address)</span></div>
+      </div>
+      <div class="df-box">
+        <div class="df-title">Interrupt Cycle</div>
+        <div class="df-line"><span class="df-r">PC</span><span class="df-a"> → </span><span class="df-r">MBR</span><span class="df-a"> → memory</span><span style="color:var(--text-dim);"> (save return addr at stack ptr)</span></div>
+        <div class="df-line"><span style="color:var(--text-muted);">CU</span><span class="df-a"> → interrupt vector addr → </span><span class="df-r">MAR</span></div>
+        <div class="df-line"><span style="color:var(--text-muted);">ISR address</span><span class="df-a"> → </span><span class="df-r">PC</span><span style="color:var(--text-dim);"> (next cycle begins ISR)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§14.4 Pipeline Performance Formulas</h3></div>
+    <div class="card-body">
+      <div class="label">Cycle Time</div>
+      <div class="formula">t = max[tᵢ] + d &nbsp;= tₘ + d</div>
+      <p style="font-size:11px;color:var(--text-muted);">tᵢ = delay of stage i &nbsp;|&nbsp; tₘ = max stage delay &nbsp;|&nbsp; d = latch delay (tₘ ≫ d)</p>
+
+      <div class="label">Total Execution Time — k stages, n instructions</div>
+      <div class="formula">T(k,n) = [k + (n − 1)] × t</div>
+      <ul class="items">
+        <li>First instruction: k cycles to complete</li>
+        <li>Each remaining (n−1) instruction: +1 cycle each</li>
+        <li>Verified: k=6, n=9 → [6+8]×1 = 14 cycles ✓ (Fig 14.10)</li>
+      </ul>
+
+      <div class="label">Speedup Factor vs. No Pipeline</div>
+      <div class="formula-g">Sₖ = T(1,n)/T(k,n) = nkt / [k+(n−1)]t = nk / [k+(n−1)]</div>
+      <ul class="items">
+        <li>As n → ∞: Sₖ → k &nbsp;(k-fold speedup — theoretical max)</li>
+        <li>As k → ∞: Sₖ → n &nbsp;(limited by instruction count without branches)</li>
+      </ul>
+
+      <div class="label">Practical Limits on More Stages</div>
+      <ul class="items">
+        <li>Buffer-to-buffer overhead + latch delay per stage</li>
+        <li>Control logic complexity grows enormously with stage count</li>
+        <li>Branch flushes negate gains from deeper pipelines</li>
+        <li>Logically dependent sequential instructions stall often at more stages</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROW 3: PIPELINE TIMING DIAGRAMS -->
+<div class="grid section-gap">
+
+  <div class="card blue col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Pipeline Timing Diagrams (Fig 14.10 / 14.11 / 14.13)</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+        <div>
+          <div class="label">No Branches — Ideal Pipeline (14 cycles for 9 instructions)</div>
+          <div class="pipe-time"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span></div>
+          <div class="pipe-row"><div class="pipe-label">I1</div><div class="pipe-cell pc-fi">FI</div><div class="pipe-cell pc-di">DI</div><div class="pipe-cell pc-co">CO</div><div class="pipe-cell pc-fo">FO</div><div class="pipe-cell pc-ei">EI</div><div class="pipe-cell pc-wo">WO</div></div>
+          <div class="pipe-row"><div class="pipe-label">I2</div><div class="pipe-cell empty"></div><div class="pipe-cell pc-fi">FI</div><div class="pipe-cell pc-di">DI</div><div class="pipe-cell pc-co">CO</div><div class="pipe-cell pc-fo">FO</div><div class="pipe-cell pc-ei">EI</div><div class="pipe-cell pc-wo">WO</div></div>
+          <div class="pipe-row"><div class="pipe-label">I3</div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell pc-fi">FI</div><div class="pipe-cell pc-di">DI</div><div class="pipe-cell pc-co">CO</div><div class="pipe-cell pc-fo">FO</div><div class="pipe-cell pc-ei">EI</div><div class="pipe-cell pc-wo">WO</div></div>
+          <div class="pipe-row"><div class="pipe-label">I4</div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell pc-fi">FI</div><div class="pipe-cell pc-di">DI</div><div class="pipe-cell pc-co">CO</div><div class="pipe-cell pc-fo">FO</div><div class="pipe-cell pc-ei">EI</div><div class="pipe-cell pc-wo">WO</div></div>
+          <div class="pipe-row"><div class="pipe-label">I5</div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell pc-fi">FI</div><div class="pipe-cell pc-di">DI</div><div class="pipe-cell pc-co">CO</div><div class="pipe-cell pc-fo">FO</div><div class="pipe-cell pc-ei">EI</div><div class="pipe-cell pc-wo">WO</div></div>
+          <p style="margin-top:6px;font-size:11px;color:var(--accent2);">T(6,9) = [6 + 8] = 14 cycles &nbsp;|&nbsp; Speedup vs no pipeline = 9×6 / 14 = 3.86×</p>
+        </div>
+        <div>
+          <div class="label" style="color:var(--accent3);">Branch Taken at I3 → I15 (4-cycle penalty)</div>
+          <div class="pipe-time"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span></div>
+          <div class="pipe-row"><div class="pipe-label">I1</div><div class="pipe-cell pc-fi">FI</div><div class="pipe-cell pc-di">DI</div><div class="pipe-cell pc-co">CO</div><div class="pipe-cell pc-fo">FO</div><div class="pipe-cell pc-ei">EI</div><div class="pipe-cell pc-wo">WO</div></div>
+          <div class="pipe-row"><div class="pipe-label">I2</div><div class="pipe-cell empty"></div><div class="pipe-cell pc-fi">FI</div><div class="pipe-cell pc-di">DI</div><div class="pipe-cell pc-co">CO</div><div class="pipe-cell pc-fo">FO</div><div class="pipe-cell pc-ei">EI</div><div class="pipe-cell pc-wo">WO</div></div>
+          <div class="pipe-row"><div class="pipe-label">I3 (branch)</div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell pc-fi">FI</div><div class="pipe-cell pc-di">DI</div><div class="pipe-cell pc-co">CO</div><div class="pipe-cell pc-fo">FO</div><div class="pipe-cell pc-ei">EI</div><div class="pipe-cell pc-wo">WO</div></div>
+          <div class="pipe-row"><div class="pipe-label">I4 (flushed)</div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell pc-fi">FI</div><div class="pipe-cell pc-di">DI</div><div class="pipe-cell pc-co">CO</div><div class="pipe-cell pc-fo">FO</div><div class="pipe-cell pc-flush">✕</div></div>
+          <div class="pipe-row"><div class="pipe-label">I5–I7 flushed</div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell pc-fi">FI</div><div class="pipe-cell pc-di">DI</div><div class="pipe-cell pc-flush">✕</div></div>
+          <div class="pipe-row"><div class="pipe-label">I15 (target)</div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell empty"></div><div class="pipe-cell pc-fi">FI</div><div class="pipe-cell pc-di">DI</div><div class="pipe-cell pc-co">CO</div><div class="pipe-cell pc-fo">FO</div><div class="pipe-cell pc-ei">EI</div><div class="pipe-cell pc-wo">WO</div></div>
+          <p style="margin-top:6px;font-size:11px;color:var(--accent3);">Branch resolved end of cycle 7 → flush I4–I7 → cycles 9–12 idle → 4-cycle penalty</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROW 4: HAZARDS + BRANCH STRATEGIES -->
+<div class="grid section-gap">
+
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Pipeline Hazards (§14.4)</h3></div>
+    <div class="card-body">
+      <p>A <strong>pipeline hazard</strong> (stall / bubble) forces the pipeline to pause. Three types:</p>
+
+      <div class="label">1. Resource Hazards (Structural)</div>
+      <ul class="items">
+        <li>Two+ in-flight instructions need the same hardware resource simultaneously</li>
+        <li>Example: single-port memory — FI and FO stages conflict → one stalls for 1 cycle</li>
+        <li>Example: single ALU — two instructions reach EI together</li>
+        <li><strong>Fix:</strong> duplicate resources (multiple memory ports, multiple ALUs)</li>
+      </ul>
+
+      <div class="label">2. Data Hazards</div>
+      <table class="tbl">
+        <thead><tr><th>Type</th><th>Alias</th><th>Condition</th></tr></thead>
+        <tbody>
+          <tr><td><strong>RAW</strong></td><td>True dependency</td><td>Read before preceding write completes (most common)</td></tr>
+          <tr><td><strong>WAR</strong></td><td>Antidependency</td><td>Write completes before a preceding read finishes</td></tr>
+          <tr><td><strong>WAW</strong></td><td>Output dependency</td><td>Two writes to same location arrive out of order</td></tr>
+        </tbody>
+      </table>
+      <div class="warn" style="margin-top:6px;">
+        <div class="w-title">RAW Example (Fig 14.16)</div>
+        <code>ADD EAX, EBX</code> — writes EAX at end of its EI stage (cycle 5).<br>
+        <code>SUB ECX, EAX</code> — needs EAX at start of its FO stage (cycle 4).<br>
+        → 2 stall cycles inserted. Without bypass hardware, pipeline idles.
+      </div>
+
+      <div class="label">3. Control Hazards (Branch Hazards)</div>
+      <p>Pipeline fetches wrong instructions after a conditional branch → must flush. Primary source of pipelined processor inefficiency. Addressed by branch prediction strategies.</p>
+    </div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Branch Strategies — All 5 Approaches</h3></div>
+    <div class="card-body">
+      <div class="label">1. Multiple Streams</div>
+      <p>Replicate early pipeline stages; fetch <em>both</em> branch target and sequential instruction simultaneously. Drawbacks: contention for registers/memory; nested branches multiply needed streams. (IBM 370/168, IBM 3033)</p>
+
+      <div class="label">2. Prefetch Branch Target</div>
+      <p>On recognizing a conditional branch, prefetch the target address into a buffer alongside the sequential path. If branch taken → target already ready. (IBM 360/91)</p>
+
+      <div class="label">3. Loop Buffer</div>
+      <p>Small very-high-speed memory in the fetch stage holding the n most recently fetched sequential instructions. Three benefits: (1) prefetched instructions available without memory latency; (2) short forward branches (IF-THEN sequences) likely already in buffer; (3) loop bodies fetched from memory only on first iteration — all subsequent iterations run from buffer. (CDC 6600, 7600, CRAY-1)</p>
+
+      <div class="label">4. Branch Prediction</div>
+      <table class="tbl">
+        <thead><tr><th>Method</th><th>Type</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Predict never taken</td><td>Static</td><td>Most popular; always fetch sequentially</td></tr>
+          <tr><td>Predict always taken</td><td>Static</td><td>Better when branches taken &gt;50% of the time</td></tr>
+          <tr><td>Predict by opcode</td><td>Static</td><td>Reported &gt;75% accuracy</td></tr>
+          <tr><td>1-bit history</td><td>Dynamic</td><td>Records last outcome; 2 errors per loop (entry + exit)</td></tr>
+          <tr><td>2-bit history (Fig 14.18/19)</td><td>Dynamic</td><td>Requires 2 consecutive mispredictions to switch; better for loops</td></tr>
+          <tr><td>Branch history table</td><td>Dynamic</td><td>Cache of {branch addr + history bits + target addr}; enables prefetch of target before branch resolves</td></tr>
+          <tr><td>(m,n) correlator</td><td>Dynamic</td><td>Uses last m global branches + n-bit local history; correlation-based; most accurate</td></tr>
+        </tbody>
+      </table>
+
+      <div class="label">5. Delayed Branch</div>
+      <p>Compiler reorders instructions to fill the pipeline slot <em>after</em> the branch with useful work. The "delay slot" executes regardless of branch outcome. Detailed in Ch. 15 (RISC).</p>
+    </div>
+  </div>
+
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Intel 80486 — 5-Stage Pipeline</h3></div>
+    <div class="card-body">
+      <p>Classic real-world pipelined processor. Sustains ~1 instruction per clock cycle.</p>
+      <div class="label">5 Stages (§14.4)</div>
+      <ol class="steps">
+        <li><strong>Fetch:</strong> independently fills two 16-byte prefetch buffers from cache or external memory; ~5 instructions per 16-byte load; variable-length instructions (1–11 bytes)</li>
+        <li><strong>Decode 1 (D1):</strong> decodes opcode + addressing-mode from first 3 bytes; determines total instruction length; directs D2 to get displacement/immediate</li>
+        <li><strong>Decode 2 (D2):</strong> expands opcode into ALU control signals; handles complex addressing mode calculations</li>
+        <li><strong>Execute (EX):</strong> ALU operations, cache access, register update</li>
+        <li><strong>Write Back (WB):</strong> updates registers and status flags; result sent to cache + write buffer simultaneously if memory write</li>
+      </ol>
+      <div class="label">Pipeline Timing Cases (Fig 14.21)</div>
+      <ul class="items">
+        <li><strong>No delay:</strong> reg-to-reg ops flow through cleanly at 1 instr/cycle</li>
+        <li><strong>Pointer load delay (+1 cycle):</strong> if a loaded register is used as base address in the very next instruction — D2 stage needs the value while WB is still writing it; bypass paths save 1 extra cycle (only 1 stall, not 2)</li>
+        <li><strong>Branch taken:</strong> compare updates condition codes in WB; bypass to EX of jump; speculative prefetch of branch target during jump EX; if branch not taken → discard speculative fetch and continue sequentially</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROW 5: x86 REGISTERS -->
+<div class="grid section-gap">
+
+  <div class="card blue col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>§14.5 x86 Register Organization (Table 14.2 + Fig 14.22/14.23)</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <div class="label">Integer Unit — 32-bit Mode</div>
+          <table class="tbl">
+            <thead><tr><th>Type</th><th>#</th><th>Bits</th><th>Notes</th></tr></thead>
+            <tbody>
+              <tr><td>General (EAX–EDI)</td><td>8</td><td>32</td><td>GPR; some with implicit uses (ECX=count, ESI/EDI=string index)</td></tr>
+              <tr><td>Segment (CS/DS/SS/ES/FS/GS)</td><td>6</td><td>16</td><td>Segment selectors into segment tables</td></tr>
+              <tr><td>EFLAGS</td><td>1</td><td>32</td><td>Status + control + system flags</td></tr>
+              <tr><td>Instruction Pointer (EIP)</td><td>1</td><td>32</td><td>Address of current instruction</td></tr>
+            </tbody>
+          </table>
+          <div class="label" style="margin-top:8px;">64-bit Mode</div>
+          <ul class="items">
+            <li>16 × 64-bit GPRs (doubled count + width); EFLAGS → RFLAGS (64-bit, upper 32 unused)</li>
+          </ul>
+          <div class="label">Segment Register Roles</div>
+          <div class="reg-row" style="flex-wrap:wrap;">
+            <div class="reg-box r-seg">CS — Code segment</div>
+            <div class="reg-box r-seg">SS — Stack segment</div>
+            <div class="reg-box r-seg">DS — Default data</div>
+            <div class="reg-box r-seg">ES/FS/GS — Extra data (×3)</div>
+          </div>
+          <div class="label">EFLAGS Key Bits (Fig 14.22)</div>
+          <table class="tbl">
+            <thead><tr><th>Flag</th><th>Type</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td>CF/PF/AF/ZF/SF/OF</td><td>Status</td><td>Standard condition codes from arithmetic</td></tr>
+              <tr><td>DF</td><td>Control</td><td>String direction: inc or dec SI/DI</td></tr>
+              <tr><td>TF</td><td>System</td><td>Trap/single-step debug mode</td></tr>
+              <tr><td>IF</td><td>System</td><td>Enable/disable maskable INTR interrupts</td></tr>
+              <tr><td>IOPL</td><td>System</td><td>Exception on all I/O in protected mode</td></tr>
+              <tr><td>RF</td><td>System</td><td>Disable debug exceptions for one restart</td></tr>
+              <tr><td>VM</td><td>System</td><td>Virtual 8086 mode on/off</td></tr>
+              <tr><td>AC</td><td>System</td><td>Alignment check exception enable</td></tr>
+              <tr><td>ID</td><td>System</td><td>If settable → CPUID instruction supported</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="label">Floating-Point Unit Registers</div>
+          <table class="tbl">
+            <thead><tr><th>Type</th><th>#</th><th>Bits</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td>Numeric (stack)</td><td>8</td><td>80</td><td>Extended-precision FP; accessed as push-down stack</td></tr>
+              <tr><td>Control</td><td>1</td><td>16</td><td>Rounding mode, precision, exception enable</td></tr>
+              <tr><td>Status</td><td>1</td><td>16</td><td>Top-of-stack pointer (3-bit), condition codes, exception flags</td></tr>
+              <tr><td>Tag Word</td><td>1</td><td>16</td><td>2-bit tag per FP reg: valid/zero/special/empty; enables fast context switch (skip empty regs)</td></tr>
+              <tr><td>FP Instruction Ptr</td><td>1</td><td>48</td><td>Points to instruction where FP exception occurred</td></tr>
+              <tr><td>FP Data Pointer</td><td>1</td><td>48</td><td>Points to operand at time of FP exception</td></tr>
+            </tbody>
+          </table>
+          <div class="label">MMX Registers — Aliasing (Fig 14.24)</div>
+          <p style="font-size:12px;">No new registers added. MM0–MM7 alias the <strong>low 64 bits (mantissa)</strong> of each FP register. On MMX write → bits [79:64] set to all-1s (NaN/∞) to prevent FP misinterpretation. <code>EMMS</code> instruction must clear tag word before returning to FP operations.</p>
+          <div class="label">Control Registers CR0–CR4 (Fig 14.23) Key Bits</div>
+          <ul class="items">
+            <li><strong>PE (CR0 bit 0):</strong> Protection Enable — real→protected mode</li>
+            <li><strong>EM (CR0 bit 2):</strong> Emulation — FP instructions cause interrupt if no FPU</li>
+            <li><strong>WP (CR0 bit 16):</strong> Write Protect — supervisor can't write user read-only pages</li>
+            <li><strong>PG (CR0 bit 31):</strong> Paging enable</li>
+            <li><strong>CR2:</strong> Page fault linear address</li>
+            <li><strong>CR3:</strong> Page directory base (PDBR), PCD + PWT bits</li>
+            <li><strong>CR4:</strong> Extended feature control (VME, PAE, PSE, OSFXSR, etc.)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>x86 Interrupt Processing (§14.5)</h3></div>
+    <div class="card-body">
+      <div class="label">Two Event Classes</div>
+      <ul class="items">
+        <li><strong>Interrupts:</strong> asynchronous; hardware signal on INTR or NMI pin</li>
+        <li><strong>Exceptions:</strong> synchronous; from executing a specific instruction</li>
+      </ul>
+      <div class="label">Sources</div>
+      <table class="tbl">
+        <thead><tr><th>Source</th><th>Maskable?</th></tr></thead>
+        <tbody>
+          <tr><td>INTR pin (maskable HW interrupt)</td><td>Yes — IF flag must be set</td></tr>
+          <tr><td>NMI pin (non-maskable HW interrupt)</td><td>No — always processed</td></tr>
+          <tr><td>Processor-detected exception</td><td>N/A — from execution error</td></tr>
+          <tr><td>Programmed (INT/INTO/BOUND)</td><td>N/A — software-generated</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Key Interrupt Vector Table Entries (Table 14.3)</div>
+      <ul class="items">
+        <li>0 = Divide error &nbsp; 1 = Debug &nbsp; 2 = NMI &nbsp; 3 = Breakpoint</li>
+        <li>6 = Undefined opcode &nbsp; 7 = Device not available &nbsp; 8 = Double fault</li>
+        <li>14 = Page fault &nbsp; 16 = FP error &nbsp; 17 = Alignment check</li>
+        <li>32–255 = User INTR vectors (activated by INTR signal + vector number on bus)</li>
+      </ul>
+      <div class="label">Interrupt Handling — 6-Step Sequence</div>
+      <ol class="steps">
+        <li>If privilege level changes → push SS + ESP to stack</li>
+        <li>Push EFLAGS to stack</li>
+        <li>Clear IF and TF (disable further INTR and single-step)</li>
+        <li>Push CS + EIP to stack</li>
+        <li>If error code → push error code</li>
+        <li>Load interrupt vector into CS:EIP → execute ISR</li>
+      </ol>
+      <p style="margin-top:6px;font-size:12px;"><strong>IRET</strong> restores all saved values; resumes from point of interrupt. Priority: Class 1 (traps on prev instr) &gt; Class 2 (external) &gt; Class 3 (fetch faults) &gt; Class 4 (decode faults) &gt; Class 5 (execute faults).</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROW 6: ARM -->
+<div class="grid section-gap">
+
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§14.6 ARM Processor Organization</h3></div>
+    <div class="card-body">
+      <div class="label">ARM RISC Characteristics</div>
+      <ul class="items">
+        <li>Moderate uniform register file (more than some CISC, fewer than many RISC)</li>
+        <li><strong>Load/Store model:</strong> only LDR/STR access memory; all other operations use registers only</li>
+        <li>Fixed 32-bit instructions (ARM standard) / 16-bit (Thumb)</li>
+        <li>Barrel Shifter: shifts/rotates one source register Rm inline, within the same instruction cycle → increases ALU power without extra instructions</li>
+        <li>Auto-increment / auto-decrement addressing for efficient loops</li>
+        <li>Conditional execution on almost all instructions → fewer branch instructions → fewer pipeline flushes</li>
+      </ul>
+      <div class="label">Simplified ARM Data Path (Fig 14.25)</div>
+      <ul class="items">
+        <li><strong>Data bus:</strong> load/store data OR instruction fetches from external memory</li>
+        <li><strong>Register file R0–R15:</strong> all 32-bit; byte/halfword sign-extended to 32 bits on load</li>
+        <li><strong>R15 = PC;</strong> R14 = LR (link register); R13 = SP (stack pointer)</li>
+        <li><strong>Barrel Shifter:</strong> preprocesses Rm value before it enters ALU (shift/rotate)</li>
+        <li><strong>ALU:</strong> inputs from Rn and shifted Rm → result to Rd</li>
+        <li><strong>Multiply/Accumulate:</strong> separate unit with Acc register for partial products</li>
+        <li><strong>CPSR:</strong> current program status register with N/Z/C/V condition flags + control bits</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>ARM Processor Modes (§14.6)</h3></div>
+    <div class="card-body">
+      <p>ARM supports <strong>7 modes</strong> — more than most processors, enabling fine-grained OS protection policies.</p>
+      <table class="tbl">
+        <thead><tr><th>Mode</th><th>Class</th><th>Entry / Use</th></tr></thead>
+        <tbody>
+          <tr><td><strong>User</strong></td><td>Unprivileged</td><td>Default application mode; no protected resource access; cannot change mode except via exception</td></tr>
+          <tr><td><strong>System</strong></td><td>Privileged</td><td>Not entered by exception; uses User-mode registers; for privileged OS tasks that can be interrupted by any exception</td></tr>
+          <tr><td><strong>Supervisor</strong></td><td>Exception</td><td>Software interrupt (SWI instruction) — standard user→OS call mechanism</td></tr>
+          <tr><td><strong>Abort</strong></td><td>Exception</td><td>Memory fault: prefetch abort (instr fetch fault) or data abort (data access fault)</td></tr>
+          <tr><td><strong>Undefined</strong></td><td>Exception</td><td>Unrecognized opcode reaches execute stage</td></tr>
+          <tr><td><strong>IRQ</strong></td><td>Exception</td><td>External interrupt via IRQ pin; interruptible only by FIQ</td></tr>
+          <tr><td><strong>FIQ</strong></td><td>Exception</td><td>Fast interrupt via FIQ pin; highest priority; private R8–R12 eliminate register save overhead; cannot be interrupted</td></tr>
+        </tbody>
+      </table>
+      <div class="tip" style="margin-top:6px;">
+        <div class="t-title">Two Advantages of Many Modes</div>
+        (1) OS can tailor system software to diverse circumstances. (2) Dedicated registers per mode allow faster context switches — no need to save/restore registers for short ISRs.
+      </div>
+    </div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>ARM Register Organization &amp; Exceptions</h3></div>
+    <div class="card-body">
+      <div class="label">37 Total Registers (Fig 14.26)</div>
+      <ul class="items">
+        <li><strong>R0–R7, R15 (PC), CPSR:</strong> shared by all modes — always visible</li>
+        <li><strong>R8–R12:</strong> shared by all modes <em>except</em> FIQ, which has private R8_fiq–R12_fiq</li>
+        <li><strong>R13 (SP), R14 (LR):</strong> each exception mode has its own private copy (R13_svc, R13_abt, R13_und, R13_irq, R13_fiq etc.)</li>
+        <li><strong>SPSR:</strong> each exception mode has a Saved PSR to preserve CPSR at exception entry</li>
+        <li>At any time: 16–18 registers visible (16 numbered + CPSR + optionally SPSR)</li>
+      </ul>
+      <div class="label">ARM CPSR/SPSR Bit Fields (Fig 14.27)</div>
+      <p style="font-size:12px;"><strong>Bits [31:16] — User flags:</strong> N (neg), Z (zero), C (carry), V (overflow), Q (SIMD saturation), J (Jazelle), GE[3:0] (SIMD ≥)</p>
+      <p style="font-size:12px;margin-top:4px;"><strong>Bits [15:0] — System control (privileged):</strong> E (endianness), A/I/F (abort/IRQ/FIQ disable), T (Thumb mode), M[4:0] (current mode)</p>
+      <div class="label">ARM Exception Vectors (Table 14.4)</div>
+      <table class="tbl">
+        <thead><tr><th>Exception</th><th>Mode</th><th>Vector</th></tr></thead>
+        <tbody>
+          <tr><td>Reset</td><td>Supervisor</td><td><code>0x00000000</code></td></tr>
+          <tr><td>Undefined instruction</td><td>Undefined</td><td><code>0x00000004</code></td></tr>
+          <tr><td>Software interrupt (SWI)</td><td>Supervisor</td><td><code>0x00000008</code></td></tr>
+          <tr><td>Prefetch abort</td><td>Abort</td><td><code>0x0000000C</code></td></tr>
+          <tr><td>Data abort</td><td>Abort</td><td><code>0x00000010</code></td></tr>
+          <tr><td>IRQ</td><td>IRQ</td><td><code>0x00000018</code></td></tr>
+          <tr><td>FIQ (highest priority)</td><td>FIQ</td><td><code>0x0000001C</code></td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px;margin-top:6px;color:var(--text-muted);"><strong>Return:</strong> SPSR → CPSR and LR (R14) → PC. Priority (high→low): Reset &gt; Data Abort &gt; FIQ &gt; IRQ &gt; Prefetch Abort &gt; Undefined &gt; SWI</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>Computer Organization &amp; Architecture, 11th Edition — Chapter 14: Processor Structure and Function (pp. 488–530)</span>
+  <span>Study reference — content extracted directly from textbook</span>
+</div>
+
+</body>
+</html>

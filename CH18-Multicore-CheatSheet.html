@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH18 – Multicore Computers</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+  --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;
+  --accent5:#ffa657;--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;
+  --yellow:#e3b341;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+
+/* ── HEADER ── */
+.header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent5);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+.header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent5);letter-spacing:-0.5px;line-height:1.1;}
+.header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+.badge{background:var(--accent5);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;}
+.col-span-2{grid-column:span 2;}
+.col-span-3{grid-column:span 3;}
+.section-gap{margin-top:28px;}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.card-header{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.card-header h3{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.card-body{padding:12px;}
+
+/* ── COLOR VARIANTS ── */
+.blue .dot{background:var(--accent);}
+.blue .card-header h3{color:var(--accent);}
+.green .dot{background:var(--accent2);}
+.green .card-header h3{color:var(--accent2);}
+.red .dot{background:var(--accent3);}
+.red .card-header h3{color:var(--accent3);}
+.purple .dot{background:var(--accent4);}
+.purple .card-header h3{color:var(--accent4);}
+.orange .dot{background:var(--accent5);}
+.orange .card-header h3{color:var(--accent5);}
+.yellow .dot{background:var(--yellow);}
+.yellow .card-header h3{color:var(--yellow);}
+
+/* ── LABEL ── */
+.label{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px;margin-right:4px;vertical-align:middle;}
+.label.blue{background:rgba(88,166,255,.15);color:var(--accent);}
+.label.green{background:rgba(63,185,80,.15);color:var(--accent2);}
+.label.red{background:rgba(247,129,102,.15);color:var(--accent3);}
+.label.purple{background:rgba(210,168,255,.15);color:var(--accent4);}
+.label.orange{background:rgba(255,166,87,.15);color:var(--accent5);}
+.label.yellow{background:rgba(227,179,65,.15);color:var(--yellow);}
+
+/* ── CODE ── */
+code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;color:var(--accent4);}
+.code-block{font-family:'IBM Plex Mono',monospace;font-size:11px;background:#010409;border:1px solid var(--border);border-radius:6px;padding:10px 12px;line-height:1.7;overflow-x:auto;color:#c9d1d9;}
+.code-block .kw{color:var(--accent3);}
+.code-block .num{color:var(--accent5);}
+.code-block .cm{color:var(--text-dim);}
+
+/* ── RULE ── */
+.rule{width:100%;border:none;border-top:1px solid var(--border);margin:10px 0;}
+
+/* ── FORMULA ── */
+.formula{font-family:'IBM Plex Mono',monospace;font-size:12px;background:#010409;border-left:3px solid var(--accent5);padding:8px 12px;border-radius:0 4px 4px 0;margin:6px 0;color:var(--yellow);}
+
+/* ── LISTS ── */
+ul.items{list-style:none;display:flex;flex-direction:column;gap:5px;}
+ul.items li{padding-left:14px;position:relative;color:var(--text);}
+ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-muted);}
+ol.steps{padding-left:18px;display:flex;flex-direction:column;gap:5px;}
+ol.steps li{color:var(--text);}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{background:var(--surface2);color:var(--text-muted);text-align:left;padding:6px 10px;font-size:10px;letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+.tbl td{padding:6px 10px;border-bottom:1px solid rgba(48,54,61,.6);vertical-align:top;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(255,255,255,.02);}
+
+/* ── CALLOUT BOXES ── */
+.warn{background:rgba(247,129,102,.08);border-left:3px solid var(--accent3);padding:8px 12px;border-radius:0 4px 4px 0;margin:6px 0;font-size:12px;}
+.info{background:rgba(88,166,255,.08);border-left:3px solid var(--accent);padding:8px 12px;border-radius:0 4px 4px 0;margin:6px 0;font-size:12px;}
+.tip{background:rgba(63,185,80,.08);border-left:3px solid var(--accent2);padding:8px 12px;border-radius:0 4px 4px 0;margin:6px 0;font-size:12px;}
+.note{background:rgba(255,166,87,.08);border-left:3px solid var(--accent5);padding:8px 12px;border-radius:0 4px 4px 0;margin:6px 0;font-size:12px;}
+.warn strong,.info strong,.tip strong,.note strong{display:block;font-size:10px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;}
+.warn strong{color:var(--accent3);}
+.info strong{color:var(--accent);}
+.tip strong{color:var(--accent2);}
+.note strong{color:var(--accent5);}
+
+/* ── MISC ── */
+.divider{display:flex;align-items:center;gap:10px;margin:20px 0 12px;}
+.divider span{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.footer-note{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+
+/* ── PIPELINE VISUAL ── */
+.pipe-row{display:flex;gap:3px;margin:6px 0;}
+.pipe-stage{flex:1;text-align:center;padding:5px 4px;border-radius:4px;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:600;}
+
+/* ── STAT ROW ── */
+.stat-row{display:flex;gap:10px;margin:6px 0;}
+.stat{flex:1;background:var(--surface2);border-radius:5px;padding:7px 10px;text-align:center;}
+.stat .val{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;}
+.stat .lbl{font-size:10px;color:var(--text-muted);margin-top:2px;}
+
+/* ── HIERARCHY ── */
+.hier{display:flex;flex-direction:column;gap:4px;}
+.hier-level{display:flex;align-items:center;gap:8px;}
+.hier-indent{width:16px;flex-shrink:0;}
+.hier-box{flex:1;padding:5px 10px;border-radius:4px;font-size:11px;font-family:'IBM Plex Mono',monospace;}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-left">
+    <h1>Multicore Computers — Chapter 18</h1>
+    <h2>Computer Organization &amp; Architecture · Stallings 10th Ed · Hardware &amp; Software Performance · Organization · Real-World Designs</h2>
+  </div>
+  <span class="badge">COA10e · CH18</span>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     ROW 1: HARDWARE PERFORMANCE ISSUES
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§18.1 Hardware Performance Issues</span></div>
+<div class="grid">
+
+  <!-- WHY SINGLE-CORE STOPPED -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Why Single-Core Scaling Stopped</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li><span class="label orange">ILP Wall</span>Beyond ~6 parallel pipelines, hazards &amp; resource dependencies prevent full utilisation; compiled binaries rarely expose more ILP</li>
+        <li><span class="label red">Power Wall</span>Power density grows exponentially with clock speed &amp; transistor density — cooling becomes impractical</li>
+        <li><span class="label blue">Memory Wall</span>DRAM latency improvements lag far behind CPU speed; cores stall waiting for data</li>
+        <li><span class="label purple">Design Wall</span>Increasing pipeline depth (e.g. Pentium 4 Prescott = 31 stages) adds logic, interconnects, and verification complexity</li>
+      </ul>
+      <div class="note" style="margin-top:8px;"><strong>Pollack's Rule (1999)</strong>Performance ≈ √(Complexity). Doubling core logic gives only ~40% more performance — incentivising multicore over ever-larger single cores.</div>
+    </div>
+  </div>
+
+  <!-- POWER & DENNARD SCALING -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Power &amp; Dennard Scaling Breakdown</h3></div>
+    <div class="card-body">
+      <div class="formula">P = C × V² × f</div>
+      <ul class="items" style="margin-top:8px;">
+        <li><code>C</code> — capacitance switched per cycle</li>
+        <li><code>V</code> — supply voltage</li>
+        <li><code>f</code> — clock frequency</li>
+      </ul>
+      <hr class="rule">
+      <p style="font-size:12px;margin-bottom:6px;"><strong>Dennard Scaling</strong> assumed that as transistors shrink, <em>V</em> and <em>f</em> scale proportionally — keeping power density constant. This held until ~2004.</p>
+      <div class="warn"><strong>Dennard Scaling Breakdown</strong>Voltage could no longer be reduced proportionally (threshold voltage limits). Static leakage current increased. Power density soared — leading to the "Power Wall".</div>
+      <div class="tip"><strong>Dark Silicon</strong>At advanced nodes (≤ 22 nm) designers cannot power all transistors simultaneously at full speed without exceeding thermal limits. Large fractions of the chip must remain "dark" (powered off) at any moment.</div>
+    </div>
+  </div>
+
+  <!-- ORGANISATIONAL EVOLUTION -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Processor Organisation Evolution</h3></div>
+    <div class="card-body">
+      <div class="pipe-row">
+        <div class="pipe-stage" style="background:rgba(88,166,255,.15);color:var(--accent);">Pipelining</div>
+        <div class="pipe-stage" style="background:rgba(88,166,255,.2);color:var(--accent);">Superscalar</div>
+        <div class="pipe-stage" style="background:rgba(88,166,255,.25);color:var(--accent);">SMT</div>
+        <div class="pipe-stage" style="background:rgba(255,166,87,.3);color:var(--accent5);">Multicore</div>
+      </div>
+      <table class="tbl" style="margin-top:8px;">
+        <thead><tr><th>Technique</th><th>Idea</th><th>Limit</th></tr></thead>
+        <tbody>
+          <tr><td>Pipelining</td><td>Overlap instruction stages</td><td>Data/control hazards</td></tr>
+          <tr><td>Superscalar</td><td>Multiple parallel pipelines</td><td>ILP scarcity, ≈ 6 pipes max</td></tr>
+          <tr><td>SMT</td><td>Share pipelines across threads (expanded register banks)</td><td>Thread coordination overhead</td></tr>
+          <tr><td><strong>Multicore</strong></td><td>Independent cores on one die</td><td>SW parallelism, cache coherence</td></tr>
+        </tbody>
+      </table>
+      <div class="info" style="margin-top:8px;"><strong>Cache as Silicon Filler</strong>Memory transistors have ~10× lower power density than logic. Growing cache fraction (now ≥ 50% of die area) absorbs extra transistors while managing power budget.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ROW 2: SOFTWARE PERFORMANCE
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§18.2 Software Performance Issues</span></div>
+<div class="grid">
+
+  <!-- AMDAHL'S LAW -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Amdahl's Law for Multicore</h3></div>
+    <div class="card-body">
+      <div class="formula">Speedup = 1 / [ s + (1−s)/N ]</div>
+      <ul class="items" style="margin-top:8px;">
+        <li><code>s</code> — serial fraction of program (1 − f)</li>
+        <li><code>f</code> — parallelisable fraction</li>
+        <li><code>N</code> — number of cores</li>
+      </ul>
+      <hr class="rule">
+      <table class="tbl">
+        <thead><tr><th>Serial %</th><th>N=2</th><th>N=4</th><th>N=8</th><th>N=∞</th></tr></thead>
+        <tbody>
+          <tr><td>0% (f=1.0)</td><td>2×</td><td>4×</td><td>8×</td><td>∞</td></tr>
+          <tr><td>2% (f=0.98)</td><td>1.96×</td><td>3.77×</td><td>6.90×</td><td>50×</td></tr>
+          <tr><td>5% (f=0.95)</td><td>1.90×</td><td>3.48×</td><td>5.93×</td><td>20×</td></tr>
+          <tr><td>10% (f=0.90)</td><td>1.82×</td><td>3.08×</td><td>4.71×</td><td>10×</td></tr>
+        </tbody>
+      </table>
+      <div class="warn" style="margin-top:8px;"><strong>Overhead Effect</strong>Real curves peak and then degrade — communication, cache coherence, and OS scheduling overhead grows with N, eventually dominating gains.</div>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">Modified law with Pollack's Rule: Speedup = 1/[(1−f)/perf(r) + f·r/(perf(r)·n)], where perf(r) ≈ √(2r)</p>
+    </div>
+  </div>
+
+  <!-- CONCURRENCY HAZARDS -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Concurrency Hazards</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li><span class="label red">Race Condition</span>Two threads access shared data with at least one write; result depends on execution order → non-deterministic bugs</li>
+        <li><span class="label orange">Deadlock</span>Thread A holds lock 1, waits for lock 2; Thread B holds lock 2, waits for lock 1 → both block forever</li>
+        <li><span class="label yellow">Livelock</span>Threads continuously change state in response to each other without making progress (e.g. both backoff repeatedly)</li>
+        <li><span class="label purple">Starvation</span>A thread is perpetually denied access to a resource due to priority scheduling</li>
+        <li><span class="label blue">False Sharing</span>Two threads access different variables on the same cache line → unnecessary coherence traffic</li>
+      </ul>
+      <hr class="rule">
+      <div class="tip"><strong>Mutual Exclusion</strong>Critical sections must be protected so only one thread executes them at a time. Achieved via locks, semaphores, or monitors.</div>
+    </div>
+  </div>
+
+  <!-- SYNCHRONISATION PRIMITIVES -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Synchronisation Primitives</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>Primitive</th><th>Description</th><th>Use Case</th></tr></thead>
+        <tbody>
+          <tr><td><span class="label purple">Lock / Mutex</span></td><td>Binary flag — only one thread holds it</td><td>Protect critical sections</td></tr>
+          <tr><td><span class="label blue">Semaphore</span></td><td>Integer counter; P() decrements (blocks at 0), V() increments</td><td>Resource counting, signalling</td></tr>
+          <tr><td><span class="label green">Monitor</span></td><td>Object encapsulating shared data + lock + condition variables</td><td>Higher-level structured sync</td></tr>
+          <tr><td><span class="label orange">Barrier</span></td><td>All threads must arrive before any proceeds</td><td>Phase-based parallel loops</td></tr>
+          <tr><td><span class="label yellow">Spinlock</span></td><td>Thread busy-waits (polls) for lock; no OS context switch</td><td>Very short critical sections</td></tr>
+          <tr><td><span class="label red">Atomic Op</span></td><td>Hardware-guaranteed test-and-set, compare-and-swap (CAS)</td><td>Lock-free data structures</td></tr>
+        </tbody>
+      </table>
+      <hr class="rule">
+      <div class="info"><strong>Memory Consistency Models</strong><b>Sequential Consistency</b> — all threads see all memory operations in the same global order (safest, but slowest). <b>Relaxed Consistency</b> (TSO, PSO, RC) — allows reordering for performance; requires explicit memory barriers/fences.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- THREADING GRANULARITY & VALVE EXAMPLE -->
+<div class="grid-2">
+
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Threading Granularity</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>Granularity</th><th>Description</th><th>Trade-off</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="label orange">Coarse</span></td>
+            <td>Whole modules (rendering, AI, physics) assigned to separate cores</td>
+            <td>Simple; ~1.2–2× speedup in practice (limited load balance)</td>
+          </tr>
+          <tr>
+            <td><span class="label green">Fine</span></td>
+            <td>Loop iterations split into thousands of tiny threads</td>
+            <td>Higher potential speedup; complex scheduling, high overhead</td>
+          </tr>
+          <tr>
+            <td><span class="label blue">Hybrid</span></td>
+            <td>Coarse for fixed-load modules (sound), fine-grain for heavy modules (scene rendering)</td>
+            <td>Best scalability for 8–16 core systems (Valve's choice)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="note" style="margin-top:8px;"><strong>Valve Source Engine</strong>Used a single-writer / multiple-readers concurrency model. Over 95% of accesses are reads — this model minimises lock contention while preserving correctness.</div>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Parallel Application Classes</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li><span class="label blue">TLP</span><strong>Multithreaded native apps</strong> — small number of highly-threaded processes (e.g. games, simulations)</li>
+        <li><span class="label green">PLP</span><strong>Multiprocess apps</strong> — many single-threaded processes running concurrently (e.g. web servers)</li>
+        <li><span class="label purple">JVM</span><strong>Java apps</strong> — JVM is inherently multithreaded; language-level thread support</li>
+        <li><span class="label orange">ALP</span><strong>Multi-instance apps</strong> — multiple independent instances of the same program (isolate with VM/containers)</li>
+        <li><span class="label yellow">DB</span><strong>Database workloads</strong> — near-linear scaling shown in Oracle DSS, DB2 benchmarks when serial fraction minimised in all layers</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ROW 3: MULTICORE ORGANISATION §18.3
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§18.3 Multicore Organisation</span></div>
+<div class="grid">
+
+  <!-- CACHE CONFIGURATIONS -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Cache Organisation Alternatives</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>Config</th><th>Structure</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><span class="label orange">(a)</span></td><td>Each core has its own L1 only; L2 off-chip</td><td>ARM11 MPCore</td></tr>
+          <tr><td><span class="label blue">(b)</span></td><td>Each core has private L1 + L2; no on-chip shared</td><td>AMD Opteron</td></tr>
+          <tr><td><span class="label green">(c)</span></td><td>Each core has private L1; shared on-chip L2</td><td>Intel Core Duo</td></tr>
+          <tr><td><span class="label purple">(d)</span></td><td>Private L1+L2 per core; shared on-chip L3 ✓ <em>dominant today</em></td><td>Intel Core i7, Xeon</td></tr>
+        </tbody>
+      </table>
+      <hr class="rule">
+      <p style="font-size:11px;margin-bottom:6px;"><strong>Advantages of Shared Higher-Level Cache:</strong></p>
+      <ul class="items" style="font-size:12px;">
+        <li>Constructive interference — shared data loaded once for all cores</li>
+        <li>No replication of shared lines at shared cache level</li>
+        <li>Dynamic cache partitioning — threads with larger working sets get more</li>
+        <li>Easy inter-core communication via shared memory locations</li>
+        <li>Coherency problem confined to lower cache levels</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SMT IN MULTICORE -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Simultaneous Multithreading (SMT)</h3></div>
+    <div class="card-body">
+      <div class="info"><strong>What is SMT?</strong>Each physical core exposes multiple hardware thread contexts (expanded register banks) sharing the same execution pipelines. To the OS, each SMT thread appears as a logical CPU.</div>
+      <div class="stat-row" style="margin-top:10px;">
+        <div class="stat">
+          <div class="val" style="color:var(--accent);">4 cores</div>
+          <div class="lbl">Physical Cores</div>
+        </div>
+        <div class="stat">
+          <div class="val" style="color:var(--accent5);">× 4 HT</div>
+          <div class="lbl">Threads/Core</div>
+        </div>
+        <div class="stat">
+          <div class="val" style="color:var(--accent2);">= 16</div>
+          <div class="lbl">Logical CPUs</div>
+        </div>
+      </div>
+      <hr class="rule">
+      <ul class="items">
+        <li>Intel Core i7 uses SMT (HyperThreading) — 2 threads/core</li>
+        <li>Intel Core Duo uses pure superscalar — no SMT</li>
+        <li>SMT allows two+ program streams to be searched for ILP simultaneously</li>
+        <li>As software exploits more parallelism, SMT is increasingly attractive over pure superscalar</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- RING BUS & INTERCONNECT -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>On-Chip Interconnect Options</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>Type</th><th>Description</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td><span class="label green">Ring Bus</span></td><td>All cores + L3 slices + memory ctrl connected on a ring; low latency for small core counts</td><td>Intel Sandy Bridge, i7</td></tr>
+          <tr><td><span class="label blue">Crossbar</span></td><td>Direct connection every-to-every; full bandwidth but O(n²) wires</td><td>Small core counts, GPUs</td></tr>
+          <tr><td><span class="label orange">Mesh</span></td><td>2D grid of routers; scalable, predictable latency; dominates in many-core</td><td>Intel Xeon Phi</td></tr>
+          <tr><td><span class="label purple">Bus</span></td><td>Shared bus; simple but serialised; bandwidth bottleneck at many cores</td><td>Legacy SMP</td></tr>
+        </tbody>
+      </table>
+      <div class="note" style="margin-top:8px;"><strong>Key Principle</strong>Interconnect choice trades off latency, bandwidth, power, and wiring complexity. Ring bus is popular for 4–12 core designs as it provides low-latency access to the shared LLC slices.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ROW 4: HETEROGENEOUS MULTICORE §18.4
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§18.4 Heterogeneous Multicore Organisation</span></div>
+<div class="grid">
+
+  <!-- CPU+GPU SOC -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>CPU + GPU Heterogeneous SoC</h3></div>
+    <div class="card-body">
+      <div class="info"><strong>Motivation</strong>GPU excels at data-parallel workloads (matrix ops, graphics). CPU excels at control-heavy serial code. Combine both on one die (APU / SoC) for performance across diverse workloads.</div>
+      <table class="tbl" style="margin-top:8px;">
+        <thead><tr><th>Parameter</th><th>CPU Cores</th><th>GPU Cores</th></tr></thead>
+        <tbody>
+          <tr><td>AMD A10-5800K</td><td>4 @ 3.8 GHz</td><td>384 @ 0.8 GHz</td></tr>
+          <tr><td>FLOPs/core</td><td>8</td><td>2</td></tr>
+          <tr><td>Peak GFLOPS</td><td>121.6</td><td>614.4</td></tr>
+        </tbody>
+      </table>
+      <hr class="rule">
+      <p style="font-size:12px;"><strong>HSA Foundation Goals:</strong></p>
+      <ul class="items" style="font-size:12px;">
+        <li>Unified virtual memory space visible to both CPU and GPU</li>
+        <li>Coherent memory policy — both caches see up-to-date data</li>
+        <li>Eliminate explicit data copying between CPU and GPU memory</li>
+        <li>Unified programming interface (serial + parallel in one program)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- BIG.LITTLE -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>ARM big.LITTLE Architecture</h3></div>
+    <div class="card-body">
+      <div class="note"><strong>Concept</strong>Pair high-performance "big" Cortex-A15 cores with power-efficient "LITTLE" Cortex-A7 cores on the same die. Tasks dynamically migrated to appropriate core type.</div>
+      <table class="tbl" style="margin-top:8px;">
+        <thead><tr><th>Feature</th><th>Cortex-A15 (big)</th><th>Cortex-A7 (little)</th></tr></thead>
+        <tbody>
+          <tr><td>Pipeline</td><td>Out-of-order, 15–24 stages</td><td>In-order, 8–10 stages</td></tr>
+          <tr><td>Issue width</td><td>3 instructions/cycle, 8 EUs</td><td>2 instructions/cycle, 5 EUs</td></tr>
+          <tr><td>Performance</td><td>~2× per MHz</td><td>1× baseline</td></tr>
+          <tr><td>Efficiency</td><td>1× baseline</td><td>~3× better (same workload)</td></tr>
+          <tr><td>Use case</td><td>Gaming, video, navigation</td><td>Texting, audio, background tasks</td></tr>
+        </tbody>
+      </table>
+      <hr class="rule">
+      <p style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;">SCHEDULING MODELS</p>
+      <ul class="items" style="font-size:12px;">
+        <li><span class="label orange">Migration</span>big/LITTLE paired → OS sees 1 CPU. Power management migrates context. One of pair always idle.</li>
+        <li><span class="label green">MP Model</span>Any mix of A15+A7 active simultaneously. More efficient; complex scheduler matches workload intensity to core type.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MOESI + CPU/DSP -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Cache Coherence: MOESI Model</h3></div>
+    <div class="card-body">
+      <div class="tip"><strong>Why MOESI?</strong>Standard MESI requires write-back before sharing. MOESI adds the <strong>Owned</strong> state — allows a dirty line to be shared without writing back to memory first, reducing bus traffic.</div>
+      <table class="tbl" style="margin-top:8px;">
+        <thead><tr><th>State</th><th>Clean/Dirty</th><th>Unique</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><span class="label red">Modified</span></td><td>Dirty</td><td>Yes</td><td>Only copy; must write back before sharing/eviction</td></tr>
+          <tr><td><span class="label orange">Owned</span></td><td>Dirty</td><td>No</td><td>Dirty but shared; this cache responsible for write-back</td></tr>
+          <tr><td><span class="label blue">Exclusive</span></td><td>Clean</td><td>Yes</td><td>Only copy; clean; transitions to M on write</td></tr>
+          <tr><td><span class="label green">Shared</span></td><td>Clean/Dirty</td><td>No</td><td>Multiple caches hold; can be dirty if one is Owned</td></tr>
+          <tr><td><span class="label purple">Invalid</span></td><td>—</td><td>—</td><td>Line not valid; must fetch</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">ARM ACE (Advanced eXtensible Interface Coherence Extensions) implements MOESI and supports coherency between dissimilar processors (e.g. A15 + A7) and differing cache line sizes.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ROW 5: INTEL CORE i7-990X §18.5
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§18.5 Intel Core i7-990X</span></div>
+<div class="grid-2">
+
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>i7-990X Architecture Overview</h3></div>
+    <div class="card-body">
+      <div class="stat-row">
+        <div class="stat"><div class="val" style="color:var(--accent);">6</div><div class="lbl">Cores</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent5);">12 MB</div><div class="lbl">Shared L3</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent2);">256 kB</div><div class="lbl">L2/Core</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent4);">32 GB/s</div><div class="lbl">DDR3 BW</div></div>
+      </div>
+      <hr class="rule">
+      <ul class="items">
+        <li>Each core has private <strong>256 kB L2 cache</strong> and all 6 cores share a <strong>12 MB L3 cache</strong></li>
+        <li><strong>Ring Bus</strong> interconnects cores + L3 slices + memory controller + I/O hub on-chip</li>
+        <li>L3 acts as a coherence point — all inter-core data sharing goes through L3</li>
+        <li><strong>Hardware prefetcher</strong> examines memory access patterns and speculatively fills caches</li>
+        <li>SMT (HyperThreading) — 2 hardware threads per core → 12 logical CPUs total</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>i7-990X External Interfaces</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>Interface</th><th>Details</th><th>Bandwidth</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="label green">DDR3</span></td>
+            <td>On-chip memory controller; 3 channels × 8 bytes wide = 192-bit total bus; no Front Side Bus</td>
+            <td>Up to 32 GB/s aggregate</td>
+          </tr>
+          <tr>
+            <td><span class="label blue">QPI</span></td>
+            <td>QuickPath Interconnect — cache-coherent point-to-point link; 4 × 20-bit lanes @ 6.4 GT/s; bidirectional pairs</td>
+            <td>25.6 GB/s total (12.8 each direction)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info" style="margin-top:8px;"><strong>On-Chip Memory Controller</strong>Bringing the memory controller onto the processor die (vs. northbridge chipset) eliminates Front Side Bus latency and dramatically increases memory bandwidth.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ROW 6: ARM CORTEX-A15 MPCORE §18.6
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§18.6 ARM Cortex-A15 MPCore</span></div>
+<div class="grid">
+
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Cortex-A15 MPCore Overview</h3></div>
+    <div class="card-body">
+      <div class="stat-row">
+        <div class="stat"><div class="val" style="color:var(--accent5);">4</div><div class="lbl">Max Cores</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent);">32 kB</div><div class="lbl">L1-I/D</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent2);">Shared</div><div class="lbl">L2 Cache</div></div>
+      </div>
+      <ul class="items" style="margin-top:8px;">
+        <li>Out-of-order, 15–24 stage pipeline; 3 instructions/cycle dispatch</li>
+        <li>Each core: dedicated 32 kB L1-I + 32 kB L1-D cache</li>
+        <li><strong>Snoop Control Unit (SCU)</strong> maintains L1/L2 cache coherency</li>
+        <li><strong>Generic Interrupt Controller (GIC)</strong> handles all interrupts centrally — supports masking, prioritisation, distribution, tracking</li>
+        <li>Generic per-core timer + watchdog; debug/trace unit</li>
+        <li>Memory-mapped I/O to GIC via private SCU interface</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>SCU Cache Coherency Optimisations</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li><span class="label blue">DDI</span><strong>Direct Data Intervention</strong> — copy clean data from one L1 to another L1 <em>without</em> accessing L2/main memory. Resolves local L1 miss via remote L1.</li>
+        <li><span class="label green">Dup Tag RAMs</span><strong>Duplicated tag RAMs</strong> — SCU maintains copies of all L1 tag arrays. Sends coherency commands only to CPUs that actually have the relevant line — reduces snooping power/traffic.</li>
+        <li><span class="label orange">Migratory Lines</span>Move dirty data from one L1 to another without write-back to L2, then re-read — saves memory bus bandwidth for frequently migrating modified lines.</li>
+      </ul>
+      <hr class="rule">
+      <div class="note"><strong>L2 Coherency</strong>L2 maintains snoop tag array (duplicate of all L1 data cache directories). Lines in M/E state belong to L1 system and must be serviced by L1. Shared/Invalid lines served directly from L2. Hybrid MESI + MOESI protocol.</div>
+    </div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>GIC Interrupt Routing</h3></div>
+    <div class="card-body">
+      <p style="font-size:12px;margin-bottom:6px;">The GIC can route any interrupt in three ways:</p>
+      <ul class="items">
+        <li><span class="label purple">Unicast</span>Directed to a single specific processor</li>
+        <li><span class="label blue">Multicast</span>Directed to a defined group; first accepting processor (typically least loaded) handles it</li>
+        <li><span class="label orange">Broadcast</span>Directed to all processors (e.g. TLB shootdown)</li>
+      </ul>
+      <hr class="rule">
+      <p style="font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;">INTERRUPT SOURCES</p>
+      <ul class="items" style="font-size:12px;">
+        <li><code>ID0–ID15</code> Interprocessor Interrupts (IPIs) — software-triggered, private per CPU</li>
+        <li><code>ID16–ID31</code> Private timers &amp; watchdog (ID29, ID30)</li>
+        <li><code>ID32+</code> Hardware interrupts — up to 224 external lines</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ROW 7: IBM zENTERPRISE EC12 §18.7
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§18.7 IBM zEnterprise EC12 Mainframe</span></div>
+<div class="grid">
+
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>EC12 Overall Organisation</h3></div>
+    <div class="card-body">
+      <div class="stat-row">
+        <div class="stat"><div class="val" style="color:var(--accent3);">6</div><div class="lbl">Cores/PU Chip</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent5);">5.5 GHz</div><div class="lbl">Clock</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent);">23B+</div><div class="lbl">Transistors/MCM</div></div>
+      </div>
+      <hr class="rule">
+      <ul class="items">
+        <li><strong>MCM</strong> (Multi-Chip Module) = 103-layer glass ceramic substrate; 8 chips, 7356 connections</li>
+        <li><strong>6 PU chips/MCM</strong>, each with 4 cores → <strong>24 cores per MCM</strong></li>
+        <li><strong>2 SC chips/MCM</strong> — host L4 cache (96 MB × 2 = 192 MB per SC) + cross-point switch for inter-book L4-to-L4 traffic</li>
+        <li>Out-of-order superscalar; decodes 3 CISC (z/Architecture) instructions/cycle; executes up to 7 ops/cycle</li>
+        <li>Per core: 2 integer units, 2 load/store units, 1 binary FP unit, 1 decimal FP unit</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>EC12 Four-Level Cache Hierarchy</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>Level</th><th>Size</th><th>Scope</th><th>Policy</th><th>Assoc.</th></tr></thead>
+        <tbody>
+          <tr><td><span class="label blue">L1</span></td><td>160 kB total (96 kB D + 64 kB I)</td><td>Per core (private)</td><td>Write-through to L2</td><td>8-way</td></tr>
+          <tr><td><span class="label green">L2</span></td><td>2 MB (1 MB D + 1 MB I)</td><td>Per core (private)</td><td>Write-through to L3</td><td>8-way</td></tr>
+          <tr><td><span class="label orange">L3</span></td><td>48 MB (on-chip, eDRAM)</td><td>Shared — all 6 cores on PU chip</td><td>Absorbs all writes; eDRAM slower than SRAM but higher density</td><td>12-way</td></tr>
+          <tr><td><span class="label red">L4</span></td><td>192 MB per book (2 × 96 MB SC chips)</td><td>Shared — all 6 PU chips on MCM; four books form one L4 pool</td><td>Coherence manager; all memory fetches must pass through L4</td><td>24-way</td></tr>
+        </tbody>
+      </table>
+      <div class="note" style="margin-top:8px;"><strong>All cache line sizes = 256 bytes</strong></div>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>EC12 Design Trade-offs &amp; RAS</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li>L1 kept small (fast access, 1 cycle) despite supporting 5.5 GHz core</li>
+        <li>Private L2/core avoids shared cache contention for hot working sets</li>
+        <li>eDRAM for L3 — slower than SRAM but fits 48 MB on-chip (proximity wins over speed for many workloads)</li>
+        <li>L3 processes every store — maintains data availability during core failure (RAS feature)</li>
+        <li>L4 spans books (MCMs) — accessing off-book L4 is faster than off-book DRAM</li>
+        <li>OS + resource manager co-locate workloads within book boundaries to minimise cross-book L4 traffic</li>
+      </ul>
+      <div class="tip" style="margin-top:8px;"><strong>RAS (Reliability, Availability, Serviceability)</strong>Write-through L1→L2→L3 chain means L3 always has a complete, up-to-date copy — enables on-the-fly core replacement without data loss.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     COMPARISON TABLE: ALL THREE MULTICORE SYSTEMS
+══════════════════════════════════════════════ -->
+<div class="divider"><span>Three-System Comparison</span></div>
+<div class="grid-2" style="grid-template-columns:1fr;">
+<div class="card col-span-3 blue">
+  <div class="card-header"><div class="dot"></div><h3>Intel i7-990X vs ARM Cortex-A15 MPCore vs IBM EC12 — Side-by-Side</h3></div>
+  <div class="card-body">
+    <table class="tbl">
+      <thead>
+        <tr><th>Feature</th><th>Intel Core i7-990X</th><th>ARM Cortex-A15 MPCore</th><th>IBM zEnterprise EC12</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Market</td><td>Desktop / Workstation</td><td>Mobile / Embedded</td><td>Mainframe / Enterprise</td></tr>
+        <tr><td>Cores</td><td>6 (× 2 HT = 12 logical)</td><td>Up to 4</td><td>24 per MCM (6 PU × 4 cores)</td></tr>
+        <tr><td>Clock</td><td>~3.4 GHz</td><td>~2.5 GHz</td><td>5.5 GHz</td></tr>
+        <tr><td>L1 Cache</td><td>32 kB I + 32 kB D per core</td><td>32 kB I + 32 kB D per core</td><td>64 kB I + 96 kB D per core</td></tr>
+        <tr><td>L2 Cache</td><td>256 kB private per core</td><td>Shared L2 across all cores</td><td>1 MB I + 1 MB D private per core</td></tr>
+        <tr><td>L3 Cache</td><td>12 MB shared on-chip</td><td>—</td><td>48 MB shared per PU chip (eDRAM)</td></tr>
+        <tr><td>L4 Cache</td><td>—</td><td>—</td><td>192 MB per book (2 × 96 MB SC)</td></tr>
+        <tr><td>Interconnect</td><td>Ring Bus on-chip</td><td>CCI-400 coherent interconnect</td><td>SC chip cross-point switch (inter-book)</td></tr>
+        <tr><td>Memory I/F</td><td>DDR3, 3-channel, 32 GB/s</td><td>LPDDR3 via memory ctrl</td><td>eDRAM/DDR3 via MCU chips</td></tr>
+        <tr><td>Coherence</td><td>MESIF + QPI</td><td>MESI/MOESI via SCU + ACE</td><td>L4 as coherence manager</td></tr>
+        <tr><td>SMT</td><td>HyperThreading (2/core)</td><td>None (superscalar only)</td><td>SMT on each core</td></tr>
+        <tr><td>Key Feature</td><td>Ring bus, hardware prefetch, 12 MB shared L3</td><td>DDI, dup tag RAMs, GIC, migratory lines</td><td>4-level cache, eDRAM, write-through RAS, eDRAM L3</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     KEY TERMS QUICK REFERENCE
+══════════════════════════════════════════════ -->
+<div class="divider"><span>Key Terms Quick Reference</span></div>
+<div class="grid">
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Hardware Concepts</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li><code>ILP</code> Instruction-Level Parallelism — exploited by superscalar and SMT</li>
+        <li><code>TLP</code> Thread-Level Parallelism — exploited by multicore</li>
+        <li><code>DVFS</code> Dynamic Voltage &amp; Frequency Scaling — power management</li>
+        <li><code>Dark Silicon</code> Transistors that must remain powered off to stay within TDP</li>
+        <li><code>Pollack's Rule</code> Perf ∝ √Complexity — motivation for multiple smaller cores</li>
+        <li><code>SoC</code> System on Chip — integrates CPU, GPU, memory ctrl, I/O on one die</li>
+        <li><code>MCM</code> Multi-Chip Module — multiple dies in one package (IBM EC12)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Cache / Coherence Terms</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li><code>MESI</code> Modified / Exclusive / Shared / Invalid — standard snoopy protocol</li>
+        <li><code>MOESI</code> Adds Owned state — allows dirty sharing without write-back</li>
+        <li><code>ACE</code> ARM Advanced eXtensible Interface Coherence Extensions</li>
+        <li><code>SCU</code> Snoop Control Unit (ARM) — L1/L2 coherency manager</li>
+        <li><code>DDI</code> Direct Data Intervention — L1-to-L1 transfer without L2</li>
+        <li><code>LLC</code> Last-Level Cache — typically shared L3 (or L4 in mainframe)</li>
+        <li><code>eDRAM</code> Embedded DRAM — lower density than SRAM but much larger capacity on-chip</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Software / Parallelism Terms</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li><code>Amdahl's Law</code> Theoretical max speedup limited by serial fraction</li>
+        <li><code>Critical Section</code> Code segment that must execute atomically</li>
+        <li><code>Mutex</code> Mutual exclusion lock — binary semaphore</li>
+        <li><code>Deadlock</code> Circular dependency on locks — system halts</li>
+        <li><code>False Sharing</code> Different vars on same cache line → unnecessary invalidations</li>
+        <li><code>Memory Fence</code> Instruction ensuring visibility ordering of memory ops</li>
+        <li><code>CAS</code> Compare-And-Swap — fundamental lock-free atomic primitive</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← Back to Menu</a>
+  <span class="footer-note">Stallings · Computer Organization &amp; Architecture 10e · Chapter 18 · Multicore Computers</span>
+</footer>
+
+</body>
+</html>

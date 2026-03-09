@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH02 – Performance Issues</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent2);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent2);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent2);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent2);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>Performance Issues — Chapter 2</h1>
+    <h2>Computer Organization &amp; Architecture, 10th Edition &nbsp;|&nbsp; Complete Study Reference</h2>
+    <div style="margin-top:10px;" class="toc">
+      <span class="toc-item">§2.1 Designing for Performance</span>
+      <span class="toc-item">§2.2 Multicore, MIC &amp; GPGPU</span>
+      <span class="toc-item">§2.3 Amdahl's &amp; Little's Law</span>
+      <span class="toc-item">§2.4 Basic Performance Measures</span>
+      <span class="toc-item">§2.5 Calculating the Mean</span>
+      <span class="toc-item">§2.6 Benchmarks &amp; SPEC</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+    <span class="badge">COA10e · CH02</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 1 — §2.1 Designing for Performance
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="grid">
+
+  <!-- Card 1: Overview & Microprocessor Speed -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§2.1 · Microprocessor Speed</h3></div>
+    <div class="card-body">
+      <p>Moore's Law has driven exponential transistor growth, enabling <strong>4–5× performance improvement every ~3 years</strong> since Intel launched x86 in 1978. Raw speed potential is only realized if the processor is fed a constant, uninterrupted stream of instructions.</p>
+      <div class="label">Key CPU Techniques to Sustain Throughput</div>
+      <ul class="items">
+        <li><strong>Pipelining</strong> — overlaps multiple instruction stages (fetch → decode → execute …) simultaneously, like an assembly line</li>
+        <li><strong>Branch Prediction</strong> — prefetches likely instruction branches to avoid stalls; advanced versions look multiple branches ahead</li>
+        <li><strong>Superscalar Execution</strong> — issues &gt;1 instruction per clock cycle using multiple parallel pipelines</li>
+        <li><strong>Data-Flow Analysis</strong> — schedules instructions by data-dependency order, independent of program order, eliminating unnecessary delays</li>
+        <li><strong>Speculative Execution</strong> — executes instructions ahead of their appearance using branch prediction &amp; data-flow analysis; results held in temporary locations</li>
+      </ul>
+      <div class="tip"><div class="t-title">Goal</div>Execute many instructions per cycle (IPC &gt; 1), rather than many cycles per instruction (CPI &gt; 1).</div>
+    </div>
+  </div>
+
+  <!-- Card 2: Performance Balance -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§2.1 · Performance Balance</h3></div>
+    <div class="card-body">
+      <p><strong>Performance balance</strong>: adjusting organization and architecture to compensate for the mismatch among capabilities of different components. The processor–memory interface is the most critical bottleneck.</p>
+      <div class="label">Processor–Memory Gap Solutions</div>
+      <ul class="items">
+        <li>Make DRAMs <em>wider</em> (more bits per access) rather than deeper, with wide bus data paths</li>
+        <li>Change DRAM interface — include on-chip caches or buffering schemes on DRAM</li>
+        <li>Add cache hierarchy (L1/L2/L3) between processor and main memory; on-chip cache has dramatically lower access latency</li>
+        <li>Increase interconnect bandwidth — higher-speed buses, hierarchical bus structures</li>
+      </ul>
+      <div class="label">I/O Bottleneck Solutions</div>
+      <ul class="items">
+        <li>Caching and buffering schemes for high-throughput peripherals</li>
+        <li>Higher-speed interconnect buses and elaborate interconnection structures</li>
+        <li>Multiple-processor configurations to distribute I/O demand</li>
+      </ul>
+      <div class="warn"><div class="w-title">Two Evolving Factors</div>Performance improvement rates differ greatly by component type (CPU, bus, memory, peripherals); AND new applications constantly change instruction/data-access demand patterns.</div>
+    </div>
+  </div>
+
+  <!-- Card 3: Chip Organization Improvements -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§2.1 · Chip Organization &amp; Architecture</h3></div>
+    <div class="card-body">
+      <div class="label">Three Approaches to Increase Processor Speed</div>
+      <ul class="items">
+        <li><strong>Increase hardware speed</strong> — shrink logic gate size → more gates per chip → shorter signal propagation → higher clock rate</li>
+        <li><strong>Increase cache size &amp; speed</strong> — on-chip cache drops access time dramatically; Pentium: ~10% of chip area; modern chips: &gt;50% for cache</li>
+        <li><strong>Improve processor organization</strong> — pipelining, superscalar, and other parallel execution techniques</li>
+      </ul>
+      <div class="label">Obstacles to Simply Raising Clock Speed</div>
+      <ul class="items">
+        <li><strong>Power</strong> — higher clock &amp; density → higher power density (W/cm²); heat dissipation becomes critical design constraint</li>
+        <li><strong>RC Delay</strong> — thinner wires increase resistance; closer wires increase capacitance; RC product rises as components shrink</li>
+        <li><strong>Memory Latency &amp; Throughput</strong> — DRAM latency and bandwidth lag behind processor speed growth</li>
+      </ul>
+      <div class="note"><div class="n-title">Consequence</div>Clock speed gains plateaued ~2004. Chip area freed by Moore's Law is now used for <strong>multiple cores</strong> and <strong>larger caches</strong>, not faster single-core logic. ~¾ of non-cache area is pipeline control &amp; buffering.</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 2 — §2.2 Multicore / MIC / GPGPU
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Multicore -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§2.2 · Multicore Architecture</h3></div>
+    <div class="card-body">
+      <p>Multiple processors (cores) placed on the same chip sharing a large cache. Avoids power-dissipation wall of higher clock speeds by trading clock frequency for parallelism.</p>
+      <div class="tip"><div class="t-title">Performance Scaling</div>Within one processor, performance scales roughly as √(complexity increase). But doubling the number of processors <em>almost doubles</em> performance — if software exploits parallelism.</div>
+      <div class="label">Cache Hierarchy Evolution</div>
+      <ul class="items">
+        <li>Initially: L1 per core, L2 &amp; L3 shared by all cores</li>
+        <li>Modern: L2 is commonly also private to each core</li>
+        <li>Power consumption of memory logic &lt;&lt; processing logic → justifies larger caches per chip</li>
+        <li>Trajectory: 2-core → 4 → 8 → 16 → many cores (MIC)</li>
+      </ul>
+      <div class="label">Strategy</div>
+      <p>Use two simpler processors rather than one complex processor. The hardware parallelism gain outweighs the simplicity penalty per core.</p>
+    </div>
+  </div>
+
+  <!-- Card 5: MIC -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>§2.2 · Many Integrated Core (MIC)</h3></div>
+    <div class="card-body">
+      <p><strong>MIC</strong> represents a leap to <strong>&gt;50 cores per chip</strong> — a homogeneous collection of general-purpose processors on a single die. The term was coined to distinguish this regime from standard multicore (2–16 cores).</p>
+      <div class="label">Key Characteristics</div>
+      <ul class="items">
+        <li>Homogeneous cores — all general-purpose, identical architecture</li>
+        <li>Massive on-chip parallelism requires highly parallel software</li>
+        <li>Challenge: developing software to exploit 50+ cores efficiently</li>
+        <li>Example: Intel Xeon Phi product line</li>
+      </ul>
+      <div class="warn"><div class="w-title">Software Challenge</div>The hardware parallelism far outpaces available parallel software. Amdahl's Law limits gains from additional cores if the sequential fraction of code is non-trivial.</div>
+    </div>
+  </div>
+
+  <!-- Card 6: GPGPU -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§2.2 · GPGPU Architecture</h3></div>
+    <div class="card-body">
+      <p>A <strong>GPU</strong> (Graphics Processing Unit) is a core designed for parallel operations on graphics data. <strong>GPGPU</strong> = General-Purpose Computing on GPUs: using GPU architecture for non-graphics workloads.</p>
+      <div class="label">GPU vs CPU Design Philosophy</div>
+      <table class="tbl">
+        <tr><th>Attribute</th><th>CPU</th><th>GPU</th></tr>
+        <tr><td>Core count</td><td>Few (2–64)</td><td>Hundreds–thousands</td></tr>
+        <tr><td>Core complexity</td><td>Very complex (OOO, predict)</td><td>Simple, in-order</td></tr>
+        <tr><td>Optimization target</td><td>Low latency, serial</td><td>High throughput, parallel</td></tr>
+        <tr><td>Memory model</td><td>Cache-centric</td><td>Wide memory bandwidth</td></tr>
+      </table>
+      <div class="label">Use Cases for GPGPU</div>
+      <ul class="items">
+        <li>Scientific simulations (repetitive floating-point operations on large arrays)</li>
+        <li>Machine learning / deep learning (matrix multiplications)</li>
+        <li>Signal &amp; image processing</li>
+        <li>Blurs the CPU/GPU boundary — vector processing on general data sets</li>
+      </ul>
+      <div class="info"><div class="i-title">Reference</div>Multicore explored in Ch.18; GPGPU in Ch.19 of Stallings COA10e.</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 3 — §2.3 Amdahl's Law (dedicated wide section)
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Amdahl's Law – Core Formula -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§2.3 · Amdahl's Law — Core Formula</h3></div>
+    <div class="card-body">
+      <p>Proposed by Gene Amdahl (1967). Quantifies the theoretical maximum speedup when parallelizing a program on N processors.</p>
+      <div class="label">Variables</div>
+      <ul class="items">
+        <li><code>T</code> — total single-processor execution time</li>
+        <li><code>f</code> — fraction of code that is infinitely parallelizable (0 ≤ f ≤ 1)</li>
+        <li><code>(1–f)</code> — fraction that is inherently sequential</li>
+        <li><code>N</code> — number of parallel processors</li>
+      </ul>
+      <div class="label">Speedup Formula (Multiprocessor)</div>
+      <div class="formula">
+        Speedup = T_single / T_parallel<br><br>
+        Speedup = [T(1–f) + Tf] / [T(1–f) + Tf/N]<br><br>
+        <strong>Speedup = 1 / [(1–f) + f/N]</strong>
+      </div>
+      <div class="label">Two Key Conclusions</div>
+      <ul class="items">
+        <li>When <code>f</code> is small → parallel processors have little effect (sequential bottleneck dominates)</li>
+        <li>As N→∞: Speedup is bounded by <strong>1/(1–f)</strong> — hard ceiling regardless of processors added</li>
+      </ul>
+      <div class="note"><div class="n-title">Pessimism Note (Gustafson 1988)</div>These conclusions are too pessimistic in practice — servers, databases, and simulations scale problem size with available processors, making <code>f</code> effectively larger.</div>
+    </div>
+  </div>
+
+  <!-- Card 8: Amdahl's Law – Generalized -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§2.3 · Amdahl's Law — Generalized Enhancement</h3></div>
+    <div class="card-body">
+      <p>Amdahl's Law generalizes to any system enhancement (not just parallel processors): cache improvement, faster memory, faster I/O, etc.</p>
+      <div class="label">General Speedup Definition</div>
+      <div class="formula">
+        Speedup = Performance_after / Performance_before<br>
+               = Execution_time_before / Execution_time_after  … (2.1)
+      </div>
+      <div class="label">Enhancement Speedup Formula</div>
+      <p>If feature <code>f</code> is used a fraction <code>f</code> of the time and is sped up by factor <code>SU_f</code>:</p>
+      <div class="formula">
+        Speedup = 1 / [(1–f) + f/SU_f]
+      </div>
+      <div class="label">Example 2.1 — FP Hardware Speedup</div>
+      <div class="info"><div class="i-title">Setup</div>40% of time is floating-point; FP module sped up by factor K.</div>
+      <div class="formula">
+        Speedup = 1 / (0.6 + 0.4/K)<br><br>
+        Max speedup (K→∞) = 1/0.6 = <strong>1.67×</strong>
+      </div>
+      <div class="warn"><div class="w-title">Insight</div>No matter how fast you make the FP unit, overall speedup is capped at 1.67× because 60% of work is non-FP. Optimizing the non-bottleneck provides diminishing returns.</div>
+    </div>
+  </div>
+
+  <!-- Card 9: Amdahl's Law – Numbers & Limits -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>§2.3 · Amdahl's Law — Limits &amp; Worked Values</h3></div>
+    <div class="card-body">
+      <div class="label">Max Speedup vs Parallel Fraction f</div>
+      <table class="tbl">
+        <tr><th>f (parallel %)</th><th>Max Speedup (N→∞)</th><th>Speedup with N=8</th><th>Speedup with N=64</th></tr>
+        <tr><td>0.50 (50%)</td><td>2.0×</td><td>1.78×</td><td>1.94×</td></tr>
+        <tr><td>0.75 (75%)</td><td>4.0×</td><td>3.2×</td><td>3.76×</td></tr>
+        <tr><td>0.90 (90%)</td><td>10×</td><td>4.71×</td><td>8.0×</td></tr>
+        <tr><td>0.95 (95%)</td><td>20×</td><td>5.93×</td><td>12.0×</td></tr>
+        <tr><td>0.99 (99%)</td><td>100×</td><td>7.47×</td><td>39.3×</td></tr>
+      </table>
+      <div class="label">Reading the Graph (Fig. 2.4)</div>
+      <ul class="items">
+        <li>Curves flatten quickly — adding processors beyond a threshold yields negligible gain</li>
+        <li>Even with f = 0.95, speedup with 1000 CPUs is only ≈19.6× (not 1000×)</li>
+        <li>The sequential portion (1–f) completely dominates at large N</li>
+      </ul>
+      <div class="tip"><div class="t-title">Implication for Multicore Design</div>To exploit 16+ cores, software must have &gt;93% parallelizable code. This is the fundamental challenge facing multicore software developers.</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 4 — §2.3 Little's Law
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="grid-2 section-gap">
+
+  <!-- Card 10: Little's Law -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§2.3 · Little's Law</h3></div>
+    <div class="card-body">
+      <p>Proposed by John Little (1961). A fundamental queuing-theory relationship applicable to <em>any</em> steady-state system with no item leakage.</p>
+      <div class="label">Variables</div>
+      <ul class="items">
+        <li><code>L</code> — average number of items in the system at any one time</li>
+        <li><code>λ</code> (lambda) — average arrival rate of items (items per unit time)</li>
+        <li><code>W</code> — average time each item spends in the system</li>
+      </ul>
+      <div class="label">Little's Law Formula</div>
+      <div class="formula">
+        L = λ · W
+      </div>
+      <div class="label">Proof Intuition</div>
+      <p>When an item arrives it finds on average <code>L</code> items ahead of it. When it leaves, it also leaves <code>L</code> items behind (steady state). It spent time <code>W</code> in the system. In that time, <code>λW</code> items arrived. Therefore <code>L = λW</code>.</p>
+      <div class="label">Key Properties</div>
+      <ul class="items">
+        <li>Requires <strong>no assumptions</strong> about service-time distribution, arrival-time distribution, or service order/priority</li>
+        <li>Applies to single-server, multi-server, single-queue, multi-queue topologies</li>
+        <li>Valid whenever the system is in statistical steady state</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 11: Little's Law Application -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§2.3 · Little's Law — Computer System Applications</h3></div>
+    <div class="card-body">
+      <div class="label">Server as "System" Mapping</div>
+      <table class="tbl">
+        <tr><th>Server</th><th>Items</th><th>λ</th><th>W</th><th>L</th></tr>
+        <tr><td>Processor</td><td>Processes/threads</td><td>Process arrival rate</td><td>Avg. service time</td><td>Avg. processes in CPU</td></tr>
+        <tr><td>Transmission line</td><td>Packets/frames</td><td>Packet arrival rate</td><td>Avg. transmission time</td><td>Avg. packets in system</td></tr>
+        <tr><td>I/O device</td><td>I/O requests</td><td>Request arrival rate</td><td>Avg. I/O service time</td><td>Avg. requests queued</td></tr>
+        <tr><td>Shared cache memory</td><td>Thread memory requests</td><td>Thread request rate</td><td>Avg. memory wait time</td><td>Avg. stopped threads</td></tr>
+      </table>
+      <div class="label">Multicore Application (from Litt11)</div>
+      <p>In a multicore system with shared memory: define <code>λ</code> as total thread request rate for memory; <code>L</code> as average stopped threads waiting; <code>W</code> as average response time. Little's Law provides a quantitative measure of whether user requirements are being met and how much improvement is needed.</div>
+      <div class="tip"><div class="t-title">Revival</div>Little's Law experienced a revival in interest due to multicore performance analysis and cloud system throughput modeling.</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 4 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 5 — §2.4 Basic Performance Measures
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 12: Clock Speed & Cycle Time -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§2.4 · Clock Speed &amp; Cycle Time</h3></div>
+    <div class="card-body">
+      <div class="label">Clock Fundamentals</div>
+      <ul class="items">
+        <li>Quartz crystal generates constant sine wave → converted to digital voltage pulses</li>
+        <li><strong>Clock rate / clock speed</strong> = pulse frequency, measured in Hz (cycles/second)</li>
+        <li><strong>Clock cycle / tick</strong> = one increment (pulse) of the clock</li>
+        <li>1 GHz processor = 1 billion pulses/second</li>
+      </ul>
+      <div class="label">Key Relationships</div>
+      <div class="formula">
+        Clock rate:  f  (Hz = cycles/second)<br>
+        Cycle time:  τ = 1/f  (seconds/cycle)<br><br>
+        Example: f = 1 GHz → τ = 1 ns
+      </div>
+      <div class="label">Clock Rate Constraints</div>
+      <ul class="items">
+        <li>Clock rate is NOT arbitrary — must allow voltage levels to settle for accurate signal values</li>
+        <li>Physical layout determines propagation delays; some paths take longer than others</li>
+        <li>Operations must be synchronized so all values are stable before the next clock edge</li>
+      </ul>
+      <div class="warn"><div class="w-title">Clock Speed ≠ Performance</div>Different processors with the same clock speed execute different amounts of work per cycle (IPC varies). Clock speed alone cannot compare across architectures.</div>
+    </div>
+  </div>
+
+  <!-- Card 13: CPI & Execution Time -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§2.4 · CPI &amp; Execution Time Formulas</h3></div>
+    <div class="card-body">
+      <div class="label">Key Variables</div>
+      <ul class="items">
+        <li><code>f</code> — clock frequency (Hz)</li>
+        <li><code>τ</code> — clock cycle time = 1/f (s)</li>
+        <li><code>I_c</code> — instruction count (# of instructions executed for a program)</li>
+        <li><code>CPI</code> — average cycles per instruction</li>
+        <li><code>CPI_i</code> — cycles for instruction type i; <code>I_i</code> — count of type-i instructions</li>
+      </ul>
+      <div class="label">CPI Formula (Mixed Instruction Types)</div>
+      <div class="formula">
+        CPI = Σ(CPI_i × I_i) / I_c    … (2.2)
+      </div>
+      <div class="label">Basic Execution Time</div>
+      <div class="formula">
+        T = I_c × CPI × τ  =  I_c × CPI / f
+      </div>
+      <div class="label">Refined Execution Time (with Memory)</div>
+      <div class="formula">
+        T = I_c × [p + (m × k)] × τ<br><br>
+        p = processor cycles to decode &amp; execute<br>
+        m = number of memory references<br>
+        k = memory_cycle_time / processor_cycle_time
+      </div>
+      <div class="info"><div class="i-title">5 Performance Factors</div>I_c, p, m, k, τ — influenced by: Instruction Set Architecture, Compiler Technology, Processor Implementation, Cache &amp; Memory Hierarchy.</div>
+    </div>
+  </div>
+
+  <!-- Card 14: MIPS & MFLOPS -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§2.4 · MIPS, MFLOPS &amp; Worked Example</h3></div>
+    <div class="card-body">
+      <div class="label">MIPS Rate Formula</div>
+      <div class="formula">
+        MIPS = I_c / (T × 10⁶)  =  f / (CPI × 10⁶)  … (2.3)
+      </div>
+      <div class="label">MFLOPS Rate Formula</div>
+      <div class="formula">
+        MFLOPS = (# FP operations executed) / (Execution time × 10⁶)
+      </div>
+      <div class="label">Example 2.2 — CPI &amp; MIPS Calculation</div>
+      <div class="info"><div class="i-title">Setup</div>2M instructions on 400-MHz processor</div>
+      <table class="tbl">
+        <tr><th>Instruction Type</th><th>CPI_i</th><th>Mix %</th><th>Contribution</th></tr>
+        <tr><td>Arithmetic &amp; logic</td><td>1</td><td>60%</td><td>0.60</td></tr>
+        <tr><td>Load/store (cache hit)</td><td>2</td><td>18%</td><td>0.36</td></tr>
+        <tr><td>Branch</td><td>4</td><td>12%</td><td>0.48</td></tr>
+        <tr><td>Memory ref (cache miss)</td><td>8</td><td>10%</td><td>0.80</td></tr>
+        <tr><td><strong>Average CPI</strong></td><td colspan="2"><strong>—</strong></td><td><strong>2.24</strong></td></tr>
+      </table>
+      <div class="formula">
+        MIPS = (400 × 10⁶) / (2.24 × 10⁶) ≈ <strong>178 MIPS</strong>
+      </div>
+      <div class="warn"><div class="w-title">MIPS Limitation</div>MIPS is architecture-dependent. A RISC may execute 4× more instructions than a CISC for the same high-level statement yet achieve the same wall-clock performance (CISC 1 MIPS vs RISC 4 MIPS — both equal work in equal time).</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 5 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 6 — Performance Factors Matrix + Attributes
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="grid-2 section-gap">
+
+  <!-- Card 15: Performance Factors Matrix -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>§2.4 · Performance Factors vs System Attributes (Table 2.1)</h3></div>
+    <div class="card-body">
+      <p>Five performance factors affected by four system attributes. X = attribute influences factor.</p>
+      <table class="tbl" style="margin-top:6px;">
+        <tr><th>System Attribute</th><th>I_c</th><th>p</th><th>m</th><th>k</th><th>τ</th></tr>
+        <tr><td>Instruction Set Architecture</td><td style="color:var(--accent2);text-align:center;">X</td><td style="color:var(--accent2);text-align:center;">X</td><td></td><td></td><td></td></tr>
+        <tr><td>Compiler Technology</td><td style="color:var(--accent2);text-align:center;">X</td><td style="color:var(--accent2);text-align:center;">X</td><td style="color:var(--accent2);text-align:center;">X</td><td></td><td></td></tr>
+        <tr><td>Processor Implementation</td><td></td><td style="color:var(--accent2);text-align:center;">X</td><td></td><td></td><td style="color:var(--accent2);text-align:center;">X</td></tr>
+        <tr><td>Cache &amp; Memory Hierarchy</td><td></td><td></td><td style="color:var(--accent2);text-align:center;">X</td><td style="color:var(--accent2);text-align:center;">X</td><td></td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="label">Factor Definitions</div>
+      <ul class="items">
+        <li><code>I_c</code> — instruction count: # of instructions executed</li>
+        <li><code>p</code> — processor cycles to decode &amp; execute one instruction</li>
+        <li><code>m</code> — number of memory references per instruction</li>
+        <li><code>k</code> — ratio: memory cycle time / processor cycle time</li>
+        <li><code>τ</code> — processor clock cycle time (= 1/f)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 16: Performance Metrics Comparison -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§2.4 · Performance Metrics Comparison</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Metric</th><th>Formula</th><th>Unit</th><th>Limitation</th></tr>
+        <tr><td><strong>Clock Speed</strong></td><td>f (given)</td><td>GHz</td><td>Ignores IPC differences</td></tr>
+        <tr><td><strong>Cycle Time</strong></td><td>τ = 1/f</td><td>ns</td><td>Same as clock speed</td></tr>
+        <tr><td><strong>CPI</strong></td><td>Σ(CPI_i·I_i)/I_c</td><td>cycles/instr</td><td>Program &amp; ISA dependent</td></tr>
+        <tr><td><strong>Exec. Time</strong></td><td>I_c × CPI × τ</td><td>seconds</td><td>Most accurate single metric</td></tr>
+        <tr><td><strong>MIPS</strong></td><td>f/(CPI×10⁶)</td><td>M instr/s</td><td>Not comparable across ISAs</td></tr>
+        <tr><td><strong>MFLOPS</strong></td><td>FP_ops/(T×10⁶)</td><td>M FP ops/s</td><td>Only for FP-heavy workloads</td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="tip"><div class="t-title">Best Single Metric</div><strong>Execution time</strong> is the most meaningful performance comparison. Everything else is a proxy. MIPS and MFLOPS can be misleading when comparing different architectures or different workloads.</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 6 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 7 — §2.5 Calculating the Mean
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 17: Three Means Formulas -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§2.5 · Three Mean Formulas</h3></div>
+    <div class="card-body">
+      <p>Given <em>n</em> positive real numbers (x₁, x₂, …, xₙ):</p>
+      <div class="label">Arithmetic Mean (AM)</div>
+      <div class="formula">
+        AM = (x₁ + x₂ + … + xₙ) / n<br>
+           = (1/n) · Σ xᵢ   … (2.4)<br><br>
+        Functional form: f(x) = x
+      </div>
+      <div class="label">Geometric Mean (GM)</div>
+      <div class="formula">
+        GM = ⁿ√(x₁ · x₂ · … · xₙ)<br>
+           = (∏ xᵢ)^(1/n)<br>
+           = exp[(1/n) · Σ ln(xᵢ)]   … (2.5)<br><br>
+        Functional form: f(x) = ln(x)
+      </div>
+      <div class="label">Harmonic Mean (HM)</div>
+      <div class="formula">
+        HM = n / Σ(1/xᵢ)   … (2.6)<br><br>
+        Functional form: f(x) = 1/x
+      </div>
+      <div class="label">Fundamental Inequality</div>
+      <div class="rule">
+        AM ≥ GM ≥ HM  (equality iff all xᵢ are equal)
+      </div>
+      <div class="label">Weighted Harmonic Mean (for Rates)</div>
+      <div class="formula">
+        WHM = Σ Zⱼ / Σ tᵢ   … (2.7)<br><br>
+        where Zᵢ = operation count, tᵢ = execution time
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 18: When to Use Each Mean -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§2.5 · When to Use Each Mean</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Mean</th><th>Use When</th><th>Property</th><th>Example Application</th></tr>
+        <tr>
+          <td><strong>Arithmetic</strong></td>
+          <td>Measuring execution <em>times</em></td>
+          <td>Proportional to sum of values; proportional to total time</td>
+          <td>Average runtime across benchmark runs; comparing simulation times</td>
+        </tr>
+        <tr>
+          <td><strong>Harmonic</strong></td>
+          <td>Measuring execution <em>rates</em> (MIPS, MFLOPS)</td>
+          <td>Inversely proportional to total execution time</td>
+          <td>Mean MFLOPS across benchmarks; rate comparisons</td>
+        </tr>
+        <tr>
+          <td><strong>Geometric</strong></td>
+          <td>Normalized performance ratios (benchmark comparisons)</td>
+          <td>Consistent regardless of reference machine; equal weight to all values in multiplicative sense</td>
+          <td>SPEC score computation; normalizing to reference machine</td>
+        </tr>
+      </table>
+      <div class="divider"></div>
+      <div class="warn"><div class="w-title">Arithmetic Mean of Rates is WRONG</div>Using AM on MFLOPS or MIPS data gives incorrect comparisons. A MFLOPS value is a rate (Z/t). AM of rates ∝ sum(1/tᵢ), not inversely proportional to Σtᵢ. Use HM for rates.</div>
+      <div class="tip"><div class="t-title">SPEC's Choice: Geometric Mean</div>SPEC uses GM for benchmark scores because: (1) Consistent regardless of reference machine; (2) Less biased by outliers than HM or AM; (3) Performance ratios follow lognormal distributions — GM is the back-transformed average of a lognormal.</div>
+    </div>
+  </div>
+
+  <!-- Card 19: Mean Properties & GM Consistency -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§2.5 · GM Properties &amp; Consistency</h3></div>
+    <div class="card-body">
+      <div class="label">Equal Weight Property (GM)</div>
+      <p>A 10% change in <em>any</em> data value produces the same relative change in GM: <code>GM × ⁿ√1.1</code>. In contrast, AM is dominated by large values — a 10% change in the largest value dominates; a 10% change in the smallest is negligible.</p>
+      <div class="label">GM of Ratios (Key Identity)</div>
+      <div class="formula">
+        GM(Zᵢ/tᵢ) = GM(Zᵢ) / GM(tᵢ)   … (2.8)
+      </div>
+      <div class="label">Consistency Property</div>
+      <p>GM gives the <strong>same relative ranking</strong> of systems regardless of which system is used as the normalization reference. AM does NOT have this property — changing the reference machine can change the ranking.</p>
+      <div class="label">Example 2.6 — Non-Monotonic AM vs GM</div>
+      <table class="tbl">
+        <tr><th>Data Set</th><th>AM</th><th>GM</th></tr>
+        <tr><td>Set c (uniform 1–11)</td><td>6.00</td><td>5.95 (lower AM, higher GM)</td></tr>
+        <tr><td>Set d (large-number bias)</td><td>7.55</td><td>6.42</td></tr>
+      </table>
+      <p style="margin-top:6px;font-size:11px;color:var(--text-muted);">AM(d) &gt; AM(c) but GM(c) &gt; GM(d) — GM and AM can disagree on ordering (GM is non-monotonic w.r.t. AM).</p>
+      <div class="warn"><div class="w-title">HM Outlier Sensitivity</div>HM is highly sensitive to small-value outliers. A single very small value drives HM far below the "central" tendency of the data — misleading for skewed distributions.</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 7 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 8 — §2.6 Benchmarks & SPEC
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 20: Benchmark Principles -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§2.6 · Benchmark Principles</h3></div>
+    <div class="card-body">
+      <p>MIPS and MFLOPS are inadequate for cross-architecture comparisons due to ISA differences. The solution: run the <em>same programs</em> on different machines and compare execution times.</p>
+      <div class="label">CISC vs RISC — Why MIPS Fails</div>
+      <div class="info"><div class="i-title">Example 2.8</div>Statement: <code>A = B + C</code> (all in main memory)<br>CISC: 1 instruction → <code>add mem(B), mem(C), mem(A)</code><br>RISC: 4 instructions → load, load, add, store<br>Same wall-clock time → CISC=1 MIPS, RISC=4 MIPS — but equal real-world work!</div>
+      <div class="label">Desirable Benchmark Properties (Weicker 1990)</div>
+      <ol class="steps">
+        <li>Written in a <strong>high-level language</strong> — portable across different machines</li>
+        <li>Representative of a particular <strong>programming domain</strong> (systems, numerical, commercial)</li>
+        <li>Can be <strong>measured easily</strong> — clear start/end, reproducible results</li>
+        <li>Has <strong>wide distribution</strong> — accepted by industry and academic communities</li>
+      </ol>
+      <div class="label">Benchmark Benefits</div>
+      <ul class="items">
+        <li>Guides customers deciding which system to buy</li>
+        <li>Helps vendors/designers identify performance targets</li>
+        <li>Enables reproducible, objective comparisons across platforms</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 21: SPEC Organization & CPU2006 -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§2.6 · SPEC Organization &amp; CPU2006</h3></div>
+    <div class="card-body">
+      <p><strong>SPEC</strong> = Standard Performance Evaluation Corporation — industry consortium defining and maintaining standardized benchmark suites since late 1980s.</p>
+      <div class="label">SPEC CPU2006 — Industry Standard for CPU-Intensive Apps</div>
+      <ul class="items">
+        <li>5th generation SPEC CPU suite (replaced CPU2000, CPU95, CPU92, CPU89)</li>
+        <li><strong>12 integer benchmarks</strong> (CINT2006) — C and C++ programs</li>
+        <li><strong>17 floating-point benchmarks</strong> (CFP2006) — C, C++, and Fortran programs</li>
+        <li>Over <strong>3 million lines of code</strong> total</li>
+        <li>All benchmarks drawn from <em>real-life applications</em> (not synthetic loops)</li>
+        <li>Reference machine: Sun Ultra Enterprise 2, 296-MHz UltraSPARC II (1997)</li>
+        <li>A conforming run takes ~12 days on the reference machine</li>
+      </ul>
+      <div class="label">SPEC Key Terms</div>
+      <table class="tbl">
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td>Benchmark</td><td>High-level language program, compilable on any platform implementing the compiler</td></tr>
+        <tr><td>System Under Test (SUT)</td><td>The system being evaluated</td></tr>
+        <tr><td>Reference Machine</td><td>Baseline system; establishes reference times for all benchmarks</td></tr>
+        <tr><td>Base Metric</td><td>Required; standard compiler with default settings — comparable results</td></tr>
+        <tr><td>Peak Metric</td><td>Optional; maximum optimization allowed (different flags per benchmark, feedback-directed optimization)</td></tr>
+        <tr><td>Speed Metric</td><td>Time to complete a single task — single-task comparison</td></tr>
+        <tr><td>Rate Metric</td><td>Tasks completed per unit time (throughput); exploits multiple processors</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 22: SPEC Evaluation Process -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>§2.6 · SPEC Evaluation Process (Fig. 2.7)</h3></div>
+    <div class="card-body">
+      <div class="label">Three-Step Calculation for Integer Benchmarks</div>
+      <ol class="steps">
+        <li><strong>Run each program 3 times</strong> — select the <em>median</em> runtime. (Three runs eliminate variation from disk access, OS kernel scheduling artifacts.)</li>
+        <li><strong>Normalize each result</strong> — compute the ratio: reference time / SUT time:<br>
+          <div class="formula" style="margin-top:4px;">rᵢ = T_ref_i / T_sut_i   … (2.9)</div>
+          Higher ratio = faster machine. T_ref is the execution time on the reference machine.
+        </li>
+        <li><strong>Compute Geometric Mean</strong> of all 12 (integer) or 17 (FP) ratios:<br>
+          <div class="formula" style="margin-top:4px;">r_G = (∏ rᵢ)^(1/12)   [for CINT2006]</div>
+        </li>
+      </ol>
+      <div class="label">Four Integer Score Variants</div>
+      <table class="tbl">
+        <tr><th>Metric</th><th>Tuning</th><th>Measure</th></tr>
+        <tr><td>SPECint2006</td><td>Peak</td><td>Speed (single task)</td></tr>
+        <tr><td>SPECint_base2006</td><td>Base</td><td>Speed (single task)</td></tr>
+        <tr><td>SPECint_rate2006</td><td>Peak</td><td>Throughput (multi-task)</td></tr>
+        <tr><td>SPECint_rate_base2006</td><td>Base</td><td>Throughput (multi-task)</td></tr>
+      </table>
+      <div class="tip"><div class="t-title">Why Geometric Mean for SPEC?</div>Consistent across reference machines, less biased by outliers, matches lognormal distribution of performance ratios.</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 8 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 9 — SPEC Benchmark Tables
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="grid-2 section-gap">
+
+  <!-- Card 23: SPEC CPU2006 Integer Benchmarks -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§2.6 · SPEC CPU2006 Integer Benchmarks (CINT2006) — Table 2.5</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Benchmark</th><th>Ref Time (hr)</th><th>Lang</th><th>Domain</th><th>Description</th></tr>
+        <tr><td>400.perlbench</td><td>2.71</td><td>C</td><td>Programming Language</td><td>PERL interpreter (3 programs)</td></tr>
+        <tr><td>401.bzip2</td><td>2.68</td><td>C</td><td>Compression</td><td>General-purpose data compression (in-memory)</td></tr>
+        <tr><td>403.gcc</td><td>2.24</td><td>C</td><td>C Compiler</td><td>GCC 3.2, generates Opteron code</td></tr>
+        <tr><td>429.mcf</td><td>2.53</td><td>C</td><td>Combinatorial Opt.</td><td>Vehicle scheduling algorithm</td></tr>
+        <tr><td>445.gobmk</td><td>2.91</td><td>C</td><td>Artificial Intelligence</td><td>Go game player</td></tr>
+        <tr><td>456.hmmer</td><td>2.59</td><td>C</td><td>Gene Sequence Search</td><td>Profile hidden Markov models for protein analysis</td></tr>
+        <tr><td>458.sjeng</td><td>3.36</td><td>C</td><td>Artificial Intelligence</td><td>Highly-ranked chess engine</td></tr>
+        <tr><td>462.libquantum</td><td>5.76</td><td>C</td><td>Quantum Computing</td><td>Quantum computer simulation (Shor's algorithm)</td></tr>
+        <tr><td>464.h264ref</td><td>6.15</td><td>C</td><td>Video Compression</td><td>H.264/AVC video encoding</td></tr>
+        <tr><td>471.omnetpp</td><td>1.74</td><td>C++</td><td>Discrete Event Sim.</td><td>OMNet++ Ethernet campus network model</td></tr>
+        <tr><td>473.astar</td><td>1.95</td><td>C++</td><td>Path-Finding</td><td>A* pathfinding library for 2D maps</td></tr>
+        <tr><td>483.xalancbmk</td><td>1.92</td><td>C++</td><td>XML Processing</td><td>Xalan-C++ XML→document transformer</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 24: SPEC CPU2006 FP Benchmarks -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§2.6 · SPEC CPU2006 FP Benchmarks (CFP2006) — Table 2.6 (selected)</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Benchmark</th><th>Ref Time (hr)</th><th>Lang</th><th>Domain</th><th>Description</th></tr>
+        <tr><td>410.bwaves</td><td>3.78</td><td>Fortran</td><td>Fluid Dynamics</td><td>3D transonic transient laminar viscous flow</td></tr>
+        <tr><td>416.gamess</td><td>5.44</td><td>Fortran</td><td>Quantum Chemistry</td><td>Quantum chemical computations</td></tr>
+        <tr><td>433.milc</td><td>2.55</td><td>C</td><td>Physics/QCD</td><td>Quark &amp; gluon behavior simulation</td></tr>
+        <tr><td>434.zeusmp</td><td>2.53</td><td>Fortran</td><td>Physics/CFD</td><td>Astrophysical CFD simulation</td></tr>
+        <tr><td>435.gromacs</td><td>1.98</td><td>C,Fortran</td><td>Molecular Dynamics</td><td>Newtonian equations for molecular particles</td></tr>
+        <tr><td>436.cactusADM</td><td>3.32</td><td>C,Fortran</td><td>General Relativity</td><td>Einstein evolution equations solver</td></tr>
+        <tr><td>444.namd</td><td>2.23</td><td>C++</td><td>Biology/Mol. Dyn.</td><td>Large biomolecular system simulation</td></tr>
+        <tr><td>450.soplex</td><td>2.32</td><td>C++</td><td>Linear Programming</td><td>Railroad planning &amp; military airlift optimization</td></tr>
+        <tr><td>453.povray</td><td>1.48</td><td>C++</td><td>Image Ray-Tracing</td><td>3D image rendering</td></tr>
+        <tr><td>459.GemsFDTD</td><td>2.95</td><td>Fortran</td><td>Computational EM</td><td>Maxwell equations 3D solver</td></tr>
+        <tr><td>470.lbm</td><td>3.82</td><td>C</td><td>Fluid Dynamics</td><td>Incompressible fluid simulation in 3D</td></tr>
+        <tr><td>481.wrf</td><td>3.10</td><td>C,Fortran</td><td>Weather</td><td>Numerical weather forecasting</td></tr>
+        <tr><td>482.sphinx3</td><td>5.41</td><td>C</td><td>Speech Recognition</td><td>Speech recognition software</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /grid row 9 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 10 — Other SPEC Suites + Quick Formula Reference
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 25: Other SPEC Suites -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§2.6 · Other SPEC Benchmark Suites</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Suite</th><th>Purpose</th></tr>
+        <tr><td><strong>SPECviewperf</strong></td><td>3D graphics performance based on professional applications</td></tr>
+        <tr><td><strong>SPECwpc</strong></td><td>All key aspects of workstation perf (media, product dev, life sciences, finance, energy)</td></tr>
+        <tr><td><strong>SPECjvm2008</strong></td><td>Java Virtual Machine (JVM) client platform — hardware + software combined</td></tr>
+        <tr><td><strong>SPECjbb2013</strong></td><td>Server-side Java electronic commerce applications</td></tr>
+        <tr><td><strong>SPECsfs2008</strong></td><td>File server speed &amp; request-handling capability</td></tr>
+        <tr><td><strong>SPECvirt_sc2013</strong></td><td>Datacenter virtualized server consolidation — HW + hypervisor + guest OS + app</td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="info"><div class="i-title">SPEC CPU History</div>CPU89 → CPU92 → CPU95 → CPU2000 → <strong>CPU2006</strong> (current in 10e). Each generation reflects real application evolution. The reference machine (Sun Ultra Enterprise 2, 1997) is kept constant to allow historical comparisons.</div>
+    </div>
+  </div>
+
+  <!-- Card 26: All Key Formulas Quick Reference -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>All Key Formulas — Quick Reference</h3></div>
+    <div class="card-body">
+      <div class="label">Clock &amp; Cycle</div>
+      <div class="formula">τ = 1/f &nbsp;&nbsp; (cycle time = 1/frequency)</div>
+      <div class="label">Execution Time</div>
+      <div class="formula">T = I_c × CPI × τ = I_c × CPI / f</div>
+      <div class="formula">T = I_c × [p + (m × k)] × τ &nbsp;&nbsp; (with memory)</div>
+      <div class="label">Average CPI</div>
+      <div class="formula">CPI = Σ(CPI_i × I_i) / I_c</div>
+      <div class="label">MIPS Rate</div>
+      <div class="formula">MIPS = I_c / (T × 10⁶) = f / (CPI × 10⁶)</div>
+      <div class="label">MFLOPS Rate</div>
+      <div class="formula">MFLOPS = FP_ops / (T × 10⁶)</div>
+      <div class="label">Amdahl's Law (Parallel)</div>
+      <div class="formula">Speedup = 1 / [(1–f) + f/N]</div>
+      <div class="label">Amdahl's Law (Enhancement)</div>
+      <div class="formula">Speedup = 1 / [(1–f) + f/SU_f]</div>
+      <div class="label">Little's Law</div>
+      <div class="formula">L = λ · W</div>
+      <div class="label">Means (n values x₁…xₙ)</div>
+      <div class="formula">AM = (Σxᵢ)/n<br>GM = (∏xᵢ)^(1/n) = exp[(1/n)·Σln(xᵢ)]<br>HM = n / Σ(1/xᵢ)<br>WHM = ΣZⱼ / Σtᵢ &nbsp;&nbsp;(weighted, for rates)</div>
+      <div class="label">SPEC Normalized Ratio</div>
+      <div class="formula">rᵢ = T_ref_i / T_sut_i</div>
+      <div class="formula">SPEC score = (∏rᵢ)^(1/n) &nbsp;&nbsp;(GM of ratios)</div>
+    </div>
+  </div>
+
+  <!-- Card 27: Chapter Summary -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Chapter 2 — Key Takeaways</h3></div>
+    <div class="card-body">
+      <div class="label">§2.1 — Design for Performance</div>
+      <ul class="items">
+        <li>Microprocessor speed has grown via Moore's Law + architectural tricks (pipeline, superscalar, speculation)</li>
+        <li>Memory &amp; I/O cannot keep pace → performance balance problem → cache hierarchy, wider buses</li>
+        <li>Clock scaling limited by power/RC-delay → shift to multicore</li>
+      </ul>
+      <div class="label">§2.2 — Parallel Architectures</div>
+      <ul class="items">
+        <li>Multicore: 2–16+ cores, shared/private cache hierarchy, homogeneous</li>
+        <li>MIC: 50+ cores, requires massively parallel software</li>
+        <li>GPGPU: hundreds of simple cores optimized for data-parallel throughput</li>
+      </ul>
+      <div class="label">§2.3 — Laws</div>
+      <ul class="items">
+        <li>Amdahl's Law: Speedup = 1/[(1–f)+f/N]; sequential fraction (1–f) is the hard ceiling</li>
+        <li>Little's Law: L = λW; simple, universal, assumption-free queuing relationship</li>
+      </ul>
+      <div class="label">§2.4 — Metrics</div>
+      <ul class="items">
+        <li>Execution time (T = I_c × CPI × τ) is the most honest metric</li>
+        <li>MIPS is ISA-dependent; MFLOPS is workload-dependent</li>
+      </ul>
+      <div class="label">§2.5 — Means</div>
+      <ul class="items">
+        <li>AM for times, HM for rates, GM for normalized ratios</li>
+        <li>AM ≥ GM ≥ HM; SPEC uses GM for consistency &amp; outlier robustness</li>
+      </ul>
+      <div class="label">§2.6 — SPEC</div>
+      <ul class="items">
+        <li>CPU2006: 12 integer + 17 FP benchmarks from real applications</li>
+        <li>Run 3×, take median → normalize to reference machine → GM of ratios</li>
+        <li>Base (default) and Peak (optimized) variants; Speed and Rate variants</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 10 -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← Back to Menu</a>
+  <span>Computer Organization &amp; Architecture · 10th Ed · Stallings · CH02 Performance Issues</span>
+  <span>COA10e · Complete Study Reference</span>
+</div>
+
+</body>
+</html>

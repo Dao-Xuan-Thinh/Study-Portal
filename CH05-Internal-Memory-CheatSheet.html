@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH05 – Internal Memory</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;--accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent3);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent3);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent3);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;} .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;} .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;} ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;} ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent3);color:#fff;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;} .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>Internal Memory — Chapter 5</h1>
+    <h2>Semiconductor RAM · ROM · Error Correction · DDR · Flash · Emerging NVM</h2>
+    <div style="margin-top:10px;">
+      <div class="toc">
+        <span class="toc-item">§5.1 Semiconductor Main Memory</span>
+        <span class="toc-item">§5.2 Error Correction</span>
+        <span class="toc-item">§5.3 DDR DRAM</span>
+        <span class="toc-item">§5.4 Flash Memory</span>
+        <span class="toc-item">§5.5 Newer NVM Technologies</span>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+    <span class="badge">COA10e · CH05</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);">Stallings · 10th Edition</span>
+  </div>
+</div>
+
+<!-- ROW 1: Memory Cell + DRAM vs SRAM + ROM Types -->
+<div class="grid">
+
+  <!-- Memory Cell Fundamentals -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§5.1 Memory Cell Fundamentals</h3></div>
+    <div class="card-body">
+      <div class="label">Core Properties of Every Semiconductor Cell</div>
+      <ul class="items">
+        <li>Exhibits <strong>two stable states</strong> representing binary 1 and 0</li>
+        <li><strong>Writable</strong> — can be set to a desired state (at least once)</li>
+        <li><strong>Readable</strong> — state can be sensed without destruction (except DRAM read)</li>
+      </ul>
+      <div class="label">Cell Signal Terminals</div>
+      <ul class="items">
+        <li><code>SELECT</code> — activates the cell for read or write</li>
+        <li><code>CONTROL</code> — indicates read or write mode</li>
+        <li><code>DATA IN / SENSE</code> — carries data in (write) or state out (read)</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">DRAM Cell — Analog Capacitor Storage</div>
+      <ul class="items">
+        <li>One transistor + one capacitor per bit</li>
+        <li><strong>Write:</strong> high/low voltage on bit line → charge stored in capacitor (1 or 0)</li>
+        <li><strong>Read:</strong> address line activates transistor → capacitor charge fed to sense amplifier (destructive — capacitor discharged, must be restored)</li>
+        <li>Capacitor leaks charge → must be <strong>periodically refreshed</strong></li>
+        <li>DRAM is essentially an <em>analog</em> device — threshold distinguishes 1 from 0</li>
+      </ul>
+      <div class="label">SRAM Cell — Digital Flip-Flop</div>
+      <ul class="items">
+        <li>Six transistors (T1–T6) cross-connected in bistable flip-flop configuration</li>
+        <li><strong>Logic state 1:</strong> C1 high, C2 low; T1 &amp; T4 off, T2 &amp; T3 on</li>
+        <li><strong>Logic state 0:</strong> C1 low, C2 high; T1 &amp; T4 on, T2 &amp; T3 off</li>
+        <li>T5 and T6 controlled by address line to enable read/write</li>
+        <li>No refresh needed — stable as long as power is applied</li>
+        <li>SRAM is a <em>digital</em> device — more power, faster, larger cell</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DRAM vs SRAM Comparison -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>DRAM vs SRAM Comparison</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead>
+          <tr><th>Characteristic</th><th>DRAM</th><th>SRAM</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Storage mechanism</td><td>Capacitor charge (analog)</td><td>Flip-flop gates (digital)</td></tr>
+          <tr><td>Transistors / bit</td><td>1 (+ 1 capacitor)</td><td>4–6 transistors</td></tr>
+          <tr><td>Cell density</td><td><strong>Higher</strong> (smaller cells)</td><td>Lower (larger cells)</td></tr>
+          <tr><td>Cost per bit</td><td><strong>Lower</strong></td><td>Higher</td></tr>
+          <tr><td>Speed</td><td>Slower</td><td><strong>Faster</strong></td></tr>
+          <tr><td>Refresh required?</td><td><strong>Yes</strong> — periodic</td><td>No</td></tr>
+          <tr><td>Power consumption</td><td>Refresh overhead</td><td>More static power</td></tr>
+          <tr><td>Volatility</td><td>Volatile</td><td>Volatile</td></tr>
+          <tr><td>Read destructive?</td><td><strong>Yes</strong> — restored after read</td><td>No</td></tr>
+          <tr><td>Typical use</td><td><strong>Main memory (RAM)</strong></td><td><strong>Cache memory</strong></td></tr>
+          <tr><td>Large memory cost</td><td>Refresh circuit fixed cost offset by cheaper cells</td><td>Too expensive at scale</td></tr>
+        </tbody>
+      </table>
+      <div class="divider"></div>
+      <div class="tip">
+        <div class="t-title">Key Rule of Thumb</div>
+        DRAM → <strong>main memory</strong> (cheap + dense). SRAM → <strong>cache</strong> (fast). Both are <strong>volatile</strong> — power loss = data loss.
+      </div>
+      <div class="label">DRAM 16-Mbit Chip (4M × 4) Structure</div>
+      <ul class="items">
+        <li>4 square arrays of 2048 × 2048 cells</li>
+        <li>Only <strong>11 address pins</strong> (A0–A10) — address is <em>multiplexed</em> (row then column)</li>
+        <li><code>RAS</code> = Row Address Strobe; <code>CAS</code> = Column Address Strobe</li>
+        <li><code>WE</code> = Write Enable; <code>OE</code> = Output Enable</li>
+        <li>Multiplexing doubles memory size for each extra address pin (quadruples with square arrays)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ROM Types -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>ROM Types &amp; Read-Mostly Memory</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead>
+          <tr><th>Type</th><th>Write</th><th>Erasure</th><th>Volatility</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>ROM</strong></td><td>Masks (fab)</td><td>Not possible</td><td>Nonvolatile</td><td>Data wired at fabrication; high fixed cost; no error correction possible</td></tr>
+          <tr><td><strong>PROM</strong></td><td>Electrically (once)</td><td>Not possible</td><td>Nonvolatile</td><td>Written after fab by customer with special equipment; one-time programmable</td></tr>
+          <tr><td><strong>EPROM</strong></td><td>Electrically</td><td>UV light (chip-level)</td><td>Nonvolatile</td><td>Erased by UV through window; entire chip erased; ~20 min per erase</td></tr>
+          <tr><td><strong>EEPROM</strong></td><td>Electrically (byte)</td><td>Electrically (byte)</td><td>Nonvolatile</td><td>Byte-level update; ~100s µs/byte write; most flexible but less dense, more expensive</td></tr>
+          <tr><td><strong>Flash</strong></td><td>Electrically</td><td>Electrically (block)</td><td>Nonvolatile</td><td>Block-level erase in 1–few seconds; 1 transistor/bit like EPROM; intermediate cost</td></tr>
+        </tbody>
+      </table>
+      <div class="divider"></div>
+      <div class="label">ROM Applications</div>
+      <ul class="items">
+        <li>Microprogramming (control store for microcode)</li>
+        <li>Library subroutines and math function tables</li>
+        <li>System programs (BIOS/firmware)</li>
+        <li>Bootstrap loaders — permanent in main memory, never need loading from disk</li>
+      </ul>
+      <div class="warn">
+        <div class="w-title">ROM Fabrication Problem</div>
+        High <strong>fixed cost</strong> per mask set + <strong>no error correction</strong> after fab — one wrong bit = entire batch scrapped. PROM solves flexibility; flash solves updateability.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ROW 2: Semiconductor Memory Types Table + Module Organization + Interleaved -->
+<div class="grid section-gap">
+
+  <!-- Semiconductor Memory Types Summary -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Semiconductor Memory Types (Table 5.1)</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead>
+          <tr><th>Memory Type</th><th>Category</th><th>Erasure</th><th>Write Mechanism</th><th>Volatility</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>RAM</strong></td><td>Read-write memory</td><td>Electrically, byte-level</td><td>Electrically</td><td style="color:var(--accent3);">Volatile</td></tr>
+          <tr><td><strong>ROM</strong></td><td>Read-only memory</td><td>Not possible</td><td>Masks (fab)</td><td style="color:var(--accent2);">Nonvolatile</td></tr>
+          <tr><td><strong>PROM</strong></td><td>Read-only memory</td><td>Not possible</td><td>Electrically (once)</td><td style="color:var(--accent2);">Nonvolatile</td></tr>
+          <tr><td><strong>EPROM</strong></td><td>Read-mostly memory</td><td>UV light, chip-level</td><td>Electrically</td><td style="color:var(--accent2);">Nonvolatile</td></tr>
+          <tr><td><strong>EEPROM</strong></td><td>Read-mostly memory</td><td>Electrically, byte-level</td><td>Electrically</td><td style="color:var(--accent2);">Nonvolatile</td></tr>
+          <tr><td><strong>Flash</strong></td><td>Read-mostly memory</td><td>Electrically, block-level</td><td>Electrically</td><td style="color:var(--accent2);">Nonvolatile</td></tr>
+        </tbody>
+      </table>
+      <div class="divider"></div>
+      <div class="note">
+        <div class="n-title">Terminology Trap</div>
+        "Random-Access Memory" (RAM) is a misnomer — <em>all</em> types listed above support random access. The true distinguishing features of RAM are: <strong>fast read + write via electrical signals</strong> and <strong>volatility</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Module Organization -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Module &amp; Chip Organization</h3></div>
+    <div class="card-body">
+      <div class="label">1-Bit-Per-Chip Organization</div>
+      <p>If a chip provides 1 bit per word, you need at least as many chips as bits per word.</p>
+      <div class="info">
+        <div class="i-title">Example: 256K × 8-bit Memory</div>
+        Use <strong>8 chips</strong> of 256K × 1-bit each. 18 address lines feed all chips simultaneously. Each chip contributes one bit to the 8-bit output word.
+      </div>
+      <div class="label">Scaling to Larger Memories</div>
+      <ul class="items">
+        <li>To build 1M × 8: use <strong>4 columns</strong> of 8 chips (each column = 256K × 8)</li>
+        <li>Lower 18 address bits → all 32 chips</li>
+        <li>Upper 2 address bits → group-select logic → activates <code>CE</code> on one column</li>
+      </ul>
+      <div class="label">DRAM Address Multiplexing</div>
+      <ul class="items">
+        <li>22-bit address for 2048×2048 array uses only <strong>11 pins</strong> — sends row addr then col addr</li>
+        <li>RAS latches row address; CAS latches column address</li>
+        <li>Each new address pin added → memory size <strong>quadruples</strong> (2× rows × 2× cols)</li>
+      </ul>
+      <div class="label">DRAM Refresh</div>
+      <ul class="items">
+        <li>Refresh counter steps through all row values sequentially</li>
+        <li>Each row: RAS activated → cells in row read and written back (restores charge)</li>
+        <li>Chip effectively disabled during refresh cycles</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Interleaved Memory -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Interleaved Memory</h3></div>
+    <div class="card-body">
+      <div class="label">Concept</div>
+      <p>Main memory composed of multiple independent DRAM <strong>banks</strong>. Each bank can service a memory request independently.</p>
+      <div class="formula">K banks → service K requests simultaneously
+Throughput improvement factor ≈ K
+(for sequential/block accesses)</div>
+      <div class="label">How It Works</div>
+      <ul class="items">
+        <li>Consecutive memory words stored in <strong>different banks</strong> (interleaved addressing)</li>
+        <li>When processor requests a block, successive words come from successive banks in parallel</li>
+        <li>While one bank completes a transfer, the next bank begins its access cycle</li>
+        <li>Dramatically increases effective memory bandwidth for block transfers</li>
+      </ul>
+      <div class="tip">
+        <div class="t-title">Benefit</div>
+        Interleaving hides individual DRAM latency by overlapping accesses across banks. Particularly effective for sequential memory access patterns (instruction fetch, DMA transfers).
+      </div>
+      <div class="label">Limitation</div>
+      <ul class="items">
+        <li>If multiple accesses target same bank → no parallelism (bank conflict)</li>
+        <li>Non-sequential access patterns see reduced benefit</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ROW 3: Error Correction -->
+<div class="grid section-gap">
+
+  <!-- Error Types + Detection -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§5.2 Error Types &amp; Detection</h3></div>
+    <div class="card-body">
+      <div class="label">Categories of Errors</div>
+      <div class="warn">
+        <div class="w-title">Hard Failure (Permanent)</div>
+        Physical defect — cell is <strong>stuck at 0 or 1</strong>, or fluctuates erratically. Caused by environmental abuse, manufacturing defects, or wear. Cannot be fixed by error correction alone.
+      </div>
+      <div class="warn">
+        <div class="w-title">Soft Error (Transient)</div>
+        Random, <strong>non-destructive</strong> event that alters cell content. Hardware is undamaged. Caused by power supply fluctuations or <strong>alpha particles</strong> (from radioactive decay in packaging materials — distressingly common).
+      </div>
+      <div class="label">Error-Correcting Code (ECC) Process</div>
+      <ol class="steps">
+        <li>On <strong>write</strong>: compute K-bit code from M data bits using function f; store M + K bits total</li>
+        <li>On <strong>read</strong>: recompute K-bit code from M data bits just read</li>
+        <li>XOR fetched code with recomputed code → produce <strong>syndrome word</strong></li>
+        <li>Syndrome = 0: no error detected → send data out</li>
+        <li>Syndrome = single bit set: error in a <em>check bit</em> → no data correction needed</li>
+        <li>Syndrome &gt; 1 bit set: syndrome value = position of erroneous <em>data bit</em> → invert to correct</li>
+      </ol>
+      <div class="label">Simple Parity Bit</div>
+      <ul class="items">
+        <li>Single extra bit — set so total 1s in word is even (even parity) or odd</li>
+        <li><strong>Detects single-bit errors only</strong> — cannot locate or correct the error</li>
+        <li>Cannot detect even-numbered multi-bit errors (they cancel out)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Hamming Code -->
+  <div class="card purple col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Hamming SEC Code — Single-Error Correcting (8-bit Data Word Example)</h3></div>
+    <div class="card-body">
+      <div class="grid-2">
+        <div>
+          <div class="label">Required Check Bits Formula</div>
+          <div class="formula">2^r ≥ M + r + 1
+
+Where: r = # check bits, M = # data bits
+For M=8: r=3 → 2³-1=7 &lt; 8+3 ✗
+         r=4 → 2⁴-1=15 ≥ 8+4 ✓
+∴ 4 check bits needed for 8 data bits</div>
+          <div class="label">12-Bit Stored Word Layout</div>
+          <table class="tbl">
+            <thead><tr><th>Bit Pos</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th></tr></thead>
+            <tbody>
+              <tr><td>Content</td>
+                <td style="color:var(--accent4);">C1</td>
+                <td style="color:var(--accent4);">C2</td>
+                <td style="color:var(--accent);">D1</td>
+                <td style="color:var(--accent4);">C4</td>
+                <td style="color:var(--accent);">D2</td>
+                <td style="color:var(--accent);">D3</td>
+                <td style="color:var(--accent);">D4</td>
+                <td style="color:var(--accent4);">C8</td>
+                <td style="color:var(--accent);">D5</td>
+                <td style="color:var(--accent);">D6</td>
+                <td style="color:var(--accent);">D7</td>
+                <td style="color:var(--accent);">D8</td>
+              </tr>
+            </tbody>
+          </table>
+          <p style="margin-top:6px;font-size:11px;color:var(--text-muted);">Check bit positions = powers of 2 (1, 2, 4, 8). Data bits occupy all other positions.</p>
+          <div class="label">Check Bit Computation (XOR)</div>
+          <div class="formula">C1 = D1⊕D2⊕D4⊕D5⊕D7   (covers odd positions)
+C2 = D1⊕D3⊕D4⊕D6⊕D7   (covers pos w/ bit1 set)
+C4 = D2⊕D3⊕D4⊕D8       (covers pos w/ bit2 set)
+C8 = D5⊕D6⊕D7⊕D8       (covers pos w/ bit3 set)
+
+Rule: Ci covers all positions n where bit i of n = 1
+e.g., C1 covers positions 1,3,5,7,9,11 (all odd)</div>
+        </div>
+        <div>
+          <div class="label">Worked Example — Data Word: 00111001</div>
+          <div class="rule">Input: D1..D8 = 0 0 1 1 1 0 0 1 (D1=rightmost)
+C1 = 1⊕0⊕1⊕1⊕0 = 1
+C2 = 1⊕0⊕1⊕1⊕0 = 1
+C4 = 0⊕0⊕1⊕0   = 1
+C8 = 1⊕1⊕0⊕0   = 0
+Stored: 0 0 1 1 0 0 1 1 1 1 1 1 (12 bits)</div>
+          <div class="label">Error Detection: Data Bit 3 Flipped (0→1)</div>
+          <div class="rule">Recalculate check bits with corrupted data:
+C1 = 1 (same)
+C2 = 1⊕1⊕1⊕1⊕0 = 0  ← changed!
+C4 = 0⊕1⊕1⊕0   = 0  ← changed!
+C8 = 1⊕1⊕0⊕0   = 0  (same)
+
+Syndrome = (new C8C4C2C1) XOR (stored C8C4C2C1)
+         = 0000 XOR 0111 = 0110
+
+Syndrome value = 6 → error at bit position 6 → D3 ✓</div>
+          <div class="label">SEC-DED Table (Check Bits Required)</div>
+          <table class="tbl">
+            <thead><tr><th>Data Bits (M)</th><th>SEC Bits (r)</th><th>% Overhead</th><th>SEC-DED (r+1)</th><th>% Overhead</th></tr></thead>
+            <tbody>
+              <tr><td>8</td><td>4</td><td>50.0%</td><td>5</td><td>62.5%</td></tr>
+              <tr><td>16</td><td>5</td><td>31.25%</td><td>6</td><td>37.5%</td></tr>
+              <tr><td>32</td><td>6</td><td>18.75%</td><td>7</td><td>21.875%</td></tr>
+              <tr><td>64</td><td>7</td><td>10.94%</td><td>8</td><td>12.5%</td></tr>
+              <tr><td>128</td><td>8</td><td>6.25%</td><td>9</td><td>7.03%</td></tr>
+            </tbody>
+          </table>
+          <div class="info">
+            <div class="i-title">SEC-DED Concept</div>
+            Add <strong>one extra parity bit</strong> covering the entire word. If 2 errors occur, syndrome points to wrong position, but extra parity reveals the discrepancy → detected but <em>not corrected</em>. IBM 30xx: 8-bit SEC-DED per 64 data bits (~12% overhead).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ROW 4: SDRAM + DDR -->
+<div class="grid section-gap">
+
+  <!-- SDRAM -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§5.3 Synchronous DRAM (SDRAM)</h3></div>
+    <div class="card-body">
+      <div class="label">Asynchronous DRAM Problem</div>
+      <p>Traditional DRAM is <strong>asynchronous</strong> — processor presents address, waits for access time delay. CPU must stall (insert wait states) during this delay, degrading performance.</p>
+      <div class="label">SDRAM Solution</div>
+      <ul class="items">
+        <li>Exchanges data <strong>synchronized to external clock</strong> at full processor/memory bus speed</li>
+        <li>Processor issues instruction + address; SDRAM responds after a <em>set number of clock cycles</em></li>
+        <li>CPU can perform other work while SDRAM processes — no forced stalling</li>
+        <li>Data is <strong>latched</strong> by the SDRAM on command receipt</li>
+      </ul>
+      <div class="label">Burst Mode (Key Feature)</div>
+      <ul class="items">
+        <li>After first access, consecutive data bits clocked out rapidly without re-sending address</li>
+        <li>Eliminates row/column precharge time for sequential accesses</li>
+        <li><strong>Burst length</strong> configurable via mode register (1, 2, 4, 8, full page)</li>
+        <li><strong>CAS latency</strong> (delay from read command to first data) also configurable</li>
+      </ul>
+      <div class="label">SDRAM Additional Features</div>
+      <ul class="items">
+        <li><strong>Multiple internal banks</strong> — improves on-chip parallelism</li>
+        <li><strong>Mode register</strong> — customizes burst length and CAS latency at runtime</li>
+        <li>Best for large sequential block transfers (word processors, multimedia, spreadsheets)</li>
+        <li>256-Mb SDRAM: 4 banks × (8192 × 512 × 16-bit arrays)</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Read Timing Example</div>
+        Burst length=4, CAS latency=2: COMMAND issued at T0 → data appears at T2, T3, T4, T5 (4 consecutive words without re-addressing).
+      </div>
+    </div>
+  </div>
+
+  <!-- DDR Generations -->
+  <div class="card orange col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>DDR SDRAM Generations — Double Data Rate</h3></div>
+    <div class="card-body">
+      <div class="grid-2">
+        <div>
+          <div class="label">How DDR Achieves Higher Throughput (3 Mechanisms)</div>
+          <ol class="steps">
+            <li><strong>Double-edge clocking</strong> — transfers data on BOTH rising AND falling clock edges (doubles effective rate vs. SDRAM)</li>
+            <li><strong>Higher bus clock frequency</strong> — increased over plain SDRAM</li>
+            <li><strong>Prefetch buffer</strong> — on-chip buffer pre-positions bits for the I/O bus; allows slow DRAM core to feed fast I/O interface</li>
+          </ol>
+          <div class="label">Prefetch Buffer Concept</div>
+          <p>DRAM core is much slower than I/O interface. Prefetch buffer bridges this gap by:</p>
+          <ul class="items">
+            <li>Fetching multiple words from core in parallel</li>
+            <li>Serializing them out through a MUX to the I/O interface</li>
+            <li>DDR1: 2N prefetch → I/O 2× faster than core</li>
+            <li>DDR2: 4N → 4× speedup; DDR3: 8N → 8× speedup</li>
+            <li>DDR4: stays at 8N but adds <strong>bank groups</strong> for more parallelism</li>
+          </ul>
+          <div class="label">DDR4 Bank Groups</div>
+          <ul class="items">
+            <li>Separate bank groups allow column cycles to complete independently</li>
+            <li>Two 8N prefetches can operate in parallel across groups</li>
+            <li>Effectively mimics a 16N prefetch without increasing burst length minimum</li>
+            <li>Up to <strong>4 bank groups</strong> supported in DDR4</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">DDR Generations Comparison (Table 5.4)</div>
+          <table class="tbl">
+            <thead>
+              <tr><th>Feature</th><th>DDR1</th><th>DDR2</th><th>DDR3</th><th>DDR4</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Prefetch buffer</td><td>2-bit</td><td>4-bit</td><td>8-bit</td><td>8-bit</td></tr>
+              <tr><td>Voltage (V)</td><td>2.5</td><td>1.8</td><td>1.5</td><td style="color:var(--accent2);"><strong>1.2</strong></td></tr>
+              <tr><td>Bus data rate (Mbps)</td><td>200–400</td><td>400–1066</td><td>800–2133</td><td>2133–4266</td></tr>
+              <tr><td>Core clock (MHz)</td><td>100–200</td><td>100–266</td><td>100–266</td><td>100–266</td></tr>
+              <tr><td>I/O clock (MHz)</td><td>100–200</td><td>200–533</td><td>400–1066</td><td>667–1600</td></tr>
+              <tr><td>Bank groups</td><td>—</td><td>—</td><td>—</td><td>Up to 4</td></tr>
+              <tr><td>Bandwidth</td><td>1.6–3.2 GB/s</td><td>3.2–8.5 GB/s</td><td>6.4–17 GB/s</td><td>17–34 GB/s</td></tr>
+            </tbody>
+          </table>
+          <div class="divider"></div>
+          <div class="info">
+            <div class="i-title">Core Speed Insight</div>
+            The DRAM array core speed has <strong>not changed significantly</strong> across generations (still ~100–266 MHz). Performance gains come entirely from larger prefetch buffers, higher I/O clock, and architectural innovations (bank groups). Each generation = lower voltage + higher effective bandwidth.
+          </div>
+          <div class="tip">
+            <div class="t-title">Downside of Larger Prefetch</div>
+            Larger prefetch dictates <strong>minimum burst length</strong>. DDR3's 8N prefetch makes burst-4 inefficient. DDR4 solved this with bank groups instead of increasing prefetch to 16N.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 4 -->
+
+<!-- ROW 5: Flash Memory -->
+<div class="grid section-gap">
+
+  <!-- Flash Operation -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>§5.4 Flash Memory — Operation</h3></div>
+    <div class="card-body">
+      <div class="label">Floating-Gate Transistor Structure</div>
+      <ul class="items">
+        <li>Normal transistor: control gate + source + drain + P-substrate</li>
+        <li>Flash cell adds a <strong>floating gate</strong> — insulated by thin oxide layer, sandwiched between control gate and channel</li>
+      </ul>
+      <div class="label">Bit States</div>
+      <div class="info">
+        <div class="i-title">Binary 1 — Floating Gate Empty</div>
+        No electrons trapped on floating gate → transistor operates normally (not obstructed). Cell defaults to 1 state.
+      </div>
+      <div class="warn">
+        <div class="w-title">Binary 0 — Electrons Trapped</div>
+        Large voltage applied across oxide layer → electrons <strong>tunnel through</strong> (Fowler-Nordheim tunneling) and are trapped on floating gate → transistor blocked → cell reads as 0. Electrons remain even with power off (persistent).
+      </div>
+      <div class="label">Read / Erase</div>
+      <ul class="items">
+        <li><strong>Read:</strong> external circuitry tests if transistor conducts → 1 if yes, 0 if no</li>
+        <li><strong>Erase:</strong> large voltage in <em>opposite direction</em> → removes electrons from floating gate → restores binary 1</li>
+        <li>Erase granularity: entire chip (EPROM-like) or <strong>blocks</strong> (flash advantage)</li>
+      </ul>
+      <div class="label">Flash vs EPROM vs EEPROM</div>
+      <table class="tbl">
+        <thead><tr><th>Property</th><th>EPROM</th><th>EEPROM</th><th>Flash</th></tr></thead>
+        <tbody>
+          <tr><td>Erase mechanism</td><td>UV light</td><td>Electrical</td><td>Electrical</td></tr>
+          <tr><td>Erase granularity</td><td>Chip</td><td>Byte</td><td>Block</td></tr>
+          <tr><td>Transistors/bit</td><td>1</td><td>2</td><td>1</td></tr>
+          <tr><td>Density</td><td>High</td><td>Low</td><td>High (=EPROM)</td></tr>
+          <tr><td>Cost</td><td>Medium</td><td>High</td><td>Medium</td></tr>
+          <tr><td>Erase speed</td><td>~20 min</td><td>Slow (byte)</td><td>1–few sec</td></tr>
+        </tbody>
+      </table>
+      <div class="tip">
+        <div class="t-title">Why "Flash"?</div>
+        Named because an entire <em>section</em> of memory cells is erased in a single action — a "flash." One transistor per bit provides EPROM-like density; electrical erase provides EEPROM-like convenience at block granularity.
+      </div>
+    </div>
+  </div>
+
+  <!-- NOR vs NAND Flash -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>NOR vs NAND Flash Memory</h3></div>
+    <div class="card-body">
+      <div class="label">Circuit Structure</div>
+      <div class="info">
+        <div class="i-title">NOR Flash — Parallel Cell Connection</div>
+        Cells connected in <strong>parallel</strong> to bit lines. Each cell individually accessible via its word line. If <em>any</em> cell in a column is on → bit line goes low (like NOR gate behavior). Supports <strong>random byte-level access</strong>.
+      </div>
+      <div class="info">
+        <div class="i-title">NAND Flash — Series Cell Connection</div>
+        16 or 32 transistors connected in <strong>series</strong> between bit line and ground. Bit line goes low only if <em>all</em> transistors in the column are on (like NAND gate behavior). Must read/write in <strong>pages/blocks</strong> — no random byte access.
+      </div>
+      <div class="label">NOR vs NAND Characteristics</div>
+      <table class="tbl">
+        <thead><tr><th>Property</th><th>NOR Flash</th><th>NAND Flash</th></tr></thead>
+        <tbody>
+          <tr><td>Access type</td><td><strong>Random</strong> (byte/word)</td><td><strong>Block/page</strong> (sequential)</td></tr>
+          <tr><td>Read speed</td><td>Faster (random)</td><td>Slower (block)</td></tr>
+          <tr><td>Write speed</td><td>Slower</td><td><strong>Faster</strong></td></tr>
+          <tr><td>Bit density</td><td>Lower</td><td><strong>Higher</strong></td></tr>
+          <tr><td>Cost per bit</td><td>Higher</td><td><strong>Lower</strong></td></tr>
+          <tr><td>Code execution</td><td><strong>Yes</strong> (XIP — execute in place)</td><td>No (must copy to RAM)</td></tr>
+          <tr><td>File storage</td><td>Less suitable</td><td><strong>Preferred</strong></td></tr>
+          <tr><td>Erase unit</td><td>Small blocks</td><td>Larger blocks</td></tr>
+          <tr><td>Endurance</td><td>Higher</td><td>Lower (but improving)</td></tr>
+          <tr><td>Typical use</td><td>Embedded firmware, BIOS, microcontrollers</td><td>USB drives, SSDs, SD cards, MP3 players</td></tr>
+        </tbody>
+      </table>
+      <div class="tip">
+        <div class="t-title">Application Rule</div>
+        <strong>NOR</strong> = program storage in embedded systems (execute in place). <strong>NAND</strong> = mass storage (SSDs, flash drives, memory cards). NAND dominates external storage; NOR dominates internal firmware storage.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLC / MLC / TLC + Wear Leveling -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Flash Cell Types &amp; Wear Leveling</h3></div>
+    <div class="card-body">
+      <div class="label">Bits Per Cell (BPC)</div>
+      <table class="tbl">
+        <thead><tr><th>Type</th><th>Bits/Cell</th><th>States</th><th>Endurance</th><th>Speed</th><th>Cost</th><th>Use Case</th></tr></thead>
+        <tbody>
+          <tr><td><strong>SLC</strong> (Single-Level Cell)</td><td>1</td><td>2</td><td style="color:var(--accent2);">Highest (~100K P/E cycles)</td><td>Fastest</td><td>Highest</td><td>Enterprise, industrial</td></tr>
+          <tr><td><strong>MLC</strong> (Multi-Level Cell)</td><td>2</td><td>4</td><td>Medium (~10K cycles)</td><td>Medium</td><td>Medium</td><td>Consumer SSDs</td></tr>
+          <tr><td><strong>TLC</strong> (Triple-Level Cell)</td><td>3</td><td>8</td><td style="color:var(--accent3);">Lower (~3K cycles)</td><td>Slower</td><td>Lowest</td><td>USB drives, budget SSDs</td></tr>
+          <tr><td><strong>QLC</strong> (Quad-Level Cell)</td><td>4</td><td>16</td><td style="color:var(--accent3);">Lowest (~1K cycles)</td><td>Slowest</td><td>Cheapest</td><td>High-capacity storage</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Wear Leveling</div>
+      <p>Flash cells degrade with each Program/Erase (P/E) cycle. Without management, frequently written blocks wear out while others remain fresh.</p>
+      <div class="tip">
+        <div class="t-title">Wear Leveling Algorithm</div>
+        Flash controller distributes writes evenly across all blocks — even static (cold) data is periodically moved to free up well-worn blocks. Extends overall device lifetime significantly.
+      </div>
+      <div class="label">Other Flash Limitations</div>
+      <ul class="items">
+        <li><strong>No in-place overwrite</strong> — must erase entire block before rewriting; old data copied elsewhere first</li>
+        <li><strong>Write amplification</strong> — actual writes to flash &gt; logical writes due to block management</li>
+        <li><strong>Read disturb</strong> — reading adjacent cells can inadvertently program them over time</li>
+        <li>NAND flash requires <strong>Error Correcting Codes (ECC)</strong> — controllers always include ECC logic</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Persistence</div>
+        Flash memory is <strong>nonvolatile</strong> — retains data when power is removed. This distinguishes it from DRAM/SRAM and enables use as secondary storage substitute.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 5 -->
+
+<!-- ROW 6: Newer NVM Technologies -->
+<div class="grid section-gap">
+
+  <!-- STT-RAM (MRAM) -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§5.5 STT-RAM (Spin-Transfer Torque RAM)</h3></div>
+    <div class="card-body">
+      <div class="label">Technology Basis</div>
+      <p>New type of <strong>magnetic RAM (MRAM)</strong> using Magnetic Tunneling Junction (MTJ): thin tunneling dielectric sandwiched between two ferromagnetic layers.</p>
+      <div class="label">MTJ Structure</div>
+      <ul class="items">
+        <li><strong>Reference (pinned) layer</strong> — magnetization fixed permanently</li>
+        <li><strong>Free layer</strong> — magnetization can be flipped by write current</li>
+        <li><strong>Parallel alignment</strong> → low resistance → binary 1</li>
+        <li><strong>Anti-parallel alignment</strong> → high resistance → binary 0</li>
+      </ul>
+      <div class="label">Write Mechanism</div>
+      <ul class="items">
+        <li>1st-gen MRAM: current-induced <em>magnetic field</em> flips free layer (large current, poor scaling)</li>
+        <li><strong>STT-RAM:</strong> <em>spin-polarized current</em> directly flips free layer magnetization — required current ∝ cell area → better scaling</li>
+      </ul>
+      <div class="label">Key Properties</div>
+      <table class="tbl">
+        <thead><tr><th>Property</th><th>STT-RAM</th></tr></thead>
+        <tbody>
+          <tr><td>Volatility</td><td style="color:var(--accent2);">Nonvolatile</td></tr>
+          <tr><td>Read/Write speed</td><td>Fast: 6–10 ns</td></tr>
+          <tr><td>Endurance</td><td>&gt;10¹⁵ cycles</td></tr>
+          <tr><td>Standby power</td><td>Zero</td></tr>
+          <tr><td>Suitable for</td><td>Cache or main memory replacement</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- PCRAM -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>PCRAM — Phase-Change RAM</h3></div>
+    <div class="card-body">
+      <div class="label">Technology Basis</div>
+      <p>Based on <strong>chalcogenide alloy</strong> material — same class used in optical storage (CDs/DVDs). Most mature of the new NVM technologies.</p>
+      <div class="label">Storage Mechanism — Resistance States</div>
+      <div class="info">
+        <div class="i-title">Crystalline State → Low Resistance → Binary 0</div>
+        <strong>SET operation:</strong> electrical pulse heats material above crystallization temperature → crystallizes → low resistance state.
+      </div>
+      <div class="info">
+        <div class="i-title">Amorphous State → High Resistance → Binary 1</div>
+        <strong>RESET operation:</strong> larger current pulse melts material then abruptly cut off → rapid quenching → frozen amorphous (disordered) state → high resistance.
+      </div>
+      <div class="label">Key Properties</div>
+      <table class="tbl">
+        <thead><tr><th>Property</th><th>PCRAM</th></tr></thead>
+        <tbody>
+          <tr><td>Volatility</td><td style="color:var(--accent2);">Nonvolatile</td></tr>
+          <tr><td>Read speed</td><td>Fast</td></tr>
+          <tr><td>Density</td><td>High</td></tr>
+          <tr><td>Maturity</td><td>Most mature new NVM</td></tr>
+          <tr><td>Suitable for</td><td>DRAM main memory replacement/supplement</td></tr>
+        </tbody>
+      </table>
+      <div class="tip">
+        <div class="t-title">Historical Note</div>
+        Chalcogenide alloys have long been used in CD/DVD rewritable optical discs where laser heat changes phase. PCRAM applies same phase-change principle electronically with no moving parts.
+      </div>
+    </div>
+  </div>
+
+  <!-- ReRAM -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>ReRAM (Resistive RAM) &amp; Memory Hierarchy</h3></div>
+    <div class="card-body">
+      <div class="label">ReRAM Technology</div>
+      <ul class="items">
+        <li>Also known as <strong>RRAM</strong></li>
+        <li>Stores data as <strong>resistance values</strong> rather than charge</li>
+        <li>Applying electric current to material changes its resistance (forms/breaks conductive filament through metal oxide)</li>
+        <li><strong>Low resistance</strong> (filament formed) = binary 0; <strong>High resistance</strong> (filament broken) = binary 1</li>
+        <li>Low voltage operation; endurance far superior to flash; smaller cells (in theory)</li>
+      </ul>
+      <div class="label">ReRAM vs Flash</div>
+      <ul class="items">
+        <li>Lower operating voltage than flash</li>
+        <li>Better endurance than flash memory</li>
+        <li>Smaller cell size potential</li>
+        <li>Suitable for: <strong>main memory AND secondary storage replacement</strong></li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Updated Memory Hierarchy with NVM</div>
+      <table class="tbl">
+        <thead><tr><th>Level</th><th>Technology</th><th>Speed</th><th>Cost/bit</th><th>Density</th><th>Volatile?</th></tr></thead>
+        <tbody>
+          <tr><td>Cache L1/L2</td><td><strong>SRAM</strong> → STT-RAM</td><td>Fastest</td><td>Highest</td><td>Lowest</td><td>Yes (SRAM) / No (STT)</td></tr>
+          <tr><td>Main memory</td><td><strong>DRAM</strong> → PCRAM/ReRAM</td><td>Fast</td><td>Medium</td><td>Medium</td><td>Yes (DRAM) / No (others)</td></tr>
+          <tr><td>Flash tier</td><td><strong>NAND Flash</strong> → ReRAM</td><td>Medium</td><td>Low</td><td>High</td><td>No</td></tr>
+          <tr><td>External storage</td><td><strong>Hard Disk</strong></td><td>Slowest</td><td>Lowest</td><td>Highest</td><td>No</td></tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <div class="n-title">Status (Stallings 10e)</div>
+        STT-RAM, PCRAM, and ReRAM are all in volume production but remain in specialty applications. NAND Flash still dominates. These emerging memories are expected to gain mainstream adoption in coming years as scaling becomes harder for conventional technologies.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 6 -->
+
+<!-- ROW 7: Key Terms + Quick-Reference Summary -->
+<div class="grid-2 section-gap">
+
+  <!-- Key Terms -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms Glossary</h3></div>
+    <div class="card-body">
+      <div class="grid-2">
+        <div>
+          <div class="label">Memory Types</div>
+          <ul class="items">
+            <li><strong>DRAM</strong> — Dynamic RAM; capacitor-based; requires refresh; main memory</li>
+            <li><strong>SRAM</strong> — Static RAM; flip-flop based; no refresh; cache memory</li>
+            <li><strong>ROM</strong> — Read-Only Memory; mask-programmed at fabrication</li>
+            <li><strong>PROM</strong> — Programmable ROM; one-time electrically writable</li>
+            <li><strong>EPROM</strong> — UV-erasable; rewritable; chip-level erase</li>
+            <li><strong>EEPROM</strong> — Electrically erasable byte-by-byte; flexible but slow write</li>
+            <li><strong>Flash Memory</strong> — Block-erase NVM; 1 transistor/bit; fast erase</li>
+            <li><strong>NOR Flash</strong> — Parallel cells; random access; code execution (XIP)</li>
+            <li><strong>NAND Flash</strong> — Series cells; block access; high density; SSDs</li>
+            <li><strong>SDRAM</strong> — Synchronous DRAM; clock-synchronized; burst mode</li>
+            <li><strong>DDR DRAM</strong> — Double Data Rate; transfers on both clock edges</li>
+          </ul>
+          <div class="label">Newer NVM</div>
+          <ul class="items">
+            <li><strong>STT-RAM</strong> — Spin-Transfer Torque RAM; magnetic; fast; nonvolatile</li>
+            <li><strong>MRAM</strong> — Magnetic RAM; parent category of STT-RAM</li>
+            <li><strong>PCRAM</strong> — Phase-Change RAM; chalcogenide alloy; amorphous/crystalline</li>
+            <li><strong>ReRAM / RRAM</strong> — Resistive RAM; filament formation in metal oxide</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">Error Correction</div>
+          <ul class="items">
+            <li><strong>Hard failure</strong> — Permanent cell defect; stuck at 0/1</li>
+            <li><strong>Soft error</strong> — Transient bit flip; no hardware damage; from alpha particles or power issues</li>
+            <li><strong>ECC</strong> — Error Correcting Code; K check bits for M data bits</li>
+            <li><strong>Parity bit</strong> — Single detection bit; detects but cannot correct</li>
+            <li><strong>Hamming code</strong> — SEC code; uses XOR-based check bits at power-of-2 positions</li>
+            <li><strong>Syndrome word</strong> — XOR of fetched and recomputed check bits; indicates error position</li>
+            <li><strong>SEC</strong> — Single-Error Correcting code</li>
+            <li><strong>SEC-DED</strong> — Single-Error Correcting, Double-Error Detecting; SEC + 1 extra parity bit</li>
+          </ul>
+          <div class="label">Organization &amp; Addressing</div>
+          <ul class="items">
+            <li><strong>RAS</strong> — Row Address Strobe; latches row address into DRAM</li>
+            <li><strong>CAS</strong> — Column Address Strobe; latches column address into DRAM</li>
+            <li><strong>Interleaved memory</strong> — Multiple banks; K banks → K parallel requests</li>
+            <li><strong>Bank group (DDR4)</strong> — Independent subsets of banks; extra parallelism</li>
+            <li><strong>Prefetch buffer</strong> — On-chip SDRAM buffer; pre-positions data for I/O bus</li>
+            <li><strong>Burst mode</strong> — Sequential data transfer without re-addressing after first access</li>
+            <li><strong>Volatile memory</strong> — Loses data without power (SRAM, DRAM)</li>
+            <li><strong>Nonvolatile memory</strong> — Retains data without power (ROM, Flash, NVM)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick-Reference Summary Formulas + Must-Knows -->
+  <div style="display:flex;flex-direction:column;gap:16px;">
+
+    <div class="card red">
+      <div class="card-header"><div class="dot"></div><h3>Critical Formulas &amp; Numbers</h3></div>
+      <div class="card-body">
+        <div class="formula">Hamming SEC check bits: 2^r ≥ M + r + 1
+M=8  → r=4 (4 check bits, 12-bit stored word)
+M=16 → r=5 (5 check bits, 21-bit stored word)
+M=32 → r=6 (6 check bits, 38-bit stored word)
+SEC-DED requires r+1 check bits</div>
+        <div class="formula">DRAM address pins: only ⌈log₂(rows)⌉ pins needed
+(22-bit addr → 11 pins via RAS/CAS multiplexing)
+Adding 1 address pin → 4× memory size
+(doubles rows × doubles columns)</div>
+        <div class="formula">Interleaved memory: K banks → up to K× bandwidth
+(for sequential block access patterns)</div>
+        <div class="formula">DDR effective rate = 2 × clock frequency (both edges)
+DDR1: 200–400 Mbps  | DDR2: 400–1066 Mbps
+DDR3: 800–2133 Mbps | DDR4: 2133–4266 Mbps</div>
+        <div class="formula">Hamming bit position rule:
+Ci covers all positions n where bit-i of n = 1
+Position n is checked by: Ci where i divides n
+(e.g., pos 7=0111 → checked by C1, C2, C4)</div>
+      </div>
+    </div>
+
+    <div class="card green">
+      <div class="card-header"><div class="dot"></div><h3>Must-Know Comparisons</h3></div>
+      <div class="card-body">
+        <div class="label">Memory Technology Spectrum (Speed → Density)</div>
+        <div class="rule">FAST/EXPENSIVE ←————————→ SLOW/CHEAP
+SRAM → STT-RAM → DRAM → PCRAM → NAND Flash → HDD</div>
+        <div class="label">Flash Erasure Granularity</div>
+        <div class="rule">EPROM: chip-level (UV light) | Flash: block-level (electrical)
+EEPROM: byte-level (electrical) | RAM: byte-level (electrical)</div>
+        <div class="label">Error Coverage</div>
+        <div class="rule">Parity: detect 1-bit only (no correction)
+SEC (Hamming): correct 1-bit (detect 1-bit)
+SEC-DED: correct 1-bit + detect 2-bit errors</div>
+        <div class="label">Volatility</div>
+        <div class="rule">Volatile: SRAM, DRAM (power off → data lost)
+Nonvolatile: ALL ROM types, Flash, STT-RAM, PCRAM, ReRAM</div>
+        <div class="tip">
+          <div class="t-title">Common Exam Pitfall</div>
+          DRAM read is <strong>destructive</strong> — capacitor discharges during read and must be recharged. This is separate from the periodic refresh requirement. SRAM reads are non-destructive.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /grid-2 row 7 -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← Back to Menu</a>
+  <span>Computer Organization and Architecture · Stallings 10th Edition · Chapter 5</span>
+  <span>SRAM · DRAM · ROM · ECC · Hamming · DDR · Flash · STT-RAM · PCRAM · ReRAM</span>
+</div>
+
+</body>
+</html>

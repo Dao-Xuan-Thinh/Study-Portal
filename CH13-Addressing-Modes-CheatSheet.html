@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH13 – Instruction Sets: Addressing Modes & Formats</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --accent5: #ffa657;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --yellow: #e3b341;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--accent4);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    gap: 20px;
+  }
+  .header-left h1 {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-size: 28px;
+    color: var(--accent4);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .header-left h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-top: 4px;
+  }
+  .badge {
+    background: var(--accent4);
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .toc { display: flex; flex-wrap: wrap; gap: 6px; }
+  .toc-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 3px;
+  }
+
+  /* LAYOUT */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .col-span-2 { grid-column: span 2; }
+  .col-span-3 { grid-column: span 3; }
+  .section-gap { margin-top: 20px; }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .card-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--border); }
+  .card-header .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .card-header h3 { font-family: 'IBM Plex Sans Condensed', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; }
+  .card-body { padding: 12px; }
+
+  .blue .card-header { background: rgba(88,166,255,0.08); } .blue .dot { background: var(--accent); } .blue h3 { color: var(--accent); }
+  .green .card-header { background: rgba(63,185,80,0.08); } .green .dot { background: var(--accent2); } .green h3 { color: var(--accent2); }
+  .red .card-header { background: rgba(247,129,102,0.08); } .red .dot { background: var(--accent3); } .red h3 { color: var(--accent3); }
+  .purple .card-header { background: rgba(210,168,255,0.08); } .purple .dot { background: var(--accent4); } .purple h3 { color: var(--accent4); }
+  .orange .card-header { background: rgba(255,166,87,0.08); } .orange .dot { background: var(--accent5); } .orange h3 { color: var(--accent5); }
+  .yellow .card-header { background: rgba(227,179,65,0.08); } .yellow .dot { background: var(--yellow); } .yellow h3 { color: var(--yellow); }
+
+  /* TYPOGRAPHY */
+  p { color: var(--text); margin-bottom: 6px; }
+  p:last-child { margin-bottom: 0; }
+  .label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; margin-top: 10px; }
+  .label:first-child { margin-top: 0; }
+
+  .rule { background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 7px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--yellow); margin-bottom: 5px; }
+  .rule:last-child { margin-bottom: 0; }
+
+  code { font-family: 'IBM Plex Mono', monospace; font-size: 11px; background: var(--surface2); border: 1px solid var(--border); border-radius: 3px; padding: 1px 5px; color: var(--accent3); }
+
+  .formula { background: rgba(210,168,255,0.07); border: 1px solid rgba(210,168,255,0.25); border-left: 3px solid var(--accent4); border-radius: 4px; padding: 7px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent4); margin-bottom: 6px; }
+
+  ul.items { list-style: none; padding: 0; }
+  ul.items li { padding: 4px 0; padding-left: 14px; position: relative; color: var(--text); border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 12px; }
+  ul.items li:last-child { border-bottom: none; }
+  ul.items li::before { content: '›'; position: absolute; left: 0; color: var(--text-dim); }
+
+  ol.steps { list-style: none; padding: 0; counter-reset: steps; }
+  ol.steps li { padding: 5px 0 5px 26px; position: relative; color: var(--text); border-bottom: 1px solid rgba(255,255,255,0.04); counter-increment: steps; font-size: 12px; }
+  ol.steps li:last-child { border-bottom: none; }
+  ol.steps li::before { content: counter(steps); position: absolute; left: 0; top: 5px; width: 18px; height: 18px; background: var(--accent4); color: #000; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 700; border-radius: 50%; display: flex; align-items: center; justify-content: center; line-height: 18px; text-align: center; }
+
+  .tbl { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .tbl th { background: var(--surface2); color: var(--text-muted); font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; padding: 5px 8px; border: 1px solid var(--border); text-align: left; }
+  .tbl td { padding: 4px 8px; border: 1px solid var(--border); font-size: 11px; vertical-align: top; }
+  .tbl tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+
+  .warn { background: rgba(247,129,102,0.08); border: 1px solid rgba(247,129,102,0.3); border-radius: 4px; padding: 7px 10px; margin-bottom: 6px; font-size: 12px; }
+  .warn .w-title { color: var(--accent3); font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; font-weight: 600; margin-bottom: 3px; }
+  .info { background: rgba(88,166,255,0.07); border: 1px solid rgba(88,166,255,0.25); border-radius: 4px; padding: 7px 10px; margin-bottom: 6px; font-size: 12px; }
+  .info .i-title { color: var(--accent); font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; font-weight: 600; margin-bottom: 3px; }
+  .tip { background: rgba(63,185,80,0.07); border: 1px solid rgba(63,185,80,0.25); border-radius: 4px; padding: 7px 10px; margin-bottom: 6px; font-size: 12px; }
+  .tip .t-title { color: var(--accent2); font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; font-weight: 600; margin-bottom: 3px; }
+  .note { background: rgba(227,179,65,0.07); border: 1px solid rgba(227,179,65,0.25); border-radius: 4px; padding: 7px 10px; margin-bottom: 6px; font-size: 12px; }
+  .note .n-title { color: var(--yellow); font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; font-weight: 600; margin-bottom: 3px; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 10px 0; }
+
+  /* ADDRESSING MODE VISUAL */
+  .mode-box {
+    display: flex; gap: 0; margin-bottom: 5px; border-radius: 4px; overflow: hidden;
+    font-family: 'IBM Plex Mono', monospace; font-size: 10px; border: 1px solid var(--border);
+  }
+  .mode-seg { padding: 5px 8px; border-right: 1px solid var(--border); display: flex; flex-direction: column; gap: 1px; }
+  .mode-seg:last-child { border-right: none; }
+  .mode-seg .ms-label { color: var(--text-dim); font-size: 9px; }
+  .mode-seg .ms-val { font-weight: 600; }
+  .seg-instr { background: rgba(88,166,255,0.1); flex: 0 0 auto; }
+  .seg-instr .ms-val { color: var(--accent); }
+  .seg-reg { background: rgba(210,168,255,0.1); flex: 0 0 auto; }
+  .seg-reg .ms-val { color: var(--accent4); }
+  .seg-mem { background: rgba(63,185,80,0.1); flex: 1; }
+  .seg-mem .ms-val { color: var(--accent2); }
+  .seg-op { background: rgba(255,166,87,0.1); flex: 1; }
+  .seg-op .ms-val { color: var(--accent5); }
+  .seg-stk { background: rgba(227,179,65,0.1); flex: 0 0 auto; }
+  .seg-stk .ms-val { color: var(--yellow); }
+
+  /* INSTRUCTION FORMAT VISUAL */
+  .fmt-box { display: flex; border-radius: 4px; overflow: hidden; margin-bottom: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; }
+  .fmt-seg { display: flex; flex-direction: column; align-items: center; padding: 4px 6px; border-right: 1px solid var(--bg); }
+  .fmt-seg:last-child { border-right: none; }
+  .fmt-seg .fl { font-size: 9px; color: var(--text-dim); margin-bottom: 1px; }
+  .fmt-seg .fv { font-weight: 600; }
+  .f-op { background: rgba(88,166,255,0.18); } .f-op .fv { color: var(--accent); }
+  .f-r  { background: rgba(210,168,255,0.15); } .f-r .fv  { color: var(--accent4); }
+  .f-a  { background: rgba(63,185,80,0.15); }  .f-a .fv  { color: var(--accent2); }
+  .f-d  { background: rgba(255,166,87,0.15); } .f-d .fv  { color: var(--accent5); }
+  .f-m  { background: rgba(247,129,102,0.15); } .f-m .fv { color: var(--accent3); }
+  .f-c  { background: rgba(227,179,65,0.15); } .f-c .fv  { color: var(--yellow); }
+  .f-x  { background: rgba(139,148,158,0.15); } .f-x .fv { color: var(--text-muted); }
+
+  /* EA PILL */
+  .ea { display: inline-block; background: rgba(88,166,255,0.15); border: 1px solid rgba(88,166,255,0.35); border-radius: 3px; padding: 1px 7px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 600; }
+
+  .footer { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 10px; display: flex; justify-content: space-between; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>Instruction Sets: Addressing Modes &amp; Formats — Ch. 14</h1>
+    <h2>Computer Organization &amp; Architecture, 11th Edition &nbsp;|&nbsp; Complete Study Reference</h2>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+    <span class="badge">COA10e · CH13</span>
+    <div class="toc">
+      <span class="toc-item">Addressing Modes</span>
+      <span class="toc-item">Immediate</span>
+      <span class="toc-item">Direct</span>
+      <span class="toc-item">Indirect</span>
+      <span class="toc-item">Register</span>
+      <span class="toc-item">Displacement</span>
+      <span class="toc-item">Stack</span>
+      <span class="toc-item">x86 Modes</span>
+      <span class="toc-item">ARM Modes</span>
+      <span class="toc-item">Instruction Formats</span>
+      <span class="toc-item">PDP-8/10/11</span>
+      <span class="toc-item">VAX</span>
+      <span class="toc-item">x86 Format</span>
+      <span class="toc-item">ARM/Thumb</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1: MASTER ADDRESSING MODE TABLE ═══ -->
+<div class="grid">
+
+  <!-- All Modes Summary -->
+  <div class="card blue col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Addressing Modes — Master Reference (Table 14.1)</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <table class="tbl">
+            <thead><tr><th>Mode</th><th>EA Formula</th><th>Advantage</th><th>Disadvantage</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Immediate</strong></td><td><span class="ea">Operand = A</span></td><td>No memory ref needed</td><td>Limited operand size</td></tr>
+              <tr><td><strong>Direct</strong></td><td><span class="ea">EA = A</span></td><td>Simple; 1 mem ref</td><td>Limited address space</td></tr>
+              <tr><td><strong>Indirect</strong></td><td><span class="ea">EA = (A)</span></td><td>Large address space (2ᴺ)</td><td>2 memory references</td></tr>
+              <tr><td><strong>Register</strong></td><td><span class="ea">EA = R</span></td><td>No memory ref; fast</td><td>Very limited address space</td></tr>
+              <tr><td><strong>Reg. Indirect</strong></td><td><span class="ea">EA = (R)</span></td><td>Large address space</td><td>Extra memory reference</td></tr>
+              <tr><td><strong>Displacement</strong></td><td><span class="ea">EA = A + (R)</span></td><td>Flexible; powerful</td><td>Complexity; 2 fields needed</td></tr>
+              <tr><td><strong>Stack</strong></td><td><span class="ea">EA = top of stack</span></td><td>No memory ref in instr</td><td>Limited applicability</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);">
+            Notation: &nbsp; A = address field &nbsp;|&nbsp; R = register field &nbsp;|&nbsp; (X) = contents of X &nbsp;|&nbsp; EA = effective address
+          </div>
+        </div>
+        <div>
+          <div class="label">How Mode Is Specified</div>
+          <ul class="items">
+            <li>Different opcodes implicitly use different modes</li>
+            <li>One or more <strong>mode bits</strong> in the instruction format explicitly declare the mode</li>
+            <li>In virtual memory systems: EA is a <em>virtual</em> address — MMU translates to physical (transparent to programmer)</li>
+          </ul>
+          <div class="label">Visual: Memory References Per Mode</div>
+          <div style="display:flex;flex-direction:column;gap:4px;font-family:'IBM Plex Mono',monospace;font-size:11px;">
+            <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--accent2);width:110px;">Immediate</span><div style="background:rgba(63,185,80,0.2);width:20px;height:14px;border-radius:2px;"></div><span style="color:var(--text-dim);">0 refs (operand in instruction)</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--accent);width:110px;">Register</span><div style="background:rgba(88,166,255,0.2);width:20px;height:14px;border-radius:2px;"></div><span style="color:var(--text-dim);">0 refs (operand in register)</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--yellow);width:110px;">Direct</span><div style="background:rgba(227,179,65,0.3);width:40px;height:14px;border-radius:2px;"></div><span style="color:var(--text-dim);">1 mem ref</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--accent4);width:110px;">Reg. Indirect</span><div style="background:rgba(210,168,255,0.3);width:40px;height:14px;border-radius:2px;"></div><span style="color:var(--text-dim);">1 mem ref</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--accent5);width:110px;">Displacement</span><div style="background:rgba(255,166,87,0.3);width:40px;height:14px;border-radius:2px;"></div><span style="color:var(--text-dim);">1 mem ref</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--accent3);width:110px;">Indirect</span><div style="background:rgba(247,129,102,0.3);width:80px;height:14px;border-radius:2px;"></div><span style="color:var(--text-dim);">2 mem refs</span></div>
+            <div style="display:flex;align-items:center;gap:8px;"><span style="color:var(--accent3);width:110px;">Multi-Indirect</span><div style="background:rgba(247,129,102,0.2);width:120px;height:14px;border-radius:2px;"></div><span style="color:var(--text-dim);">3+ mem refs</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Notation -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Mode-by-Mode Deep Dive</h3></div>
+    <div class="card-body">
+      <div class="label">Immediate</div>
+      <p>Operand is embedded in the instruction itself. Stored in twos complement; sign-extended when loaded into a register. <em>No memory access for operand.</em> Useful for constants and initialization.</p>
+
+      <div class="label">Direct</div>
+      <p>Address field = exact memory address. Simple but address field is small → limited to a narrow range of memory. Common in early computers; rare today.</p>
+
+      <div class="label">Indirect</div>
+      <p>Address field points to a memory word that <em>contains</em> the real address. Unlocks full N-bit address space (2ᴺ). Costs an extra memory cycle. Multilevel/cascaded variant: <code>EA = (…(A)…)</code> — each level adds a memory ref.</p>
+
+      <div class="label">Register &amp; Register Indirect</div>
+      <ul class="items">
+        <li><strong>Register:</strong> operand is in a CPU register (3–5 bit field → 8–32 registers). Very fast, no memory access</li>
+        <li><strong>Register Indirect:</strong> register holds the address of the operand in memory. One memory ref; full word-length address; 1 fewer ref than indirect</li>
+      </ul>
+
+      <div class="label">Stack</div>
+      <p>Implied addressing — no address field needed. Stack pointer (SP) register tracks top-of-stack. Push/pop automatically update SP. LIFO queue; ideal for expression evaluation and subroutine calls.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ ROW 2: DISPLACEMENT ADDRESSING ═══ -->
+<div class="grid section-gap">
+
+  <!-- Displacement Overview -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Displacement Addressing</h3></div>
+    <div class="card-body">
+      <div class="formula">EA = A + (R) &nbsp;&nbsp;[address field + register contents]</div>
+      <p>Requires two address fields in the instruction. Combines capabilities of direct addressing (the constant A) and register indirect addressing (the register R). Three major uses:</p>
+
+      <div class="label">1. Relative (PC-Relative) Addressing</div>
+      <ul class="items">
+        <li>Implicit register = <strong>Program Counter (PC)</strong></li>
+        <li><code>EA = A + (PC)</code> — A is a signed twos complement offset</li>
+        <li>Effective address is relative to the current instruction</li>
+        <li>Exploits locality — nearby addresses need fewer bits</li>
+        <li>Used for branches and jumps in position-independent code</li>
+      </ul>
+
+      <div class="label">2. Base-Register Addressing</div>
+      <ul class="items">
+        <li>Register holds a <em>base</em> (segment start) address; A is an unsigned displacement/offset</li>
+        <li>Register reference may be explicit or implicit</li>
+        <li>Supports segmentation — one segment-base register per segment</li>
+        <li>If N registers, K-bit offset: can reference N regions of 2ᴷ words</li>
+      </ul>
+
+      <div class="label">3. Indexing</div>
+      <ul class="items">
+        <li>A = base memory address (in instruction); Register = positive offset/index</li>
+        <li>Opposite interpretation from base-register: A is the fixed base, R increments</li>
+        <li>Ideal for iterative array traversal — increment index register each loop</li>
+        <li><strong>Autoindexing:</strong> hardware auto-increments/decrements index reg after each use</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Indexing Variants -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Indexing Variants: Pre vs. Post Indexing</h3></div>
+    <div class="card-body">
+      <div class="label">Autoindexing</div>
+      <div class="formula">EA = A + (R) &nbsp;&nbsp;then&nbsp;&nbsp; (R) ← (R) + 1</div>
+      <p>Register automatically increments after each reference. Enables clean loop iteration without separate increment instructions.</p>
+
+      <div class="label">Postindexing (index after indirect)</div>
+      <div class="formula">EA = (A) + (R)</div>
+      <ol class="steps">
+        <li>Fetch the address stored at memory location A → get a direct address</li>
+        <li>Add the register (index) value to that address → final EA</li>
+      </ol>
+      <p style="margin-top:6px;">Useful when A is a <em>pointer variable</em> (e.g., pointer to start of a process control block) and R is the field offset within that block.</p>
+
+      <div class="label">Preindexing (index before indirect)</div>
+      <div class="formula">EA = (A + (R))</div>
+      <ol class="steps">
+        <li>Calculate A + (R) first → intermediate address</li>
+        <li>Fetch the operand address from that intermediate memory location → final EA</li>
+      </ol>
+      <p style="margin-top:6px;">Useful for multi-way branch tables: A = start of address table, R = index into table. The table entry contains the actual branch target.</p>
+
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">💡 Key Difference</div>
+        Postindexing: pointer first, then index. Preindexing: index first, then indirect lookup. Most ISAs offer only one of the two.
+      </div>
+    </div>
+  </div>
+
+  <!-- x86 Addressing Modes -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>x86 Addressing Modes (Table 14.2)</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>Mode</th><th>Formula (LA = …)</th></tr></thead>
+        <tbody>
+          <tr><td>Immediate</td><td><code>Operand = A</code></td></tr>
+          <tr><td>Register Operand</td><td><code>LA = R</code></td></tr>
+          <tr><td>Displacement</td><td><code>(SR) + A</code></td></tr>
+          <tr><td>Base</td><td><code>(SR) + (B)</code></td></tr>
+          <tr><td>Base + Displacement</td><td><code>(SR) + (B) + A</code></td></tr>
+          <tr><td>Scaled Index + Disp</td><td><code>(SR) + (I)×S + A</code></td></tr>
+          <tr><td>Base + Index + Disp</td><td><code>(SR) + (B) + (I) + A</code></td></tr>
+          <tr><td>Base + Scaled Index + Disp</td><td><code>(SR) + (I)×S + (B) + A</code></td></tr>
+          <tr><td>Relative</td><td><code>(PC) + A</code></td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);">SR=segment reg &nbsp;B=base reg &nbsp;I=index reg &nbsp;S=scale(1,2,4,8) &nbsp;A=displacement</div>
+
+      <div class="label">Scaled Index Uses</div>
+      <ul class="items">
+        <li>Scale=2 → 16-bit integer arrays</li>
+        <li>Scale=4 → 32-bit int / float arrays</li>
+        <li>Scale=8 → double-precision float arrays</li>
+      </ul>
+      <div class="label">Address Calculation (Fig 14.2)</div>
+      <p>Segment register → descriptor table → base address. Final linear address = segment base + effective address. Then (if paging) → physical address via MMU.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ ROW 3: ARM ADDRESSING ═══ -->
+<div class="grid section-gap">
+
+  <!-- ARM Load/Store Indexing -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>ARM Addressing: Load/Store Indexing (Fig 14.3)</h3></div>
+    <div class="card-body">
+      <p>ARM is a <strong>load/store architecture</strong> — only load and store instructions access memory. All memory addressing done via <em>base register + offset</em>. Three indexing methods:</p>
+
+      <div class="label">1. Offset (No update)</div>
+      <div class="formula">Address = base_reg + offset &nbsp;&nbsp;(base not modified)</div>
+      <p>Base register unchanged after access. Example: <code>STRB r0, [r1, #12]</code> → address = r1 + 12; r1 stays the same.</p>
+
+      <div class="label">2. Pre-index (Write-back)</div>
+      <div class="formula">Address = base_reg + offset &nbsp;&nbsp;then&nbsp;&nbsp; base_reg ← updated</div>
+      <p>Address formed same as offset, but the computed address is written back into the base register. Signified by <code>!</code> in assembly: <code>STRB r0, [r1, #12]!</code></p>
+
+      <div class="label">3. Post-index</div>
+      <div class="formula">Address = base_reg &nbsp;&nbsp;then&nbsp;&nbsp; base_reg ← base_reg + offset</div>
+      <p>Memory is accessed at the <em>original</em> base address; then the base register is updated with the offset added. Example: <code>STRB r0, [r1], #12</code></p>
+
+      <div class="label">Scaled Register Offset</div>
+      <p>Offset register can be shifted before adding to base. Shift operators: LSL, LSR, ASR, ROR, RRX (rotate with carry). Shift amount specified as immediate in instruction.</p>
+    </div>
+  </div>
+
+  <!-- ARM Load/Store Multiple -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>ARM Load/Store Multiple (Fig 14.4)</h3></div>
+    <div class="card-body">
+      <p>LDM / STM instructions load or store a <em>subset of all</em> general-purpose registers in a single instruction. A 16-bit field in the instruction has one bit per register.</p>
+      <div class="label">Four Addressing Modes</div>
+      <table class="tbl">
+        <thead><tr><th>Mode</th><th>Abbr.</th><th>Behaviour</th></tr></thead>
+        <tbody>
+          <tr><td>Increment After</td><td><code>IA</code></td><td>Access at base, then increment</td></tr>
+          <tr><td>Increment Before</td><td><code>IB</code></td><td>Increment first, then access</td></tr>
+          <tr><td>Decrement After</td><td><code>DA</code></td><td>Access at base, then decrement</td></tr>
+          <tr><td>Decrement Before</td><td><code>DB</code></td><td>Decrement first, then access</td></tr>
+        </tbody>
+      </table>
+      <div class="rule" style="margin-top:8px;">Lowest-numbered register ↔ lowest memory address (always)</div>
+      <div class="label">Use Cases</div>
+      <ul class="items">
+        <li>Block memory copy (bulk register save/restore)</li>
+        <li>Stack operations (push/pop multiple registers)</li>
+        <li>Procedure entry/exit sequences</li>
+      </ul>
+      <div class="label">ARM Data Processing &amp; Branch</div>
+      <ul class="items">
+        <li><strong>Data processing:</strong> register addressing, or register + immediate (with optional shift on one operand)</li>
+        <li><strong>Branch instructions:</strong> immediate only — 24-bit value, shifted left 2 bits (word alignment) → effective range ±32 MB from PC</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Instruction Format Design -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Instruction Format Design Principles</h3></div>
+    <div class="card-body">
+      <div class="label">Instruction Length Trade-offs</div>
+      <ul class="items">
+        <li>Longer → more opcodes, operands, address modes, larger address range</li>
+        <li>Shorter → fewer bits wasted; faster fetch (16-bit fetched 2× faster than 32-bit)</li>
+        <li>Should equal or be a multiple of the memory bus width (avoid partial fetches)</li>
+        <li>Should be a multiple of character size (typically 8 bits) and fixed-point word length</li>
+      </ul>
+
+      <div class="label">Bit Allocation Trade-offs</div>
+      <ul class="items">
+        <li><strong>More opcodes</strong> → fewer bits for addressing</li>
+        <li><strong>Variable-length opcodes</strong> — short common opcodes, longer rare ones; remaining bits used for addressing</li>
+        <li><strong>Registers vs memory:</strong> 3–5 bits per register ref (8–32 regs); studies recommend 8–32 user-visible registers</li>
+        <li><strong>Register sets:</strong> 1 general-purpose set (32+ regs) is typical; specialized sets (x86) reduce bits per reference</li>
+        <li><strong>Address range:</strong> displacement addressing extends range to register size; larger displacement = longer instruction</li>
+        <li><strong>Granularity:</strong> byte addressing needs more address bits than word addressing for same memory size</li>
+      </ul>
+
+      <div class="tip">
+        <div class="t-title">💡 Orthogonality</div>
+        Addressing mode independent of opcode. Any mode usable with any instruction. Seen in PDP-11, ARM. Reduces programmer burden.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ ROW 4: HISTORICAL FORMAT EXAMPLES ═══ -->
+<div class="grid section-gap">
+
+  <!-- PDP-8 -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>PDP-8 Instruction Format (12-bit)</h3></div>
+    <div class="card-body">
+      <p>Single accumulator machine. 12-bit words, 12-bit instructions. Remarkably efficient design for its era.</p>
+      <div class="label">Memory Reference Instructions (Opcodes 0–5)</div>
+      <div class="fmt-box">
+        <div class="fmt-seg f-op"><div class="fl">bits 0–2</div><div class="fv">Opcode (3b)</div></div>
+        <div class="fmt-seg f-x"><div class="fl">bit 3</div><div class="fv">Indirect</div></div>
+        <div class="fmt-seg f-x"><div class="fl">bit 4</div><div class="fv">Page</div></div>
+        <div class="fmt-seg f-a"><div class="fl">bits 5–11</div><div class="fv">Displacement (7b)</div></div>
+      </div>
+      <ul class="items">
+        <li><strong>Page bit=0:</strong> address is on page 0 (words 0–127)</li>
+        <li><strong>Page bit=1:</strong> address is on current page (page containing instruction)</li>
+        <li><strong>Indirect bit:</strong> 0=direct, 1=indirect. Combined with page for full flexibility</li>
+        <li>8 dedicated words on page 0 act as autoindex "registers"</li>
+      </ul>
+      <div class="label">Other Instruction Types</div>
+      <ul class="items">
+        <li><strong>Opcode 6 (I/O):</strong> 6-bit device select (64 devices), 3-bit I/O command</li>
+        <li><strong>Opcode 7 (Microinstruction):</strong> each remaining bit encodes a specific operation (clear AC, complement, rotate…); bits combinable in one instruction → ~35 total operations</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PDP-10 -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>PDP-10 Instruction Format (36-bit)</h3></div>
+    <div class="card-body">
+      <p>Designed for ease of programming (time-shared systems). Luxury of large bit width means no clever packing needed.</p>
+      <div class="fmt-box">
+        <div class="fmt-seg f-op"><div class="fl">bits 0–8</div><div class="fv">Opcode (9b)</div></div>
+        <div class="fmt-seg f-r"><div class="fl">bits 9–12</div><div class="fv">Reg (4b)</div></div>
+        <div class="fmt-seg f-x"><div class="fl">bit 13</div><div class="fv">Indirect</div></div>
+        <div class="fmt-seg f-r"><div class="fl">bits 14–17</div><div class="fv">Index Reg (4b)</div></div>
+        <div class="fmt-seg f-a"><div class="fl">bits 18–35</div><div class="fv">Address (18b)</div></div>
+      </div>
+      <div class="label">Design Principles</div>
+      <ul class="items">
+        <li><strong>Orthogonality:</strong> EA calculated the same way regardless of opcode</li>
+        <li><strong>Completeness:</strong> identical instruction sets for all data types (int, fixed, float)</li>
+        <li><strong>Direct addressing:</strong> 18-bit address field makes direct addressing practical (avoids base+displacement burden)</li>
+        <li>9-bit opcode → up to 512 ops; 365 defined</li>
+        <li>16 general-purpose registers (4-bit field); same registers used as index registers</li>
+        <li>Indirect + indexing both supported for addresses &gt; 2¹⁸</li>
+      </ul>
+      <div class="tip">
+        <div class="t-title">Trade-off</div>
+        Ease of programming at the cost of less efficient space utilization — a conscious, justified design choice.
+      </div>
+    </div>
+  </div>
+
+  <!-- PDP-11 & VAX -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>PDP-11 &amp; VAX — Variable-Length Formats</h3></div>
+    <div class="card-body">
+      <div class="label">PDP-11 (16-bit, variable-length)</div>
+      <p>Eight 16-bit GPRs (R7 = PC, R6 = SP). 13 different instruction formats. Zero, one, and two-address types.</p>
+      <ul class="items">
+        <li>Opcode: 4 to 16 bits (variable)</li>
+        <li>Each register reference: 6 bits = 3-bit mode + 3-bit register number</li>
+        <li><strong>Orthogonal:</strong> mode tied to operand, not opcode → any mode with any instruction</li>
+        <li>Base: 16-bit instruction; extended to 32 or 48 bits with appended memory addresses</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">VAX — Maximally Flexible Format</div>
+      <p>Two design goals: (1) each instruction has its "natural" number of operands; (2) all operands equally general in addressing.</p>
+      <ul class="items">
+        <li>1 or 2 byte opcode; 0–6 operand specifiers per instruction</li>
+        <li>Instructions range from <strong>1 byte to 37 bytes</strong></li>
+        <li>Each operand specifier: 1 byte minimum; 4-bit mode field + 4-bit register; extendable with constant bytes</li>
+        <li>12 different addressing modes per operand</li>
+        <li>Literal mode: 00 in top 2 bits → 6-bit literal embedded in operand byte</li>
+        <li>Index mode prefix byte for indexed addressing</li>
+        <li>Supports memory-to-memory operations in a single instruction (contrast: x86 cannot)</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ ROW 5: x86 FORMAT + ARM FORMAT ═══ -->
+<div class="grid section-gap">
+
+  <!-- x86 Instruction Format -->
+  <div class="card red col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>x86 Instruction Format (Fig 14.9) — Variable Length</h3></div>
+    <div class="card-body">
+      <div class="fmt-box">
+        <div class="fmt-seg f-x"><div class="fl">0–4 bytes (optional)</div><div class="fv">Instruction Prefixes</div></div>
+        <div class="fmt-seg f-op"><div class="fl">1, 2, or 3 bytes</div><div class="fv">Opcode</div></div>
+        <div class="fmt-seg f-m"><div class="fl">0 or 1 byte</div><div class="fv">ModR/M</div></div>
+        <div class="fmt-seg f-r"><div class="fl">0 or 1 byte</div><div class="fv">SIB</div></div>
+        <div class="fmt-seg f-d"><div class="fl">0, 1, 2, or 4 bytes</div><div class="fv">Displacement</div></div>
+        <div class="fmt-seg f-a"><div class="fl">0, 1, 2, or 4 bytes</div><div class="fv">Immediate</div></div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px;">
+        <div>
+          <div class="label">Prefix Bytes (all optional)</div>
+          <ul class="items">
+            <li><strong>Instruction prefix:</strong> LOCK (exclusive memory access in multiprocessor) or REP/REPE/REPZ/REPNE/REPNZ (repeat string operation; count in CX register)</li>
+            <li><strong>Segment override:</strong> explicitly selects which segment register overrides the default</li>
+            <li><strong>Operand size override:</strong> switches between 16-bit and 32-bit operand sizes</li>
+            <li><strong>Address size override:</strong> switches between 16-bit and 32-bit address generation</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">ModR/M Byte (8 bits)</div>
+          <div class="fmt-box">
+            <div class="fmt-seg f-m"><div class="fl">bits 6–7</div><div class="fv">Mod (2b)</div></div>
+            <div class="fmt-seg f-op"><div class="fl">bits 3–5</div><div class="fv">Reg/Opcode (3b)</div></div>
+            <div class="fmt-seg f-a"><div class="fl">bits 0–2</div><div class="fv">R/M (3b)</div></div>
+          </div>
+          <ul class="items" style="margin-top:4px;">
+            <li>Mod + R/M → 32 combinations (8 regs + 24 memory modes)</li>
+            <li>Reg/Opcode → register number OR 3 extra opcode bits</li>
+          </ul>
+          <div class="label">SIB Byte (Scale-Index-Base)</div>
+          <div class="fmt-box">
+            <div class="fmt-seg f-x"><div class="fl">bits 6–7</div><div class="fv">Scale (2b)</div></div>
+            <div class="fmt-seg f-r"><div class="fl">bits 3–5</div><div class="fv">Index (3b)</div></div>
+            <div class="fmt-seg f-a"><div class="fl">bits 0–2</div><div class="fv">Base (3b)</div></div>
+          </div>
+          <p style="margin-top:4px;">Present only when ModR/M encoding requires it. Scale = 1, 2, 4, or 8.</p>
+        </div>
+      </div>
+      <div class="warn" style="margin-top:8px;">
+        <div class="w-title">x86 vs VAX Key Difference</div>
+        x86: addressing mode in opcode sequence → only ONE memory operand per instruction. VAX: mode per operand → memory-to-memory in one instruction. x86 is more compact but less flexible.
+      </div>
+    </div>
+  </div>
+
+  <!-- ARM Instruction Format -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>ARM Instruction Formats (Fig 14.10)</h3></div>
+    <div class="card-body">
+      <p>All ARM instructions are <strong>fixed 32-bit</strong>. Regular structure simplifies decode logic.</p>
+      <div class="label">Common Layout</div>
+      <div class="fmt-box">
+        <div class="fmt-seg f-c"><div class="fl">bits 28–31</div><div class="fv">Cond (4b)</div></div>
+        <div class="fmt-seg f-x"><div class="fl">bits 25–27</div><div class="fv">Type (3b)</div></div>
+        <div class="fmt-seg f-op"><div class="fl">bits 21–24</div><div class="fv">Opcode (4b)</div></div>
+        <div class="fmt-seg f-x"><div class="fl">bit 20</div><div class="fv">S</div></div>
+        <div class="fmt-seg f-r"><div class="fl">bits 16–19</div><div class="fv">Rn</div></div>
+        <div class="fmt-seg f-r"><div class="fl">bits 12–15</div><div class="fv">Rd</div></div>
+        <div class="fmt-seg f-a"><div class="fl">bits 0–11</div><div class="fv">Operand2</div></div>
+      </div>
+      <ul class="items" style="margin-top:4px;">
+        <li><strong>Condition code (4b):</strong> most ARM instructions conditionally execute — 15 conditions + always</li>
+        <li><strong>S bit:</strong> if set, instruction updates condition flags (NZCV)</li>
+        <li><strong>Immediate constant:</strong> 8-bit value + 4-bit rotate → rotated right by 2×rotate bits → 32-bit constant with wide range</li>
+      </ul>
+
+      <div class="label">Key Format Variants</div>
+      <ul class="items">
+        <li><strong>Data proc. imm. shift:</strong> Rm shifted by immediate amount</li>
+        <li><strong>Data proc. reg. shift:</strong> Rm shifted by amount in Rs register</li>
+        <li><strong>Data proc. immediate:</strong> 8-bit immediate with 4-bit rotate</li>
+        <li><strong>Load/Store imm offset:</strong> 12-bit immediate offset</li>
+        <li><strong>Load/Store reg offset:</strong> register-based offset with shift</li>
+        <li><strong>Load/Store multiple:</strong> 16-bit register list field</li>
+        <li><strong>Branch/Branch+Link:</strong> 24-bit offset (×4 → ±32 MB range)</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ ROW 6: THUMB / THUMB-2 + VARIABLE LENGTH + SUMMARY ═══ -->
+<div class="grid section-gap">
+
+  <!-- Thumb & Thumb-2 -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>ARM Thumb &amp; Thumb-2 Instruction Sets</h3></div>
+    <div class="card-body">
+      <div class="label">Thumb (16-bit re-encoding of ARM)</div>
+      <p>Designed for better code density on narrow memory buses. Subset of ARM ISA re-encoded into 16-bit instructions. Space savings achieved by:</p>
+      <ol class="steps">
+        <li><strong>Unconditional only</strong> → no 4-bit condition field (saves 4 bits)</li>
+        <li><strong>All ALU ops update flags</strong> → no S bit (saves 1 bit). Total: 5 bits saved</li>
+        <li><strong>Reduced opcode</strong>: 2-bit opcode + 3-bit type (saves 2 bits)</li>
+        <li><strong>Smaller register file</strong>: only r0–r7 (3-bit field vs 4-bit) + no rotate on immediate. Saves remaining 9 bits</li>
+      </ol>
+      <div class="divider"></div>
+      <div class="label">Thumb-2 (Enhanced — Cortex-M default ISA)</div>
+      <ul class="items">
+        <li>Intermixes 16-bit Thumb and new 32-bit instructions freely</li>
+        <li>32-bit Thumb-2 instructions are mostly unconditional</li>
+        <li>New <strong>If-Then (IT)</strong> instruction provides ARM-style conditional execution for up to 4 following instructions</li>
+        <li>Code density ≈ Thumb; performance ≈ ARM (98% of ARM on benchmarks)</li>
+        <li>Eliminates need to choose ARM (performance) vs Thumb (size)</li>
+      </ul>
+      <div class="label">Thumb-2 Encoding Rule (Fig 14.13)</div>
+      <table class="tbl">
+        <thead><tr><th>Bits 15:13</th><th>Bits 12:11</th><th>Length</th><th>Type</th></tr></thead>
+        <tbody>
+          <tr><td>≠ 111</td><td>xx</td><td>16-bit</td><td>Thumb instruction</td></tr>
+          <tr><td>111</td><td>00</td><td>16-bit</td><td>Thumb unconditional branch</td></tr>
+          <tr><td>111</td><td>≠ 00</td><td>32-bit</td><td>Thumb-2 instruction</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Variable-Length Instructions -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Variable-Length Instructions</h3></div>
+    <div class="card-body">
+      <div class="label">Advantages</div>
+      <ul class="items">
+        <li>Efficient and compact representation of diverse operations</li>
+        <li>Large opcode space without wasting bits on simple instructions</li>
+        <li>Mixed operand counts and addressing modes in the same ISA</li>
+        <li>Short instructions for common cases → better code density</li>
+      </ul>
+      <div class="label">Disadvantages / Costs</div>
+      <ul class="items">
+        <li>Increases processor decode complexity</li>
+        <li>Harder to pipeline (instruction boundaries unknown until decoded)</li>
+        <li>RISC/superscalar processors exploit fixed-length for improved IPC</li>
+      </ul>
+      <div class="label">Fetch Strategy</div>
+      <p>Processor doesn't know next instruction's length before decoding. Typical approach: fetch enough bytes for the <em>maximum</em> possible instruction length. Often fetches more than one instruction per cycle — beneficial for prefetch pipelines.</p>
+
+      <div class="label">Length Constraint Rule</div>
+      <div class="rule">All instruction lengths should be integral multiples of the word/character length (e.g., 8-bit multiples for 8-bit character systems)</div>
+
+      <div class="label">Variable-Length Opcodes</div>
+      <p>Minimum opcode length + extension bits for rare operations. Extension bits borrowed from addressing fields → simpler instructions get more address bits; complex instructions get fewer. Used in x86 (1–3 byte opcodes) and VAX (1–2 byte opcodes).</p>
+    </div>
+  </div>
+
+  <!-- Quick Reference Summary -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Quick Reference: All Key Formulas</h3></div>
+    <div class="card-body">
+      <div class="label">Core Addressing Formulas</div>
+      <div class="formula">Immediate: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Operand = A (no EA)</div>
+      <div class="formula">Direct: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EA = A</div>
+      <div class="formula">Indirect: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EA = (A)</div>
+      <div class="formula">Register: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EA = R</div>
+      <div class="formula">Reg. Indirect: &nbsp;&nbsp;EA = (R)</div>
+      <div class="formula">Displacement: &nbsp;&nbsp;EA = A + (R)</div>
+      <div class="formula">PC-Relative: &nbsp;&nbsp;&nbsp;&nbsp;EA = A + (PC)</div>
+      <div class="formula">Postindex: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EA = (A) + (R)</div>
+      <div class="formula">Preindex: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EA = (A + (R))</div>
+      <div class="formula">Autoindex: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;EA = A+(R); R←R+1</div>
+
+      <div class="label">ARM Branch Range</div>
+      <div class="formula">24-bit offset × 4 = ±32 MB from PC</div>
+
+      <div class="label">Indirect Address Space</div>
+      <div class="formula">N-bit word → 2ᴺ addressable locations</div>
+
+      <div class="label">Thumb bit savings</div>
+      <div class="formula">5 bits (cond+S) + 2 bits (opcode) + 9 bits (operands) = 16 saved</div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>Computer Organization &amp; Architecture, 11th Edition — Chapter 14: Instruction Sets: Addressing Modes and Formats</span>
+  <span>Study reference — all content based on course slides</span>
+</div>
+
+</body>
+</html>
+
+

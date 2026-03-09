@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH10 – Computer Arithmetic Cheat Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --accent5: #ffa657;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --yellow: #e3b341;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    gap: 20px;
+  }
+  .header-left h1 {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-size: 28px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .header-left h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-top: 4px;
+  }
+  .badge {
+    background: var(--accent);
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .toc-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: default;
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .col-span-2 { grid-column: span 2; }
+  .col-span-3 { grid-column: span 3; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .card-header h3 {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .card-body { padding: 12px; }
+
+  /* COLORS PER SECTION */
+  .blue .card-header { background: rgba(88,166,255,0.08); }
+  .blue .dot { background: var(--accent); }
+  .blue h3 { color: var(--accent); }
+
+  .green .card-header { background: rgba(63,185,80,0.08); }
+  .green .dot { background: var(--accent2); }
+  .green h3 { color: var(--accent2); }
+
+  .red .card-header { background: rgba(247,129,102,0.08); }
+  .red .dot { background: var(--accent3); }
+  .red h3 { color: var(--accent3); }
+
+  .purple .card-header { background: rgba(210,168,255,0.08); }
+  .purple .dot { background: var(--accent4); }
+  .purple h3 { color: var(--accent4); }
+
+  .orange .card-header { background: rgba(255,166,87,0.08); }
+  .orange .dot { background: var(--accent5); }
+  .orange h3 { color: var(--accent5); }
+
+  .yellow .card-header { background: rgba(227,179,65,0.08); }
+  .yellow .dot { background: var(--yellow); }
+  .yellow h3 { color: var(--yellow); }
+
+  /* CONTENT ELEMENTS */
+  p { color: var(--text); margin-bottom: 6px; }
+  p:last-child { margin-bottom: 0; }
+
+  .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    margin-top: 10px;
+  }
+  .label:first-child { margin-top: 0; }
+
+  .rule {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 7px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--yellow);
+    margin-bottom: 6px;
+  }
+  .rule:last-child { margin-bottom: 0; }
+
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--accent3);
+  }
+
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+  }
+
+  /* BINARY EXAMPLES */
+  .bin-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .bin-block:last-child { margin-bottom: 0; }
+  .bin-block .title {
+    color: var(--text-muted);
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  .bin-block .line { color: var(--text); }
+  .bin-block .result { color: var(--accent2); font-weight: 600; }
+  .bin-block .overflow { color: var(--accent3); font-weight: 600; }
+  .bin-block .note { color: var(--text-dim); font-size: 10px; margin-top: 3px; }
+
+  /* TABLE */
+  .tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  .tbl th {
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  .tbl td {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    vertical-align: top;
+  }
+  .tbl tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .pos { color: var(--accent); }
+  .neg { color: var(--accent3); }
+  .zero { color: var(--accent2); }
+  .special { color: var(--yellow); }
+
+  /* LIST */
+  ul.items { list-style: none; padding: 0; }
+  ul.items li {
+    padding: 4px 0;
+    padding-left: 14px;
+    position: relative;
+    color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  ul.items li:last-child { border-bottom: none; }
+  ul.items li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+  }
+
+  /* STEP LIST */
+  ol.steps { list-style: none; padding: 0; counter-reset: steps; }
+  ol.steps li {
+    padding: 5px 0 5px 26px;
+    position: relative;
+    color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    counter-increment: steps;
+  }
+  ol.steps li:last-child { border-bottom: none; }
+  ol.steps li::before {
+    content: counter(steps);
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 18px;
+    height: 18px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 18px;
+    text-align: center;
+  }
+
+  /* SPECIAL CASE BOX */
+  .warn {
+    background: rgba(247,129,102,0.08);
+    border: 1px solid rgba(247,129,102,0.3);
+    border-radius: 4px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .warn .w-title {
+    color: var(--accent3);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .info {
+    background: rgba(88,166,255,0.07);
+    border: 1px solid rgba(88,166,255,0.25);
+    border-radius: 4px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .info .i-title {
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .tip {
+    background: rgba(63,185,80,0.07);
+    border: 1px solid rgba(63,185,80,0.25);
+    border-radius: 4px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .tip .t-title {
+    color: var(--accent2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 10px 0;
+  }
+
+  .section-gap { margin-top: 20px; }
+
+  /* FORMULA */
+  .formula {
+    background: rgba(210,168,255,0.07);
+    border: 1px solid rgba(210,168,255,0.25);
+    border-left: 3px solid var(--accent4);
+    border-radius: 4px;
+    padding: 7px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent4);
+    margin-bottom: 6px;
+  }
+
+  /* BOOTH TABLE */
+  .booth-row {
+    display: grid;
+    grid-template-columns: 40px 40px 1fr;
+    gap: 6px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    align-items: center;
+  }
+  .booth-row:last-child { border-bottom: none; }
+  .booth-row .bits {
+    background: var(--surface2);
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-align: center;
+  }
+  .add-m { color: var(--accent2); }
+  .sub-m { color: var(--accent3); }
+  .shift-only { color: var(--text-muted); }
+
+  /* FLOAT FORMAT VISUAL */
+  .float-format {
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+  }
+  .float-seg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px 8px;
+    border-right: 1px solid var(--bg);
+  }
+  .float-seg:last-child { border-right: none; }
+  .float-seg .seg-label { font-size: 9px; color: var(--text-dim); margin-bottom: 2px; }
+  .float-seg .seg-val { font-weight: 600; }
+  .seg-sign { background: rgba(247,129,102,0.2); flex: 0 0 auto; min-width: 36px; }
+  .seg-sign .seg-val { color: var(--accent3); }
+  .seg-exp8 { background: rgba(88,166,255,0.15); flex: 0 0 auto; min-width: 70px; }
+  .seg-exp11 { background: rgba(88,166,255,0.15); flex: 0 0 auto; min-width: 88px; }
+  .seg-exp15 { background: rgba(88,166,255,0.15); flex: 0 0 auto; min-width: 110px; }
+  .seg-exp .seg-val { color: var(--accent); }
+  .seg-sig { background: rgba(63,185,80,0.12); flex: 1; }
+  .seg-sig .seg-val { color: var(--accent2); }
+
+  /* RANGE REGIONS */
+  .regions {
+    display: flex;
+    gap: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .region {
+    padding: 5px 6px;
+    text-align: center;
+    flex: 1;
+    border-right: 1px solid var(--bg);
+  }
+  .region:last-child { border-right: none; }
+  .region .rlabel { font-size: 9px; margin-top: 2px; }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  @media print {
+    body { background: white; color: black; font-size: 11px; padding: 10px; }
+    .card { border: 1px solid #ccc; break-inside: avoid; }
+    .card-header { background: #f0f0f0 !important; }
+    h3 { color: #333 !important; }
+    code, .mono, .bin-block, .rule, .formula { background: #f5f5f5; color: #333 !important; }
+    .rule, .formula { border-color: #999; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>Computer Arithmetic — Chapter 11</h1>
+    <h2>Computer Organization &amp; Architecture, 11th Edition &nbsp;|&nbsp; Complete Study Reference</h2>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+    <span class="badge">COA10e · CH10</span>
+    <div class="toc">
+      <span class="toc-item">ALU</span>
+      <span class="toc-item">Integer Repr.</span>
+      <span class="toc-item">2's Complement</span>
+      <span class="toc-item">Negation</span>
+      <span class="toc-item">Add/Sub</span>
+      <span class="toc-item">Multiply</span>
+      <span class="toc-item">Booth's Alg.</span>
+      <span class="toc-item">Division</span>
+      <span class="toc-item">Float Point</span>
+      <span class="toc-item">IEEE 754</span>
+      <span class="toc-item">NaN/Inf</span>
+      <span class="toc-item">Rounding</span>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 1: ALU + Integer Representations -->
+<div class="grid">
+
+  <!-- ALU -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Arithmetic Logic Unit (ALU)</h3></div>
+    <div class="card-body">
+      <p>The part of the CPU that actually performs arithmetic and logical operations on data. All other components (control unit, registers, memory, I/O) exist to bring data to the ALU and retrieve results.</p>
+      <div class="label">ALU Inputs &amp; Outputs</div>
+      <ul class="items">
+        <li><strong>Operands</strong> — stored in registers, fed into ALU</li>
+        <li><strong>Results</strong> — written back to registers</li>
+        <li><strong>Flags</strong> — overflow flag (OF), zero flag, etc. stored in 1-bit registers</li>
+        <li><strong>Control signals</strong> — specify operation (add, sub, AND, OR…)</li>
+      </ul>
+      <div class="label">Add/Sub Hardware (Fig. 11.6)</div>
+      <p>Uses a central <strong>binary adder</strong>. For subtraction, the subtrahend (B) is passed through a <em>twos complementer</em> before reaching the adder. A 1-bit overflow flag stores the result of overflow detection.</p>
+    </div>
+  </div>
+
+  <!-- Integer Representation -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Integer Representations</h3></div>
+    <div class="card-body">
+      <div class="label">Three Schemes (4-bit examples)</div>
+      <table class="tbl">
+        <thead>
+          <tr><th>Decimal</th><th>Sign-Mag</th><th>2's Comp</th><th>Biased</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="pos">+7</td><td class="pos">0111</td><td class="pos">0111</td><td class="pos">1110</td></tr>
+          <tr><td class="zero">+0</td><td class="zero">0000</td><td class="zero">0000</td><td class="zero">0111</td></tr>
+          <tr><td class="zero">−0</td><td>1000</td><td class="zero">—</td><td class="zero">—</td></tr>
+          <tr><td class="neg">−1</td><td class="neg">1001</td><td class="neg">1111</td><td class="neg">0110</td></tr>
+          <tr><td class="neg">−7</td><td class="neg">1111</td><td class="neg">1001</td><td class="neg">0000</td></tr>
+          <tr><td class="neg">−8</td><td>—</td><td class="neg">1000</td><td>—</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Key Properties</div>
+      <ul class="items">
+        <li><strong>Sign-Magnitude:</strong> MSB = sign bit; two representations of 0; rarely used in ALUs</li>
+        <li><strong>Twos Complement:</strong> One representation of 0; range −2<sup>n−1</sup> to 2<sup>n−1</sup>−1; universally used</li>
+        <li><strong>Biased (Excess-N):</strong> True value = stored value − bias; used in float exponents; unsigned comparison works</li>
+        <li><strong>Fixed-Point:</strong> Radix point assumed at fixed position (right of LSB for integers)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Twos Complement Details -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Twos Complement — Core Rules</h3></div>
+    <div class="card-body">
+      <div class="label">Range</div>
+      <div class="formula">–2<sup>n–1</sup>  ≤  x  ≤  2<sup>n–1</sup> – 1 &nbsp;&nbsp;(e.g. 8-bit: –128 to +127)</div>
+
+      <div class="label">Value Box Interpretation (n-bit)</div>
+      <p>Positions left-to-right: −2<sup>n−1</sup>, 2<sup>n−2</sup>, …, 2<sup>1</sup>, 2<sup>0</sup>. MSB contributes a <em>negative</em> weight.</p>
+      <div class="rule">8-bit 10000011 → −128 + 2 + 1 = −125</div>
+
+      <div class="label">Sign Extension (Range Extension)</div>
+      <ul class="items">
+        <li>To extend bit length, copy the sign bit into all new left positions</li>
+        <li>Positive: fill with 0s &nbsp;|&nbsp; Negative: fill with 1s</li>
+        <li>Example: 4-bit 1011 (−5) → 8-bit 11111011 (−5) ✓</li>
+      </ul>
+
+      <div class="label">Characteristics (Table 11.1)</div>
+      <ul class="items">
+        <li>Unique representation of zero</li>
+        <li>Addition same as for unsigned integers</li>
+        <li>Subtraction: negate subtrahend, then add</li>
+        <li>Overflow: result has opposite sign from both operands</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROW 2: Negation + Addition + Subtraction -->
+<div class="grid section-gap">
+
+  <!-- Negation -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Negation (Twos Complement)</h3></div>
+    <div class="card-body">
+      <div class="label">Two-Step Procedure</div>
+      <ol class="steps">
+        <li>Complement all bits (bitwise NOT)</li>
+        <li>Add 1 to the result (treat as unsigned integer)</li>
+      </ol>
+      <div class="label">Example: Negate +18</div>
+      <div class="bin-block">
+        <div class="title">+18 = 00010010</div>
+        <div class="line">Bitwise complement → 11101101</div>
+        <div class="line">Add 1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ 1</div>
+        <div class="result">Result &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11101110 = −18 ✓</div>
+      </div>
+      <div class="warn">
+        <div class="w-title">⚠ Special Case 1: Zero</div>
+        00000000 → 11111111 + 1 = <strong>1</strong>00000000 → carry discarded → 00000000 = 0 ✓
+      </div>
+      <div class="warn">
+        <div class="w-title">⚠ Special Case 2: Most Negative (−128)</div>
+        10000000 → 01111111 + 1 = 10000000 → −(−128) = −128 ✗ (no positive equivalent; monitor MSB change!)
+      </div>
+    </div>
+  </div>
+
+  <!-- Addition -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Addition (Twos Complement)</h3></div>
+    <div class="card-body">
+      <p>Treat both numbers as unsigned binary integers and add. Carry out of MSB is <strong>discarded</strong> when sign-correct.</p>
+      <div class="label">Overflow Rule</div>
+      <div class="rule">Overflow ↔ both operands have same sign AND result has opposite sign</div>
+      <div class="label">Examples (4-bit)</div>
+      <div class="bin-block">
+        <div class="title">(−7) + (+5) = −2</div>
+        <div class="line">&nbsp;&nbsp;1001 (−7)</div>
+        <div class="line">+ 0101 (+5)</div>
+        <div class="result">&nbsp;&nbsp;1110 (−2) ✓</div>
+      </div>
+      <div class="bin-block">
+        <div class="title">(−4) + (+4) = 0</div>
+        <div class="line">&nbsp;&nbsp;1100</div>
+        <div class="line">+ 0100</div>
+        <div class="result">&nbsp;&nbsp;1 0000 → discard carry → 0 ✓</div>
+      </div>
+      <div class="bin-block">
+        <div class="title">(+5) + (+4) → OVERFLOW</div>
+        <div class="line">&nbsp;&nbsp;0101</div>
+        <div class="line">+ 0100</div>
+        <div class="overflow">&nbsp;&nbsp;1001 (−7) ✗ — sign changed! Overflow!</div>
+      </div>
+      <div class="bin-block">
+        <div class="title">(−7) + (−6) → OVERFLOW</div>
+        <div class="line">&nbsp;&nbsp;1001</div>
+        <div class="line">+ 1010</div>
+        <div class="overflow">&nbsp;&nbsp;1 0011 → result positive! Overflow!</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Subtraction -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Subtraction (Twos Complement)</h3></div>
+    <div class="card-body">
+      <div class="label">Subtraction Rule</div>
+      <div class="rule">A − B = A + (−B) &nbsp;&nbsp;[negate B, then add]</div>
+      <div class="label">Examples (Fig. 11.4)</div>
+      <div class="bin-block">
+        <div class="title">2 − 7 = 2 + (−7) = −5</div>
+        <div class="line">M = 0010 (+2) &nbsp;&nbsp;S = 0111 (+7)</div>
+        <div class="line">−S = 1001 &nbsp;&nbsp;M + (−S):</div>
+        <div class="line">&nbsp;&nbsp;0010 + 1001</div>
+        <div class="result">&nbsp;&nbsp;1011 = −5 ✓</div>
+      </div>
+      <div class="bin-block">
+        <div class="title">5 − (−2) = 5 + 2 = 7</div>
+        <div class="line">M = 0101, S = 1110 (−2), −S = 0010</div>
+        <div class="line">&nbsp;&nbsp;0101 + 0010</div>
+        <div class="result">&nbsp;&nbsp;0111 = +7 ✓</div>
+      </div>
+      <div class="bin-block">
+        <div class="title">7 − (−7) → OVERFLOW</div>
+        <div class="line">M = 0111, −S = 0111</div>
+        <div class="line">&nbsp;&nbsp;0111 + 0111</div>
+        <div class="overflow">&nbsp;&nbsp;1110 (−2) ✗ — Overflow!</div>
+      </div>
+      <div class="tip">
+        <div class="t-title">💡 Hardware Note</div>
+        Same adder used for add &amp; subtract. A multiplexer switches B-register through a complementer for subtraction.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROW 3: Multiplication -->
+<div class="grid section-gap">
+
+  <!-- Unsigned Multiplication -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Unsigned Binary Multiplication</h3></div>
+    <div class="card-body">
+      <div class="label">Paper-and-Pencil Method</div>
+      <ul class="items">
+        <li>Generate one partial product per multiplier bit</li>
+        <li>Multiplier bit = 0 → partial product = 0</li>
+        <li>Multiplier bit = 1 → partial product = multiplicand (shifted left)</li>
+        <li>n × n bits → up to 2n-bit product</li>
+      </ul>
+      <div class="label">Example: 1011 × 1101 = 143</div>
+      <div class="bin-block">
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1011 (11)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× 1101 (13)</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1011 ← ×2⁰</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;0000 ← ×2¹</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1011&nbsp; ← ×2²</div>
+        <div class="line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1011&nbsp;&nbsp; ← ×2³</div>
+        <div class="result">&nbsp;&nbsp;&nbsp;&nbsp;10001111 = 143 ✓</div>
+      </div>
+      <div class="label">Hardware (Fig. 11.8) — Registers: M, A, Q, C</div>
+      <ul class="items">
+        <li><strong>M</strong> = multiplicand &nbsp;|&nbsp; <strong>Q</strong> = multiplier &nbsp;|&nbsp; <strong>A</strong> = accumulator (init 0) &nbsp;|&nbsp; <strong>C</strong> = carry bit</li>
+        <li>Each cycle: if Q₀=1, A←A+M; then shift C,A,Q right 1</li>
+        <li>Repeat n times. Product in A:Q</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Booth's Algorithm -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Booth's Algorithm (Twos Complement Multiply)</h3></div>
+    <div class="card-body">
+      <div class="label">Why Booth's?</div>
+      <p>Straightforward unsigned multiplication fails for negative (twos complement) multiplicands. Booth's handles all sign combinations and often speeds up multiplication by skipping blocks of 0s or 1s.</p>
+      <div class="label">Setup</div>
+      <ul class="items">
+        <li>Registers: <strong>A</strong> (init 0), <strong>Q</strong> (multiplier), <strong>Q₋₁</strong> (1-bit, init 0), <strong>M</strong> (multiplicand)</li>
+        <li>Perform n cycles (n = bit length)</li>
+      </ul>
+      <div class="label">Decision Table (examine Q₀ and Q₋₁ each cycle)</div>
+      <div class="booth-row" style="font-weight:700;color:var(--text-muted);font-size:10px;">
+        <div>Q₀</div><div>Q₋₁</div><div>Action</div>
+      </div>
+      <div class="booth-row">
+        <div class="bits">0</div><div class="bits">0</div>
+        <div class="shift-only">No op — arithmetic shift right A, Q, Q₋₁</div>
+      </div>
+      <div class="booth-row">
+        <div class="bits">0</div><div class="bits">1</div>
+        <div class="add-m">A ← A + M, then arithmetic shift right</div>
+      </div>
+      <div class="booth-row">
+        <div class="bits">1</div><div class="bits">0</div>
+        <div class="sub-m">A ← A − M, then arithmetic shift right</div>
+      </div>
+      <div class="booth-row">
+        <div class="bits">1</div><div class="bits">1</div>
+        <div class="shift-only">No op — arithmetic shift right A, Q, Q₋₁</div>
+      </div>
+      <div class="info">
+        <div class="i-title">🔑 Arithmetic Shift</div>
+        Sign bit (MSB of A) is replicated during the right shift — preserves the sign of the partial product.
+      </div>
+      <div class="label">Example: 7 × 3 = 21 &nbsp;(M=0111, Q=0011)</div>
+      <table class="tbl">
+        <thead><tr><th>A</th><th>Q</th><th>Q₋₁</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>0000</td><td>0011</td><td>0</td><td>Init</td></tr>
+          <tr><td>1001</td><td>0011</td><td>0</td><td>A−M (Q₀=1,Q₋₁=0)</td></tr>
+          <tr><td>1100</td><td>1001</td><td>1</td><td>Shift</td></tr>
+          <tr><td>1110</td><td>0100</td><td>1</td><td>Shift (Q₀=0,Q₋₁=1… wait, Q₀=1→sub, actually from slide: shift)</td></tr>
+          <tr><td>0101</td><td>0100</td><td>1</td><td>A+M (Q₀=0,Q₋₁=1)</td></tr>
+          <tr><td>0010</td><td>1010</td><td>0</td><td>Shift</td></tr>
+          <tr><td class="zero" colspan="3">0001 0101</td><td class="zero">= 21 ✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Division -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Binary Division</h3></div>
+    <div class="card-body">
+      <div class="label">Unsigned Division — Restoring Algorithm</div>
+      <p>Similar to long division. Registers: <strong>A</strong> (init 0, becomes remainder), <strong>Q</strong> (dividend → quotient), <strong>M</strong> (divisor).</p>
+      <ol class="steps">
+        <li>Shift A, Q left 1 bit</li>
+        <li>Subtract M from A: A ← A − M</li>
+        <li>If A ≥ 0: set Q₀ = 1 &nbsp;|&nbsp; If A &lt; 0: set Q₀ = 0 and restore A (A ← A + M)</li>
+        <li>Decrement count; repeat n times</li>
+      </ol>
+      <div class="label">Result: Quotient in Q, Remainder in A</div>
+      <div class="bin-block">
+        <div class="title">Example: 10010 ÷ 1011 (Fig 11.15)</div>
+        <div class="line">Dividend = 10010 (18), Divisor = 1011 (11)</div>
+        <div class="result">Quotient = 00001101 (no wait — Q=0001), Rem=100</div>
+        <div class="note">18 ÷ 11 = 1 remainder 7 → Quotient=00001, Rem=0111</div>
+      </div>
+      <hr class="divider">
+      <div class="label">Twos Complement Division</div>
+      <p>Convert both operands to positive magnitude, perform unsigned division, then apply signs:</p>
+      <div class="formula">sign(Remainder) = sign(Dividend)</div>
+      <div class="formula">sign(Quotient) = sign(Dividend) × sign(Divisor)</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROW 4: Floating Point Principles -->
+<div class="grid section-gap">
+
+  <!-- Float Principles -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Floating-Point Principles</h3></div>
+    <div class="card-body">
+      <div class="label">Motivation</div>
+      <ul class="items">
+        <li>Fixed-point can't represent very large or very small numbers</li>
+        <li>FP analogous to scientific notation: &nbsp;<em>significand × base<sup>exponent</sup></em></li>
+      </ul>
+      <div class="label">General 32-bit Format</div>
+      <div class="float-format">
+        <div class="float-seg seg-sign"><div class="seg-label">Sign</div><div class="seg-val">1 bit</div></div>
+        <div class="float-seg seg-exp8 seg-exp"><div class="seg-label">Biased Exponent</div><div class="seg-val">8 bits</div></div>
+        <div class="float-seg seg-sig"><div class="seg-label">Significand (trailing)</div><div class="seg-val">23 bits</div></div>
+      </div>
+      <ul class="items">
+        <li><strong>Sign bit:</strong> 0 = positive, 1 = negative</li>
+        <li><strong>Biased exponent:</strong> stored value = true exponent + bias &nbsp;(bias = 2<sup>k−1</sup>−1 for k-bit field)</li>
+        <li><strong>Significand:</strong> fractional part; the leading 1 is <em>implied</em> (hidden bit) in normalized form</li>
+      </ul>
+      <div class="label">Normalization</div>
+      <div class="rule">Normalized: MSB of significand is 1 (non-zero leading digit)</div>
+      <p>Equivalents: &nbsp;0.110×2⁵ = 1.10×2⁴ = 110×2² &nbsp;→ normalized form: <strong>1.10×2⁴</strong></p>
+      <div class="label">Number Density</div>
+      <p>FP numbers are <em>not</em> evenly spaced — they cluster near zero and spread out near ±∞ (Fig 11.20).</p>
+    </div>
+  </div>
+
+  <!-- Expressible Range -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Expressible Number Ranges</h3></div>
+    <div class="card-body">
+      <div class="label">32-bit Float Regions (Fig 11.19)</div>
+      <div class="regions">
+        <div class="region" style="background:rgba(247,129,102,0.15)"><div>−∞</div><div class="rlabel" style="color:var(--accent3)">Neg Overflow</div></div>
+        <div class="region" style="background:rgba(255,166,87,0.1)"><div>Neg</div><div class="rlabel" style="color:var(--accent5)">Normal Neg</div></div>
+        <div class="region" style="background:rgba(227,179,65,0.15)"><div>Neg UF</div><div class="rlabel" style="color:var(--yellow)">Underflow</div></div>
+        <div class="region" style="background:rgba(63,185,80,0.15)"><div>0</div><div class="rlabel" style="color:var(--accent2)">Zero</div></div>
+        <div class="region" style="background:rgba(227,179,65,0.15)"><div>Pos UF</div><div class="rlabel" style="color:var(--yellow)">Underflow</div></div>
+        <div class="region" style="background:rgba(255,166,87,0.1)"><div>Pos</div><div class="rlabel" style="color:var(--accent5)">Normal Pos</div></div>
+        <div class="region" style="background:rgba(247,129,102,0.15)"><div>+∞</div><div class="rlabel" style="color:var(--accent3)">Pos Overflow</div></div>
+      </div>
+      <div class="label">32-bit Float Number Ranges</div>
+      <ul class="items">
+        <li><strong>Positive normal:</strong> 2<sup>−126</sup> to (2 − 2<sup>−23</sup>) × 2<sup>128</sup></li>
+        <li><strong>Negative normal:</strong> −(2 − 2<sup>−23</sup>)×2<sup>128</sup> to −2<sup>−126</sup></li>
+        <li><strong>Positive underflow:</strong> 0 &lt; x &lt; 2<sup>−126</sup> (→ result ≈ 0)</li>
+        <li><strong>Overflow:</strong> |x| &gt; (2 − 2<sup>−23</sup>) × 2<sup>128</sup></li>
+      </ul>
+      <div class="label">FP Arithmetic Errors</div>
+      <ul class="items">
+        <li><strong>Exponent overflow</strong> → ±∞</li>
+        <li><strong>Exponent underflow</strong> → 0 or subnormal</li>
+        <li><strong>Significand underflow</strong> → rounding needed (digits lost right)</li>
+        <li><strong>Significand overflow</strong> → carry from MSB → re-align (shift right, increment exponent)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FP Operations -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Floating-Point Arithmetic Operations</h3></div>
+    <div class="card-body">
+      <div class="label">General Formulae (base B)</div>
+      <div class="formula">X + Y = (X<sub>S</sub>·B<sup>X<sub>E</sub>−Y<sub>E</sub></sup> + Y<sub>S</sub>) · B<sup>Y<sub>E</sub></sup></div>
+      <div class="formula">X − Y = (X<sub>S</sub>·B<sup>X<sub>E</sub>−Y<sub>E</sub></sup> − Y<sub>S</sub>) · B<sup>Y<sub>E</sub></sup></div>
+      <div class="formula">X × Y = (X<sub>S</sub>·Y<sub>S</sub>) · B<sup>X<sub>E</sub>+Y<sub>E</sub></sup></div>
+      <div class="formula">X ÷ Y = (X<sub>S</sub>÷Y<sub>S</sub>) · B<sup>X<sub>E</sub>−Y<sub>E</sub></sup></div>
+      <div class="label">Add/Subtract — 4 Phases (Fig 11.22)</div>
+      <ol class="steps">
+        <li><strong>Zero check</strong> — if either operand = 0, return the other</li>
+        <li><strong>Align significands</strong> — shift smaller number right until exponents equal (shift the smaller, losing less precision)</li>
+        <li><strong>Add/Sub significands</strong> — consider signs; if sum = 0 → return 0; handle significand overflow (shift right, increment exponent)</li>
+        <li><strong>Normalize &amp; round</strong> — shift left until leading bit = 1; decrement exponent; check underflow; round result</li>
+      </ol>
+      <div class="label">Multiply (Fig 11.23)</div>
+      <p>Add exponents (subtract bias once); multiply significands; normalize &amp; round.</p>
+      <div class="label">Divide (Fig 11.24)</div>
+      <p>Subtract exponents (add bias back); divide significands; normalize &amp; round.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROW 5: IEEE 754 -->
+<div class="grid section-gap">
+
+  <!-- IEEE 754 Formats -->
+  <div class="card red col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>IEEE 754-2008 Formats &amp; Parameters</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <div class="label">Binary32 (Single Precision)</div>
+          <div class="float-format">
+            <div class="float-seg seg-sign"><div class="seg-label">S</div><div class="seg-val">1</div></div>
+            <div class="float-seg seg-exp8 seg-exp"><div class="seg-label">Exponent</div><div class="seg-val">8 bits</div></div>
+            <div class="float-seg seg-sig"><div class="seg-label">Trailing Significand</div><div class="seg-val">23 bits</div></div>
+          </div>
+          <div class="label">Binary64 (Double Precision)</div>
+          <div class="float-format">
+            <div class="float-seg seg-sign"><div class="seg-label">S</div><div class="seg-val">1</div></div>
+            <div class="float-seg seg-exp11 seg-exp"><div class="seg-label">Exponent</div><div class="seg-val">11 bits</div></div>
+            <div class="float-seg seg-sig"><div class="seg-label">Trailing Significand</div><div class="seg-val">52 bits</div></div>
+          </div>
+          <div class="label">Binary128 (Quad Precision)</div>
+          <div class="float-format">
+            <div class="float-seg seg-sign"><div class="seg-label">S</div><div class="seg-val">1</div></div>
+            <div class="float-seg seg-exp15 seg-exp"><div class="seg-label">Exponent</div><div class="seg-val">15 bits</div></div>
+            <div class="float-seg seg-sig"><div class="seg-label">Trailing Significand</div><div class="seg-val">112 bits</div></div>
+          </div>
+        </div>
+        <div>
+          <div class="label">Parameter Comparison (Table 11.3)</div>
+          <table class="tbl">
+            <thead><tr><th>Parameter</th><th>Bin32</th><th>Bin64</th><th>Bin128</th></tr></thead>
+            <tbody>
+              <tr><td>Storage (bits)</td><td>32</td><td>64</td><td>128</td></tr>
+              <tr><td>Exponent (bits)</td><td>8</td><td>11</td><td>15</td></tr>
+              <tr><td>Bias</td><td>127</td><td>1023</td><td>16383</td></tr>
+              <tr><td>Max exponent</td><td>+127</td><td>+1023</td><td>+16383</td></tr>
+              <tr><td>Min exponent</td><td>−126</td><td>−1022</td><td>−16382</td></tr>
+              <tr><td>Significand (bits)*</td><td>23</td><td>52</td><td>112</td></tr>
+              <tr><td>Approx range (dec)</td><td>10<sup>±38</sup></td><td>10<sup>±308</sup></td><td>10<sup>±4932</sup></td></tr>
+              <tr><td>Smallest pos normal</td><td>2<sup>−126</sup></td><td>2<sup>−1022</sup></td><td>2<sup>−16362</sup></td></tr>
+              <tr><td>Smallest subnormal</td><td>2<sup>−149</sup></td><td>2<sup>−1074</sup></td><td>2<sup>−16494</sup></td></tr>
+            </tbody>
+          </table>
+          <div style="color:var(--text-dim);font-size:10px;margin-top:4px;">* Trailing field only; +1 bit implied (hidden bit)</div>
+        </div>
+      </div>
+
+      <hr class="divider">
+      <div class="label">Format Types (Table 11.4)</div>
+      <table class="tbl">
+        <thead><tr><th>Format</th><th>Arithmetic</th><th>Basic</th><th>Interchange</th></tr></thead>
+        <tbody>
+          <tr><td>binary16</td><td></td><td></td><td class="zero">✓</td></tr>
+          <tr><td>binary32</td><td class="zero">✓</td><td class="zero">✓</td><td class="zero">✓</td></tr>
+          <tr><td>binary64</td><td class="zero">✓</td><td class="zero">✓</td><td class="zero">✓</td></tr>
+          <tr><td>binary128</td><td class="zero">✓</td><td class="zero">✓</td><td class="zero">✓</td></tr>
+          <tr><td>extended precision</td><td class="zero">✓</td><td></td><td></td></tr>
+          <tr><td>extendable precision</td><td class="zero">✓</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Special Values -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>IEEE 754 Special Values</h3></div>
+    <div class="card-body">
+      <div class="label">Bit Pattern Interpretations (Binary32, Table 11.5)</div>
+      <table class="tbl">
+        <thead><tr><th>Sign</th><th>Exponent</th><th>Fraction</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td>0</td><td class="zero">+0</td></tr>
+          <tr><td>1</td><td>0</td><td>0</td><td class="neg">−0</td></tr>
+          <tr><td>0</td><td>all 1s</td><td>0</td><td class="special">+∞</td></tr>
+          <tr><td>1</td><td>all 1s</td><td>0</td><td class="special">−∞</td></tr>
+          <tr><td>0/1</td><td>all 1s</td><td>≠0, bit1=1</td><td class="special">qNaN</td></tr>
+          <tr><td>0/1</td><td>all 1s</td><td>≠0, bit1=0</td><td class="special">sNaN</td></tr>
+          <tr><td>0</td><td>0&lt;e&lt;255</td><td>f</td><td class="pos">+2<sup>e−127</sup>(1.f)</td></tr>
+          <tr><td>1</td><td>0&lt;e&lt;255</td><td>f</td><td class="neg">−2<sup>e−127</sup>(1.f)</td></tr>
+          <tr><td>0</td><td>0</td><td>f≠0</td><td class="pos">+2<sup>−126</sup>(0.f)</td></tr>
+          <tr><td>1</td><td>0</td><td>f≠0</td><td class="neg">−2<sup>−126</sup>(0.f)</td></tr>
+        </tbody>
+      </table>
+      <hr class="divider">
+      <div class="label">NaN Types</div>
+      <ul class="items">
+        <li><strong>Signaling NaN (sNaN):</strong> signals invalid operation exception; used for uninitialized variables</li>
+        <li><strong>Quiet NaN (qNaN):</strong> propagates silently through most operations</li>
+      </ul>
+      <div class="label">Operations → qNaN (Table 11.7)</div>
+      <ul class="items">
+        <li>Any op on sNaN</li>
+        <li>(+∞) + (−∞) or (−∞) + (+∞)</li>
+        <li>0 × ∞</li>
+        <li>0/0 or ∞/∞</li>
+        <li>x REM 0 or ∞ REM y</li>
+        <li>√x where x &lt; 0</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROW 6: Precision / Infinity / Subnormals -->
+<div class="grid section-gap">
+
+  <!-- Rounding -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Precision: Guard Bits &amp; Rounding</h3></div>
+    <div class="card-body">
+      <div class="label">Guard Bits</div>
+      <p>Extra bits appended to the right of significand in ALU registers during computation. Prevent precision loss during alignment (right-shifting smaller operand). Without guard bits, a 1-bit shift can lose the LSB, causing up to a factor-of-2 error (factor-of-16 for hex).</p>
+
+      <div class="label">IEEE 754 Rounding Modes</div>
+      <div class="rule">Round to Nearest (default): round to closest representable value; on tie → round to even (last bit = 0)</div>
+      <div class="rule">Round toward +∞: always round up (ceiling)</div>
+      <div class="rule">Round toward −∞: always round down (floor)</div>
+      <div class="rule">Round toward 0: truncation — extra bits dropped; simplest but introduces bias</div>
+
+      <div class="label">Interval Arithmetic</div>
+      <p>Uses "round toward +∞" and "round toward −∞" simultaneously to compute a bounding interval <code>[lower, upper]</code> for every result. Width of interval = accuracy estimate.</p>
+
+      <div class="label">Truncation (Round toward 0)</div>
+      <ul class="items">
+        <li>Simplest but introduces systematic bias toward zero</li>
+        <li>Affects every operation with nonzero extra bits</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Infinity -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Infinity Arithmetic (IEEE 754)</h3></div>
+    <div class="card-body">
+      <div class="label">Ordering</div>
+      <div class="formula">−∞ &lt; (every finite number) &lt; +∞</div>
+      <div class="label">Arithmetic Examples</div>
+      <table class="tbl">
+        <thead><tr><th>Expression</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>5 + (+∞)</td><td class="special">+∞</td></tr>
+          <tr><td>5 − (+∞)</td><td class="special">−∞</td></tr>
+          <tr><td>5 + (−∞)</td><td class="special">−∞</td></tr>
+          <tr><td>5 − (−∞)</td><td class="special">+∞</td></tr>
+          <tr><td>5 × (+∞)</td><td class="special">+∞</td></tr>
+          <tr><td>5 ÷ (+∞)</td><td class="zero">+0</td></tr>
+          <tr><td>(+∞) + (+∞)</td><td class="special">+∞</td></tr>
+          <tr><td>(−∞) + (−∞)</td><td class="special">−∞</td></tr>
+          <tr><td>(−∞) − (+∞)</td><td class="special">−∞</td></tr>
+          <tr><td>(+∞) − (−∞)</td><td class="special">+∞</td></tr>
+          <tr><td>(+∞) + (−∞)</td><td class="special">qNaN ⚠</td></tr>
+        </tbody>
+      </table>
+      <div class="tip" style="margin-top:8px;">
+        <div class="t-title">💡 Why Infinity?</div>
+        Allows overflow to be non-fatal — programs can test for ∞ and handle gracefully instead of aborting.
+      </div>
+    </div>
+  </div>
+
+  <!-- Subnormal Numbers -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Subnormal Numbers &amp; Gradual Underflow</h3></div>
+    <div class="card-body">
+      <div class="label">Problem Without Subnormals</div>
+      <p>In 32-bit IEEE 754, the smallest normal positive number is 2<sup>−126</sup>. Without subnormals, there's a large <em>gap</em> between 0 and 2<sup>−126</sup> — a number slightly below 2<sup>−126</sup> would abruptly underflow to 0.</p>
+
+      <div class="label">Subnormal Format</div>
+      <div class="rule">Exponent field = 0 AND fraction ≠ 0 → subnormal</div>
+      <p>True exponent is treated as −126 (binary32), but the hidden leading bit is 0 (not 1):</p>
+      <div class="formula">Value = ±2<sup>−126</sup> × 0.fraction</div>
+
+      <div class="label">Effect — Gradual Underflow (Fig 11.26)</div>
+      <p>Adds 2<sup>23</sup>−1 additional numbers uniformly between 0 and 2<sup>−126</sup>. The spacing between consecutive representable numbers near zero matches the spacing in the first normal interval [2<sup>−126</sup>, 2<sup>−125</sup>].</p>
+
+      <div class="label">Smallest Positive Values (Binary32)</div>
+      <ul class="items">
+        <li>Smallest <strong>normal</strong>: 2<sup>−126</sup> ≈ 1.175 × 10<sup>−38</sup></li>
+        <li>Smallest <strong>subnormal</strong>: 2<sup>−149</sup> ≈ 1.401 × 10<sup>−45</sup></li>
+      </ul>
+
+      <div class="tip">
+        <div class="t-title">💡 Benefit</div>
+        Gradual underflow reduces the impact of exponent underflow to a level comparable with ordinary rounding error.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ROW 7: Quick Reference Summary -->
+<div class="section-gap">
+  <div class="card blue col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Quick Reference: All Key Rules at a Glance</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+        <div>
+          <div class="label">Integer Negation</div>
+          <ol class="steps">
+            <li>Complement all bits</li>
+            <li>Add 1</li>
+          </ol>
+          <div class="warn" style="margin-top:8px;">
+            <div class="w-title">Exceptions</div>
+            0 → 0 (carry discarded)<br>
+            −2<sup>n−1</sup> → −2<sup>n−1</sup> (cannot negate!)
+          </div>
+        </div>
+        <div>
+          <div class="label">Overflow Detection</div>
+          <div class="rule">Addition: same-sign inputs, opposite-sign result</div>
+          <div class="rule">No overflow possible when adding opposite signs</div>
+          <div class="label" style="margin-top:8px;">Sign Extension</div>
+          <div class="rule">Copy sign bit into new positions</div>
+          <div class="rule">+3 (0011) → 8-bit: 00000011</div>
+          <div class="rule">−3 (1101) → 8-bit: 11111101</div>
+        </div>
+        <div>
+          <div class="label">Booth's Algorithm Decision</div>
+          <table class="tbl">
+            <thead><tr><th>Q₀</th><th>Q₋₁</th><th>Op</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td class="zero">shift only</td></tr>
+              <tr><td>0</td><td>1</td><td class="pos">A+M, shift</td></tr>
+              <tr><td>1</td><td>0</td><td class="neg">A−M, shift</td></tr>
+              <tr><td>1</td><td>1</td><td class="zero">shift only</td></tr>
+            </tbody>
+          </table>
+          <div style="margin-top:6px;font-size:11px;color:var(--text-muted);">Arithmetic (sign-preserving) right shift</div>
+        </div>
+        <div>
+          <div class="label">IEEE 754 Biased Exponent</div>
+          <div class="formula">True exp = stored − bias</div>
+          <div class="formula">Bias₃₂ = 127 &nbsp;|&nbsp; Bias₆₄ = 1023</div>
+          <div class="label">Normalized Number Value</div>
+          <div class="formula">(−1)<sup>S</sup> × 2<sup>E−bias</sup> × 1.fraction</div>
+          <div class="label">Subnormal Number Value</div>
+          <div class="formula">(−1)<sup>S</sup> × 2<sup>1−bias</sup> × 0.fraction</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>Computer Organization &amp; Architecture, 11th Edition — Chapter 11: Computer Arithmetic</span>
+  <span>Study reference — all content based on course slides</span>
+</div>
+
+</body>
+</html>
+
+

@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH15 – Reduced Instruction Set Computers (RISC)</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;--accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent2);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent2);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent2);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;} .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;} .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;} ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;} ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent2);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;} .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .mono-block{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);line-height:1.7;margin-bottom:6px;white-space:pre;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HEADER ═══════════════════════ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Reduced Instruction Set Computers (RISC) — Chapter 15</h1>
+    <h2>Computer Organization and Architecture · Stallings 10th Edition · §15.1–15.8</h2>
+    <div style="margin-top:10px;">
+      <div class="toc">
+        <span class="toc-item">§15.1 Execution Characteristics</span>
+        <span class="toc-item">§15.2 Large Register File</span>
+        <span class="toc-item">§15.3 Compiler Optimization</span>
+        <span class="toc-item">§15.4 RISC Architecture</span>
+        <span class="toc-item">§15.5 RISC Pipelining</span>
+        <span class="toc-item">§15.6 MIPS R4000</span>
+        <span class="toc-item">§15.7 SPARC</span>
+        <span class="toc-item">§15.8 RISC vs CISC</span>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+    <span class="badge">COA10e · CH15</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);">Pages 535–574</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════ ROW 1: §15.1 Instruction Execution Characteristics ═══════════════════════ -->
+<div class="grid">
+
+  <!-- Card 1: Why RISC – Historical Motivation -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§15.1 Historical Motivation & Semantic Gap</h3></div>
+    <div class="card-body">
+      <p>The <strong>semantic gap</strong> = difference between operations in HLLs and those in hardware. CISC architects tried to close this gap with more instructions, more addressing modes, and HLL constructs in hardware.</p>
+      <div class="divider"></div>
+      <div class="label">CISC Design Rationale</div>
+      <ul class="items">
+        <li>Ease the compiler writer's task</li>
+        <li>Improve execution efficiency via microcode</li>
+        <li>Support more complex and sophisticated HLLs</li>
+        <li>Smaller program size → fewer memory accesses</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="warn">
+        <div class="w-title">The Problem</div>
+        Compilers tend to favor <em>simpler</em> instructions anyway. Complex instructions rarely matched exactly, so CISC complexity often went unused. Studies showed RISC I code was comparable in size to VAX/PDP-11/M68000 code.
+      </div>
+      <div class="tip">
+        <div class="t-title">RISC Counter-Argument</div>
+        A simpler architecture supports more effective optimizing compilers and enables faster hardwired execution of the instructions that actually dominate real programs.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Frequency of Operations -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§15.1 HLL Operation Frequency (Dynamic)</h3></div>
+    <div class="card-body">
+      <div class="label">Table 15.2 — Weighted Dynamic Frequency [PATT82a]</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Statement</th><th>Pascal Dyn%</th><th>C Dyn%</th><th>Instr-Wt Pascal</th><th>Mem-Ref Pascal</th></tr>
+        <tr><td>ASSIGN</td><td>45%</td><td>38%</td><td>13%</td><td>14%</td></tr>
+        <tr><td>LOOP</td><td>5%</td><td>3%</td><td>42%</td><td>33%</td></tr>
+        <tr><td>CALL/RETURN</td><td>15%</td><td>12%</td><td>31%</td><td>44%</td></tr>
+        <tr><td>IF</td><td>29%</td><td>43%</td><td>11%</td><td>7%</td></tr>
+        <tr><td>GOTO</td><td>—</td><td>3%</td><td>—</td><td>—</td></tr>
+      </table>
+      <div class="note">
+        <div class="n-title">Key Insight</div>
+        When weighted by machine instructions generated, <strong>CALL/RETURN is the most time-consuming operation</strong> in compiled HLL programs (~31–33% instr-wt, ~44–45% mem-ref-wt). LOOP is also expensive.
+      </div>
+      <div class="label">Table 15.3 — Dynamic Operand Types</div>
+      <table class="tbl">
+        <tr><th>Operand Type</th><th>Pascal</th><th>C</th><th>Average</th></tr>
+        <tr><td>Integer constant</td><td>16%</td><td>23%</td><td>20%</td></tr>
+        <tr><td>Scalar variable</td><td>58%</td><td>53%</td><td>55%</td></tr>
+        <tr><td>Array/Structure</td><td>26%</td><td>24%</td><td>25%</td></tr>
+      </table>
+      <p style="margin-top:6px;font-size:11px;color:var(--text-muted);">80%+ of scalars are <em>local</em> variables — strongly motivates register storage.</p>
+    </div>
+  </div>
+
+  <!-- Card 3: Procedure Calls & Implications -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§15.1 Procedure Calls & Design Implications</h3></div>
+    <div class="card-body">
+      <div class="label">Tanenbaum / Berkeley RISC Findings [TANE78, KATE83]</div>
+      <ul class="items">
+        <li><strong>98%</strong> of dynamically called procedures passed &lt; 6 arguments</li>
+        <li><strong>92%</strong> of procedures used &lt; 6 local scalar variables</li>
+        <li>Programs stay within a narrow <em>window of procedure depth</em></li>
+        <li>References to local variables are highly localized</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Three Design Implications for RISC</div>
+      <ol class="steps">
+        <li><strong>Large registers or compiler optimization:</strong> Keep local scalars in registers. Minimize register–memory operations by exploiting locality.</li>
+        <li><strong>Efficient instruction pipelines:</strong> High proportion of branches/calls makes naïve pipelining inefficient. Prefetch often wasted.</li>
+        <li><strong>Simple, high-performance instruction primitives:</strong> Predictable cost in time, code size, and energy. Hardwired, no microcode.</li>
+      </ol>
+      <div class="tip">
+        <div class="t-title">Bottom Line</div>
+        Supporting HLLs means optimizing for what programs actually do — not closing the semantic gap with hardware complexity.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ ROW 2: §15.2 Register Windows ═══════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Register Window Concept -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§15.2 Register Windows — Concept</h3></div>
+    <div class="card-body">
+      <p>Instead of saving/restoring registers on every procedure call, the processor switches to a <strong>different fixed-size window</strong> of physical registers. Adjacent windows <em>overlap</em> to pass parameters without data movement.</p>
+      <div class="divider"></div>
+      <div class="label">Window Structure (per procedure level)</div>
+      <div class="mono-block">┌─────────────────────────────┐
+│  PARAMETER registers        │ ← Passed in from caller
+│  (= caller's TEMP regs)     │   (physical overlap)
+├─────────────────────────────┤
+│  LOCAL registers            │ ← Private to this procedure
+│                             │
+├─────────────────────────────┤
+│  TEMPORARY registers        │ ← Passed out to callee
+│  (= callee's PARAM regs)    │   (physical overlap)
+└─────────────────────────────┘</div>
+      <div class="info">
+        <div class="i-title">Key Mechanism</div>
+        Temporary registers at level J are <em>physically identical</em> to parameter registers at level J+1. Parameters are passed by a CWP pointer increment — <strong>zero data movement needed</strong>.
+      </div>
+      <div class="label">Berkeley RISC Numbers</div>
+      <ul class="items">
+        <li>8 windows × 16 registers each = 128 physical registers</li>
+        <li>Pyramid: 16 windows × 32 registers = 512 physical registers</li>
+        <li>With 8 windows: save/restore needed on only <strong>~1%</strong> of calls [TAMI83]</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 5: CWP, SWP & Circular Buffer -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§15.2 Circular Buffer & CWP/SWP</h3></div>
+    <div class="card-body">
+      <p>Since procedure depth fluctuates in a narrow range, register windows are organized as a <strong>circular buffer</strong>. Only the most recent N–1 activations are held in registers.</p>
+      <div class="divider"></div>
+      <div class="label">Pointer Definitions</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Pointer</th><th>Meaning</th></tr>
+        <tr><td><code>CWP</code></td><td><strong>Current Window Pointer</strong> — points to the window of the currently active procedure. Register references are offset by CWP.</td></tr>
+        <tr><td><code>SWP</code></td><td><strong>Saved Window Pointer</strong> — points to the window most recently saved to memory.</td></tr>
+      </table>
+      <div class="label">Overflow/Underflow Handling</div>
+      <div class="warn">
+        <div class="w-title">Overflow (too many calls)</div>
+        When CWP is incremented and becomes equal to SWP, an interrupt fires. The oldest window (param + local portions only) is saved to memory. SWP advances.
+      </div>
+      <div class="tip">
+        <div class="t-title">Underflow (too many returns)</div>
+        When CWP is decremented and becomes equal to SWP, an interrupt fires. The saved window is restored from memory. SWP decrements.
+      </div>
+      <div class="label">N-Window Buffer Capacity</div>
+      <div class="formula">N-window register file holds N−1 procedure activations
+Only param+local portions saved (NOT temporaries)
+Temporaries are callee's params — callee saves them if needed</div>
+    </div>
+  </div>
+
+  <!-- Card 6: Global Variables & Register File vs Cache -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>§15.2 Global Variables & Register File vs Cache</h3></div>
+    <div class="card-body">
+      <div class="label">Two Options for Global Variables</div>
+      <ul class="items">
+        <li><strong>Memory-based:</strong> Compiler assigns globals to memory locations. Simple but slow for frequently accessed globals.</li>
+        <li><strong>Global register set:</strong> Fixed set of registers (e.g., r0–r7) available to all procedures. Registers 8–31 are window-relative. Linker assigns hot globals to global registers.</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Table 15.5 — Large Register File vs Cache</div>
+      <table class="tbl">
+        <tr><th>Aspect</th><th>Register File (Windows)</th><th>Cache</th></tr>
+        <tr><td>Variables held</td><td>All local scalars (recent N–1 procedures)</td><td>Recently used scalars (any)</td></tr>
+        <tr><td>Global vars</td><td>Compiler/linker-assigned globals</td><td>Dynamically discovered</td></tr>
+        <tr><td>Save/restore trigger</td><td>Procedure nesting depth</td><td>Cache replacement algorithm</td></tr>
+        <tr><td>Addressing</td><td>Register (fast decode)</td><td>Full-width memory address (slow)</td></tr>
+        <tr><td>Data unit</td><td>Individual variables</td><td>Blocks (may load unused data)</td></tr>
+        <tr><td>Granularity</td><td>Multiple operands/cycle</td><td>One operand addressed/cycle</td></tr>
+      </table>
+      <div class="note">
+        <div class="n-title">Register File Advantage</div>
+        For local scalars, window-based register file is clearly superior: simple decode, no set-associative tag comparison, no block transfer overhead.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ ROW 3: §15.3 Compiler-Based Register Optimization ═══════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Graph Coloring -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§15.3 Compiler-Based Register Optimization</h3></div>
+    <div class="card-body">
+      <p>When only a small number (16–32) of registers is available, the compiler must optimize register allocation. HLL programs use symbolic variables; the compiler maps them to physical registers.</p>
+      <div class="divider"></div>
+      <div class="label">Graph Coloring Algorithm [CHAI82]</div>
+      <ol class="steps">
+        <li>Assign each program quantity a <strong>symbolic/virtual register</strong></li>
+        <li>Analyze program to build a <strong>register interference graph</strong>: nodes = symbolic registers; edge between two nodes if both are <em>live</em> at the same time</li>
+        <li>Attempt to <strong>color the graph with n colors</strong> (n = number of physical registers), such that no two adjacent nodes share a color</li>
+        <li>Nodes sharing the same color → assigned to the <strong>same physical register</strong></li>
+        <li>Nodes that cannot be colored → assigned to memory; compiler inserts <code>LOAD</code>/<code>STORE</code> as needed (<em>spilling</em>)</li>
+      </ol>
+      <div class="divider"></div>
+      <div class="label">Example: 6 Symbolic → 3 Physical Registers</div>
+      <div class="mono-block">Symbolic: A B C D E F (6 vars)
+Physical: R1 R2 R3 (3 available)
+
+A ──── time ────────────
+B ───────── time ───────
+C ──── time ────
+D              time ────
+E         time ─────────
+F ──── time ────────────  ← spilled (conflicts all)
+
+Coloring: A,D → R1 | B → R2 | C,E → R3 | F → memory</div>
+      <div class="tip">
+        <div class="t-title">Research Finding [BRAD91a]</div>
+        With reasonably sophisticated optimization, marginal improvement beyond <strong>32 registers</strong>. Little benefit beyond 64 even with simple optimization.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 8: RISC Characteristics -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§15.4 RISC Architecture Characteristics</h3></div>
+    <div class="card-body">
+      <div class="label">Core RISC Properties</div>
+      <ul class="items">
+        <li><strong>One instruction per cycle:</strong> Machine cycle = fetch 2 reg operands + ALU + store result. RISC instructions ≈ microinstruction speed. No microcode needed → hardwired control.</li>
+        <li><strong>Register-to-register operations:</strong> Only LOAD/STORE access memory. Simplifies instruction set and control unit. E.g., RISC has 1–2 ADD variants; VAX has 25.</li>
+        <li><strong>Simple addressing modes:</strong> Primarily register addressing + displacement + PC-relative. Complex modes synthesized in software.</li>
+        <li><strong>Simple instruction formats:</strong> Fixed length (typically 4 bytes), aligned on word boundaries. Fixed opcode field position. Opcode decode and register operand access can occur <em>in parallel</em>.</li>
+        <li><strong>Large register file or compiler optimization:</strong> Minimize register–memory traffic.</li>
+        <li><strong>Load/store architecture:</strong> All computation on registers; memory access only via explicit LOAD/STORE.</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Benefits of Simple Instruction Formats</div>
+      <ul class="items">
+        <li>Fixed fields → simultaneous opcode decode + register access</li>
+        <li>Word-length fetch → optimized instruction fetching</li>
+        <li>Word-aligned → no instruction crosses page boundary</li>
+        <li>Simplified control unit → faster execution</li>
+      </ul>
+      <div class="info">
+        <div class="i-title">Hardwired vs Microprogrammed</div>
+        RISC instructions are simple enough to be hardwired directly. No need to access a microprogram control store → eliminates control store access latency on every instruction.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 9: RISC vs CISC Classic Comparison Table -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§15.1 / §15.4 Classic RISC vs CISC Systems (Table 15.1)</h3></div>
+    <div class="card-body">
+      <div class="label">CISC Processors</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Feature</th><th>IBM 370/168</th><th>VAX 11/780</th><th>Intel 80486</th></tr>
+        <tr><td>Year</td><td>1973</td><td>1978</td><td>1989</td></tr>
+        <tr><td># Instructions</td><td>208</td><td>303</td><td>235</td></tr>
+        <tr><td>Instr size (B)</td><td>2–6</td><td>2–57</td><td>1–11</td></tr>
+        <tr><td>Addr modes</td><td>4</td><td>22</td><td>11</td></tr>
+        <tr><td>GP Registers</td><td>16</td><td>16</td><td>8</td></tr>
+        <tr><td>Ctrl mem (kbits)</td><td>420</td><td>480</td><td>246</td></tr>
+        <tr><td>Cache (kB)</td><td>64</td><td>64</td><td>8</td></tr>
+      </table>
+      <div class="label">RISC Processors</div>
+      <table class="tbl">
+        <tr><th>Feature</th><th>SPARC</th><th>MIPS R4000</th><th>PowerPC</th></tr>
+        <tr><td>Year</td><td>1987</td><td>1991</td><td>1993</td></tr>
+        <tr><td># Instructions</td><td>69</td><td>94</td><td>225</td></tr>
+        <tr><td>Instr size (B)</td><td>4</td><td>4</td><td>4</td></tr>
+        <tr><td>Addr modes</td><td>1</td><td>1</td><td>2</td></tr>
+        <tr><td>GP Registers</td><td>40–520</td><td>32</td><td>32</td></tr>
+        <tr><td>Ctrl mem</td><td>—</td><td>—</td><td>—</td></tr>
+        <tr><td>Cache (kB)</td><td>32</td><td>128</td><td>16–32</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ ROW 4: §15.5 RISC Pipelining ═══════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 10: Pipeline Basics -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§15.5 RISC Pipeline Stages</h3></div>
+    <div class="card-body">
+      <div class="label">Instruction Types & Their Stages</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Instruction Type</th><th>Stages</th><th>Description</th></tr>
+        <tr><td>Register–Register</td><td>I → E</td><td>I: Fetch. E: ALU op on reg inputs, store to reg</td></tr>
+        <tr><td>Load / Store</td><td>I → E → D</td><td>I: Fetch. E: Calculate mem address. D: Mem access</td></tr>
+        <tr><td>Branch</td><td>I → E</td><td>I: Fetch. E: Evaluate condition, update PC</td></tr>
+      </table>
+      <div class="label">4-Stage Pipeline (E split into E1+E2)</div>
+      <div class="mono-block">Stages: I  | E1 | E2 | D
+         I: Instruction fetch
+        E1: Register file read
+        E2: ALU operation + register write
+         D: Data memory access (loads/stores)
+
+Up to 4 instructions in flight simultaneously → max 4× speedup</div>
+      <div class="warn">
+        <div class="w-title">Pipeline Hazards</div>
+        <strong>Data dependency:</strong> Instruction needs operand modified by preceding instruction → delay (NOOP). <strong>Branch hazard:</strong> Branch updates PC → fetched instructions may be wrong → pipeline flush or NOOP.
+      </div>
+      <div class="label">Pipeline Timing (sequential vs pipelined)</div>
+      <div class="mono-block">Sequential: 2N + D stages (N instr, D mem accesses)
+2-stage: ~N + D stages (with wait states for 1-port mem)
+3-stage: ~(N + D)/2 + branch penalty
+4-stage: ~N/4 + penalty (data + branch delays)</div>
+    </div>
+  </div>
+
+  <!-- Card 11: Delayed Branching -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§15.5 Delayed Branch & Delayed Load</h3></div>
+    <div class="card-body">
+      <div class="label">Delayed Branch Concept</div>
+      <p>A <strong>delayed branch</strong> does not take effect until <em>after</em> the execution of the following instruction. The slot immediately after the branch is the <strong>delay slot</strong>.</p>
+      <div class="divider"></div>
+      <div class="label">Table 15.8 — Normal vs Delayed Branch (Optimized)</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Addr</th><th>Normal Branch</th><th>+ NOOP (RISC)</th><th>Optimized Delayed</th></tr>
+        <tr><td>100</td><td>LOAD X, rA</td><td>LOAD X, rA</td><td>LOAD X, rA</td></tr>
+        <tr><td>101</td><td>ADD 1, rA</td><td>ADD 1, rA</td><td><strong>JUMP 105</strong></td></tr>
+        <tr><td>102</td><td>JUMP 105</td><td>JUMP 106</td><td>ADD 1, rA  ← delay slot</td></tr>
+        <tr><td>103</td><td>ADD rA, rB</td><td>NOOP</td><td>ADD rA, rB</td></tr>
+        <tr><td>105</td><td>STORE rA, Z</td><td>STORE rA, Z</td><td>STORE rA, Z</td></tr>
+      </table>
+      <div class="info">
+        <div class="i-title">How Optimization Works</div>
+        Move the ADD (which comes before the JUMP logically) into the delay slot. ADD executes while JUMP is resolving. Result: 2 fewer clock cycles. No special pipeline-flush circuitry needed. Berkeley RISC / IBM 801 fill delay slots successfully <strong>70–90% of the time</strong>.
+      </div>
+      <div class="divider"></div>
+      <div class="label">Delayed Load</div>
+      <p>The target register of a LOAD is <strong>locked</strong>. Processor continues until that register is needed, then idles if load not complete. Compiler rearranges instructions to do useful work in the load latency window.</p>
+      <div class="divider"></div>
+      <div class="label">Loop Unrolling [BACO94]</div>
+      <ul class="items">
+        <li>Replicate loop body <em>u</em> times; iterate by step u</li>
+        <li>Reduces loop overhead (fewer test+branch)</li>
+        <li>Increases instruction parallelism (fills pipeline slots)</li>
+        <li>Improves register/data cache/TLB locality</li>
+      </ul>
+      <div class="warn">
+        <div class="w-title">Conditional Branch Caution</div>
+        For conditional branches, instruction before/after cannot blindly be swapped if the condition is modified by that instruction. Compiler must verify no dependency, or insert NOOP.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 12: CISC vs RISC Characteristics Detail (Table 15.7) -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>§15.4 RISC Criteria — Table 15.7 Comparison</h3></div>
+    <div class="card-body">
+      <div class="label">Classic RISC Criteria [MASH95]</div>
+      <ol class="steps">
+        <li>Single instruction size (decode complexity)</li>
+        <li>Instruction size = 4 bytes (decode complexity)</li>
+        <li>&lt; 5 data addressing modes (decode complexity)</li>
+        <li>No indirect addressing (pipeline ease)</li>
+        <li>No load/store combined with arithmetic (pipeline ease)</li>
+        <li>Max 1 memory-addressed operand per instruction (pipeline ease)</li>
+        <li>No arbitrary data alignment for load/store (pipeline ease)</li>
+        <li>Max MMU uses per data address ≤ 1 (pipeline ease)</li>
+        <li>≥ 5 bits for integer register specifier (≥ 32 GP registers)</li>
+        <li>≥ 4 bits for FP register specifier (≥ 16 FP registers)</li>
+      </ol>
+      <div class="divider"></div>
+      <div class="label">Classification of Real Processors</div>
+      <table class="tbl">
+        <tr><th>Processor</th><th>Category</th><th>Notable Deviation</th></tr>
+        <tr><td>AMD29000, MIPS R2000, SPARC, MC88000, IBM RS/6000</td><td style="color:var(--accent2);">RISC</td><td>All meet most criteria</td></tr>
+        <tr><td>IBM 3090, Intel 80486, MC68040, VAX, NSC 32016</td><td style="color:var(--accent3);">CISC</td><td>Multiple instr sizes, indirect addressing, mem ops combined</td></tr>
+        <tr><td>HP PA, Intel 80960, Clipper</td><td style="color:var(--yellow);">Mixed</td><td>RISC-like but some CISC characteristics</td></tr>
+      </table>
+      <div class="note">
+        <div class="n-title">Convergence Trend</div>
+        PowerPC (RISC) added some CISC features. Pentium II/III (CISC) added register file depth and pipeline optimization. The boundary blurred by the late 1990s.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ ROW 5: MIPS R4000 ═══════════════════════ -->
+<div class="grid-2 section-gap">
+
+  <!-- Card 13: MIPS R4000 Architecture -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§15.6 MIPS R4000 — Architecture & Instruction Set</h3></div>
+    <div class="card-body">
+      <div class="label">Overview</div>
+      <ul class="items">
+        <li>Developed by MIPS Technology Inc. (inspired by Stanford MIPS [HENN84])</li>
+        <li><strong>64-bit</strong> architecture: all internal/external paths, addresses, registers, ALU (vs R2000/R3000 which were 32-bit)</li>
+        <li>32 × 64-bit general-purpose registers</li>
+        <li>Up to 128 KB on-chip cache (split: instruction + data)</li>
+        <li>Chip partitioned: CPU core + memory management coprocessor</li>
+        <li><strong>No condition codes</strong> — conditions stored in GP registers (simplifies pipelining and register optimization)</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Instruction Set Principles</div>
+      <ul class="items">
+        <li>All instructions: <strong>single 32-bit fixed format</strong></li>
+        <li>All data operations: <strong>register to register</strong> only</li>
+        <li>Memory access: pure <strong>LOAD / STORE</strong> only</li>
+        <li>Only addressing mode: <strong>16-bit offset from a base register</strong></li>
+        <li><code>r0</code> always contains 0 (useful for synthesizing operations)</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">MIPS R4000 Instruction Formats (Figure 15.9)</div>
+      <table class="tbl">
+        <tr><th>Format</th><th>Fields (bits)</th><th>Usage</th></tr>
+        <tr><td>R-type</td><td>Op(6) rs(5) rt(5) rd(5) shamt(5) funct(6)</td><td>Register–register ALU, shifts</td></tr>
+        <tr><td>I-type</td><td>Op(6) rs(5) rt(5) Immediate(16)</td><td>Loads, stores, branches, immediate ops</td></tr>
+        <tr><td>J-type</td><td>Op(6) Target(26)</td><td>Unconditional jumps</td></tr>
+      </table>
+      <div class="tip">
+        <div class="t-title">32-bit Immediate Synthesis (lui + addu + lw)</div>
+        <code>lui r1, #imm-hi</code> → load high 16 bits<br>
+        <code>addu r1, r1, r4</code> → add base register<br>
+        <code>lw r2, #imm-lo(r1)</code> → load with low 16-bit offset
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 14: MIPS R4000 Pipeline -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§15.6 MIPS R4000 — 8-Stage Superpipeline</h3></div>
+    <div class="card-body">
+      <div class="label">Pipeline Evolution: R3000 → R4000</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Version</th><th>Stages</th><th>Clock/Advance</th><th>Notes</th></tr>
+        <tr><td>R3000</td><td>5</td><td>1 stage/cycle</td><td>IF, RD, ALU, MEM, WB; 60ns cycle</td></tr>
+        <tr><td>R4000</td><td>8</td><td>2 stages/cycle</td><td>Superpipelined, 30ns cycle, on-chip cache</td></tr>
+      </table>
+      <div class="label">R4000 Eight Pipeline Stages (Figure 15.11b)</div>
+      <table class="tbl">
+        <tr><th>Stage</th><th>Abbrev</th><th>Function</th></tr>
+        <tr><td>1</td><td><code>IF</code></td><td>Instruction fetch first half — virtual addr presented to I-cache + TLB</td></tr>
+        <tr><td>2</td><td><code>IS</code></td><td>Instruction fetch second half — I-cache outputs instruction; TLB generates physical addr</td></tr>
+        <tr><td>3</td><td><code>RF</code></td><td>Register file: decode + interlock check + I-cache tag check + operand fetch (parallel)</td></tr>
+        <tr><td>4</td><td><code>EX</code></td><td>Execute: reg–reg ALU op OR data virtual addr calc (load/store) OR branch target + condition</td></tr>
+        <tr><td>5</td><td><code>DF</code></td><td>Data cache first half — virtual addr presented to D-cache + TLB</td></tr>
+        <tr><td>6</td><td><code>DS</code></td><td>Data cache second half — TLB physical addr + D-cache data output</td></tr>
+        <tr><td>7</td><td><code>TC</code></td><td>Tag check — cache tag checks for loads and stores</td></tr>
+        <tr><td>8</td><td><code>WB</code></td><td>Write back — instruction result written back to register file</td></tr>
+      </table>
+      <div class="note">
+        <div class="n-title">Superpipelining Advantage</div>
+        R4000 advances 2 stages per clock cycle. Up to 8 instructions in flight simultaneously. On-chip caches eliminate external memory access latency for the most common case.
+      </div>
+      <div class="label">R3000 Pipeline Stages (Table 15.9 summary)</div>
+      <table class="tbl">
+        <tr><th>Stage</th><th>Key Function</th></tr>
+        <tr><td>IF (f1/f2)</td><td>TLB virtual→physical translation; send address to I-cache</td></tr>
+        <tr><td>RD (f1/f2)</td><td>Return instruction from cache; decode; read register file; calc branch target</td></tr>
+        <tr><td>ALU (f1/f2)</td><td>ALU op for reg-reg; calc data virtual addr for mem refs; translate data addr via TLB</td></tr>
+        <tr><td>MEM (f1/f2)</td><td>Send physical addr to D-cache; return data + tag check</td></tr>
+        <tr><td>WB (f1)</td><td>Write result to register file</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ ROW 6: SPARC ═══════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 15: SPARC Register Set -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§15.7 SPARC — Register Windows</h3></div>
+    <div class="card-body">
+      <p><strong>SPARC</strong> (Scalable Processor Architecture) — developed by Sun Microsystems, directly inspired by Berkeley RISC I.</p>
+      <div class="divider"></div>
+      <div class="label">Register Window Layout</div>
+      <ul class="items">
+        <li>Each window: <strong>32 logical registers</strong> (r0–r31)</li>
+        <li>Physical registers: <strong>8 global</strong> (r0–r7) + 8 windows × 24 window-specific = 136 total (for 8-window impl.)</li>
+        <li><strong>In registers</strong> (r24–r31 / logical): Passed in from calling procedure. <em>Physically overlapped</em> with caller's out registers.</li>
+        <li><strong>Local registers</strong> (r16–r23): Private to current procedure, not shared.</li>
+        <li><strong>Out registers</strong> (r8–r15): Passed out to called procedure. <em>Physically overlapped</em> with callee's in registers.</li>
+        <li><strong>Global registers</strong> (r0–r7): Accessible from all windows.</li>
+        <li><code>r0</code> hardwired to 0 (useful for synthesis)</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">SPARC Window Diagram (Figure 15.12)</div>
+      <div class="mono-block">Physical Regs:        Procedure A   Procedure B   Procedure C
+─────────────────────────────────────────────────────────
+r128–r135  ← Globals (r0–r7 logical) shared by all
+r127–r120  ← A.ins (r24–r31)
+r119–r112  ← A.locals (r16–r23)
+r111–r104  ← A.outs = B.ins (r8–r15 / r24–r31)
+r103–r96   ← B.locals
+r95–r88    ← B.outs = C.ins
+r87–r80    ← C.locals
+r79–r72    ← C.outs → next callee's ins</div>
+      <div class="label">Control Registers</div>
+      <table class="tbl">
+        <tr><th>Register</th><th>Location</th><th>Function</th></tr>
+        <tr><td><code>CWP</code></td><td>PSR (Processor Status Register)</td><td>Current Window Pointer — identifies active window</td></tr>
+        <tr><td><code>WIM</code></td><td>PSR</td><td>Window Invalid Mask — indicates which windows are invalid (overflow/underflow detection)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 16: SPARC Instruction Set & Formats -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§15.7 SPARC — Instruction Set & Formats</h3></div>
+    <div class="card-body">
+      <div class="label">General Instruction Form</div>
+      <div class="formula">Rd ← RS1  op  S2
+where: Rd = destination register
+       RS1 = first source register
+       S2 = register OR 13-bit immediate operand</div>
+      <div class="label">ALU Operations</div>
+      <ul class="items">
+        <li>Integer addition (with/without carry)</li>
+        <li>Integer subtraction (with/without carry)</li>
+        <li>Bitwise: AND, OR, XOR and their negations</li>
+        <li>Shift: left logical, right logical, right arithmetic</li>
+        <li>All (except shifts) can optionally set condition codes: ZERO, NEGATIVE, OVERFLOW, CARRY</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Addressing — Single Mode + Synthesis</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Mode</th><th>Algorithm</th><th>SPARC Equivalent</th></tr>
+        <tr><td>Immediate</td><td>operand = A</td><td>S2 (13-bit)</td></tr>
+        <tr><td>Direct</td><td>EA = A</td><td>R0 + S2</td></tr>
+        <tr><td>Register</td><td>EA = R</td><td>RS1, S2=0</td></tr>
+        <tr><td>Register Indirect</td><td>EA = (R)</td><td>RS1 + 0</td></tr>
+        <tr><td>Displacement</td><td>EA = (R) + A</td><td>RS1 + S2</td></tr>
+      </table>
+      <div class="label">SPARC Instruction Formats (Figure 15.14 — all 32 bits)</div>
+      <table class="tbl">
+        <tr><th>Format</th><th>Fields</th><th>Usage</th></tr>
+        <tr><td>Call</td><td>Op(2) + Disp30(30)</td><td>PC-relative call, 30-bit displacement</td></tr>
+        <tr><td>Branch</td><td>Op(2) a(1) Cond(4) Op2(3) Disp22(22)</td><td>Conditional branch with annul bit</td></tr>
+        <tr><td>SETHI</td><td>Op(2) Dest(5) Op2(3) Imm22(22)</td><td>Load high 22 bits of constant</td></tr>
+        <tr><td>General (reg)</td><td>Op(2) Dest(5) Op3(6) RS1(5) 0 Ignored(8) RS2(5)</td><td>Two-source register operation</td></tr>
+        <tr><td>General (imm)</td><td>Op(2) Dest(5) Op3(6) RS1(5) 1 Imm13(13)</td><td>Immediate operand operation</td></tr>
+        <tr><td>FP</td><td>Op(2) Dest(5) Op3(6) Src1(5) FP-op(9) Src2(5)</td><td>Floating-point operations</td></tr>
+      </table>
+      <div class="info">
+        <div class="i-title">Annul Bit (Branch Format)</div>
+        <strong>a=0:</strong> Instruction after branch always executes (standard delayed branch). <strong>a=1:</strong> Instruction after branch executes <em>only if branch taken</em>; annulled otherwise. Helps compiler fill delay slot with branch target instruction.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 17: SPARC vs MIPS Comparison -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§15.7 SPARC vs MIPS R4000 Comparison</h3></div>
+    <div class="card-body">
+      <table class="tbl" style="margin-bottom:10px;">
+        <tr><th>Feature</th><th>SPARC</th><th>MIPS R4000</th></tr>
+        <tr><td>Year</td><td>1987</td><td>1991</td></tr>
+        <tr><td>Data width</td><td>32-bit (V8) / 64-bit (V9)</td><td>64-bit</td></tr>
+        <tr><td>GP Registers</td><td>40–520 (window-based)</td><td>32 fixed</td></tr>
+        <tr><td>Register strategy</td><td>Hardware windows (CWP/WIM)</td><td>Compiler optimization</td></tr>
+        <tr><td>Instr length</td><td>32-bit fixed</td><td>32-bit fixed</td></tr>
+        <tr><td>Addressing modes</td><td>1 (RS1 + S2)</td><td>1 (16-bit offset from reg)</td></tr>
+        <tr><td>Addr offset size</td><td>13-bit immediate or register</td><td>16-bit immediate only</td></tr>
+        <tr><td>Address from 2 regs</td><td>Yes (RS1 + RS2)</td><td>No</td></tr>
+        <tr><td>Condition codes</td><td>Yes (optional, set by ALU)</td><td>No (stored in GP regs)</td></tr>
+        <tr><td>Delayed branch</td><td>Yes + Annul bit</td><td>Yes (no annul)</td></tr>
+        <tr><td>Pipeline stages</td><td>4 (basic)</td><td>8 (superpipeline)</td></tr>
+        <tr><td>Cache</td><td>32 kB external</td><td>128 kB on-chip</td></tr>
+        <tr><td>Unique feature</td><td>Scalable register windows</td><td>64-bit superpipeline, no cond codes</td></tr>
+      </table>
+      <div class="tip">
+        <div class="t-title">SETHI Usage (SPARC 32-bit constant)</div>
+        <code>sethi %hi(K), %r8</code>  — load high 22 bits of address K into r8<br>
+        <code>ld [%r8 + %lo(K)], %r8</code>  — load from K using low 10 bits<br>
+        Analogous to MIPS <code>lui</code> + <code>lw</code> sequence.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ ROW 7: RISC vs CISC Controversy + Summary ═══════════════════════ -->
+<div class="grid-2 section-gap">
+
+  <!-- Card 18: RISC vs CISC Controversy -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>§15.8 RISC vs CISC Controversy</h3></div>
+    <div class="card-body">
+      <div class="label">Two Categories of Assessment</div>
+      <div class="grid-2" style="gap:8px;margin-bottom:8px;">
+        <div class="info">
+          <div class="i-title">Quantitative</div>
+          Compares program size and execution speed on comparable technology. Mostly done by RISC proponents [PATT82b, HEAT84, PATT84] — generally favorable to RISC.
+        </div>
+        <div class="warn">
+          <div class="w-title">Qualitative</div>
+          Examines HLL support quality and VLSI real-estate efficiency. Inherently subjective. Results ambiguous and disputed from both sides [COLW85a, WALL85, PATT85b].
+        </div>
+      </div>
+      <div class="label">Problems with RISC/CISC Comparison</div>
+      <ul class="items">
+        <li>No pair with comparable technology, cost, compiler sophistication, and OS support</li>
+        <li>No definitive test program set; performance varies by workload</li>
+        <li>Hard to separate hardware effects from compiler quality effects</li>
+        <li>Most RISC studies used "toy" machines, not commercial products</li>
+        <li>Commercial "RISC" machines often contain CISC features (not pure)</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Code Size Reality (Table 15.6 — relative to RISC I)</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Machine</th><th>[PATT82a] 11 C progs</th><th>[KATE83] 12 C progs</th></tr>
+        <tr><td>RISC I</td><td>1.0 (baseline)</td><td>1.0</td></tr>
+        <tr><td>VAX-11/780</td><td>0.8</td><td>0.67</td></tr>
+        <tr><td>M68000</td><td>0.9</td><td>0.9</td></tr>
+        <tr><td>Z8002</td><td>1.2</td><td>1.12</td></tr>
+        <tr><td>PDP-11/70</td><td>0.9</td><td>0.71</td></tr>
+      </table>
+      <p style="font-size:11px;color:var(--text-muted);">IBM 801 (RISC) produced code 0.9× the size of IBM S/370 [RADI83] — CISC advantage in code size is marginal and not guaranteed.</p>
+      <div class="note">
+        <div class="n-title">Modern Convergence (1990s onward)</div>
+        RISC machines grew more complex (PowerPC). CISC machines adopted RISC techniques: deeper register files, aggressive pipelining, RISC-like micro-ops (Pentium Pro+). The controversy has largely been rendered moot by architectural convergence.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 19: Comprehensive RISC vs CISC Design Philosophy -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>RISC vs CISC — Design Philosophy Summary</h3></div>
+    <div class="card-body">
+      <table class="tbl" style="margin-bottom:10px;">
+        <tr><th>Design Dimension</th><th style="color:var(--accent2);">RISC</th><th style="color:var(--accent3);">CISC</th></tr>
+        <tr><td>Instruction count</td><td>Few (50–150)</td><td>Many (100–300+)</td></tr>
+        <tr><td>Instruction size</td><td>Fixed (4 bytes)</td><td>Variable (1–57 bytes)</td></tr>
+        <tr><td>Instruction complexity</td><td>Simple primitives</td><td>Complex, HLL-like</td></tr>
+        <tr><td>Cycles per instruction</td><td>1 (goal)</td><td>1–many</td></tr>
+        <tr><td>Addressing modes</td><td>1–4</td><td>10–24</td></tr>
+        <tr><td>Memory access</td><td>LOAD/STORE only</td><td>Memory operands in ALU ops</td></tr>
+        <tr><td>Registers</td><td>Many GP (32–520)</td><td>Few GP (8–16)</td></tr>
+        <tr><td>Control unit</td><td>Hardwired</td><td>Microprogrammed</td></tr>
+        <tr><td>Control store</td><td>None</td><td>Large (246–480 kbits)</td></tr>
+        <tr><td>Pipeline design</td><td>Central to design</td><td>Secondary concern</td></tr>
+        <tr><td>Compiler role</td><td>Heavy (optimization)</td><td>Lighter (complex hw assists)</td></tr>
+        <tr><td>Interrupt granularity</td><td>Between simple operations</td><td>At instruction boundaries</td></tr>
+        <tr><td>VLSI real estate</td><td>More space for cache/ALU</td><td>Large control store</td></tr>
+      </table>
+      <div class="tip">
+        <div class="t-title">RISC Performance Arguments</div>
+        <ul class="items">
+          <li>Simple instructions → hardwired, no control store latency</li>
+          <li>Simpler control unit → more chip area for cache and ALU</li>
+          <li>Fixed formats → parallel decode + register fetch</li>
+          <li>Load/store architecture → straightforward pipelining</li>
+          <li>More GP registers → less memory traffic</li>
+          <li>Compiler can optimize simple primitives more effectively</li>
+          <li>Faster interrupt response (check between elementary ops)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ ROW 8: Quick Reference & Key Terms ═══════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 20: Key Formulas & Rules -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Key Formulas, Rules & Numbers</h3></div>
+    <div class="card-body">
+      <div class="label">Register Windows</div>
+      <div class="formula">N windows → hold N−1 procedure activations
+SPARC K windows → N = 8K + 8 physical registers
+  (8 globals + K windows × 24 window regs)
+Berkeley RISC: 8 windows × 16 regs = 128 physical
+Pyramid:       16 windows × 32 regs = 512 physical</div>
+      <div class="label">Pipeline Execution Time</div>
+      <div class="formula">Sequential:   T = 2N + D  stages
+2-stage pipe: T ≈ N + D   (+ wait states for single-port mem)
+3-stage pipe: T ≈ N + branch_penalties
+4-stage pipe: T ≈ N/4 + data_dep + branch penalties
+  where N = # instructions, D = # memory accesses</div>
+      <div class="label">Graph Coloring Register Allocation</div>
+      <div class="rule">n colors needed ≈ n physical registers needed
+If graph is n-colorable: all vars fit in registers
+Uncolorable nodes → spilled to memory (load/store)</div>
+      <div class="label">Empirical Results</div>
+      <div class="rule">98% procedures: &lt; 6 arguments  [TANE78]
+92% procedures: &lt; 6 local scalars
+55% operand refs are scalar variables
+80%+ scalars are local to current procedure
+With 8 windows: save/restore on only ~1% of calls [TAMI83]
+Delay slot filled: 70–90% of branches [PATT82a, RADI83]
+Little benefit from &gt;64 regs (simple opt) / &gt;32 regs (good opt)</div>
+    </div>
+  </div>
+
+  <!-- Card 21: Key Terms Glossary -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms & Glossary</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td><code>RISC</code></td><td>Reduced Instruction Set Computer — architecture emphasizing simple instructions, large register file, and pipeline optimization</td></tr>
+        <tr><td><code>CISC</code></td><td>Complex Instruction Set Computer — architecture with rich instruction set, complex addressing, variable-length instructions, microprogrammed control</td></tr>
+        <tr><td><code>Semantic Gap</code></td><td>Difference between HLL operations and machine instruction operations; CISC tries to close it, RISC ignores it</td></tr>
+        <tr><td><code>Register Window</code></td><td>A subset of physical registers visible to one procedure; windows overlap for parameter passing</td></tr>
+        <tr><td><code>CWP</code></td><td>Current Window Pointer — identifies which register window is active</td></tr>
+        <tr><td><code>SWP / WIM</code></td><td>Saved Window Pointer (RISC I) / Window Invalid Mask (SPARC) — identifies windows saved to memory</td></tr>
+        <tr><td><code>Graph Coloring</code></td><td>Compiler technique mapping symbolic registers to physical registers by coloring a register interference graph</td></tr>
+        <tr><td><code>Delayed Branch</code></td><td>Branch whose effect is deferred until after the next instruction (delay slot); compiler fills slot with useful work</td></tr>
+        <tr><td><code>Delay Slot</code></td><td>The instruction position immediately following a branch instruction; always executed (unless annul bit set)</td></tr>
+        <tr><td><code>Delayed Load</code></td><td>Processor locks target register of LOAD; continues execution; idles only when locked register is needed</td></tr>
+        <tr><td><code>Loop Unrolling</code></td><td>Replicating loop body u times; reduces branch overhead, increases instruction parallelism</td></tr>
+        <tr><td><code>Load/Store Arch</code></td><td>All computation on registers; memory accessed only via explicit LOAD/STORE instructions</td></tr>
+        <tr><td><code>SPARC</code></td><td>Scalable Processor Architecture (Sun Microsystems) — commercial RISC based on Berkeley RISC I, uses register windows</td></tr>
+        <tr><td><code>Annul Bit</code></td><td>SPARC branch flag: if set, instruction in delay slot is annulled when branch is not taken</td></tr>
+        <tr><td><code>Superpipeline</code></td><td>Pipeline with many fine-grained stages advancing at multiple cycles per clock (e.g., MIPS R4000: 8 stages, 2 stages/cycle)</td></tr>
+        <tr><td><code>Register Spilling</code></td><td>Storing a symbolic register's value to memory when physical registers are exhausted during compilation</td></tr>
+        <tr><td><code>Hardwired Control</code></td><td>Control unit implemented directly in logic (no microcode); faster for simple instructions</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 22: Common Exam Topics & Tricky Points -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Exam Topics & Tricky Points</h3></div>
+    <div class="card-body">
+      <div class="warn">
+        <div class="w-title">Why temporary registers aren't saved on window overflow</div>
+        The temporary registers of procedure A are <em>physically identical</em> to the parameter registers of procedure B. If B saves its in-registers (which are A's temporaries), those values are preserved by B — A doesn't need to save them separately.
+      </div>
+      <div class="note">
+        <div class="n-title">N windows ≠ N procedure depths</div>
+        An N-window file can hold only <strong>N−1</strong> activations. The Nth window overlaps with the oldest, causing overflow when it would be overwritten.
+      </div>
+      <div class="info">
+        <div class="i-title">Why delayed branch works for unconditional but not blindly for conditional</div>
+        Unconditional branches always jump → instruction before branch can always go in delay slot. Conditional branches may or may not jump → instruction moved to delay slot must not depend on (or modify) the condition being tested.
+      </div>
+      <div class="tip">
+        <div class="t-title">RISC pipeline efficiency formula trap</div>
+        "Sequential: 2N + D" counts 2 cycles per instruction (fetch + execute) plus D extra cycles for memory data access. Pipelined versions overlap these, but data dependencies and branches subtract from ideal speedup.
+      </div>
+      <div class="warn">
+        <div class="w-title">CISC code size advantage overstated</div>
+        Studies show RISC code size is comparable to or only slightly larger than CISC. Key reason: CISC uses longer opcodes (more instructions → more opcode bits), and RISC favors register ops (fewer bits than memory addresses).
+      </div>
+      <div class="note">
+        <div class="n-title">SPARC r0 = 0 synthesis tricks</div>
+        <code>MOV src, dst</code> → <code>OR src, %r0, dst</code><br>
+        <code>CLR dst</code> → <code>OR %r0, %r0, dst</code><br>
+        <code>NEG dst</code> → <code>SUB %r0, src, dst</code><br>
+        <code>COMPARE s1, s2</code> → <code>SUBcc s1, s2, %r0</code> (set flags, discard result)
+      </div>
+      <div class="tip">
+        <div class="t-title">MIPS: no condition codes → no special pipeline logic</div>
+        Conditions stored in GP registers means the same dependency-tracking hardware used for data dependencies handles condition values automatically. No special condition-code forwarding needed.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<div class="footer">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← Back to Menu</a>
+  <span>Computer Organization and Architecture · Stallings 10th Ed · Chapter 15 · §15.1–15.8 · Pages 535–574</span>
+  <span>22 cards · RISC, Register Windows, Pipelining, MIPS R4000, SPARC</span>
+</div>
+
+</body>
+</html>

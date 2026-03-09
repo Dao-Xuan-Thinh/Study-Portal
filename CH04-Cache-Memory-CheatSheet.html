@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH04 – Cache Memory</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;--accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent5);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent5);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent5);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;} .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;} .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;} ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;} ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent5);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;} .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .addr-box{display:flex;gap:2px;margin:8px 0;}
+  .addr-seg{padding:5px 8px;border-radius:3px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;text-align:center;}
+  .seg-tag{background:rgba(247,129,102,0.2);border:1px solid rgba(247,129,102,0.5);color:var(--accent3);}
+  .seg-line{background:rgba(88,166,255,0.2);border:1px solid rgba(88,166,255,0.5);color:var(--accent);}
+  .seg-set{background:rgba(63,185,80,0.2);border:1px solid rgba(63,185,80,0.5);color:var(--accent2);}
+  .seg-word{background:rgba(227,179,65,0.2);border:1px solid rgba(227,179,65,0.5);color:var(--yellow);}
+  .addr-label{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-dim);text-align:center;margin-top:2px;}
+  .hier-row{display:flex;align-items:center;gap:8px;padding:5px 8px;border-radius:4px;margin-bottom:4px;}
+  .hier-name{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;min-width:100px;}
+  .hier-bar-wrap{flex:1;background:var(--surface2);border-radius:2px;height:10px;overflow:hidden;}
+  .hier-bar{height:10px;border-radius:2px;}
+  .hier-meta{font-size:10px;color:var(--text-muted);min-width:160px;text-align:right;font-family:'IBM Plex Mono',monospace;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>Cache Memory — Chapter 4</h1>
+    <h2>Computer Organization and Architecture, 10th Edition · William Stallings</h2>
+    <div style="margin-top:10px;" class="toc">
+      <span class="toc-item">§4.1 Memory Overview</span>
+      <span class="toc-item">§4.2 Cache Principles</span>
+      <span class="toc-item">§4.3 Cache Design (8 Elements)</span>
+      <span class="toc-item">§4.4 Pentium 4</span>
+      <span class="toc-item">§4A Two-Level Performance</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+    <span class="badge">COA10e · CH04</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);">Pages 120–164</span>
+  </div>
+</div>
+
+<!-- ROW 1: Memory Overview, Hierarchy, Locality -->
+<div class="grid">
+
+  <!-- Memory System Characteristics -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§4.1 Memory System Characteristics</h3></div>
+    <div class="card-body">
+      <div class="label">Key Characteristics (Table 4.1)</div>
+      <table class="tbl">
+        <tr><th>Characteristic</th><th>Values</th></tr>
+        <tr><td>Location</td><td>Internal (registers, cache, RAM) / External (disk, tape)</td></tr>
+        <tr><td>Capacity</td><td>Words or Bytes; block size for external</td></tr>
+        <tr><td>Unit of Transfer</td><td>Word (internal) / Block (external, larger)</td></tr>
+        <tr><td>Access Method</td><td>Sequential · Direct · Random · Associative</td></tr>
+        <tr><td>Performance</td><td>Access time · Cycle time · Transfer rate</td></tr>
+        <tr><td>Physical Type</td><td>Semiconductor · Magnetic · Optical</td></tr>
+        <tr><td>Characteristics</td><td>Volatile/Nonvolatile · Erasable/Nonerasable</td></tr>
+      </table>
+      <div class="label" style="margin-top:8px;">Performance Parameters</div>
+      <ul class="items">
+        <li><strong>Access time (latency):</strong> Time from address presented → data available</li>
+        <li><strong>Cycle time:</strong> Access time + recovery time before next access (system bus concern)</li>
+        <li><strong>Transfer rate:</strong> = 1/cycle time (random) or T<sub>n</sub> = T<sub>A</sub> + n/R (non-random)</li>
+      </ul>
+      <div class="formula">T_n = T_A + n/R
+// T_A = avg access time, n = bits, R = transfer rate (bps)</div>
+      <div class="label">Access Methods Compared</div>
+      <ul class="items">
+        <li><strong>Sequential:</strong> Linear order only (tape); variable time</li>
+        <li><strong>Direct:</strong> Shared R/W + direct to vicinity + sequential search (disk)</li>
+        <li><strong>Random:</strong> Any location independently; constant time (RAM, some cache)</li>
+        <li><strong>Associative:</strong> Match on content, not address; simultaneous all-word compare (cache)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Memory Hierarchy -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§4.1 Memory Hierarchy</h3></div>
+    <div class="card-body">
+      <div class="label">Design Constraint Triangle</div>
+      <div class="info"><div class="i-title">The Three Questions</div>How much? · How fast? · How expensive?<br>No single technology optimally satisfies all three — hence the <strong>hierarchy</strong>.</div>
+      <div class="label">Hierarchy Trade-offs (going down)</div>
+      <table class="tbl">
+        <tr><th>Property</th><th>Direction ↓ the Hierarchy</th></tr>
+        <tr><td>Cost per bit</td><td>Decreasing ↓</td></tr>
+        <tr><td>Capacity</td><td>Increasing ↑</td></tr>
+        <tr><td>Access time</td><td>Increasing (slower) ↑</td></tr>
+        <tr><td>Processor access frequency</td><td>Decreasing ↓</td></tr>
+      </table>
+      <div class="label">Hierarchy Levels (fast → slow)</div>
+      <div class="hier-row" style="background:rgba(88,166,255,0.08);">
+        <span class="hier-name" style="color:var(--accent);">Registers</span>
+        <div class="hier-bar-wrap"><div class="hier-bar" style="width:8%;background:var(--accent);"></div></div>
+        <span class="hier-meta">Dozens–hundreds · &lt;1 ns · on-chip</span>
+      </div>
+      <div class="hier-row" style="background:rgba(255,166,87,0.08);">
+        <span class="hier-name" style="color:var(--accent5);">Cache (L1/L2/L3)</span>
+        <div class="hier-bar-wrap"><div class="hier-bar" style="width:20%;background:var(--accent5);"></div></div>
+        <span class="hier-meta">8 kB–96 MB · 1–30 ns · SRAM</span>
+      </div>
+      <div class="hier-row" style="background:rgba(63,185,80,0.08);">
+        <span class="hier-name" style="color:var(--accent2);">Main Memory</span>
+        <div class="hier-bar-wrap"><div class="hier-bar" style="width:55%;background:var(--accent2);"></div></div>
+        <span class="hier-meta">GBs · 50–100 ns · DRAM</span>
+      </div>
+      <div class="hier-row" style="background:rgba(210,168,255,0.08);">
+        <span class="hier-name" style="color:var(--accent4);">Magnetic Disk</span>
+        <div class="hier-bar-wrap"><div class="hier-bar" style="width:85%;background:var(--accent4);"></div></div>
+        <span class="hier-meta">TBs · ms range · nonvolatile</span>
+      </div>
+      <div class="hier-row" style="background:rgba(247,129,102,0.08);">
+        <span class="hier-name" style="color:var(--accent3);">Tape / Optical</span>
+        <div class="hier-bar-wrap"><div class="hier-bar" style="width:100%;background:var(--accent3);"></div></div>
+        <span class="hier-meta">TBs–PBs · seconds · off-line</span>
+      </div>
+      <div class="tip"><div class="t-title">Key Insight</div>The hierarchy works because of <strong>locality of reference</strong> — the processor accesses lower levels far less frequently, making small fast upper levels sufficient.</div>
+    </div>
+  </div>
+
+  <!-- Locality of Reference -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§4.1 Locality of Reference</h3></div>
+    <div class="card-body">
+      <div class="info"><div class="i-title">Definition (Denning, 1968)</div>Memory references by the processor tend to <strong>cluster</strong>. Over a short period, the processor works with fixed clusters; over a long period, clusters change.</div>
+      <div class="label">Two Types of Locality</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Definition</th><th>Exploited By</th></tr>
+        <tr><td style="color:var(--accent);">Temporal</td><td>Recently accessed locations likely accessed again soon</td><td>Keep in cache (LRU, etc.)</td></tr>
+        <tr><td style="color:var(--accent2);">Spatial</td><td>Locations near a referenced location likely accessed soon</td><td>Larger cache lines; prefetching</td></tr>
+      </table>
+      <div class="label">Why Locality Exists</div>
+      <ul class="items">
+        <li>Sequential execution: next instruction follows last (except branches/calls)</li>
+        <li>Iterative loops: small instruction set repeated many times</li>
+        <li>Subroutines: program stays in narrow procedure-invocation depth</li>
+        <li>Data structures: arrays and tables accessed in clustered fashion</li>
+      </ul>
+      <div class="label">Example: Two-Level Memory (Example 4.1)</div>
+      <div class="note"><div class="n-title">Worked Example</div>
+        L1: 1000 words, T₁ = 0.01 ms &nbsp;|&nbsp; L2: 100,000 words, T₂ = 0.1 ms<br>
+        Hit ratio H = 0.95:<br>
+        T<sub>avg</sub> = 0.95×0.01 + 0.05×(0.01+0.1) = 0.0095 + 0.0055 = <strong>0.015 ms</strong><br>
+        ≈ 7× closer to L1 speed than L2 speed
+      </div>
+      <div class="label">Disk Cache Benefits</div>
+      <ul class="items">
+        <li>Clusters disk writes → fewer large transfers → better disk performance</li>
+        <li>Data pending write-out retrieved from software cache at memory speed</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- end row 1 -->
+
+<!-- ROW 2: Cache Principles + Hit/Miss + Operation -->
+<div class="grid section-gap">
+
+  <!-- Cache Memory Principles -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§4.2 Cache Memory Principles</h3></div>
+    <div class="card-body">
+      <div class="info"><div class="i-title">Core Concept</div>Cache combines <strong>access time</strong> of expensive fast memory with the <strong>large size</strong> of slower cheap memory. Small fast cache holds copies of recently used main memory blocks.</div>
+      <div class="label">Structure Terminology</div>
+      <table class="tbl">
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td style="color:var(--accent4);">Block</td><td>Fixed-size unit of main memory (K words); M = 2ⁿ/K total blocks</td></tr>
+        <tr><td style="color:var(--accent);">Line</td><td>Cache storage unit; holds K words of data + tag + control bits</td></tr>
+        <tr><td style="color:var(--accent3);">Tag</td><td>Portion of memory address identifying which block occupies a line</td></tr>
+        <tr><td style="color:var(--accent5);">Line size</td><td>Length of line excluding tag and control bits</td></tr>
+        <tr><td style="color:var(--accent2);">Dirty bit</td><td>Control bit; 1 = line modified since loaded (write-back)</td></tr>
+      </table>
+      <div class="label">Cache Read Operation Flow</div>
+      <ol class="steps">
+        <li>CPU generates Read Address (RA)</li>
+        <li>Check if block containing RA is in cache</li>
+        <li><strong>HIT:</strong> Deliver word directly to CPU (cache-speed access)</li>
+        <li><strong>MISS:</strong> Access main memory → load block into cache line</li>
+        <li>Deliver word from cache line to CPU</li>
+      </ol>
+      <div class="tip"><div class="t-title">Hardware Transparency</div>Cache is <strong>invisible</strong> to programmer and typically to the OS. It is a hardware staging device between main memory and processor registers.</div>
+      <div class="label">Cache Hit Organization</div>
+      <p style="font-size:11px;">On HIT: data/address buffers disabled; communication only between CPU and cache — <strong>no system bus traffic</strong>. On MISS: address put on bus, data returned through data buffer to both cache and CPU.</p>
+    </div>
+  </div>
+
+  <!-- Hit Ratio & Access Time Formulas -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>§4.2 Hit Ratio &amp; Access Time</h3></div>
+    <div class="card-body">
+      <div class="label">Key Definitions</div>
+      <table class="tbl">
+        <tr><th>Symbol</th><th>Meaning</th></tr>
+        <tr><td style="color:var(--yellow);">H</td><td>Hit ratio = fraction of accesses found in cache (M1)</td></tr>
+        <tr><td style="color:var(--yellow);">(1–H)</td><td>Miss ratio = fraction not found in cache</td></tr>
+        <tr><td style="color:var(--yellow);">T₁ = T_c</td><td>Cache access time</td></tr>
+        <tr><td style="color:var(--yellow);">T₂ = T_m</td><td>Main memory access time</td></tr>
+        <tr><td style="color:var(--yellow);">T_s</td><td>Average (system) access time</td></tr>
+      </table>
+      <div class="label">Primary Formula — Simultaneous Load (Eq. 4.2)</div>
+      <div class="formula">T_s = H·T₁ + (1-H)·(T₁ + T₂)
+    = T₁ + (1-H)·T₂
+
+// Assumes miss → T₁ + T₂ (load to cache then deliver)</div>
+      <div class="label">Alternative Form — Sequential Load</div>
+      <div class="formula">T_avg = h·T_c + (1-h)·T_m
+
+// Some texts omit T_c on miss (assumes re-execute)
+// T_avg = T_c + (1-H)·T_m  [Eq. 4.2 variant, Prob 4.26]</div>
+      <div class="label">Access Efficiency (Eq. 4.4)</div>
+      <div class="formula">T₁/T_s = 1 / [1 + (1-H)·(T₂/T₁)]
+
+// r = T₂/T₁; on-chip cache: r ≈ 25–50
+// off-chip L2 cache: r ≈ 5–15
+// disk vs main memory: r ≈ 1000</div>
+      <div class="note"><div class="n-title">Performance Target</div>For T_s ≈ T₁, need hit ratio H close to 1. With r = T₂/T₁ = 25–50 (typical on-chip), need H ≥ ~0.9 for good efficiency.</div>
+      <div class="label">Cost Formula (Eq. 4.3)</div>
+      <div class="formula">C_s = (C₁·S₁ + C₂·S₂) / (S₁ + S₂)
+
+// C_s ≈ C₂ requires S₁ &lt;&lt; S₂
+// Works because locality → high H with small S₁</div>
+      <div class="label">Two-Level Cache (Problem 4.27)</div>
+      <div class="formula">T_a = H₁·T_c1 + (1-H₁)·H₂·T_c2 + (1-H₁)·(1-H₂)·T_m
+// H₁ = L1 hit ratio, H₂ = combined L1+L2 hit ratio</div>
+    </div>
+  </div>
+
+  <!-- Cache Design Elements Overview -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§4.3 Eight Elements of Cache Design</h3></div>
+    <div class="card-body">
+      <div class="label">Table 4.2 — Complete Design Elements</div>
+      <table class="tbl">
+        <tr><th>#</th><th>Element</th><th>Options</th></tr>
+        <tr><td style="color:var(--accent5);">1</td><td>Cache Addresses</td><td>Logical (virtual) / Physical</td></tr>
+        <tr><td style="color:var(--accent5);">2</td><td>Cache Size</td><td>Balance: cost vs. performance</td></tr>
+        <tr><td style="color:var(--accent5);">3</td><td>Mapping Function</td><td>Direct / Associative / Set-Associative</td></tr>
+        <tr><td style="color:var(--accent5);">4</td><td>Replacement Algorithm</td><td>LRU / FIFO / LFU / Random</td></tr>
+        <tr><td style="color:var(--accent5);">5</td><td>Write Policy</td><td>Write-Through / Write-Back</td></tr>
+        <tr><td style="color:var(--accent5);">6</td><td>Line Size</td><td>8–128 bytes typical</td></tr>
+        <tr><td style="color:var(--accent5);">7</td><td>Number of Caches</td><td>L1/L2/L3; Single vs. two-level</td></tr>
+        <tr><td style="color:var(--accent5);">8</td><td>Unified vs. Split</td><td>Unified I+D / Split I-cache + D-cache</td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="label">Cache Addresses: Logical vs Physical</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Location</th><th>Advantage</th><th>Disadvantage</th></tr>
+        <tr><td style="color:var(--accent);">Logical (Virtual)</td><td>Between CPU and MMU</td><td>Faster — no MMU translation first</td><td>Must flush on context switch; or add virtual space ID bits</td></tr>
+        <tr><td style="color:var(--accent2);">Physical</td><td>Between MMU and RAM</td><td>No coherency issue across processes</td><td>Slower — must translate address first</td></tr>
+      </table>
+      <div class="label">Cache Size Considerations</div>
+      <ul class="items">
+        <li>Large enough: avg access time ≈ cache speed</li>
+        <li>Small enough: avg cost/bit ≈ main memory cost</li>
+        <li>Larger cache → more gates → slightly slower (same tech)</li>
+        <li>Beyond ~32 kB: diminishing returns on hit ratio improvement</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- end row 2 -->
+
+<!-- ROW 3: Three Mapping Functions -->
+<div class="grid section-gap">
+
+  <!-- Direct Mapping -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§4.3 Direct Mapping</h3></div>
+    <div class="card-body">
+      <div class="info"><div class="i-title">Core Rule</div>Each main memory block maps to <strong>exactly one</strong> cache line. Simplest and cheapest to implement.</div>
+      <div class="label">Mapping Formula</div>
+      <div class="rule">i = j  mod  m
+// i = cache line number
+// j = main memory block number
+// m = number of lines in cache</div>
+      <div class="label">Address Structure (s+w bits total)</div>
+      <div class="addr-box">
+        <div style="flex:2;">
+          <div class="addr-seg seg-tag">TAG (s−r bits)</div>
+          <div class="addr-label">Most significant</div>
+        </div>
+        <div style="flex:2;">
+          <div class="addr-seg seg-line">LINE (r bits)</div>
+          <div class="addr-label">Identifies cache line</div>
+        </div>
+        <div style="flex:1;">
+          <div class="addr-seg seg-word">WORD (w bits)</div>
+          <div class="addr-label">Offset in block</div>
+        </div>
+      </div>
+      <div class="label">Parameter Summary</div>
+      <div class="formula">Address length    = s + w  bits
+Addressable units = 2^(s+w) words/bytes
+Block/line size   = 2^w words/bytes
+Blocks in memory  = 2^s
+Lines in cache    = m = 2^r
+Cache size        = 2^(r+w) words/bytes
+Tag size          = s − r  bits</div>
+      <div class="label">Worked Example (Fig 4.10) — 24-bit address, 64kB cache, 4B blocks</div>
+      <div class="note"><div class="n-title">Example 4.2a</div>
+        Cache: 16K = 2¹⁴ lines (r=14), block=4B (w=2), memory=16MB (24-bit addr, s=22)<br>
+        <strong>Tag = 8 bits</strong> (s−r = 22−14), <strong>Line = 14 bits</strong>, <strong>Word = 2 bits</strong><br>
+        Address <code>16339C</code>: Tag=<code>16</code> (hex), Line=<code>0CE7</code>, Word=<code>0</code><br>
+        Line 0 holds blocks: <code>000000</code>, <code>010000</code>, …, <code>FF0000</code>
+      </div>
+      <div class="warn"><div class="w-title">Disadvantage: Thrashing</div>If two heavily-used blocks map to the same line, they are continually swapped → low hit ratio. Fixed mapping = no flexibility.</div>
+    </div>
+  </div>
+
+  <!-- Associative Mapping -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§4.3 Associative (Fully) Mapping</h3></div>
+    <div class="card-body">
+      <div class="info"><div class="i-title">Core Rule</div>Any main memory block can be loaded into <strong>any</strong> cache line. Maximum flexibility; hardware-expensive (parallel tag search).</div>
+      <div class="label">Address Structure (s+w bits total)</div>
+      <div class="addr-box">
+        <div style="flex:4;">
+          <div class="addr-seg seg-tag">TAG (s bits)</div>
+          <div class="addr-label">Uniquely identifies memory block</div>
+        </div>
+        <div style="flex:1;">
+          <div class="addr-seg seg-word">WORD (w bits)</div>
+          <div class="addr-label">Offset in block</div>
+        </div>
+      </div>
+      <div class="tip"><div class="t-title">Key Difference</div>No LINE field — cache logic must <strong>simultaneously examine every line's tag</strong> for a match (content-addressable memory / CAM).</div>
+      <div class="label">Parameter Summary</div>
+      <div class="formula">Address length    = s + w  bits
+Addressable units = 2^(s+w) words/bytes
+Block/line size   = 2^w words/bytes
+Blocks in memory  = 2^s
+Lines in cache    = undetermined (no address field)
+Tag size          = s  bits</div>
+      <div class="label">Worked Example (Fig 4.12) — same 24-bit system</div>
+      <div class="note"><div class="n-title">Example 4.2b</div>
+        Same system: 16MB memory (24-bit), 4B blocks (w=2), so s=22<br>
+        <strong>Tag = 22 bits</strong>, <strong>Word = 2 bits</strong><br>
+        Address <code>16339C</code>: binary <code>0001 0110 0011 0011 1001 1100</code><br>
+        Tag (22 MSBs) = <code>058CE7</code> hex, Word = <code>0</code><br>
+        Any line can hold this block — no line field needed.
+      </div>
+      <div class="warn"><div class="w-title">Disadvantage: Complex Hardware</div>All cache line tags must be compared in parallel. Requires CAM (Content Addressable Memory) — expensive for large caches. Full replacement flexibility available.</div>
+    </div>
+  </div>
+
+  <!-- Set-Associative Mapping -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§4.3 Set-Associative Mapping</h3></div>
+    <div class="card-body">
+      <div class="info"><div class="i-title">Core Rule</div>Cache divided into <strong>v sets</strong>, each with <strong>k lines</strong>. Block maps to a specific <em>set</em> (direct), but can go into <em>any line within that set</em> (associative). Best of both worlds.</div>
+      <div class="label">Mapping Formulas</div>
+      <div class="rule">m = v × k   (total lines = sets × lines-per-set)
+i = j  mod  v   (set number for block j)
+// i = cache set number,  j = main memory block number
+// m = total lines,  v = sets,  k = ways (lines/set)</div>
+      <div class="label">Address Structure (s+w bits total)</div>
+      <div class="addr-box">
+        <div style="flex:2;">
+          <div class="addr-seg seg-tag">TAG (s−d bits)</div>
+          <div class="addr-label">Identifies block within set</div>
+        </div>
+        <div style="flex:2;">
+          <div class="addr-seg seg-set">SET (d bits)</div>
+          <div class="addr-label">v = 2^d sets</div>
+        </div>
+        <div style="flex:1;">
+          <div class="addr-seg seg-word">WORD (w bits)</div>
+          <div class="addr-label">Offset</div>
+        </div>
+      </div>
+      <div class="label">Parameter Summary</div>
+      <div class="formula">Address length    = s + w  bits
+Block/line size   = 2^w words/bytes
+Blocks in memory  = 2^s
+Lines per set     = k (ways)
+Number of sets    = v = 2^d
+Total cache lines = m = k × 2^d
+Cache size        = k × 2^(d+w) words/bytes
+Tag size          = s − d  bits</div>
+      <div class="label">Worked Example (Fig 4.15) — 2-Way Set-Associative</div>
+      <div class="note"><div class="n-title">Example 4.2c</div>
+        Same system: 24-bit addr, 4B blocks (w=2), 16K lines, k=2 ways<br>
+        v = 16K/2 = 8192 = 2¹³ sets → d=13, Tag = 24−13−2 = <strong>9 bits</strong><br>
+        Address structure: <strong>[9-bit Tag | 13-bit Set | 2-bit Word]</strong><br>
+        Set 0 holds any of: blocks <code>000000</code>, <code>008000</code>, …, <code>FF8000</code><br>
+        Both lines in set examined in parallel for tag match.
+      </div>
+      <div class="label">Special Cases</div>
+      <table class="tbl">
+        <tr><th>v</th><th>k</th><th>Result</th></tr>
+        <tr><td>m (= total lines)</td><td>1</td><td>Direct mapping</td></tr>
+        <tr><td>1</td><td>m</td><td>Fully associative</td></tr>
+        <tr><td>m/2</td><td>2</td><td>2-way (most common)</td></tr>
+        <tr><td>m/4</td><td>4</td><td>4-way (modest improvement)</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end row 3 -->
+
+<!-- ROW 4: Mapping Comparison + Replacement + Write Policy -->
+<div class="grid section-gap">
+
+  <!-- Mapping Comparison Table -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>§4.3 Mapping Function Comparison</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Property</th><th>Direct</th><th>Associative</th><th>Set-Assoc</th></tr>
+        <tr><td>Block → Lines</td><td>1 specific line</td><td>Any line</td><td>Any line in set</td></tr>
+        <tr><td>Address fields</td><td>Tag+Line+Word</td><td>Tag+Word</td><td>Tag+Set+Word</td></tr>
+        <tr><td>Tag size</td><td>s−r bits (smaller)</td><td>s bits (largest)</td><td>s−d bits</td></tr>
+        <tr><td>Tag compare</td><td>One line only</td><td>All lines parallel</td><td>k lines in set</td></tr>
+        <tr><td>Hardware cost</td><td>Lowest</td><td>Highest (CAM)</td><td>Moderate</td></tr>
+        <tr><td>Flexibility</td><td>None</td><td>Full</td><td>Within set</td></tr>
+        <tr><td>Thrashing risk</td><td>High</td><td>None (algo choice)</td><td>Reduced</td></tr>
+        <tr><td>Typical use</td><td>Simple/old designs</td><td>TLBs, small caches</td><td>Modern L1/L2/L3</td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="label">Hit Ratio vs Associativity (GCC Simulation, Fig 4.16)</div>
+      <ul class="items">
+        <li>Direct → 2-way: <strong>significant improvement</strong> up to 64kB cache size</li>
+        <li>2-way → 4-way: modest additional improvement (most pronounced at 4kB)</li>
+        <li>Beyond 4-way: diminishing returns; better to increase cache size</li>
+        <li>Beyond ~32kB cache: increasing size yields no significant performance gain</li>
+      </ul>
+      <div class="label">Victim Cache (Reducing Direct-Map Conflicts)</div>
+      <p style="font-size:11px;">Small fully-associative cache (4–16 lines) between direct-mapped L1 and next memory level. Stores recently evicted lines for fast re-use. Reduces conflict misses without full associativity overhead.</p>
+    </div>
+  </div>
+
+  <!-- Replacement Algorithms -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§4.3 Replacement Algorithms</h3></div>
+    <div class="card-body">
+      <div class="note"><div class="n-title">Applies To</div>Only needed for <strong>associative</strong> and <strong>set-associative</strong> caches. Direct mapping has only one possible destination — no choice.</div>
+      <div class="label">Four Common Algorithms</div>
+      <table class="tbl">
+        <tr><th>Algorithm</th><th>Rule</th><th>Implementation</th><th>Performance</th></tr>
+        <tr><td style="color:var(--accent);">LRU</td><td>Replace line least recently used (longest time with no reference)</td><td>USE bit per line (2-way); list of indexes (fully assoc)</td><td>Best (exploits temporal locality)</td></tr>
+        <tr><td style="color:var(--accent2);">FIFO</td><td>Replace line that has been in cache the longest</td><td>Round-robin / circular buffer</td><td>Good; simple</td></tr>
+        <tr><td style="color:var(--accent4);">LFU</td><td>Replace line with fewest references</td><td>Counter per line</td><td>Good; moderate complexity</td></tr>
+        <tr><td style="color:var(--accent3);">Random</td><td>Pick any candidate line at random</td><td>Trivial hardware</td><td>Only slightly worse than usage-based</td></tr>
+      </table>
+      <div class="label">LRU for 2-Way Set-Associative</div>
+      <div class="rule">Each line has a USE bit.
+On access to line A in set:  USE(A)=1, USE(other)=0
+On replacement: evict line with USE=0</div>
+      <div class="label">Intel 80486 Pseudo-LRU (4-way)</div>
+      <p style="font-size:11px;">3 bits (B0, B1, B2) per set of 4 lines (L0–L3):</p>
+      <ul class="items">
+        <li>B0: 0 → L0/L1 least recent, 1 → L2/L3 least recent</li>
+        <li>B1: used to choose within L0/L1</li>
+        <li>B2: used to choose within L2/L3</li>
+        <li>True LRU would need 6 bits (log₂(4!) = log₂(24) ≈ 4.6 → 6 bits)</li>
+      </ul>
+      <div class="tip"><div class="t-title">Implementation Note</div>LRU is most popular due to best hit ratio and relatively simple implementation. All algorithms must be hardware-implemented for speed.</div>
+    </div>
+  </div>
+
+  <!-- Write Policy -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§4.3 Write Policy</h3></div>
+    <div class="card-body">
+      <div class="label">The Two Write Policies</div>
+      <table class="tbl">
+        <tr><th>Policy</th><th>Mechanism</th><th>Pros</th><th>Cons</th></tr>
+        <tr>
+          <td style="color:var(--accent);">Write-Through</td>
+          <td>Every write goes to both cache AND main memory simultaneously</td>
+          <td>Main memory always valid; easy coherency; simple</td>
+          <td>High memory traffic; potential bus bottleneck</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent2);">Write-Back</td>
+          <td>Write only to cache; set <strong>dirty bit</strong>. Write to memory only on eviction (if dirty)</td>
+          <td>Minimizes memory writes; less bus traffic</td>
+          <td>Main memory may be stale; complex I/O; coherency issues</td>
+        </tr>
+      </table>
+      <div class="label">Write-Back Dirty Bit Logic</div>
+      <div class="rule">On write: set dirty_bit = 1 for that cache line
+On eviction: IF dirty_bit = 1 THEN write line back to memory
+              IF dirty_bit = 0 THEN discard (memory already valid)</div>
+      <div class="label">Example 4.3 — Write-Back Break-Even</div>
+      <div class="note"><div class="n-title">When is Write-Back Better?</div>
+        Line = 32 bytes = 8 words; write time/word = 30 ns<br>
+        Write-back eviction: 8 × 30 = <strong>240 ns</strong> (once per eviction)<br>
+        Write-through: 30 ns <strong>per update</strong><br>
+        Break-even: 240/30 = <strong>8 writes per line before eviction</strong><br>
+        → Write-back wins if avg writes per line &gt; 8
+      </div>
+      <div class="label">Cache Coherency Problem</div>
+      <p style="font-size:11px;">When multiple CPUs/I/O share memory, a write in one cache invalidates others.</p>
+      <div class="label">Coherency Solutions</div>
+      <ul class="items">
+        <li><strong>Bus watching (write-through):</strong> Controllers monitor bus writes and invalidate matching entries</li>
+        <li><strong>Hardware transparency:</strong> Writes propagate to all caches automatically</li>
+        <li><strong>Noncacheable memory:</strong> Shared memory excluded from caching (always misses)</li>
+      </ul>
+      <div class="tip"><div class="t-title">Write Frequency</div>Writes ≈ 15% of memory references (general); up to 33–50% for HPC (vector/matrix).</div>
+    </div>
+  </div>
+
+</div><!-- end row 4 -->
+
+<!-- ROW 5: Line Size + Number of Caches -->
+<div class="grid-2 section-gap">
+
+  <!-- Line Size -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§4.3 Line Size</h3></div>
+    <div class="card-body">
+      <div class="info"><div class="i-title">Design Trade-off</div>Larger lines exploit spatial locality but reduce the number of lines in the cache, which can hurt performance by evicting useful data.</div>
+      <div class="label">Effect of Block Size on Hit Ratio</div>
+      <ul class="items">
+        <li><strong>Small → medium size:</strong> Hit ratio ↑ (more spatial locality exploited)</li>
+        <li><strong>Very large size:</strong> Hit ratio ↓ (fewer blocks fit in cache; distant words unlikely needed)</li>
+        <li><strong>Two competing effects:</strong> (1) Fewer blocks → higher eviction rate; (2) Each word farther from reference → less likely needed</li>
+      </ul>
+      <div class="label">Practical Guidelines</div>
+      <table class="tbl">
+        <tr><th>System Type</th><th>Typical Line Size</th></tr>
+        <tr><td>General purpose</td><td>8 to 64 bytes (optimal range per studies)</td></tr>
+        <tr><td>HPC systems</td><td>64 and 128 bytes (most common)</td></tr>
+        <tr><td>Pentium 4 L1 D-cache</td><td>64 bytes</td></tr>
+        <tr><td>Pentium 4 L2/L3 cache</td><td>128 bytes</td></tr>
+      </table>
+      <div class="warn"><div class="w-title">No Universal Optimum</div>Optimal line size depends on locality characteristics of specific program workload. No single value is optimal for all applications.</div>
+      <div class="label">Miss Penalty with Block Transfer (Problem 4.28)</div>
+      <div class="formula">// First-word: T_first, each additional: T_each
+// Line = n words:
+Miss penalty (non-burst) = 1 + n × T_access
+Miss penalty (burst) = 1 + T_first + (n-1) × T_each</div>
+    </div>
+  </div>
+
+  <!-- Number of Caches: Multi-Level + Unified/Split -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§4.3 Number of Caches — Multi-Level &amp; Split</h3></div>
+    <div class="card-body">
+      <div class="grid-2">
+        <div>
+          <div class="label">Multi-Level Cache Rationale</div>
+          <ul class="items">
+            <li><strong>On-chip L1:</strong> Eliminates external bus for most accesses; fastest possible; internal data paths much shorter</li>
+            <li><strong>L2 (off/on-chip):</strong> Catches L1 misses before slow DRAM; SRAM matches bus speed (zero wait-state)</li>
+            <li><strong>L3:</strong> Added for large database applications; now on-chip in most modern CPUs</li>
+          </ul>
+          <div class="label">L2 Effectiveness Rule</div>
+          <div class="note"><div class="n-title">L2 Sizing</div>L2 must be <strong>at least 2× L1 size</strong> to significantly improve total hit ratio. If same size, contents mirror L1 — no benefit.</div>
+          <div class="label">Modern Hierarchy</div>
+          <table class="tbl">
+            <tr><th>Level</th><th>Location</th><th>Size Range</th></tr>
+            <tr><td style="color:var(--accent);">L1</td><td>On-chip</td><td>16–128 kB</td></tr>
+            <tr><td style="color:var(--accent2);">L2</td><td>On-chip (now)</td><td>256 kB–4 MB</td></tr>
+            <tr><td style="color:var(--accent4);">L3</td><td>On-chip (now)</td><td>4–96 MB</td></tr>
+            <tr><td style="color:var(--accent3);">L4</td><td>Multi-chip (IBM)</td><td>Shared</td></tr>
+          </table>
+        </div>
+        <div>
+          <div class="label">Unified vs. Split Cache</div>
+          <table class="tbl">
+            <tr><th>Type</th><th>Description</th><th>Advantage</th></tr>
+            <tr><td style="color:var(--yellow);">Unified</td><td>Single cache for both instructions and data</td><td>Higher hit rate (auto load-balancing); one design</td></tr>
+            <tr><td style="color:var(--accent2);">Split (Harvard)</td><td>Separate I-cache and D-cache at same level</td><td>Eliminates contention between fetch/decode and execute units</td></tr>
+          </table>
+          <div class="tip"><div class="t-title">Modern Trend</div>Split caches at L1 (eliminates pipeline stalls); unified caches at L2/L3. Critical for superscalar/pipelined designs that prefetch instructions while executing data operations simultaneously.</div>
+          <div class="label">Contention Problem (Unified L1)</div>
+          <p style="font-size:11px;">When instruction prefetcher and execution unit simultaneously request cache access, prefetcher is stalled → pipeline stall → performance loss. Split cache eliminates this entirely.</p>
+          <div class="label">Intel Cache Evolution (Table 4.4)</div>
+          <ul class="items">
+            <li><strong>386:</strong> External cache only (off-chip)</li>
+            <li><strong>486:</strong> On-chip L1 (8kB unified) + external L2</li>
+            <li><strong>Pentium:</strong> Split L1 (I+D) to eliminate contention</li>
+            <li><strong>Pentium Pro:</strong> Backside bus for L2 (dedicated, faster)</li>
+            <li><strong>Pentium II:</strong> L2 moved on-chip</li>
+            <li><strong>Pentium III:</strong> External L3 added</li>
+            <li><strong>Pentium 4:</strong> L3 moved on-chip</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end row 5 -->
+
+<!-- ROW 6: Pentium 4 + Selected Processor Table -->
+<div class="grid section-gap">
+
+  <!-- Pentium 4 Cache -->
+  <div class="card red col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>§4.4 Pentium 4 Cache Organization</h3></div>
+    <div class="card-body">
+      <div class="grid-2">
+        <div>
+          <div class="label">Cache Specifications</div>
+          <table class="tbl">
+            <tr><th>Cache</th><th>Size</th><th>Line Size</th><th>Associativity</th><th>Type</th></tr>
+            <tr><td style="color:var(--accent3);">L1 I-cache</td><td>12K micro-ops</td><td>—</td><td>—</td><td>Micro-operation trace cache</td></tr>
+            <tr><td style="color:var(--accent);">L1 D-cache</td><td>16 kB</td><td>64 bytes</td><td>4-way set-assoc</td><td>Write-back</td></tr>
+            <tr><td style="color:var(--accent2);">L2 Cache</td><td>512 kB</td><td>128 bytes</td><td>8-way set-assoc</td><td>Unified</td></tr>
+            <tr><td style="color:var(--accent4);">L3 Cache</td><td>1 MB (EE)</td><td>128 bytes</td><td>8-way set-assoc</td><td>Unified, on-chip</td></tr>
+          </table>
+          <div class="label">Unique: Instruction Trace Cache</div>
+          <div class="info"><div class="i-title">P4 Innovation</div>Unlike all previous designs, the P4 instruction cache sits <strong>after</strong> the decode logic — it stores decoded <strong>micro-operations</strong>, not raw x86 instructions. Decoding is done separately, enabling better superscalar scheduling. 256-bit interface to execution units.</div>
+          <div class="label">L1 Data Cache Control Bits (Table 4.5)</div>
+          <table class="tbl">
+            <tr><th>CD</th><th>NW</th><th>Cache Fills</th><th>Write-Throughs</th><th>Invalidates</th></tr>
+            <tr><td>0</td><td>0</td><td>Enabled</td><td>Enabled</td><td>Enabled</td></tr>
+            <tr><td>1</td><td>0</td><td>Disabled</td><td>Enabled</td><td>Enabled</td></tr>
+            <tr><td>1</td><td>1</td><td>Disabled</td><td>Disabled</td><td>Disabled</td></tr>
+            <tr><td colspan="5" style="color:var(--accent3);">CD=0, NW=1 is an invalid combination</td></tr>
+          </table>
+        </div>
+        <div>
+          <div class="label">Processor Core Components</div>
+          <ul class="items">
+            <li><strong>Fetch/Decode unit:</strong> Fetches instructions from L2, decodes to micro-ops, stores in L1 I-cache</li>
+            <li><strong>Out-of-order execution logic:</strong> Schedules micro-ops based on data dependencies; speculative execution</li>
+            <li><strong>Execution units:</strong> Execute micro-ops using L1 D-cache; results in registers</li>
+            <li><strong>Memory subsystem:</strong> L2 + L3 caches + system bus (64-bit) for L1/L2 misses and I/O</li>
+          </ul>
+          <div class="label">Write Policy</div>
+          <div class="tip"><div class="t-title">Default: Write-Back</div>Data written to main memory only on eviction when dirty. Can be dynamically configured to write-through via control registers (CD/NW bits).</div>
+          <div class="label">Special Cache Instructions</div>
+          <ul class="items">
+            <li><code>INVD</code> — Invalidate (flush) internal cache; signal external cache to invalidate</li>
+            <li><code>WBINVD</code> — Write-back then invalidate internal; write-back then invalidate external</li>
+          </ul>
+          <div class="label">Data Path Widths</div>
+          <ul class="items">
+            <li>L1 D-cache ↔ Execution units: <strong>256-bit</strong> internal bus</li>
+            <li>System bus (main memory): <strong>64-bit</strong></li>
+            <li>Both L2 and L3 are eight-way set-associative, 128-byte lines</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected Processors Cache Sizes -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§4.3 Cache Sizes — Selected Processors</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Processor</th><th>Year</th><th>L1</th><th>L2</th><th>L3</th></tr>
+        <tr><td>IBM 360/85</td><td>1968</td><td>16–32 kB</td><td>—</td><td>—</td></tr>
+        <tr><td>Intel 80486</td><td>1989</td><td>8 kB</td><td>—</td><td>—</td></tr>
+        <tr><td>Pentium</td><td>1993</td><td>8/8 kB</td><td>256–512 kB</td><td>—</td></tr>
+        <tr><td>Pentium 4</td><td>2000</td><td>8/8 kB</td><td>256 kB</td><td>—</td></tr>
+        <tr><td>Itanium 2</td><td>2002</td><td>32 kB</td><td>256 kB</td><td>6 MB</td></tr>
+        <tr><td>IBM POWER5</td><td>2003</td><td>64 kB</td><td>1.9 MB</td><td>36 MB</td></tr>
+        <tr><td>IBM POWER6</td><td>2007</td><td>64/64 kB</td><td>4 MB</td><td>32 MB</td></tr>
+        <tr><td>Core i7 EE 990</td><td>2011</td><td>6×32/32 kB</td><td>1.5 MB</td><td>12 MB</td></tr>
+        <tr><td>IBM zEnt 196</td><td>2011</td><td>24×64/128 kB</td><td>24×1.5 MB</td><td>24MB+192MB</td></tr>
+      </table>
+      <div class="note"><div class="n-title">Two values (e.g. 8/8 kB)</div>Format = I-cache / D-cache (split L1)</div>
+    </div>
+  </div>
+
+</div><!-- end row 6 -->
+
+<!-- ROW 7: Appendix 4A + Key Terms -->
+<div class="grid-2 section-gap">
+
+  <!-- Appendix 4A: Two-Level Performance -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Appendix 4A — Two-Level Memory Performance</h3></div>
+    <div class="card-body">
+      <div class="label">Three Two-Level Memory Instances (Table 4.6)</div>
+      <table class="tbl">
+        <tr><th>Instance</th><th>M1/M2 Ratio</th><th>Block Size</th><th>Managed By</th></tr>
+        <tr><td style="color:var(--accent4);">Cache / Main Memory</td><td>5:1</td><td>4–128 bytes</td><td>Special hardware</td></tr>
+        <tr><td style="color:var(--accent2);">Main Memory / Disk (VM)</td><td>10⁶:1</td><td>64–4096 bytes</td><td>HW + OS</td></tr>
+        <tr><td style="color:var(--accent);">Disk Cache / Disk</td><td>10⁶:1</td><td>64–4096 bytes</td><td>System software</td></tr>
+      </table>
+      <div class="label">Complete Formula Set</div>
+      <div class="formula">// Average access time (Eq 4.2):
+T_s = T₁ + (1-H) × T₂
+
+// Access efficiency (Eq 4.4):
+T₁/T_s = 1 / [1 + (1-H) × (T₂/T₁)]
+
+// Average cost per bit (Eq 4.3):
+C_s = (C₁×S₁ + C₂×S₂) / (S₁ + S₂)
+
+// N-level generalization (Problem 4.16):
+T_s = T₁ + (1-H₁)T₂ + (1-H₁)(1-H₂)T₃ + ...
+    = sum_{i=1}^{N} T_i × product_{j=1}^{i-1}(1-H_j)</div>
+      <div class="label">Locality Effects on Hit Ratio</div>
+      <ul class="items">
+        <li><strong>No locality:</strong> H = S₁/S₂ (linear function of relative size)</li>
+        <li><strong>Moderate locality:</strong> H &gt; S₁/S₂ (sub-linear improvement)</li>
+        <li><strong>Strong locality:</strong> H ≫ S₁/S₂ (very small M1 achieves high H)</li>
+        <li>Empirical: 1K–128K word cache yields H &gt; 0.75 regardless of total memory size</li>
+      </ul>
+      <div class="label">Performance Goals</div>
+      <table class="tbl">
+        <tr><th>Goal</th><th>Requirement</th></tr>
+        <tr><td>T_s ≈ T₁ (fast)</td><td>H close to 1; strong locality required</td></tr>
+        <tr><td>C_s ≈ C₂ (cheap)</td><td>S₁ ≪ S₂</td></tr>
+        <tr><td>Both simultaneously</td><td>Requires strong locality — the fundamental justification for cache hierarchy</td></tr>
+      </table>
+      <div class="tip"><div class="t-title">Key Insight</div>Strong locality means a small M1 achieves both goals simultaneously. The same principle applies to cache, virtual memory, and disk cache.</div>
+      <div class="label">Example — 3-Level (Cache+VM+Disk, Problem 4.22)</div>
+      <div class="note"><div class="n-title">Worked Example</div>
+        Cache hit: 20 ns; MM load to cache: 60 ns; Disk fetch: 12 ms<br>
+        H_cache = 0.9, H_MM = 0.6<br>
+        T_avg = 0.9×20 + 0.1×0.6×(60+20) + 0.1×0.4×(12,000,000+60+20)<br>
+        = 18 + 4.8 + 480,032.8 ≈ <strong>480,056 ns ≈ 480 μs</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Key Terms + Quick Reference -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Reference</h3></div>
+    <div class="card-body">
+      <div class="label">Essential Vocabulary</div>
+      <div class="grid-2" style="gap:4px;">
+        <ul class="items" style="font-size:11px;">
+          <li><strong>Cache hit:</strong> Requested data found in cache</li>
+          <li><strong>Cache miss:</strong> Not found; must fetch from memory</li>
+          <li><strong>Cache line:</strong> Basic unit of cache storage (K words + tag + control)</li>
+          <li><strong>Cache set:</strong> Group of lines in set-associative</li>
+          <li><strong>Tag:</strong> Address bits identifying block in a line</li>
+          <li><strong>Hit ratio (H):</strong> Fraction of accesses that hit</li>
+          <li><strong>Miss ratio:</strong> 1 − H</li>
+          <li><strong>Dirty bit:</strong> Indicates line modified (write-back)</li>
+          <li><strong>Thrashing:</strong> Repeated eviction of needed blocks (direct map)</li>
+          <li><strong>Temporal locality:</strong> Recently used → used again soon</li>
+          <li><strong>Spatial locality:</strong> Nearby addresses → used soon</li>
+        </ul>
+        <ul class="items" style="font-size:11px;">
+          <li><strong>L1 cache:</strong> Level 1, on-chip, fastest</li>
+          <li><strong>L2 cache:</strong> Level 2, larger, slower</li>
+          <li><strong>L3 cache:</strong> Level 3, largest on-chip</li>
+          <li><strong>Logical cache:</strong> Uses virtual addresses</li>
+          <li><strong>Physical cache:</strong> Uses physical addresses</li>
+          <li><strong>Unified cache:</strong> Combined I+D cache</li>
+          <li><strong>Split cache:</strong> Separate I-cache and D-cache</li>
+          <li><strong>Write-through:</strong> Write to cache and memory</li>
+          <li><strong>Write-back:</strong> Write to cache only; memory on eviction</li>
+          <li><strong>Victim cache:</strong> Small fully-assoc buffer for evicted lines</li>
+          <li><strong>MMU:</strong> Memory management unit (virtual→physical)</li>
+        </ul>
+      </div>
+      <div class="divider"></div>
+      <div class="label">Address Field Summary</div>
+      <table class="tbl">
+        <tr><th>Mapping</th><th>Field 1</th><th>Field 2</th><th>Field 3</th></tr>
+        <tr><td>Direct</td><td>Tag (s−r)</td><td>Line (r bits)</td><td>Word (w bits)</td></tr>
+        <tr><td>Associative</td><td>Tag (s bits)</td><td>—</td><td>Word (w bits)</td></tr>
+        <tr><td>Set-Assoc</td><td>Tag (s−d)</td><td>Set (d bits)</td><td>Word (w bits)</td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="label">Critical Design Relationships</div>
+      <ul class="items">
+        <li>Direct: <strong>i = j mod m</strong> (line = block mod total-lines)</li>
+        <li>Set-assoc: <strong>i = j mod v</strong> (set = block mod num-sets); <strong>m = v × k</strong></li>
+        <li>Direct is special case of set-assoc: k=1, v=m</li>
+        <li>Fully-assoc is special case: k=m, v=1</li>
+        <li>Line size optimum: <strong>8–64 bytes</strong> general; <strong>64–128 bytes</strong> HPC</li>
+        <li>L2 must be <strong>&gt;2× L1</strong> to improve total hit ratio</li>
+        <li>Write% ≈ 15% general; up to 50% HPC workloads</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- end row 7 -->
+
+<!-- ROW 8: Practice Problems Reference -->
+<div class="section-gap">
+<div class="card yellow col-span-3">
+  <div class="card-header"><div class="dot"></div><h3>Practice Problem Reference &amp; Worked Examples</h3></div>
+  <div class="card-body">
+    <div class="grid" style="gap:12px;">
+
+      <div>
+        <div class="label">Address Format Problems (Prob 4.1–4.7)</div>
+        <div class="note"><div class="n-title">Prob 4.2 — Worked</div>
+          2-way set-assoc, line=16B, total=8kB, memory=64MB (byte addressable)<br>
+          Lines in cache = 8kB/16B = 512 = 2⁹ → lines<br>
+          Sets v = 512/2 = 256 = 2⁸ → d=8 (set field)<br>
+          Word offset w = log₂(16) = 4 bits<br>
+          Address = log₂(64M) = 26 bits<br>
+          Tag = 26 − 8 − 4 = <strong>14 bits</strong><br>
+          Format: <code>[14-bit Tag | 8-bit Set | 4-bit Word]</code>
+        </div>
+        <div class="note"><div class="n-title">Prob 4.11a — 32-bit addr, 64B line, direct, tag=20</div>
+          Word offset w = log₂(64) = 6 bits<br>
+          Tag = 20 bits → Line = 32−20−6 = 6 bits → 2⁶ = 64 lines<br>
+          Blocks in memory = 2³²/64 = 2²⁶<br>
+          Format: <code>[20-bit Tag | 6-bit Line | 6-bit Word]</code>
+        </div>
+      </div>
+
+      <div>
+        <div class="label">Hit Ratio Problems (Prob 4.19–4.21)</div>
+        <div class="note"><div class="n-title">Prob 4.19c — Find H given T_eff</div>
+          T_c=100ns, T_m=1200ns; T_eff = 1.1 × T_c = 110 ns<br>
+          T_eff = T_c + (1−H)×T_m<br>
+          110 = 100 + (1−H)×1200<br>
+          10 = (1−H)×1200<br>
+          H = 1 − 10/1200 = <strong>0.9917</strong>
+        </div>
+        <div class="note"><div class="n-title">Prob 4.20a — Compare two designs</div>
+          Design A: T_c=1ns, H=0.95 → T_s = 1 + 0.05×T_m<br>
+          Design B: T_c=1.5ns, H=0.97 → T_s = 1.5 + 0.03×T_m<br>
+          B better when: 1.5 + 0.03×T_m &lt; 1 + 0.05×T_m<br>
+          0.5 &lt; 0.02×T_m → T_m &gt; <strong>25 ns</strong>
+        </div>
+      </div>
+
+      <div>
+        <div class="label">Mapping Address Calculation (Prob 4.3)</div>
+        <div class="note"><div class="n-title">24-bit addresses: 111111, 666666, BBBBBB</div>
+          <strong>Direct (8-bit tag, 14-bit line, 2-bit word):</strong><br>
+          <code>111111</code>: Tag=11, Line=1111, Word=01<br>
+          <code>666666</code>: Tag=66, Line=1999, Word=02<br>
+          <code>BBBBBB</code>: Tag=BB, Line=2EEE, Word=03<br><br>
+          <strong>Associative (22-bit tag, 2-bit word):</strong><br>
+          <code>111111</code>: Tag=044444, Word=01<br><br>
+          <strong>2-way Set-Assoc (9-bit tag, 13-bit set, 2-bit word):</strong><br>
+          <code>111111</code>: Tag=008, Set=0888, Word=01<br>
+          <code>666666</code>: Tag=033, Set=0CCE, Word=02
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">&#8592; Back to Menu</a>
+  <span>COA10e · Chapter 4 — Cache Memory · Stallings · Pages 120–164</span>
+  <span>§4.1 Memory Overview · §4.2 Principles · §4.3 Design Elements · §4.4 Pentium 4 · §4A Performance</span>
+</div>
+
+</body>
+</html>

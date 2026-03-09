@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH01 – Basic Concepts &amp; Computer Evolution</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Basic Concepts and Computer Evolution — Chapter 1</h1>
+    <h2>Computer Organization &amp; Architecture, 10th Edition &nbsp;|&nbsp; Complete Study Reference</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§1.1 Org vs Architecture</span>
+      <span class="toc-item">§1.2 Structure &amp; Function</span>
+      <span class="toc-item">§1.3 History of Computers</span>
+      <span class="toc-item">§1.4 Intel x86 Evolution</span>
+      <span class="toc-item">§1.5 Embedded Systems</span>
+      <span class="toc-item">§1.6 ARM Architecture</span>
+      <span class="toc-item">§1.7 Cloud Computing</span>
+      <span class="toc-item">§1.8 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">COA10e · CH01</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — §1.1 Architecture vs Organization ═══ -->
+<div class="grid">
+
+  <!-- Card 1: Computer Architecture -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Computer Architecture (ISA)</h3></div>
+    <div class="card-body">
+      <div class="rule">Architecture = attributes visible to programmer; direct impact on logical execution of a program</div>
+      <p><strong>ISA (Instruction Set Architecture)</strong> is often used interchangeably with "computer architecture."</p>
+      <div class="label">ISA Defines</div>
+      <ul class="items">
+        <li>Instruction formats and opcodes</li>
+        <li>Registers and their usage</li>
+        <li>Instruction and data memory layout</li>
+        <li>Effect of executed instructions on registers and memory</li>
+        <li>Algorithm for controlling instruction execution</li>
+      </ul>
+      <div class="label">Architectural Attribute Examples</div>
+      <ul class="items">
+        <li>Instruction set (which operations exist)</li>
+        <li>Number of bits for each data type (integers, characters, floats)</li>
+        <li>I/O mechanisms</li>
+        <li>Techniques for addressing memory</li>
+        <li>Whether a <code>MULTIPLY</code> instruction exists → architectural decision</li>
+      </ul>
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">IBM System/370 Example</div>
+        Introduced 1970; same architecture has survived to today as IBM mainframe product line. Multiple generations of hardware, all running the same instruction set.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Computer Organization -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Computer Organization — The HOW</h3></div>
+    <div class="card-body">
+      <div class="warn">
+        <div class="w-title">Critical Distinction</div>
+        <strong>Architecture = WHAT</strong> the system does (programmer-visible).<br>
+        <strong>Organization = HOW</strong> it does it (hardware implementation details, transparent to programmer).
+      </div>
+      <div class="label">Organizational Attribute Examples</div>
+      <ul class="items">
+        <li>Control signals between components</li>
+        <li>Interfaces between computer and peripherals</li>
+        <li>Memory technology used (DRAM vs SRAM)</li>
+        <li>Whether multiply uses a dedicated unit or repeated ADDs</li>
+        <li>Clock speeds and timing</li>
+      </ul>
+      <div class="label">Classic Example — Multiply Instruction</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Question</th><th>Domain</th></tr>
+        <tr><td>Does a MUL instruction exist?</td><td style="color:var(--accent);">Architecture</td></tr>
+        <tr><td>Dedicated multiply unit vs. repeated ADD?</td><td style="color:var(--accent3);">Organization</td></tr>
+        <tr><td>Speed and cost tradeoffs of implementation?</td><td style="color:var(--accent3);">Organization</td></tr>
+      </table>
+      <div class="tip" style="margin-top:8px;">
+        <div class="t-title">Microcomputers</div>
+        In microcomputers, architecture and organization are tightly coupled — technology changes affect both simultaneously. RISC (Chapter 15) is a prominent example of interplay between the two.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Structure and Function -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Structure and Function — §1.2</h3></div>
+    <div class="card-body">
+      <div class="rule">Hierarchical system: set of interrelated subsystems, each hierarchical in structure, down to elementary components</div>
+      <div class="label">Two Design Concepts at Every Level</div>
+      <ul class="items">
+        <li><strong>Structure:</strong> the way components are interrelated</li>
+        <li><strong>Function:</strong> operation of each individual component as part of the structure</li>
+      </ul>
+      <div class="label">Hierarchical Design Approach</div>
+      <ul class="items">
+        <li>Designer deals with one level at a time</li>
+        <li>Each level: set of components + their interrelationships</li>
+        <li>Behavior at each level depends only on <em>abstracted</em> characterization of next lower level</li>
+        <li>Top-down approach: most clear and effective for description [WEIN75]</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Book's Approach</div>
+        This textbook describes computers top-down: starting at major components → successively lower levels of hierarchy. Structure and function examined together at each level.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — Four Functions & Single-Processor Structure ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Four Basic Functions -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Four Basic Computer Functions</h3></div>
+    <div class="card-body">
+      <div class="label">Function 1 — Data Processing</div>
+      <p>Data may take wide variety of forms; only a few fundamental methods/types of data processing exist. The computer must process data in response to program instructions.</p>
+      <div class="label">Function 2 — Data Storage</div>
+      <ul class="items">
+        <li><strong>Short-term:</strong> temporarily holds pieces of data being worked on at any given moment</li>
+        <li><strong>Long-term:</strong> files of data stored for subsequent retrieval and update</li>
+      </ul>
+      <div class="label">Function 3 — Data Movement</div>
+      <ul class="items">
+        <li><strong>I/O (Input–Output):</strong> data received from or delivered to a directly connected device (peripheral)</li>
+        <li><strong>Data Communications:</strong> data moved over longer distances to/from a remote device</li>
+      </ul>
+      <div class="label">Function 4 — Control</div>
+      <p>Control unit manages the computer's resources and orchestrates performance of functional parts in response to instructions.</p>
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">Stallings Quote [SIEW82]</div>
+        "There is remarkably little shaping of computer structure to fit the function to be performed… all the functional specialization occurs at the time of programming and not at the time of design."
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Single-Processor Structure -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Single-Processor Computer Structure</h3></div>
+    <div class="card-body">
+      <div class="label">Four Main Structural Components</div>
+      <table class="tbl">
+        <tr><th>Component</th><th>Role</th></tr>
+        <tr><td style="color:var(--accent);">CPU</td><td>Controls operation; performs data processing; "the processor"</td></tr>
+        <tr><td style="color:var(--accent);">Main Memory</td><td>Stores data and instructions</td></tr>
+        <tr><td style="color:var(--accent);">I/O</td><td>Moves data between computer and external environment</td></tr>
+        <tr><td style="color:var(--accent);">System Interconnection</td><td>Communication mechanism (system bus = conducting wires)</td></tr>
+      </table>
+      <div class="label">System Bus</div>
+      <p>A common form of system interconnection — a number of conducting wires to which all components attach. Carries data, addresses, and control signals.</p>
+      <div class="label">Motherboard</div>
+      <ul class="items">
+        <li>Main printed circuit board (PCB) in a computer</li>
+        <li>Holds: processor socket, memory slots, I/O controller chips, expansion slots</li>
+        <li>PCB layers (typically 2–10) interconnect via copper pathways etched into board</li>
+        <li>Chip: single piece of silicon → integrated circuit</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 6: CPU Internal Structure -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>CPU Internal Structure</h3></div>
+    <div class="card-body">
+      <div class="label">Four Major CPU Components</div>
+      <table class="tbl">
+        <tr><th>Component</th><th>Function</th></tr>
+        <tr><td style="color:var(--accent);">Control Unit (CU)</td><td>Controls operation of the CPU and hence the entire computer</td></tr>
+        <tr><td style="color:var(--accent);">ALU</td><td>Arithmetic &amp; Logic Unit — performs data processing functions</td></tr>
+        <tr><td style="color:var(--accent);">Registers</td><td>Provides storage internal to the CPU (fast, small)</td></tr>
+        <tr><td style="color:var(--accent);">CPU Interconnection</td><td>Internal bus: communication among CU, ALU, and registers</td></tr>
+      </table>
+      <div class="label">Microprogrammed Control Unit</div>
+      <p>One common CU implementation: executes <em>microinstructions</em> that define the functionality of the control unit. Adds a lower layer of programming below machine instructions.</p>
+      <div class="label">Core Functional Elements (Modern)</div>
+      <ul class="items">
+        <li><strong>Instruction logic:</strong> fetching instructions; decoding operation and memory locations</li>
+        <li><strong>ALU:</strong> performs the specified operation</li>
+        <li><strong>Load/store logic:</strong> manages transfer of data to/from main memory via cache</li>
+        <li><strong>L1 cache:</strong> split into I-cache (instructions) and D-cache (data)</li>
+        <li><strong>L2 cache:</strong> typically also split or combined</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Multicore Structure & IAS Computer ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Multicore Terms -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Multicore Computer — Key Definitions</h3></div>
+    <div class="card-body">
+      <div class="label">Consensus Definitions (Industry-wide)</div>
+      <table class="tbl">
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td style="color:var(--accent);">CPU</td><td>Fetches and executes instructions; consists of ALU, control unit, and registers. In single-processor system = "the processor"</td></tr>
+        <tr><td style="color:var(--accent);">Core</td><td>Individual processing unit on a processor chip; may be equivalent to a CPU; other specialized units (e.g., vector units) also called cores</td></tr>
+        <tr><td style="color:var(--accent);">Processor</td><td>Physical silicon chip containing one or more cores. Interprets and executes instructions. Multicore processor = multiple cores on one chip</td></tr>
+      </table>
+      <div class="label">Cache Memory Hierarchy</div>
+      <ul class="items">
+        <li>Smaller and faster than main memory; speeds up access by storing likely-needed data</li>
+        <li><strong>L1 cache:</strong> closest to core; smallest and fastest</li>
+        <li><strong>L2 cache:</strong> second level; larger, slower than L1</li>
+        <li><strong>L3 cache:</strong> shared by all cores; largest, slowest of cache levels</li>
+        <li>Rule: Level <em>n</em> is smaller and faster than level <em>n+1</em></li>
+      </ul>
+      <div class="tip">
+        <div class="t-title">IBM zEnterprise EC12</div>
+        2.75 billion transistors; 6 cores; 2 L3 cache areas shared by all cores; includes ISU, IFU, IDU, LSU, XU, FXU, BFU, DFU, RU, COP, I-cache, L2 control.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 8: IAS Computer -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>IAS Computer — First Stored-Program Computer</h3></div>
+    <div class="card-body">
+      <div class="rule">Stored-program concept: instructions stored in memory alongside data — programs can be treated as data and manipulated</div>
+      <div class="label">Historical Background</div>
+      <ul class="items">
+        <li><strong>1945:</strong> von Neumann's EDVAC proposal — first publication of stored-program concept</li>
+        <li>Alan Turing developed the idea concurrently</li>
+        <li><strong>1946:</strong> Design of IAS computer began at Princeton Institute for Advanced Studies</li>
+        <li><strong>1952:</strong> IAS computer completed — <em>prototype of all subsequent general-purpose computers</em></li>
+        <li>EDVAC = Electronic Discrete Variable Computer</li>
+      </ul>
+      <div class="label">IAS Hardware Components</div>
+      <table class="tbl">
+        <tr><th>Von Neumann Label</th><th>Modern Name</th><th>Function</th></tr>
+        <tr><td><code>CA</code></td><td>ALU</td><td>Central arithmetic: +, −, ×, ÷</td></tr>
+        <tr><td><code>CC</code></td><td>Control Unit</td><td>Central control: interprets and executes instructions</td></tr>
+        <tr><td><code>M</code></td><td>Main Memory</td><td>Stores data AND instructions</td></tr>
+        <tr><td><code>I</code></td><td>Input</td><td>Transfers data from external medium R into C and M</td></tr>
+        <tr><td><code>O</code></td><td>Output</td><td>Transfers data from M into external medium R</td></tr>
+      </table>
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Von Neumann Machines</div>
+        With rare exceptions, all computers today have the same general IAS structure and function — they are "von Neumann machines."
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 9: IAS Memory Format -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>IAS Memory Format &amp; Registers</h3></div>
+    <div class="card-body">
+      <div class="label">Memory Organization</div>
+      <div class="formula">Memory: 4,096 words × 40 bits/word
+Number word:  [sign(1)] [value(39)]
+Instruction:  [opcode(8)][addr(12)] | [opcode(8)][addr(12)]
+              ← left instruction →    ← right instruction →
+              bits 0–19                bits 20–39</div>
+      <div class="label">IAS Registers</div>
+      <table class="tbl">
+        <tr><th>Register</th><th>Full Name</th><th>Purpose</th></tr>
+        <tr><td><code>MBR</code></td><td>Memory Buffer Register</td><td>Word to/from memory or I/O unit</td></tr>
+        <tr><td><code>MAR</code></td><td>Memory Address Register</td><td>Specifies address in memory for read/write</td></tr>
+        <tr><td><code>IR</code></td><td>Instruction Register</td><td>Holds 8-bit opcode of current instruction</td></tr>
+        <tr><td><code>IBR</code></td><td>Instruction Buffer Register</td><td>Temporarily holds right-half instruction from memory word</td></tr>
+        <tr><td><code>PC</code></td><td>Program Counter</td><td>Address of next instruction pair to fetch</td></tr>
+        <tr><td><code>AC</code></td><td>Accumulator</td><td>Holds most significant 40 bits of ALU result</td></tr>
+        <tr><td><code>MQ</code></td><td>Multiplier Quotient</td><td>Holds least significant 40 bits of multiply result</td></tr>
+      </table>
+      <p style="margin-top:6px;font-size:11px;color:var(--text-muted);">Opcode = 8 bits → max 256 instructions (IAS used 21). Address = 12 bits → 2<sup>12</sup> = 4,096 addressable locations. Only one MAR, one MBR — "indirection" simplifies electronics.</p>
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══ ROW 4 — IAS Instructions & Computer Generations ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 10: IAS Instruction Set -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>IAS Instruction Set — 21 Instructions</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Type</th><th>Symbolic</th><th>Description</th></tr>
+        <tr><td rowspan="7" style="color:var(--accent2);">Data Transfer</td><td><code>LOAD MQ</code></td><td>MQ → AC</td></tr>
+        <tr><td><code>LOAD MQ,M(X)</code></td><td>M(X) → MQ</td></tr>
+        <tr><td><code>STOR M(X)</code></td><td>AC → M(X)</td></tr>
+        <tr><td><code>LOAD M(X)</code></td><td>M(X) → AC</td></tr>
+        <tr><td><code>LOAD -M(X)</code></td><td>−M(X) → AC</td></tr>
+        <tr><td><code>LOAD |M(X)|</code></td><td>|M(X)| → AC</td></tr>
+        <tr><td><code>LOAD -|M(X)|</code></td><td>−|M(X)| → AC</td></tr>
+        <tr><td rowspan="2" style="color:var(--accent);">Uncond. Branch</td><td><code>JUMP M(X,0:19)</code></td><td>PC ← left half of M(X)</td></tr>
+        <tr><td><code>JUMP M(X,20:39)</code></td><td>PC ← right half of M(X)</td></tr>
+        <tr><td rowspan="2" style="color:var(--accent3);">Cond. Branch</td><td><code>JUMP+ M(X,0:19)</code></td><td>If AC ≥ 0: PC ← left half of M(X)</td></tr>
+        <tr><td><code>JUMP+ M(X,20:39)</code></td><td>If AC ≥ 0: PC ← right half of M(X)</td></tr>
+        <tr><td rowspan="8" style="color:var(--yellow);">Arithmetic</td><td><code>ADD M(X)</code></td><td>AC ← AC + M(X)</td></tr>
+        <tr><td><code>ADD |M(X)|</code></td><td>AC ← AC + |M(X)|</td></tr>
+        <tr><td><code>SUB M(X)</code></td><td>AC ← AC − M(X)</td></tr>
+        <tr><td><code>SUB |M(X)|</code></td><td>AC ← AC − |M(X)| (remainder)</td></tr>
+        <tr><td><code>MUL M(X)</code></td><td>M(X) × MQ → AC (high) : MQ (low)</td></tr>
+        <tr><td><code>DIV M(X)</code></td><td>AC ÷ M(X) → MQ (quotient), AC (remainder)</td></tr>
+        <tr><td><code>LSH</code></td><td>AC ← AC × 2 (shift left 1 bit)</td></tr>
+        <tr><td><code>RSH</code></td><td>AC ← AC ÷ 2 (shift right 1 bit)</td></tr>
+        <tr><td rowspan="2" style="color:var(--accent4);">Addr. Modify</td><td><code>STOR M(X,8:19)</code></td><td>Replace left addr field of M(X) with AC(28:39)</td></tr>
+        <tr><td><code>STOR M(X,28:39)</code></td><td>Replace right addr field of M(X) with AC(28:39)</td></tr>
+      </table>
+      <p style="margin-top:6px;font-size:11px;color:var(--text-muted);">MUL requires 39 sub-operations (one per non-sign bit). Address modify enables flexible runtime addressing.</p>
+    </div>
+  </div>
+
+  <!-- Card 11: IAS Instruction Cycle -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>IAS Instruction Cycle</h3></div>
+    <div class="card-body">
+      <div class="label">Fetch Cycle — Load Next Opcode into IR</div>
+      <ol class="steps">
+        <li>Check IBR: is next instruction already buffered? If yes, skip to step 4</li>
+        <li>Load instruction pair from memory: <code>MAR ← PC</code>; <code>MBR ← M(MAR)</code>; <code>PC ← PC + 1</code></li>
+        <li>For left instruction: <code>IR ← MBR(0:7)</code>; <code>MAR ← MBR(8:19)</code>; <code>IBR ← MBR(20:39)</code></li>
+        <li>For right instruction (from IBR): <code>IR ← IBR(0:7)</code>; <code>MAR ← IBR(8:19)</code></li>
+      </ol>
+      <div class="label">Execute Cycle — Perform Instruction</div>
+      <ol class="steps">
+        <li>Decode opcode in IR using control circuitry</li>
+        <li>Send appropriate control signals</li>
+        <li>Move data or perform ALU operation per decoded instruction</li>
+      </ol>
+      <div class="label">Example Executions</div>
+      <ul class="items">
+        <li><code>LOAD M(X)</code>: MBR ← M(MAR); AC ← MBR</li>
+        <li><code>ADD M(X)</code>: MBR ← M(MAR); AC ← AC + MBR</li>
+        <li><code>JUMP+ M(X,0:19)</code>: if AC &gt; 0 then PC ← MAR</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Indirection Reason</div>
+        Only ONE MAR (for specifying memory addresses) and ONE MBR (source/destination). This simplifies the electronics by limiting the number of data paths required.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 12: Computer Generations -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Computer Generations</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Gen</th><th>Dates</th><th>Technology</th><th>Typical Speed</th></tr>
+        <tr><td style="color:var(--accent4);">1</td><td>1946–1957</td><td>Vacuum tube</td><td>40,000 ops/s</td></tr>
+        <tr><td style="color:var(--accent4);">2</td><td>1957–1964</td><td>Transistor</td><td>200,000 ops/s</td></tr>
+        <tr><td style="color:var(--accent4);">3</td><td>1965–1971</td><td>Small/medium-scale integration (SSI/MSI)</td><td>1,000,000 ops/s</td></tr>
+        <tr><td style="color:var(--accent4);">4</td><td>1972–1977</td><td>Large scale integration (LSI)</td><td>10,000,000 ops/s</td></tr>
+        <tr><td style="color:var(--accent4);">5</td><td>1978–1991</td><td>Very large scale integration (VLSI)</td><td>100,000,000 ops/s</td></tr>
+        <tr><td style="color:var(--accent4);">6</td><td>1991–</td><td>Ultra large scale integration (ULSI)</td><td>&gt;1,000,000,000 ops/s</td></tr>
+      </table>
+      <div class="label">Each Generation Characterized By</div>
+      <ul class="items">
+        <li>Greater processing performance</li>
+        <li>Larger memory capacity</li>
+        <li>Smaller physical size</li>
+        <li>Lower cost per unit of performance</li>
+      </ul>
+      <div class="label">Integration Scale Progression</div>
+      <p class="mono">SSI → MSI → LSI → VLSI → ULSI</p>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">SSI = Small Scale Integration (tens of transistors per chip); MSI = Medium (hundreds); LSI = Large (thousands); VLSI = Very Large (millions); ULSI = Ultra Large (billions)</p>
+    </div>
+  </div>
+
+</div><!-- /grid row 4 -->
+
+<!-- ═══ ROW 5 — History: Generations 1–3 ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 13: First Generation -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>1st Generation: Vacuum Tubes (1946–1957)</h3></div>
+    <div class="card-body">
+      <div class="label">Key Technologies</div>
+      <ul class="items">
+        <li>Vacuum tubes for digital logic and memory</li>
+        <li>Require wires, metal plates, glass capsule, and vacuum — physically large and fragile</li>
+        <li>High power consumption and heat generation</li>
+      </ul>
+      <div class="label">IAS Computer (Landmark 1st Gen)</div>
+      <ul class="items">
+        <li>Designed 1946, completed 1952, Princeton Institute for Advanced Studies</li>
+        <li>Stored-program concept: von Neumann + Turing</li>
+        <li>Binary representation of data and instructions</li>
+        <li>4,096 words × 40-bit memory</li>
+      </ul>
+      <div class="label">Transistor Discovery</div>
+      <ul class="items">
+        <li>Transistor invented at Bell Labs, <strong>1947</strong></li>
+        <li>Solid-state device made from silicon — no vacuum required</li>
+        <li>Smaller, cheaper, generates less heat than vacuum tube</li>
+        <li>By late 1950s: fully transistorized commercial computers available</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Fundamental Computer Elements</div>
+        Only two types needed: <strong>Gates</strong> (implement Boolean functions, process data) and <strong>Memory Cells</strong> (store 1 bit, two stable states). All computers are built from these.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 14: Second Generation -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>2nd Generation: Transistors (1957–1964)</h3></div>
+    <div class="card-body">
+      <div class="label">Advances Over Vacuum Tubes</div>
+      <ul class="items">
+        <li>Smaller, cheaper, less heat, solid-state (silicon)</li>
+        <li>More complex ALU and control units</li>
+        <li>Introduction of high-level programming languages</li>
+        <li>System software (OS precursors): load programs, move data to peripherals, common libraries</li>
+      </ul>
+      <div class="label">IBM 7094 (Important 2nd Gen System)</div>
+      <table class="tbl">
+        <tr><th>Attribute</th><th>Details</th></tr>
+        <tr><td>Memory</td><td>2K to 32K words (36-bit); cycle time 30ms → 1.4ms</td></tr>
+        <tr><td>Opcodes</td><td>Grew from 24 to 185 over product lifetime</td></tr>
+        <tr><td>CPU Speed</td><td>50× increase over lifetime</td></tr>
+        <tr><td>Instruction Backup Register</td><td>Prefetches next instruction; halves memory accesses (except on branches ~10–15%)</td></tr>
+        <tr><td>Data Channels</td><td>Independent I/O modules with own processor + ISA; offload I/O from CPU</td></tr>
+        <tr><td>Multiplexor</td><td>Central termination for data channels, CPU, memory; schedules memory access</td></tr>
+      </table>
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Data Channels</div>
+        CPU sends control signal to data channel → channel executes I/O sequence independently → signals CPU when done. Dramatically reduces CPU burden for I/O operations.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 15: Third Generation -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>3rd Generation: Integrated Circuits (1965–1971)</h3></div>
+    <div class="card-body">
+      <div class="rule">1958: Invention of integrated circuit — single-chip fabrication of an entire circuit in silicon</div>
+      <div class="label">IC Technology</div>
+      <ul class="items">
+        <li>Microelectronics: fabricate entire circuit in tiny piece of silicon</li>
+        <li>Transistors, resistors, conductors all from semiconductor (silicon)</li>
+        <li>Many transistors produced simultaneously on single silicon wafer</li>
+        <li>Metallization connects transistors into circuits</li>
+        <li>Wafer → matrix of small areas (few mm²) → broken into individual chips</li>
+        <li>Each chip packaged with input/output attachment points</li>
+      </ul>
+      <div class="label">IBM System/360 (1964)</div>
+      <ul class="items">
+        <li>Industry's first planned family of computers</li>
+        <li>Incompatible with older IBM machines — controversial but necessary</li>
+        <li>IBM captured &gt;70% market share; architecture survived to IBM mainframe line today</li>
+        <li>Family: same ISA across models; only speed/cost differs</li>
+        <li>Customer could buy cheap Model 30 → later upgrade without losing software</li>
+      </ul>
+      <div class="label">DEC PDP-8 (1964)</div>
+      <ul class="items">
+        <li>Used a single shared bus (Omnibus) connecting all components</li>
+        <li>Revolutionary flexible, expandable architecture</li>
+        <li>Forerunner of modern bus-based computer architectures</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 5 -->
+
+<!-- ═══ ROW 6 — Moore's Law & IBM System/360 Details ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 16: Moore's Law -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Moore's Law</h3></div>
+    <div class="card-body">
+      <div class="rule">Gordon Moore (Intel co-founder), 1965: transistors per chip doubles every year → revised to every 18 months in 1970s</div>
+      <div class="formula">Transistors(t) ≈ Transistors(0) × 2^(t / 1.5 years)
+Example: 1978 8086 = 29,000 transistors
+         2013 Core i7 = 1,860,000,000 transistors
+         Ratio ≈ 64,138× over ~35 years</div>
+      <div class="label">5 Key Consequences of Moore's Law</div>
+      <ol class="steps">
+        <li><strong>Lower cost:</strong> cost per chip unchanged while density grows → cost of logic/memory falls dramatically</li>
+        <li><strong>Higher speed:</strong> closer components → shorter electrical paths → faster operation</li>
+        <li><strong>Smaller computers:</strong> more convenient for varied environments</li>
+        <li><strong>Less power:</strong> reduced energy requirements per computation</li>
+        <li><strong>More reliable:</strong> fewer inter-chip solder connections; metallization more reliable than solder joints</li>
+      </ol>
+      <div class="tip" style="margin-top:8px;">
+        <div class="t-title">Intel Tick-Tock Model</div>
+        Intel's strategy to maintain Moore's Law pace: alternating between new silicon technology (Tick) and new processor microarchitecture (Tock) on alternating years.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 17: IBM System/360 Family -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>IBM System/360 — Computer Family Concept</h3></div>
+    <div class="card-body">
+      <div class="label">Family Characteristics (Novel &amp; Extremely Successful)</div>
+      <table class="tbl">
+        <tr><th>Characteristic</th><th>Description</th></tr>
+        <tr><td>Similar/identical ISA</td><td>Programs move up the family; not always down (subset ISA at low end)</td></tr>
+        <tr><td>Similar/identical OS</td><td>Same basic OS; higher-end adds features</td></tr>
+        <tr><td>Increasing speed</td><td>Rate of instruction execution increases at higher models</td></tr>
+        <tr><td>Increasing I/O ports</td><td>More I/O connections at higher-end models</td></tr>
+        <tr><td>Increasing memory</td><td>Main memory size increases up the family</td></tr>
+        <tr><td>Increasing cost</td><td>Higher performance = higher price</td></tr>
+      </table>
+      <div class="label">Customer Value Proposition</div>
+      <ul class="items">
+        <li>Start with inexpensive Model 30 to match modest budget</li>
+        <li>As needs grow: upgrade to faster/larger model</li>
+        <li>No loss of software investment — backward compatibility</li>
+        <li>Protected investment in already-developed software</li>
+      </ul>
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Legacy</div>
+        System/360 architecture, with enhancements, remains the architecture of IBM's mainframe product line to this day — over 60 years of architectural continuity.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 18: Later Generations -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Later Generations: LSI → VLSI → ULSI</h3></div>
+    <div class="card-body">
+      <div class="label">4th Generation (1972–1977): LSI</div>
+      <ul class="items">
+        <li>Large Scale Integration: thousands of transistors per chip</li>
+        <li>10 million operations per second</li>
+        <li>Intel introduced first microprocessors (4004 in 1971, 8008 in 1972)</li>
+        <li>Personal computing begins to emerge</li>
+      </ul>
+      <div class="label">5th Generation (1978–1991): VLSI</div>
+      <ul class="items">
+        <li>Very Large Scale Integration: millions of transistors per chip</li>
+        <li>100 million operations per second</li>
+        <li>Intel 8086 (1978) — foundation of x86 architecture</li>
+        <li>IBM PC (1981) using Intel 8088</li>
+        <li>Complex instruction sets, hardware caches, FPUs</li>
+      </ul>
+      <div class="label">6th Generation (1991–): ULSI</div>
+      <ul class="items">
+        <li>Ultra Large Scale Integration: billions of transistors per chip</li>
+        <li>&gt;1 billion operations per second</li>
+        <li>Multi-core processors, GPU computing, deep pipelining</li>
+        <li>Today: 2.75B transistors on a single chip (IBM zEC12)</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 6 -->
+
+<!-- ═══ ROW 7 — Intel x86 Evolution ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 19: x86 Overview -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Intel x86 — CISC Architecture Overview</h3></div>
+    <div class="card-body">
+      <div class="rule">CISC = Complex Instruction Set Computer — sophisticated design principles once found only in mainframes/supercomputers</div>
+      <div class="label">x86 Architecture Characteristics</div>
+      <ul class="items">
+        <li>Intel #1 microprocessor maker for non-embedded systems for decades</li>
+        <li><strong>Full backward compatibility:</strong> any program from older x86 runs on newer versions</li>
+        <li>All changes = <em>additions</em> to instruction set — no removals ever</li>
+        <li>~1 new instruction added per month → now thousands of instructions [ANTH08]</li>
+      </ul>
+      <div class="label">40 Years of x86 Progress</div>
+      <table class="tbl">
+        <tr><th>Metric</th><th>8086 (1978)</th><th>Core i7 EE 4960X (2013)</th><th>Improvement</th></tr>
+        <tr><td>Clock Speed</td><td>5 MHz</td><td>4 GHz</td><td style="color:var(--accent2);">800×</td></tr>
+        <tr><td>Transistors</td><td>29,000</td><td>1.86 billion</td><td style="color:var(--accent2);">~64,000×</td></tr>
+        <tr><td>Package size</td><td>Small</td><td>Slightly larger</td><td>Minimal change</td></tr>
+        <tr><td>Cost</td><td>Moderate</td><td>Comparable</td><td>~Same</td></tr>
+      </table>
+      <div class="tip" style="margin-top:8px;">
+        <div class="t-title">CISC vs RISC</div>
+        x86 = CISC (complex instructions, variable length). ARM = RISC (simple, fixed-length 32-bit instructions). Both are covered extensively in this textbook.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 20: x86 Processor Timeline -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Intel x86 Processor Timeline</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Processor</th><th>Year</th><th>Bits</th><th>Key Innovation</th></tr>
+        <tr><td style="color:var(--accent5);">8080</td><td>1974</td><td>8</td><td>World's first general-purpose microprocessor; used in Altair PC</td></tr>
+        <tr><td style="color:var(--accent5);">8086</td><td>1978</td><td>16</td><td>First x86; instruction cache/queue; 8088 variant in IBM PC</td></tr>
+        <tr><td style="color:var(--accent5);">80286</td><td>1982</td><td>16</td><td>Extended 8086; 16 MB addressing (vs 1 MB)</td></tr>
+        <tr><td style="color:var(--accent5);">80386</td><td>1985</td><td>32</td><td>First 32-bit Intel; first to support multitasking</td></tr>
+        <tr><td style="color:var(--accent5);">80486</td><td>1989</td><td>32</td><td>Sophisticated cache + pipelining; built-in math coprocessor (FPU)</td></tr>
+        <tr><td style="color:var(--accent5);">Pentium</td><td>1993</td><td>32</td><td>Superscalar: multiple instructions execute in parallel</td></tr>
+        <tr><td style="color:var(--accent5);">Pentium Pro</td><td>1995</td><td>32</td><td>Register renaming, branch prediction, data flow analysis, speculative execution</td></tr>
+        <tr><td style="color:var(--accent5);">Pentium II</td><td>1997</td><td>32</td><td>Intel MMX technology for video/audio/graphics</td></tr>
+        <tr><td style="color:var(--accent5);">Pentium III</td><td>1999</td><td>32</td><td>SSE: 70 new streaming SIMD instructions; 9.5M transistors; 250nm</td></tr>
+        <tr><td style="color:var(--accent5);">Pentium 4</td><td>2000</td><td>32</td><td>Additional FP/multimedia enhancements; 42M transistors; 1.3–1.8 GHz</td></tr>
+        <tr><td style="color:var(--accent5);">Core</td><td>2006</td><td>64</td><td>First Intel x86 dual-core processor</td></tr>
+        <tr><td style="color:var(--accent5);">Core 2</td><td>2006</td><td>64</td><td>64-bit; Quad (4 cores); AVX 256-bit/512-bit vector instructions; 167M transistors</td></tr>
+        <tr><td style="color:var(--accent5);">Core i7 EE</td><td>2013</td><td>64</td><td>6 cores; 1.86B transistors; 4 GHz; 22nm feature size; 15MB L3</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 21: x86 Recent Comparison -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Recent x86 Processors — Detailed Comparison</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Specification</th><th>Pentium III</th><th>Pentium 4</th><th>Core 2 Duo</th><th>Core i7 EE</th></tr>
+        <tr><td>Introduced</td><td>1999</td><td>2000</td><td>2006</td><td>2013</td></tr>
+        <tr><td>Clock Speed</td><td>450–660 MHz</td><td>1.3–1.8 GHz</td><td>1.06–1.2 GHz</td><td>4 GHz</td></tr>
+        <tr><td>Bus Width</td><td>64 bits</td><td>64 bits</td><td>64 bits</td><td>64 bits</td></tr>
+        <tr><td>Transistors</td><td>9.5M</td><td>42M</td><td>167M</td><td>1.86B</td></tr>
+        <tr><td>Feature Size</td><td>250 nm</td><td>180 nm</td><td>65 nm</td><td>22 nm</td></tr>
+        <tr><td>Addressable Mem</td><td>64 GB</td><td>64 GB</td><td>64 GB</td><td>64 GB</td></tr>
+        <tr><td>Virtual Memory</td><td>64 TB</td><td>64 TB</td><td>64 TB</td><td>64 TB</td></tr>
+        <tr><td>Cache</td><td>512 kB L2</td><td>256 kB L2</td><td>2 MB L2</td><td>1.5 MB L2 / 15 MB L3</td></tr>
+        <tr><td>Cores</td><td>1</td><td>1</td><td>2</td><td>6</td></tr>
+      </table>
+      <div class="label">Instruction Set Extensions Timeline</div>
+      <ul class="items">
+        <li><strong>MMX (Pentium II):</strong> multimedia operations on packed integer data</li>
+        <li><strong>SSE (Pentium III):</strong> 70 streaming SIMD instructions; FP + DSP</li>
+        <li><strong>SSE2/3/4 (Pentium 4+):</strong> additional SIMD enhancements</li>
+        <li><strong>AVX (Sandy Bridge+):</strong> 256-bit vector operations</li>
+        <li><strong>AVX-512 (Skylake+):</strong> 512-bit vector operations</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 7 -->
+
+<!-- ═══ ROW 8 — Embedded Systems ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 22: Embedded Systems -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Embedded Systems — §1.5</h3></div>
+    <div class="card-body">
+      <div class="rule">Embedded system: use of electronics and software within a product, as opposed to a general-purpose computer</div>
+      <div class="warn">
+        <div class="w-title">Scale Comparison</div>
+        Millions of general-purpose computers sold per year. <strong>Billions</strong> of embedded computer systems produced per year. Today, most electric-powered devices contain an embedded computing system.
+      </div>
+      <div class="label">Real-Time Constraints</div>
+      <ul class="items">
+        <li>Tightly coupled to environment → real-time constraints</li>
+        <li>Reactive system: continual interaction with environment; executes at pace determined by environment</li>
+        <li>Constraints include: required speeds of motion, precision of measurement, time durations</li>
+        <li>Multiple simultaneous activities → more complex real-time requirements</li>
+      </ul>
+      <div class="label">Differences from Desktop Computers</div>
+      <ul class="items">
+        <li>Sensors and actuators for environmental interaction</li>
+        <li>Human interface: simple (flashing light) → complex (robotic vision) or none at all</li>
+        <li>Diagnostic port: diagnoses the controlled system, not just the computer</li>
+        <li>Special hardware: FPGA, ASIC, or non-digital hardware for performance/reliability</li>
+        <li>Fixed-function software specific to the application</li>
+        <li>Optimization targets: energy, code size, execution time, weight/dimensions, cost</li>
+      </ul>
+      <div class="label">Example Applications</div>
+      <p class="mono" style="font-size:10px;color:var(--text-muted);">Cell phones · Digital cameras · Microwave ovens · Thermostats · Printers · Automotive (ABS, cruise control, fuel injection, transmission) · Industrial automation · Home security · Smart TVs</p>
+    </div>
+  </div>
+
+  <!-- Card 23: IoT -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Internet of Things (IoT)</h3></div>
+    <div class="card-body">
+      <div class="rule">IoT: expanding interconnection of smart devices, from appliances to tiny sensors — billions of embedded devices</div>
+      <div class="label">IoT Characteristics</div>
+      <ul class="items">
+        <li>Short-range mobile transceivers embedded in wide array of gadgets</li>
+        <li>New forms of communication: people↔things, things↔things</li>
+        <li>Internet supports interconnection of billions of industrial and personal objects via cloud</li>
+        <li>Objects deliver sensor information, act on environment, modify themselves</li>
+        <li>Enables management of larger systems (factories, cities)</li>
+      </ul>
+      <div class="label">4 Generations of Internet Deployment</div>
+      <ol class="steps">
+        <li><strong>Information Technology (IT):</strong> PCs, servers, routers, firewalls — enterprise IT, primarily wired</li>
+        <li><strong>Operational Technology (OT):</strong> medical machinery, SCADA, process control — enterprise OT, primarily wired</li>
+        <li><strong>Personal Technology:</strong> smartphones, tablets, eBooks — consumer devices, wireless only</li>
+        <li><strong>Sensor/Actuator Technology (IoT):</strong> single-purpose devices, consumer/IT/OT, wireless only — billions of devices</li>
+      </ol>
+      <div class="label">IoT Data Characteristics</div>
+      <ul class="items">
+        <li>Primarily low-bandwidth, low-repetition data-capture appliances</li>
+        <li>High-bandwidth exceptions: video security cameras, video VoIP phones</li>
+        <li>Driven primarily by deeply embedded devices</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 24: Microprocessor vs Microcontroller -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Microprocessor vs Microcontroller</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Aspect</th><th>Microprocessor</th><th>Microcontroller</th></tr>
+        <tr><td>Chip Contents</td><td>CPU + external RAM/ROM chips</td><td>CPU + ROM + RAM + Clock + I/O all on one chip</td></tr>
+        <tr><td>Speed</td><td>GHz range</td><td>MHz range</td></tr>
+        <tr><td>Complexity</td><td>Multiple cores, large cache, complex ISA</td><td>Simple processor, minimal silicon area</td></tr>
+        <tr><td>Use Case</td><td>General-purpose computing</td><td>Dedicated single/few specific tasks</td></tr>
+        <tr><td>Human Interface</td><td>Yes (keyboard, display, etc.)</td><td>Typically none</td></tr>
+        <tr><td>Energy</td><td>Higher (Watts)</td><td>Optimized (milliWatts)</td></tr>
+        <tr><td>Cost</td><td>Higher</td><td>Can be as low as $1</td></tr>
+        <tr><td>Memory</td><td>Volatile RAM, separate ROM</td><td>Non-volatile ROM (program), volatile RAM (data)</td></tr>
+        <tr><td>Architecture</td><td>von Neumann (shared bus)</td><td>Harvard (separate instruction/data buses)</td></tr>
+      </table>
+      <div class="label">Microcontroller Facts</div>
+      <ul class="items">
+        <li>Also called "computer on a chip" — billions embedded each year</li>
+        <li>A single vehicle may use 70+ microcontrollers</li>
+        <li>Architectures range from 4-bit to 32-bit</li>
+        <li>Programmed for specific task; executed as needed</li>
+        <li>No reprogramming by end-user</li>
+      </ul>
+      <div class="label">Processor Classification</div>
+      <ul class="items">
+        <li><strong>Application Processor:</strong> runs complex OS (Linux, Android, Chrome); general-purpose; example: smartphone</li>
+        <li><strong>Dedicated Processor:</strong> dedicated to one or few specific tasks; minimized size and cost</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 8 -->
+
+<!-- ═══ ROW 9 — Deeply Embedded & ARM Architecture ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 25: Deeply Embedded Systems -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Deeply Embedded Systems</h3></div>
+    <div class="card-body">
+      <div class="rule">Deeply embedded system: processor whose behavior is difficult to observe by programmer and user; ROM-programmed; no user interaction</div>
+      <div class="label">Defining Characteristics</div>
+      <ul class="items">
+        <li>Uses microcontroller (not microprocessor)</li>
+        <li><strong>Not reprogrammable:</strong> program logic burned into ROM (read-only memory)</li>
+        <li><strong>No user interaction:</strong> completely autonomous operation</li>
+        <li>Dedicated single-purpose device</li>
+        <li>Processor behavior difficult to observe</li>
+      </ul>
+      <div class="label">Function Pattern</div>
+      <ol class="steps">
+        <li>Detect something in the environment (via sensors)</li>
+        <li>Perform a basic level of processing</li>
+        <li>Do something with the results (via actuators)</li>
+      </ol>
+      <div class="label">Resource Constraints</div>
+      <ul class="items">
+        <li>Memory: extremely limited (KB range)</li>
+        <li>Processor size: minimal gate count</li>
+        <li>Time: strict real-time deadlines</li>
+        <li>Power: often battery-powered; ultra-low consumption</li>
+      </ul>
+      <div class="label">Deployment Patterns</div>
+      <ul class="items">
+        <li>Often have wireless capability</li>
+        <li>Deployed in networked configurations (sensor networks)</li>
+        <li>Factory sensor networks, agricultural field arrays</li>
+        <li>IoT depends heavily on deeply embedded systems</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 26: ARM Overview -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>ARM Architecture — Overview &amp; History</h3></div>
+    <div class="card-body">
+      <div class="rule">ARM = Advanced RISC Machines (originally Acorn RISC Machine) — most widely used processor architecture in the world</div>
+      <div class="label">ARM Holdings Business Model</div>
+      <ul class="items">
+        <li>Designs microprocessor and multicore architectures</li>
+        <li>Does <strong>NOT</strong> manufacture chips — licenses designs to manufacturers</li>
+        <li><strong>Processor license:</strong> customer uses ARM-supplied design in their chips</li>
+        <li><strong>Architecture license:</strong> customer designs own processor compliant with ARM architecture</li>
+      </ul>
+      <div class="label">Historical Timeline</div>
+      <table class="tbl">
+        <tr><th>Year</th><th>Event</th></tr>
+        <tr><td>Early 1980s</td><td>Acorn Computers awarded BBC contract (Computer Literacy Project)</td></tr>
+        <tr><td>1985</td><td>ARM1 — first commercial RISC processor; used as BBC coprocessor</td></tr>
+        <tr><td>Later 1980s</td><td>VLSI Technology licensed to fabricate/market chips; early embedded success</td></tr>
+        <tr><td>~1990</td><td>ARM Ltd. formed: Acorn + VLSI + Apple Computer as founding partners</td></tr>
+        <tr><td>Late 1990s</td><td>Dropped "Advanced RISC Machines" name; simply "ARM architecture"</td></tr>
+      </table>
+      <div class="label">Key Characteristics</div>
+      <ul class="items">
+        <li>High-speed, small die size, low power requirements</li>
+        <li>Apple iPod and iPhone processors; virtually all Android smartphones</li>
+        <li>Dominant in embedded systems globally [VANC14]</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 27: ARM ISA & Cortex Family -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>ARM ISA &amp; Cortex Product Family</h3></div>
+    <div class="card-body">
+      <div class="label">ARM Instruction Set Architecture</div>
+      <ul class="items">
+        <li>All instructions <strong>32 bits</strong> long with regular, uniform format</li>
+        <li>Designed for efficient implementation across wide product range</li>
+        <li><strong>Thumb ISA:</strong> 16-bit re-encoded subset of ARM 32-bit ISA; better code density; for 16-bit or narrower memory bus</li>
+        <li><strong>Thumb-2:</strong> current version; mixed 16/32-bit instructions</li>
+        <li>Harvard architecture (Cortex-M3): separate instruction and data buses → parallel access</li>
+      </ul>
+      <hr class="divider">
+      <div class="label">ARM Cortex Product Families</div>
+      <table class="tbl">
+        <tr><th>Profile</th><th>Target</th><th>Clock</th><th>Memory Mgmt</th><th>ISA</th></tr>
+        <tr><td style="color:var(--accent);">Cortex-A / A50</td><td>Mobile, smart TV, digital TV, DSL gateway</td><td>&gt;1 GHz</td><td>MMU (full OS)</td><td>ARM + Thumb-2 (A=32-bit, A50=64-bit)</td></tr>
+        <tr><td style="color:var(--accent);">Cortex-R</td><td>Real-time (automotive ABS, storage, networking)</td><td>200–800 MHz</td><td>MPU (no MMU)</td><td>ARM + Thumb-2</td></tr>
+        <tr><td style="color:var(--accent);">Cortex-M</td><td>Microcontrollers, IoT, sensors, automotive body</td><td>Low power</td><td>MPU (no MMU)</td><td>Thumb-2 only</td></tr>
+      </table>
+      <div class="label">Cortex-M Sub-Series</div>
+      <ul class="items">
+        <li><strong>M0:</strong> 8/16-bit apps; ultra-low cost; 12k gates minimum</li>
+        <li><strong>M0+:</strong> enhanced M0; more energy efficient</li>
+        <li><strong>M3:</strong> 16/32-bit; performance + energy efficiency; Harvard arch; NVIC; debug/trace; used as text example</li>
+        <li><strong>M4:</strong> M3 + DSP instructions for digital signal processing</li>
+      </ul>
+      <div class="tip" style="margin-top:8px;">
+        <div class="t-title">MMU vs MPU</div>
+        <strong>MMU</strong> (Memory Management Unit): translates virtual→physical addresses; required for full OS (Linux, Android). <strong>MPU</strong> (Memory Protection Unit): prohibits programs from accessing each other's memory; simpler; used in Cortex-R/M.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 9 -->
+
+<!-- ═══ ROW 10 — Cloud Computing ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 28: Cloud Computing Basics -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Cloud Computing — §1.7</h3></div>
+    <div class="card-body">
+      <div class="rule">NIST SP-800-145: "A model for enabling ubiquitous, convenient, on-demand network access to a shared pool of configurable computing resources that can be rapidly provisioned and released with minimal management effort or service provider interaction."</div>
+      <div class="label">Historical Context</div>
+      <ul class="items">
+        <li>General concepts from 1950s; services first available early 2000s</li>
+        <li>Initially targeted large enterprises; spread to SMBs, then consumers</li>
+        <li>Apple iCloud (2012): 20 million users in first week</li>
+        <li>Evernote (2008): approached 100 million users in &lt;6 years</li>
+      </ul>
+      <div class="label">Core Benefits</div>
+      <ul class="items">
+        <li><strong>Economies of scale:</strong> shared infrastructure reduces per-user cost</li>
+        <li><strong>Professional network management:</strong> high-performance, high-reliability</li>
+        <li><strong>Professional security management:</strong> dedicated security expertise</li>
+        <li>Pay only for storage capacity and services needed</li>
+        <li>No setup, maintenance, backup, or hardware acquisition burden</li>
+      </ul>
+      <div class="label">Cloud Subcategories</div>
+      <ul class="items">
+        <li><strong>Cloud Storage:</strong> database storage and applications hosted remotely; scales with needs</li>
+        <li><strong>Cloud Networking:</strong> networks enabling cloud access; high-performance links; firewalls at critical points; may bypass public Internet via private facilities</li>
+      </ul>
+      <div class="warn" style="margin-top:8px;">
+        <div class="w-title">Security Concern</div>
+        Security failures among cloud providers have occurred (e.g., Evernote 2013 password reset after intrusion). Customer is not always fully protected despite provider's security management.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 29: Cloud Service Models -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Cloud Service Models: SaaS / PaaS / IaaS</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Model</th><th>Full Name</th><th>What Customer Gets</th><th>Examples</th></tr>
+        <tr>
+          <td style="color:var(--accent2);font-weight:bold;">SaaS</td>
+          <td>Software as a Service</td>
+          <td>Application software running in cloud; accessible via browser; CSP manages everything</td>
+          <td>Gmail, Salesforce.com, Office 365</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent);font-weight:bold;">PaaS</td>
+          <td>Platform as a Service</td>
+          <td>Platform to run customer's apps; dev tools, languages, runtimes, databases; "OS in the cloud"</td>
+          <td>Google App Engine, Salesforce1</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent3);font-weight:bold;">IaaS</td>
+          <td>Infrastructure as a Service</td>
+          <td>Virtual machines + abstracted hardware + OS; API control; customer deploys arbitrary software</td>
+          <td>Amazon EC2, Windows Azure</td>
+        </tr>
+      </table>
+      <div class="label">What Each Model Manages</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Layer</th><th>SaaS</th><th>PaaS</th><th>IaaS</th><th>Traditional IT</th></tr>
+        <tr><td>Applications</td><td style="color:var(--accent2);">CSP</td><td style="color:var(--accent3);">Client</td><td style="color:var(--accent3);">Client</td><td style="color:var(--accent3);">Client</td></tr>
+        <tr><td>OS / Runtime</td><td style="color:var(--accent2);">CSP</td><td style="color:var(--accent2);">CSP</td><td style="color:var(--accent3);">Client</td><td style="color:var(--accent3);">Client</td></tr>
+        <tr><td>Servers / Storage / Network</td><td style="color:var(--accent2);">CSP</td><td style="color:var(--accent2);">CSP</td><td style="color:var(--accent2);">CSP</td><td style="color:var(--accent3);">Client</td></tr>
+      </table>
+      <div class="label">Characteristics vs Traditional IT</div>
+      <ul class="items">
+        <li>Cloud: less complex, lower upfront cost, more scalable, less customizable</li>
+        <li>Traditional IT: more complex, more upfront cost, less scalable, more customizable</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 30: Key Terms Glossary -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms — §1.8 Glossary</h3></div>
+    <div class="card-body">
+      <div class="label">Architecture &amp; Organization</div>
+      <table class="tbl">
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td><code>Computer Architecture</code></td><td>Attributes visible to programmer; direct impact on logical execution</td></tr>
+        <tr><td><code>Computer Organization</code></td><td>Operational units and interconnections; hardware details transparent to programmer</td></tr>
+        <tr><td><code>ISA</code></td><td>Instruction Set Architecture — defines instructions, registers, memory</td></tr>
+        <tr><td><code>CPU</code></td><td>Central Processing Unit: ALU + CU + registers; fetches and executes instructions</td></tr>
+        <tr><td><code>Core</code></td><td>Individual processing unit on a processor chip</td></tr>
+        <tr><td><code>Processor</code></td><td>Physical chip containing one or more cores</td></tr>
+        <tr><td><code>ALU</code></td><td>Arithmetic and Logic Unit: performs data processing</td></tr>
+        <tr><td><code>Registers</code></td><td>Fast storage internal to the CPU</td></tr>
+        <tr><td><code>System Bus</code></td><td>Conducts communication among CPU, memory, I/O</td></tr>
+        <tr><td><code>Microcontroller</code></td><td>Single chip: CPU + ROM + RAM + clock + I/O</td></tr>
+        <tr><td><code>Embedded System</code></td><td>Electronics/software within a product (non-general-purpose)</td></tr>
+        <tr><td><code>Deeply Embedded</code></td><td>Microcontroller, ROM-programmed, no user interface</td></tr>
+        <tr><td><code>IoT</code></td><td>Internet of Things: interconnection of billions of smart devices</td></tr>
+        <tr><td><code>MMU</code></td><td>Memory Management Unit: translates virtual → physical addresses</td></tr>
+        <tr><td><code>MPU</code></td><td>Memory Protection Unit: prohibits unauthorized cross-program memory access</td></tr>
+        <tr><td><code>SaaS / PaaS / IaaS</code></td><td>Cloud service models: Software / Platform / Infrastructure as a Service</td></tr>
+        <tr><td><code>Moore's Law</code></td><td>Transistors per chip doubles every ~18 months (Gordon Moore, 1965)</td></tr>
+        <tr><td><code>VLSI / ULSI</code></td><td>Very/Ultra Large Scale Integration (millions/billions of transistors)</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /grid row 10 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← Back to Menu</a>
+  <span>Computer Organization &amp; Architecture, 10th Ed. — Stallings | Chapter 1: Basic Concepts and Computer Evolution</span>
+  <span>COA10e · CH01 · §1.1–§1.8</span>
+</div>
+
+</body>
+</html>

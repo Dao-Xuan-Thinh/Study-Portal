@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH03 – Computer Function &amp; Interconnection</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;--accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent4);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent4);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent4);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;} .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;} .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;} ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;} ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent4);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;} .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  /* ASCII diagram styles */
+  .ascii{font-family:'IBM Plex Mono',monospace;font-size:10px;line-height:1.4;color:var(--accent2);background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px 10px;margin-bottom:6px;white-space:pre;overflow-x:auto;}
+  .ascii-blue{color:var(--accent);}
+  .ascii-orange{color:var(--accent5);}
+  .section-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--accent4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;margin-top:4px;display:flex;align-items:center;gap:6px;}
+  .section-label::after{content:'';flex:1;height:1px;background:rgba(210,168,255,0.2);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HEADER ═══════════════════════════════════ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Computer Function &amp; Interconnection — Chapter 3</h1>
+    <h2>Computer Organization &amp; Architecture, 10th Edition &nbsp;|&nbsp; Complete Study Reference</h2>
+    <div style="margin-top:10px;">
+      <div class="toc">
+        <span class="toc-item">§3.1 Computer Components</span>
+        <span class="toc-item">§3.2 Computer Function</span>
+        <span class="toc-item">§3.3 Interconnection Structures</span>
+        <span class="toc-item">§3.4 Bus Interconnection</span>
+        <span class="toc-item">§3.5 QPI Point-to-Point</span>
+        <span class="toc-item">§3.6 PCI Express</span>
+      </div>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+    <span class="badge">COA10e · CH03</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ SECTION 1: VON NEUMANN ════════════════════════════ -->
+<div class="section-label">§3.1 — Computer Components</div>
+<div class="grid">
+
+  <!-- Card 1: Von Neumann Architecture -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Von Neumann Architecture</h3></div>
+    <div class="card-body">
+      <p>Contemporary computer designs are based on concepts developed by <strong>John von Neumann</strong> at the Institute for Advanced Studies, Princeton.</p>
+      <div class="label">Three Key Concepts</div>
+      <ul class="items">
+        <li><strong>Stored Program:</strong> Data and instructions are stored in a single read–write memory</li>
+        <li><strong>Addressable Memory:</strong> Contents of memory are addressable by location, without regard to the type of data contained there</li>
+        <li><strong>Sequential Execution:</strong> Execution occurs sequentially from one instruction to the next (unless explicitly modified)</li>
+      </ul>
+      <div class="label">Two Major CPU Components</div>
+      <ul class="items">
+        <li><strong>Instruction Interpreter:</strong> Accepts instruction codes and generates control signals</li>
+        <li><strong>General-Purpose ALU:</strong> Performs arithmetic and logic operations based on control signals</li>
+      </ul>
+      <div class="tip"><div class="t-title">Key Insight</div>Instead of rewiring hardware for each program (hardwired), the programmer supplies a new sequence of instruction codes (software). Same hardware, different control signals.</div>
+    </div>
+  </div>
+
+  <!-- Card 2: Top-Level Components -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Top-Level Components &amp; Registers</h3></div>
+    <div class="card-body">
+      <div class="label">System Components</div>
+      <ul class="items">
+        <li><strong>CPU:</strong> Instruction interpreter + ALU; reads instructions &amp; data, writes results, generates control signals</li>
+        <li><strong>Main Memory:</strong> N words at addresses 0…N-1; stores both instructions and data (von Neumann)</li>
+        <li><strong>I/O Module:</strong> Transfers data between external devices and CPU/memory; contains internal buffers</li>
+        <li><strong>System Bus:</strong> Interconnects CPU, memory, and I/O modules</li>
+      </ul>
+      <div class="label">CPU Internal Registers</div>
+      <table class="tbl">
+        <tr><th>Register</th><th>Full Name</th><th>Role</th></tr>
+        <tr><td><code>PC</code></td><td>Program Counter</td><td>Address of next instruction to fetch</td></tr>
+        <tr><td><code>IR</code></td><td>Instruction Register</td><td>Holds the currently executing instruction</td></tr>
+        <tr><td><code>MAR</code></td><td>Memory Address Register</td><td>Specifies address in memory for next R/W</td></tr>
+        <tr><td><code>MBR</code></td><td>Memory Buffer Register</td><td>Data to be written/read from memory</td></tr>
+        <tr><td><code>I/OAR</code></td><td>I/O Address Register</td><td>Identifies particular I/O device</td></tr>
+        <tr><td><code>I/OBR</code></td><td>I/O Buffer Register</td><td>Exchange data between I/O module and CPU</td></tr>
+        <tr><td><code>AC</code></td><td>Accumulator</td><td>Temporary storage for arithmetic results</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 3: System Architecture Diagram -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>System Architecture Diagram</h3></div>
+    <div class="card-body">
+      <div class="ascii">  ┌─────────────────────────────────────────┐
+  │                  CPU                     │
+  │  ┌──────────┐  ┌──────────────────────┐  │
+  │  │ Control  │  │  Execution Unit (ALU) │  │
+  │  │  Unit    │  │                      │  │
+  │  └────┬─────┘  └──────────────────────┘  │
+  │  Registers: PC · IR · MAR · MBR · AC     │
+  └───────────────────┬─────────────────────┘
+                      │  System Bus
+        ┌─────────────┼──────────────┐
+        ▼             ▼              ▼
+  ┌──────────┐  ┌──────────┐  ┌──────────┐
+  │  Memory  │  │ I/O Mod. │  │ I/O Mod. │
+  │  0       │  │ Buffers  │  │ Buffers  │
+  │  1       │  │          │  │          │
+  │  ...     │  │ Port 0   │  │ Port 0   │
+  │  N-1     │  │ Port M-1 │  │ Port M-1 │
+  └──────────┘  └──────────┘  └──────────┘
+         ↕            ↕              ↕
+    Instructions  Keyboard        Printer
+    Data          Disk            Network</div>
+      <div class="note"><div class="n-title">Important</div>Von Neumann's insight: same memory can store both instructions AND data — enabling the stored-program concept.</div>
+    </div>
+  </div>
+
+</div><!-- end grid -->
+
+<!-- ═══════════════════════════ SECTION 2: INSTRUCTION CYCLE ═══════════════════════════ -->
+<div class="section-gap"></div>
+<div class="section-label">§3.2 — Computer Function: Instruction Cycle</div>
+<div class="grid">
+
+  <!-- Card 4: Basic Instruction Cycle -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Basic Instruction Cycle</h3></div>
+    <div class="card-body">
+      <p>The processing required for a single instruction is called an <strong>instruction cycle</strong>.</p>
+      <div class="ascii">  START
+    │
+    ▼
+  ┌──────────────────┐
+  │   FETCH CYCLE    │  ← PC → MAR → memory → MBR → IR
+  │  Fetch next      │    PC is incremented
+  │  instruction     │
+  └────────┬─────────┘
+           │
+           ▼
+  ┌──────────────────┐
+  │  EXECUTE CYCLE   │  ← Decode IR, perform action
+  │  Execute         │    (may access memory/I/O)
+  │  instruction     │
+  └────────┬─────────┘
+           │
+           ▼
+         HALT? ──Yes──► HALT
+           │No
+           └──────────► (loop back to FETCH)</div>
+      <div class="label">Four Categories of Instruction Actions</div>
+      <ul class="items">
+        <li><strong>Processor-Memory:</strong> Data transfer between processor and memory</li>
+        <li><strong>Processor-I/O:</strong> Data transfer to/from peripheral device via I/O module</li>
+        <li><strong>Data Processing:</strong> Arithmetic or logic operation on data</li>
+        <li><strong>Control:</strong> Alter sequence of execution (jumps/branches)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 5: Detailed Instruction Cycle States -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Instruction Cycle State Diagram</h3></div>
+    <div class="card-body">
+      <p>A more detailed model shows seven distinct states:</p>
+      <div class="ascii">  ┌─────────────────────────────────────────────┐
+  │         INSTRUCTION CYCLE STATES            │
+  ├──────┬──────────────────────────────────────┤
+  │ iac  │ Instruction Address Calculation       │
+  │      │ Determine address of next instruction │
+  ├──────┼──────────────────────────────────────┤
+  │  if  │ Instruction Fetch                     │
+  │      │ Read instruction from memory → CPU    │
+  ├──────┼──────────────────────────────────────┤
+  │ iod  │ Instruction Operation Decoding        │
+  │      │ Analyze instruction type &amp; operands  │
+  ├──────┼──────────────────────────────────────┤
+  │ oac  │ Operand Address Calculation           │
+  │      │ Determine address of operand(s)       │
+  ├──────┼──────────────────────────────────────┤
+  │  of  │ Operand Fetch                         │
+  │      │ Fetch operand from memory or I/O      │
+  ├──────┼──────────────────────────────────────┤
+  │  do  │ Data Operation                        │
+  │      │ Perform the indicated operation       │
+  ├──────┼──────────────────────────────────────┤
+  │  os  │ Operand Store                         │
+  │      │ Write result to memory or I/O         │
+  └──────┴──────────────────────────────────────┘</div>
+      <div class="tip"><div class="t-title">PDP-11 Example: ADD A,B</div>State sequence: <code>iac → if → iod → oac → of → oac → of → do → oac → os</code></div>
+    </div>
+  </div>
+
+  <!-- Card 6: Hypothetical Machine Example -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Hypothetical Machine Example</h3></div>
+    <div class="card-body">
+      <div class="label">Machine Characteristics</div>
+      <ul class="items">
+        <li>16-bit instructions and data words</li>
+        <li>4-bit opcode → up to 2⁴ = <strong>16 opcodes</strong></li>
+        <li>12-bit address → up to 2¹² = <strong>4096 (4K) words</strong></li>
+        <li>Single data register: <strong>Accumulator (AC)</strong></li>
+      </ul>
+      <div class="label">Opcodes</div>
+      <table class="tbl">
+        <tr><th>Code</th><th>Operation</th></tr>
+        <tr><td><code>0001</code></td><td>Load AC from memory</td></tr>
+        <tr><td><code>0010</code></td><td>Store AC to memory</td></tr>
+        <tr><td><code>0101</code></td><td>Add to AC from memory</td></tr>
+      </table>
+      <div class="label">6-Step Example: mem[940] + mem[941] → mem[941]</div>
+      <table class="tbl">
+        <tr><th>Step</th><th>PC</th><th>IR</th><th>AC</th><th>Action</th></tr>
+        <tr><td>1</td><td>300</td><td>1940</td><td>—</td><td>Fetch instruction at 300 (LOAD from 940); PC→301</td></tr>
+        <tr><td>2</td><td>301</td><td>1940</td><td>0003</td><td>Execute: AC ← mem[940] = 0003</td></tr>
+        <tr><td>3</td><td>301</td><td>5941</td><td>0003</td><td>Fetch instruction at 301 (ADD from 941); PC→302</td></tr>
+        <tr><td>4</td><td>302</td><td>5941</td><td>0005</td><td>Execute: AC ← AC + mem[941] = 0003+0002 = 0005</td></tr>
+        <tr><td>5</td><td>302</td><td>2941</td><td>0005</td><td>Fetch instruction at 302 (STORE to 941); PC→303</td></tr>
+        <tr><td>6</td><td>303</td><td>2941</td><td>0005</td><td>Execute: mem[941] ← AC = 0005</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end grid -->
+
+<!-- ═══════════════════════════ SECTION 3: INTERRUPTS ═══════════════════════════ -->
+<div class="section-gap"></div>
+<div class="section-label">§3.2 — Interrupts</div>
+<div class="grid">
+
+  <!-- Card 7: Interrupt Classes -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Classes of Interrupts</h3></div>
+    <div class="card-body">
+      <p>Interrupts are provided primarily as a way to <strong>improve processing efficiency</strong> — the CPU doesn't waste cycles polling slow devices.</p>
+      <table class="tbl" style="margin-top:8px;">
+        <tr><th>Class</th><th>Source</th><th>Examples</th></tr>
+        <tr><td><strong style="color:var(--accent3);">Program</strong></td><td>Instruction execution condition</td><td>Arithmetic overflow, division by zero, illegal opcode, memory violation</td></tr>
+        <tr><td><strong style="color:var(--yellow);">Timer</strong></td><td>Internal processor timer</td><td>Allows OS to perform periodic functions (preemptive multitasking)</td></tr>
+        <tr><td><strong style="color:var(--accent);">I/O</strong></td><td>I/O controller</td><td>Normal I/O completion, service request, error conditions</td></tr>
+        <tr><td><strong style="color:var(--accent4);">Hardware Failure</strong></td><td>Hardware fault</td><td>Power failure, memory parity error</td></tr>
+      </table>
+      <div class="warn"><div class="w-title">Without Interrupts</div>CPU must sit idle polling the I/O device. A slow printer could waste thousands of instruction cycles — very inefficient.</div>
+    </div>
+  </div>
+
+  <!-- Card 8: Interrupt Cycle & Handling -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Interrupt Handling Procedure</h3></div>
+    <div class="card-body">
+      <div class="label">Instruction Cycle with Interrupt Cycle Added</div>
+      <div class="ascii">  START
+    │
+    ▼
+  ┌──────────────┐
+  │  FETCH CYCLE │
+  └──────┬───────┘
+         │
+         ▼
+  ┌──────────────┐
+  │ EXECUTE CYCLE│
+  └──────┬───────┘
+         │
+         ▼
+  ┌──────────────────────────────┐
+  │       INTERRUPT CYCLE        │
+  │  Any interrupt pending?      │
+  │  No  ──────────────────────► │ (back to FETCH)
+  │  Yes ──► process interrupt   │
+  └──────────────────────────────┘</div>
+      <div class="label">Interrupt Processing Steps</div>
+      <ol class="steps">
+        <li><strong>Suspend</strong> current program execution; save context (PC + relevant data) onto system stack</li>
+        <li><strong>Set PC</strong> to starting address of the interrupt handler routine (ISR)</li>
+        <li><strong>Execute ISR:</strong> Determine nature of interrupt; perform required actions (e.g., write more data to I/O module)</li>
+        <li><strong>Restore context:</strong> Pop saved state from stack; resume user program at point of interruption</li>
+      </ol>
+      <div class="tip"><div class="t-title">Key Point</div>The user program does NOT contain special interrupt code — the processor and OS are entirely responsible for suspending and resuming it transparently.</div>
+    </div>
+  </div>
+
+  <!-- Card 9: Multiple Interrupts & Timing -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Multiple Interrupts &amp; Timing</h3></div>
+    <div class="card-body">
+      <div class="label">Two Approaches to Multiple Interrupts</div>
+      <div class="info"><div class="i-title">Approach 1 — Sequential (Disable Interrupts)</div>While processing an interrupt, all interrupts are <strong>disabled</strong>. Pending interrupts are checked after ISR completes and interrupts are re-enabled. Simple but ignores priority.</div>
+      <div class="tip"><div class="t-title">Approach 2 — Nested (Priority-Based)</div>Higher-priority interrupts can interrupt a lower-priority ISR. Lower-priority interrupts are held pending. Enables time-critical processing.</div>
+      <div class="label">Priority Example (t-axis, 3 devices: printer=2, disk=4, comm=5)</div>
+      <div class="ascii">  t=0   User program begins
+  t=10  Printer interrupt (priority 2) → enter Printer ISR
+  t=15  Comm interrupt (priority 5 > 2) → interrupt Printer ISR
+        Push Printer ISR state → enter Comm ISR
+  t=20  Disk interrupt (priority 4) → HELD (4 &lt; 5, comm running)
+  t=25  Comm ISR completes → restore Printer ISR state
+        BUT disk interrupt (4 > 2) honored immediately
+        → enter Disk ISR
+  t=35  Disk ISR completes → resume Printer ISR
+  t=40  Printer ISR completes → return to User program</div>
+      <div class="label">Efficiency Gain (Short I/O Wait)</div>
+      <div class="ascii">  Without:  [1]──[I/O wait]──[2]──[I/O wait]──[3]
+  With ISR: [1]──[2a]──★──[2b]──[3]
+                      ↑ interrupt occurs; I/O ran concurrently</div>
+    </div>
+  </div>
+
+</div><!-- end grid -->
+
+<!-- ═══════════════════════════ SECTION 4: INTERCONNECTION STRUCTURES ═══════════════════════════ -->
+<div class="section-gap"></div>
+<div class="section-label">§3.3 — Interconnection Structures</div>
+<div class="grid-2">
+
+  <!-- Card 10: Required Transfers -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Required Interconnection Transfers</h3></div>
+    <div class="card-body">
+      <p>The <strong>interconnection structure</strong> is the collection of paths connecting the modules. It must support all necessary data exchanges:</p>
+      <table class="tbl" style="margin-top:8px;">
+        <tr><th>Transfer Type</th><th>Direction</th><th>Description</th></tr>
+        <tr><td><strong>Memory Read</strong></td><td>Memory → Processor</td><td>Processor reads instruction or data from memory</td></tr>
+        <tr><td><strong>Memory Write</strong></td><td>Processor → Memory</td><td>Processor writes data unit to memory</td></tr>
+        <tr><td><strong>I/O Read</strong></td><td>I/O → Processor</td><td>Processor reads data from I/O device via I/O module</td></tr>
+        <tr><td><strong>I/O Write</strong></td><td>Processor → I/O</td><td>Processor sends data to I/O device</td></tr>
+        <tr><td><strong>DMA (I/O ↔ Memory)</strong></td><td>I/O ↔ Memory</td><td>I/O module exchanges data with memory directly, bypassing processor</td></tr>
+      </table>
+      <div class="label">Module Interface Requirements</div>
+      <ul class="items">
+        <li><strong>Memory:</strong> Read/Write operations; address specifies location; data bus carries word</li>
+        <li><strong>I/O Module:</strong> Read/Write operations; port address; external data paths; can send interrupt signals</li>
+        <li><strong>Processor:</strong> Reads instructions &amp; data; writes data; uses control signals; receives interrupts</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 11: Interconnect Comparison -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Interconnect Topology Comparison</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Feature</th><th>Shared Bus</th><th>Point-to-Point</th></tr>
+        <tr><td>Topology</td><td>Single shared medium</td><td>Direct pairwise links</td></tr>
+        <tr><td>Arbitration</td><td>Required (centralized/distributed)</td><td>Not needed per pair</td></tr>
+        <tr><td>Latency</td><td>Higher (arbitration overhead)</td><td>Lower</td></tr>
+        <tr><td>Data Rate</td><td>Limited by sharing</td><td>Higher</td></tr>
+        <tr><td>Scalability</td><td>Poor at high frequencies</td><td>Better</td></tr>
+        <tr><td>Protocol</td><td>Simple control signals</td><td>Layered protocol + packets</td></tr>
+        <tr><td>Examples</td><td>PCI, ISA, microcontrollers</td><td>QPI, PCIe, HyperTransport</td></tr>
+        <tr><td>Current Use</td><td>Embedded/microcontrollers</td><td>Modern CPUs, GPUs, servers</td></tr>
+      </table>
+      <div class="note"><div class="n-title">Why the Shift?</div>At higher frequencies, synchronization and arbitration in wide synchronous buses become increasingly difficult. Multi-core chips magnified these problems.</div>
+    </div>
+  </div>
+
+</div><!-- end grid -->
+
+<!-- ═══════════════════════════ SECTION 5: BUS INTERCONNECTION ═══════════════════════════ -->
+<div class="section-gap"></div>
+<div class="section-label">§3.4 — Bus Interconnection</div>
+<div class="grid">
+
+  <!-- Card 12: Bus Structure -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Bus Structure &amp; Line Types</h3></div>
+    <div class="card-body">
+      <p>A <strong>bus</strong> is a shared communication pathway connecting two or more devices. Only one device may transmit at a time (shared medium).</p>
+      <div class="label">Three Functional Groups of Bus Lines</div>
+      <div class="ascii">  ┌───────────────────────────────────────────┐
+  │               SYSTEM BUS                   │
+  ├───────────────────────────────────────────┤
+  │  DATA LINES    (32/64/128+ bits wide)      │
+  │  ════════════════════════════════════════  │
+  │  → carry actual data between modules       │
+  │  → width = key performance factor          │
+  ├───────────────────────────────────────────┤
+  │  ADDRESS LINES (width → memory capacity)   │
+  │  ────────────────────────────────────────  │
+  │  → specify source/destination of data      │
+  │  → high-order bits: select module          │
+  │  → low-order bits: select location/port    │
+  ├───────────────────────────────────────────┤
+  │  CONTROL LINES (command + timing signals)  │
+  │  ············································│
+  │  → control access to data &amp; address lines │
+  └───────────────────────────────────────────┘</div>
+      <div class="formula">Bus bandwidth = bus_width(bits) × bus_frequency(Hz) / bits_per_transfer</div>
+      <div class="note"><div class="n-title">Data Bus Width Impact</div>If data bus is 32 bits wide but instructions are 64 bits long → processor must access memory TWICE per instruction cycle, halving throughput.</div>
+    </div>
+  </div>
+
+  <!-- Card 13: Control Lines -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Control Line Signals</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Control Signal</th><th>Function</th></tr>
+        <tr><td><code>Memory Write</code></td><td>Data on bus to be written to addressed memory location</td></tr>
+        <tr><td><code>Memory Read</code></td><td>Data from addressed location to be placed on bus</td></tr>
+        <tr><td><code>I/O Write</code></td><td>Data on bus to be output to addressed I/O port</td></tr>
+        <tr><td><code>I/O Read</code></td><td>Data from addressed I/O port to be placed on bus</td></tr>
+        <tr><td><code>Transfer ACK</code></td><td>Data accepted from / placed on bus</td></tr>
+        <tr><td><code>Bus Request</code></td><td>Module needs to gain control of the bus</td></tr>
+        <tr><td><code>Bus Grant</code></td><td>Requesting module has been granted bus control</td></tr>
+        <tr><td><code>Interrupt Request</code></td><td>An interrupt is pending</td></tr>
+        <tr><td><code>Interrupt ACK</code></td><td>Pending interrupt has been recognized by processor</td></tr>
+        <tr><td><code>Clock</code></td><td>Synchronize operations (synchronous buses)</td></tr>
+        <tr><td><code>Reset</code></td><td>Initialize all modules</td></tr>
+      </table>
+      <div class="label">Bus Operation Protocol</div>
+      <ol class="steps">
+        <li><strong>Obtain bus:</strong> Module requests and waits for bus grant</li>
+        <li><strong>Transfer data:</strong> Put address on address lines, data on data lines, assert control signal</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Card 14: Bus Arbitration & Timing -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Bus Arbitration &amp; Timing</h3></div>
+    <div class="card-body">
+      <div class="label">Arbitration Methods</div>
+      <div class="info"><div class="i-title">Centralized Arbitration</div>Single hardware arbiter receives all bus requests; grants bus access. Simpler design but arbiter is a single point of failure.</div>
+      <div class="tip"><div class="t-title">Distributed Arbitration</div>Each module participates in selection of next bus master. E.g., daisy-chain: BPRN/BPRO signals propagate priority from highest to lowest device. No single point of failure.</div>
+      <hr class="divider">
+      <div class="label">Timing Methods</div>
+      <div class="ascii">  SYNCHRONOUS BUS (clock-driven):
+  ┌───┐   ┌───┐   ┌───┐   ┌───┐
+  │ T1│   │ T2│   │ T3│   │ T4│
+  ┘   └───┘   └───┘   └───┘   └
+  Address  Data    ACK   Next
+  valid    valid   rcv'd cycle
+
+  ASYNCHRONOUS BUS (handshake-driven):
+  Master: ──[ReadReq]──────────────[ReadReq↓]──
+  Slave:        ──[DataReady]──[ACK]──
+  (Each event triggers next; no shared clock)</div>
+      <table class="tbl">
+        <tr><th>Method</th><th>Pros</th><th>Cons</th></tr>
+        <tr><td>Synchronous</td><td>Simple, fast</td><td>Must accommodate slowest device; clock skew at high freq.</td></tr>
+        <tr><td>Asynchronous</td><td>Accommodates mixed speeds</td><td>More complex handshake logic</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end grid -->
+
+<!-- ═══════════════════════════ SECTION 6: QPI ═══════════════════════════ -->
+<div class="section-gap"></div>
+<div class="section-label">§3.5 — Point-to-Point Interconnect: Intel QuickPath Interconnect (QPI)</div>
+<div class="grid">
+
+  <!-- Card 15: QPI Overview -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>QPI Overview &amp; Key Characteristics</h3></div>
+    <div class="card-body">
+      <p>Intel's <strong>QuickPath Interconnect (QPI)</strong>, introduced 2008, is a point-to-point interconnect replacing Front Side Bus in multi-core platforms.</p>
+      <div class="label">Key Characteristics</div>
+      <ul class="items">
+        <li><strong>Multiple direct connections:</strong> Pairwise direct links between components — no arbitration needed</li>
+        <li><strong>Layered protocol architecture:</strong> Like TCP/IP — Protocol / Routing / Link / Physical layers</li>
+        <li><strong>Packetized data transfer:</strong> Data sent as packets with headers and error control codes, not raw bit streams</li>
+        <li><strong>Bidirectional:</strong> Simultaneous full-duplex transfer in both directions</li>
+      </ul>
+      <div class="label">Typical Multicore Configuration</div>
+      <div class="ascii">  ┌──────────┐  QPI  ┌──────────┐
+  │  Core A  │◄────►│  Core B  │
+  │  +DRAM   │      │  +DRAM   │
+  └────┬─────┘      └─────┬────┘
+       │ QPI          QPI │
+       ▼                  ▼
+  ┌──────────┐  QPI  ┌──────────┐
+  │  Core C  │◄────►│  Core D  │
+  │  +DRAM   │      │  +DRAM   │
+  └──────────┘      └──────────┘
+       │ QPI              │ QPI
+       ▼                  ▼
+   ┌───────┐          ┌───────┐
+   │  IOH  │          │  IOH  │  (I/O Hub)
+   └───┬───┘          └───┬───┘
+       │ PCIe             │ PCIe
+    I/O devices        I/O devices</div>
+      <div class="formula">QPI throughput = 6.4 GT/s × 20 bits/transfer = 16 GB/s per direction
+Total bidirectional capacity = 32 GB/s</div>
+    </div>
+  </div>
+
+  <!-- Card 16: QPI Four Layers -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>QPI Four-Layer Protocol Architecture</h3></div>
+    <div class="card-body">
+      <div class="ascii">  ┌─────────────────────────────────────────┐
+  │          PROTOCOL LAYER                  │
+  │  Unit: Packet (N × Flits)                │
+  │  Cache coherency protocol; packet        │
+  │  format standardized; high-level rules   │
+  │  for exchanging packets between devices  │
+  ├─────────────────────────────────────────┤
+  │          ROUTING LAYER                   │
+  │  Determines path through interconnect    │
+  │  fabric; routing tables defined by       │
+  │  firmware; handles failures &amp; rerouting │
+  ├─────────────────────────────────────────┤
+  │          LINK LAYER                      │
+  │  Unit: Flit = 80 bits (72 payload + 8 CRC)│
+  │  Reliable transmission + flow control    │
+  │  Credit-based flow control; CRC error    │
+  │  detection; retransmission on error      │
+  ├─────────────────────────────────────────┤
+  │          PHYSICAL LAYER                  │
+  │  Unit: Phit = 20 bits                    │
+  │  Actual wires + LVDS differential signal │
+  │  20 data lanes + 1 clock lane (each dir) │
+  │  Manages 80-bit flit → 20-bit phit via   │
+  │  multilane distribution (round-robin)    │
+  └─────────────────────────────────────────┘</div>
+      <div class="label">Unit Sizes</div>
+      <table class="tbl">
+        <tr><th>Layer</th><th>Unit</th><th>Size</th></tr>
+        <tr><td>Physical</td><td>Phit</td><td>20 bits</td></tr>
+        <tr><td>Link</td><td>Flit</td><td>80 bits (72 payload + 8 CRC)</td></tr>
+        <tr><td>Protocol</td><td>Packet</td><td>Integral number of Flits</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 17: QPI Physical & Link Layer Details -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>QPI Physical &amp; Link Layer Details</h3></div>
+    <div class="card-body">
+      <div class="label">Physical Layer — Differential Signaling (LVDS)</div>
+      <div class="ascii">  ┌──────────────────────────────────────────┐
+  │         QPI Port Physical Structure        │
+  ├──────────────────────────────────────────┤
+  │  20 data lanes (TX) + 1 clock lane (TX)  │
+  │  20 data lanes (RX) + 1 clock lane (RX)  │
+  │  Total: 84 individual links per port      │
+  ├──────────────────────────────────────────┤
+  │  Each "lane" = PAIR of wires (differential)│
+  │  Binary value = voltage difference between│
+  │  the two conductors (LVDS technique)       │
+  ├──────────────────────────────────────────┤
+  │  4 quadrants × 5 lanes = 20 data lanes   │
+  │  Can operate at half/quarter width for    │
+  │  power saving or fault tolerance          │
+  └──────────────────────────────────────────┘</div>
+      <div class="label">Multilane Distribution (80-bit flit → 4× 20-bit phits)</div>
+      <div class="ascii">  Flit bit stream: b0 b1 b2 b3 ... b79
+  Lane  0: b0, b20, b40, b60
+  Lane  1: b1, b21, b41, b61
+  ...
+  Lane 19: b19, b39, b59, b79
+  (Round-robin distribution across 20 lanes)</div>
+      <div class="label">Link Layer — Error &amp; Flow Control</div>
+      <ul class="items">
+        <li><strong>CRC Error Detection:</strong> Each 80-bit flit has 8-bit CRC over 72-bit payload; mismatch → NAK → retransmit damaged flit + all subsequent</li>
+        <li><strong>Credit-Based Flow Control:</strong> Sender given N credits; each flit sent decrements credit; each buffer freed at receiver returns a credit; prevents overflow</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- end grid -->
+
+<!-- ═══════════════════════════ SECTION 7: PCIe ═══════════════════════════ -->
+<div class="section-gap"></div>
+<div class="section-label">§3.6 — PCI Express (PCIe)</div>
+<div class="grid">
+
+  <!-- Card 18: PCIe Overview & Architecture -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>PCIe Overview &amp; Physical Architecture</h3></div>
+    <div class="card-body">
+      <p><strong>PCI Express (PCIe)</strong> replaces bus-based PCI for I/O device interconnection. Point-to-point, full-duplex, high-bandwidth, processor-independent.</p>
+      <div class="label">PCIe Topology Components</div>
+      <table class="tbl">
+        <tr><th>Component</th><th>Role</th></tr>
+        <tr><td><strong>Root Complex</strong> (chipset/host bridge)</td><td>Connects processor + memory to PCIe fabric; translates formats; buffers rate differences</td></tr>
+        <tr><td><strong>Switch</strong></td><td>Manages multiple PCIe streams; routes packets between ports</td></tr>
+        <tr><td><strong>PCIe Endpoint</strong></td><td>I/O device implementing PCIe (GPU, NIC, disk controller)</td></tr>
+        <tr><td><strong>Legacy Endpoint</strong></td><td>Migrated PCI designs; may use I/O space and locked transactions</td></tr>
+        <tr><td><strong>PCIe/PCI Bridge</strong></td><td>Allows older PCI devices to connect to PCIe systems</td></tr>
+      </table>
+      <div class="label">PCIe Lane Structure</div>
+      <div class="ascii">  Each PCIe Lane (bidirectional):
+  ┌───────────────────────────────────────┐
+  │  TX+ ────────────────────────► RX+   │
+  │  TX- ────────────────────────► RX-   │  ← one direction
+  │  RX+ ◄──────────────────────── TX+  │
+  │  RX- ◄──────────────────────── TX-  │  ← return direction
+  └───────────────────────────────────────┘
+  Port sizes: ×1, ×4, ×8, ×16, ×32 lanes
+  (QPI lane = 1 direction; PCIe lane = bidirectional)</div>
+    </div>
+  </div>
+
+  <!-- Card 19: PCIe Transfer Rates -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>PCIe Transfer Rate Reference</h3></div>
+    <div class="card-body">
+      <div class="label">PCIe Versions — Per-Lane Bandwidth (each direction)</div>
+      <table class="tbl">
+        <tr><th>Version</th><th>Year</th><th>Encoding</th><th>GT/s/lane</th><th>GB/s per ×1</th><th>GB/s per ×16</th></tr>
+        <tr><td>PCIe 1.0</td><td>2003</td><td>8b/10b</td><td>2.5</td><td>0.25</td><td>4.0</td></tr>
+        <tr><td>PCIe 2.0</td><td>2007</td><td>8b/10b</td><td>5.0</td><td>0.50</td><td>8.0</td></tr>
+        <tr><td>PCIe 3.0</td><td>2010</td><td>128b/130b</td><td>8.0</td><td>~0.985</td><td>~15.75</td></tr>
+        <tr><td>PCIe 4.0</td><td>2017</td><td>128b/130b</td><td>16.0</td><td>~1.969</td><td>~31.51</td></tr>
+        <tr><td>PCIe 5.0</td><td>2019</td><td>128b/130b</td><td>32.0</td><td>~3.938</td><td>~63.02</td></tr>
+        <tr><td>PCIe 6.0</td><td>2022</td><td>PAM4 / FLIT</td><td>64.0</td><td>~7.563</td><td>~121.0</td></tr>
+      </table>
+      <div class="note"><div class="n-title">PCIe 3.0 Encoding Efficiency</div>128b/130b encoding: 128 bits of data per 130 bits transmitted. Overhead = 2/130 ≈ 1.5% (much better than 8b/10b's 20% overhead). Plus scrambling for clock recovery without extra bits.</div>
+      <div class="label">vs. Original PCI</div>
+      <table class="tbl">
+        <tr><th>Feature</th><th>PCI</th><th>PCIe</th></tr>
+        <tr><td>Topology</td><td>Shared bus</td><td>Point-to-point serial</td></tr>
+        <tr><td>Transfer</td><td>Parallel (32/64 bit)</td><td>Serial differential pairs</td></tr>
+        <tr><td>Max BW</td><td>133 MB/s (32-bit/33MHz)</td><td>Up to 121+ GB/s (PCIe 6.0 ×16)</td></tr>
+        <tr><td>Duplex</td><td>Half-duplex (shared)</td><td>Full-duplex per link</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 20: PCIe Protocol Layers -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>PCIe Three-Layer Protocol Architecture</h3></div>
+    <div class="card-body">
+      <div class="ascii">  ┌──────────────────────────────────────────┐
+  │        TRANSACTION LAYER (TL)             │
+  │  Unit: TLP (Transaction Layer Packet)     │
+  │  Generates read/write requests            │
+  │  Split-transaction: request → completion  │
+  │  Manages flow control of TLPs             │
+  │  TLP = [Header][Data (0–4096 B)][ECRC]   │
+  ├──────────────────────────────────────────┤
+  │        DATA LINK LAYER (DLL)              │
+  │  Unit: DLLP (Data Link Layer Packet)      │
+  │  Reliable transmission + flow control     │
+  │  Adds: 16-bit Sequence# + 32-bit LCRC    │
+  │  ACK/NAK for error recovery               │
+  │  DLLP types: Flow control, Power mgmt,   │
+  │              TLP ACK/NAK                  │
+  ├──────────────────────────────────────────┤
+  │        PHYSICAL LAYER (PL)                │
+  │  Actual wires; differential signaling     │
+  │  128b/130b encoding + scrambling          │
+  │  Clock recovery (no dedicated clock lane) │
+  │  Multilane round-robin byte distribution  │
+  └──────────────────────────────────────────┘</div>
+      <div class="label">TLP Packet Format</div>
+      <div class="ascii">  [STP framing][Seq#][Header 12/16B][Data 0-4096B][ECRC][LCRC][End]
+   ←PL adds→  ←DLL→ ←─────── TL creates ──────────────→ ←DLL→</div>
+    </div>
+  </div>
+
+</div><!-- end grid -->
+
+<!-- ═══════════════════════════ SECTION 8: PCIe DETAILS ═══════════════════════════ -->
+<div class="section-gap"></div>
+<div class="grid-2">
+
+  <!-- Card 21: PCIe TLP Transaction Types -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>PCIe TLP Address Spaces &amp; Transaction Types</h3></div>
+    <div class="card-body">
+      <div class="label">Four Address Spaces</div>
+      <ul class="items">
+        <li><strong>Memory:</strong> System main memory + PCIe I/O devices mapped into memory address ranges</li>
+        <li><strong>I/O:</strong> Legacy PCI devices with reserved memory address ranges</li>
+        <li><strong>Configuration:</strong> Read/write configuration registers of I/O devices</li>
+        <li><strong>Message:</strong> Control signals for interrupts, error handling, power management (in-band)</li>
+      </ul>
+      <div class="label">TLP Transaction Types (Table 3.2)</div>
+      <table class="tbl">
+        <tr><th>Address Space</th><th>TLP Type</th></tr>
+        <tr><td rowspan="3">Memory</td><td>Memory Read Request</td></tr>
+        <tr><td>Memory Read Lock Request</td></tr>
+        <tr><td>Memory Write Request</td></tr>
+        <tr><td rowspan="2">I/O</td><td>I/O Read Request</td></tr>
+        <tr><td>I/O Write Request</td></tr>
+        <tr><td rowspan="4">Configuration</td><td>Config Type 0 Read Request</td></tr>
+        <tr><td>Config Type 0 Write Request</td></tr>
+        <tr><td>Config Type 1 Read Request</td></tr>
+        <tr><td>Config Type 1 Write Request</td></tr>
+        <tr><td rowspan="2">Message</td><td>Message Request</td></tr>
+        <tr><td>Message Request with Data</td></tr>
+        <tr><td rowspan="4">Memory/I/O/Config</td><td>Completion</td></tr>
+        <tr><td>Completion with Data</td></tr>
+        <tr><td>Completion Locked</td></tr>
+        <tr><td>Completion Locked with Data</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 22: PCIe Physical Layer Details -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>PCIe Physical Layer: 128b/130b Encoding &amp; Scrambling</h3></div>
+    <div class="card-body">
+      <div class="label">Why 128b/130b Encoding? (PCIe 3.0+)</div>
+      <p>Unlike QPI, PCIe does <strong>not</strong> use its clock lane for bit synchronization — the receiver must self-synchronize by detecting transitions in the data stream.</p>
+      <div class="warn"><div class="w-title">Problem</div>Long strings of identical bits (all 0s or all 1s) → no transitions → receiver clock drifts → loss of synchronization.</div>
+      <div class="label">Solution: Two-Step Process</div>
+      <div class="ascii">  Input data
+      │
+      ▼
+  ┌──────────────┐    Spreads transitions uniformly;
+  │   SCRAMBLER  │ ←─ improves spectral properties;
+  └──────┬───────┘    doesn't add bits
+         │
+         ▼
+  ┌──────────────────┐    Buffers 128 bits; adds 2-bit
+  │ 128b/130b ENCODER│ ←─ sync header (10=data, 01=ordered set)
+  └──────┬───────────┘    Overhead = only 1.5%
+         │
+         ▼
+  ┌─────────────────────┐
+  │ PARALLEL→SERIAL     │ → Differential signaling (D+/D-)
+  └─────────────────────┘
+
+  At Receiver: Serial→Parallel → 128b/130b Decode → Descramble</div>
+      <div class="label">Multilane Distribution (PCIe ×4 Example)</div>
+      <div class="ascii">  Byte stream: B0 B1 B2 B3 B4 B5 B6 B7 ...
+  Lane 0 (128b/130b): B0, B4, B8, ...
+  Lane 1 (128b/130b): B1, B5, B9, ...
+  Lane 2 (128b/130b): B2, B6, B10, ...
+  Lane 3 (128b/130b): B3, B7, B11, ...
+  (1 byte at a time, round-robin)</div>
+      <div class="tip"><div class="t-title">Result</div>Using these techniques, PCIe 3.0 achieves <strong>16 GB/s</strong> per ×16 link (each direction). Each transmission begins/ends with 8-bit framing for receiver synchronization.</div>
+    </div>
+  </div>
+
+</div><!-- end grid -->
+
+<!-- ═══════════════════════════ SECTION 9: SPLIT TRANSACTION & DLL ═══════════════════════════ -->
+<div class="section-gap"></div>
+<div class="grid">
+
+  <!-- Card 23: PCIe Split Transaction -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>PCIe Split Transaction &amp; TL Operations</h3></div>
+    <div class="card-body">
+      <div class="label">Split Transaction Protocol</div>
+      <div class="ascii">  Source Device                 Destination Device
+       │                                 │
+       │──── Request TLP (unique ID) ───►│
+       │                                 │  ← Data/status not yet ready
+       │◄── Other PCIe traffic ─────────►│  ← Link is free for other use
+       │                                 │  ← Data/status now ready
+       │◄── Completion TLP (same ID) ────│
+       │                                 │
+  Completion is separated IN TIME from request.
+  Multiple outstanding transactions possible.</div>
+      <div class="label">Transaction Types by Response</div>
+      <ul class="items">
+        <li><strong>Split transactions:</strong> Memory/I/O/Config reads — completion packet returns later with data</li>
+        <li><strong>Posted transactions:</strong> Memory writes, Message requests — no response expected</li>
+        <li><strong>Locked operations:</strong> Atomic read-modify-write sequences; root complex locks PCIe link during transaction set</li>
+      </ul>
+      <div class="label">TLP Packet Attributes</div>
+      <ul class="items">
+        <li><code>no-snoop</code> — bypass cache coherency check for non-cacheable data</li>
+        <li><code>relaxed-ordering</code> — allow reordering for performance</li>
+        <li><code>priority</code> — route time-sensitive data (streaming video, audio) first</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 24: DLL Error Recovery -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>PCIe Data Link Layer: Error Recovery</h3></div>
+    <div class="card-body">
+      <div class="label">TLP Processing by DLL</div>
+      <div class="ascii">  DLL TRANSMITTER adds to TLP:
+  ┌──────────────────────────────────────┐
+  │ [Seq# 16-bit][TLP Core][LCRC 32-bit] │
+  └──────────────────────────────────────┘
+  Retains copy in buffer; awaits ACK/NAK
+
+  DLL RECEIVER on incoming TLP:
+  ┌────────────────────────────────────────┐
+  │ Strip Seq# + LCRC fields               │
+  │ Recalculate LCRC over TLP core         │
+  │ Match?  YES → pass TLP core to TL      │
+  │                (forward or process)    │
+  │         NO  → send NAK DLLP back       │
+  │              → sender retransmits TLP  │
+  │              + all subsequent TLPs     │
+  └────────────────────────────────────────┘</div>
+      <div class="label">DLLP Packet Types</div>
+      <table class="tbl">
+        <tr><th>DLLP Type</th><th>Purpose</th></tr>
+        <tr><td>Flow Control</td><td>Regulate rate of TLP/DLLP transmission across link</td></tr>
+        <tr><td>Power Management</td><td>Platform power budgeting and state control</td></tr>
+        <tr><td>TLP ACK</td><td>Positive acknowledgment — sender discards buffered TLP</td></tr>
+        <tr><td>TLP NAK</td><td>Error — sender retransmits from errored TLP onward</td></tr>
+      </table>
+      <div class="label">DLLP Format</div>
+      <div class="ascii">  [STP framing][DLLP body 4B][CRC 2B][End framing]
+   ←── added by PL ──→ ← DLL creates → ← PL adds →</div>
+    </div>
+  </div>
+
+  <!-- Card 25: Quick Reference Summary -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Chapter 3 Quick Reference Summary</h3></div>
+    <div class="card-body">
+      <div class="label">Key Terminology</div>
+      <table class="tbl">
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td><code>Instruction Cycle</code></td><td>Complete processing of one instruction: fetch + decode + execute (+ interrupt check)</td></tr>
+        <tr><td><code>PC</code></td><td>Program Counter — holds address of next instruction to fetch</td></tr>
+        <tr><td><code>ISR</code></td><td>Interrupt Service Routine — program that handles an interrupt</td></tr>
+        <tr><td><code>DMA</code></td><td>Direct Memory Access — I/O ↔ memory without CPU involvement</td></tr>
+        <tr><td><code>System Bus</code></td><td>Bus connecting major components: CPU, memory, I/O</td></tr>
+        <tr><td><code>Bus Width</code></td><td>Number of data bus lines — determines bits transferred per cycle</td></tr>
+        <tr><td><code>Phit</code></td><td>Physical unit — 20 bits (QPI physical layer unit)</td></tr>
+        <tr><td><code>Flit</code></td><td>Flow control unit — 80 bits (QPI link layer unit)</td></tr>
+        <tr><td><code>TLP</code></td><td>Transaction Layer Packet — PCIe transaction layer unit</td></tr>
+        <tr><td><code>DLLP</code></td><td>Data Link Layer Packet — PCIe data link layer unit</td></tr>
+        <tr><td><code>Root Complex</code></td><td>PCIe chipset connecting CPU/memory to PCIe fabric</td></tr>
+        <tr><td><code>Lane</code></td><td>PCIe: bidirectional differential pair; QPI: unidirectional pair</td></tr>
+      </table>
+      <div class="formula">Address space capacity = 2^(address_bus_width) locations
+Max memory = 2^N words  (N = address bus bits)</div>
+      <div class="formula">Bus data rate = (data_bus_width / 8) × bus_frequency  [bytes/sec]</div>
+    </div>
+  </div>
+
+</div><!-- end grid -->
+
+<!-- ═══════════════════════════ SECTION 10: REVIEW MNEMONICS ═══════════════════════════ -->
+<div class="section-gap"></div>
+<div class="grid-2">
+
+  <!-- Card 26: Interrupt Handling Mnemonic -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Interrupt vs. Bus Flow Comparison</h3></div>
+    <div class="card-body">
+      <div class="label">Interrupt Flow (processor perspective)</div>
+      <div class="ascii">  Normal Execution
+  ──────────────────────────────────────────►
+  I1  I2  I3  I4 ★ ISR1  ISR2 ★ I5  I6  I7
+                  ↑              ↑
+            Int. occurs    Int. completes
+            (save PC,      (restore PC,
+             goto ISR)      resume user)
+
+  ★ = interrupt point; no code change in user program</div>
+      <div class="label">Bus Read Cycle Flow (Synchronous)</div>
+      <div class="ascii">  Clock:  ─┐ ┌─┐ ┌─┐ ┌─┐ ┌─┐ ┌─
+            └─┘ └─┘ └─┘ └─┘ └─┘
+          │ T1 │ T2 │ T3 │ T4 │
+  Addr:    ═══valid════════════════
+  ReadReq: ───────────────────────
+  Data:                ════valid══  (memory responds by T3)
+  ACK:                         ─── (data latched by master)
+
+  Bus operation: (1) obtain bus (2) transfer data</div>
+      <div class="label">I/O Function Summary</div>
+      <ul class="items">
+        <li><strong>Programmed I/O:</strong> CPU polls device status repeatedly — CPU-bound, wasteful</li>
+        <li><strong>Interrupt-driven I/O:</strong> Device signals CPU when ready — efficient, CPU does other work</li>
+        <li><strong>DMA:</strong> I/O module reads/writes memory directly — CPU only involved in setup and completion; maximum efficiency</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 27: QPI vs PCIe Comparison -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>QPI vs. PCIe Head-to-Head</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Feature</th><th>QPI</th><th>PCIe 3.0</th></tr>
+        <tr><td>Purpose</td><td>CPU-to-CPU, CPU-to-IOH</td><td>CPU-to-I/O devices</td></tr>
+        <tr><td>Introduced</td><td>2008</td><td>2010</td></tr>
+        <tr><td>Layers</td><td>Physical/Link/Routing/Protocol</td><td>Physical/Data Link/Transaction</td></tr>
+        <tr><td>Physical unit</td><td>Phit (20 bits)</td><td>130-bit encoded block</td></tr>
+        <tr><td>Link unit</td><td>Flit (80 bits)</td><td>TLP (variable)</td></tr>
+        <tr><td>Encoding</td><td>None (20-lane parallel)</td><td>128b/130b + scrambling</td></tr>
+        <tr><td>Clock recovery</td><td>Dedicated clock lane</td><td>Self-clocking (transitions)</td></tr>
+        <tr><td>Lane direction</td><td>Unidirectional (pair = 1 dir)</td><td>Bidirectional per lane</td></tr>
+        <tr><td>Flow control</td><td>Credit-based (link layer)</td><td>Credit-based (TL + DLL)</td></tr>
+        <tr><td>Error control</td><td>8-bit CRC per flit; retransmit</td><td>LCRC per TLP; ACK/NAK</td></tr>
+        <tr><td>Speed (ref)</td><td>6.4 GT/s → 16 GB/s/dir</td><td>8 GT/s → ~16 GB/s (×16)</td></tr>
+        <tr><td>Routing</td><td>Explicit routing layer</td><td>Root complex + switches</td></tr>
+        <tr><td>Cache coherence</td><td>Protocol layer (MESIF)</td><td>N/A (I/O focused)</td></tr>
+      </table>
+      <div class="tip"><div class="t-title">Successor Note</div>QPI was succeeded by Intel's <strong>UPI (Ultra Path Interconnect)</strong> in Skylake-SP (2017), offering higher bandwidth and lower latency.</div>
+    </div>
+  </div>
+
+</div><!-- end grid -->
+
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════ -->
+<div class="footer">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← Back to Menu</a>
+  <span>COA 10e · Chapter 3 · A Top-Level View of Computer Function and Interconnection</span>
+  <span>Stallings · Computer Organization &amp; Architecture · 10th Edition</span>
+</div>
+
+</body>
+</html>

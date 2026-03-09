@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH06 – External Memory</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;--accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--yellow);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--yellow);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--yellow);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;} .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;} .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;} ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;} ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--yellow);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;} .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .section-title{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  .raid-badge{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px;margin-right:4px;}
+  .r0{background:rgba(247,129,102,0.15);color:var(--accent3);border:1px solid rgba(247,129,102,0.3);}
+  .r1{background:rgba(88,166,255,0.15);color:var(--accent);border:1px solid rgba(88,166,255,0.3);}
+  .r2{background:rgba(210,168,255,0.15);color:var(--accent4);border:1px solid rgba(210,168,255,0.3);}
+  .r3{background:rgba(63,185,80,0.15);color:var(--accent2);border:1px solid rgba(63,185,80,0.3);}
+  .r4{background:rgba(255,166,87,0.15);color:var(--accent5);border:1px solid rgba(255,166,87,0.3);}
+  .r5{background:rgba(227,179,65,0.15);color:var(--yellow);border:1px solid rgba(227,179,65,0.3);}
+  .r6{background:rgba(88,166,255,0.15);color:var(--accent);border:1px solid rgba(88,166,255,0.3);}
+  .highlight{color:var(--yellow);font-weight:600;}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+<div class="header">
+  <div class="header-left">
+    <h1>External Memory — Chapter 6</h1>
+    <h2>Computer Organization and Architecture, 10th Edition · William Stallings</h2>
+    <div style="margin-top:10px;" class="toc">
+      <span class="toc-item">§6.1 Magnetic Disk</span>
+      <span class="toc-item">§6.2 RAID</span>
+      <span class="toc-item">§6.3 Solid State Drives</span>
+      <span class="toc-item">§6.4 Optical Memory</span>
+      <span class="toc-item">§6.5 Magnetic Tape</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+    <span class="badge">COA10e · CH06</span>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);">Pages 194–224</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ §6.1 MAGNETIC DISK ════════════════════════ -->
+<div class="section-title">§6.1 — Magnetic Disk</div>
+<div class="grid">
+
+  <!-- Card 1: Disk Structure -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Disk Structure &amp; Anatomy</h3></div>
+    <div class="card-body">
+      <div class="label">Physical Components</div>
+      <ul class="items">
+        <li><strong>Platter</strong> — Circular non-magnetic substrate (aluminum alloy or glass) coated with magnetizable material</li>
+        <li><strong>Track</strong> — Concentric ring on platter surface; thousands of tracks per surface; same width as R/W head</li>
+        <li><strong>Sector</strong> — Arc segment of a track; typical size = <code>512 bytes</code> (or 4096 bytes in modern drives)</li>
+        <li><strong>Cylinder</strong> — Set of all tracks at the same radial position across all platters</li>
+        <li><strong>Spindle</strong> — Central shaft that rotates all platters together</li>
+        <li><strong>Boom / Arm</strong> — Mechanical arm that positions the R/W head radially</li>
+        <li><strong>Intertrack gap</strong> — Space between adjacent tracks (prevents cross-track interference)</li>
+        <li><strong>Intersector gap</strong> — Space between adjacent sectors on a track</li>
+      </ul>
+      <div class="label" style="margin-top:10px;">Glass Substrate Advantages</div>
+      <ul class="items">
+        <li>More uniform magnetic film → fewer read/write errors</li>
+        <li>Fewer surface defects</li>
+        <li>Supports lower fly heights (greater density)</li>
+        <li>Better stiffness, greater shock resistance</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 2: Read/Write Mechanisms -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Read / Write Mechanisms</h3></div>
+    <div class="card-body">
+      <div class="label">Write (Inductive)</div>
+      <p>Electric pulses → conducting coil → magnetic field across gap → magnetizes surface. Reversing current direction reverses magnetization polarity (encodes 0/1).</p>
+      <div class="label">Read (Traditional)</div>
+      <p>Moving magnetic field induces current in coil. Same head structure used for both read and write (floppy/older rigid disks).</p>
+      <div class="label">Read (Modern — MR Sensor)</div>
+      <p>Separate <strong>Magnetoresistive (MR)</strong> read head. Electrical resistance changes based on magnetic direction of passing medium → detected as voltage signals. Allows <span class="highlight">higher frequency → greater density &amp; speed</span>.</p>
+      <div class="tip">
+        <div class="t-title">Key Point</div>
+        During read/write, the head is <strong>stationary</strong> — the platter rotates beneath it.
+      </div>
+      <div class="label">Data Encoding</div>
+      <ul class="items">
+        <li>Change between pit/land states represents bit boundaries</li>
+        <li>No change between sensor intervals → <code>0</code></li>
+        <li>Beginning or end of pit → <code>1</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 3: Physical Characteristics -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Physical Characteristics</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Dimension</th><th>Options</th></tr>
+        <tr><td><strong>Head Motion</strong></td><td>Fixed-head (1 per track) / Movable-head (1 per surface)</td></tr>
+        <tr><td><strong>Platters</strong></td><td>Single platter / Multiple platters</td></tr>
+        <tr><td><strong>Portability</strong></td><td>Nonremovable (fixed) / Removable</td></tr>
+        <tr><td><strong>Sides</strong></td><td>Single-sided / Double-sided</td></tr>
+        <tr><td><strong>Head Mechanism</strong></td><td>Contact (floppy) / Fixed-gap / Aerodynamic (Winchester)</td></tr>
+      </table>
+      <div class="label" style="margin-top:10px;">Winchester Disk</div>
+      <p>Sealed drive assembly (near-contaminant-free). Aerodynamic foil rests on surface when idle; air pressure from spinning disk lifts head (~0.1 µm). Allows narrow heads → <span class="highlight">greater data density</span>.</p>
+      <div class="info">
+        <div class="i-title">Cylinder Note</div>
+        All heads move together → they always sit over the same cylinder. Accessing data on the same cylinder requires NO additional seek.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 4: CAV vs MZR -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Data Layout: CAV vs MZR</h3></div>
+    <div class="card-body">
+      <div class="label">CAV — Constant Angular Velocity</div>
+      <p>Disk rotates at fixed speed. All tracks hold the <strong>same number of bits</strong>. Outer track bits are spaced farther apart (lower linear density). Easy direct addressing by track + sector. <em>Wastes outer track capacity.</em></p>
+      <div class="label">MZR — Multiple Zone Recording</div>
+      <p>Surface divided into <code>~16 concentric zones</code>. Within each zone, bit count per track is constant. Outer zones have <strong>more sectors</strong> per track than inner zones → approximately uniform linear bit density → <span class="highlight">greater overall capacity</span>.</p>
+      <div class="note">
+        <div class="n-title">Trade-off</div>
+        MZR: More complex circuitry (timing changes when head crosses zone boundary) but significantly higher storage capacity.
+      </div>
+      <div class="label">Optical Disks (CD/DVD)</div>
+      <p>Use a single <strong>spiral track</strong> with <strong>CLV (Constant Linear Velocity)</strong>: disk rotates <em>slower</em> for outer areas, <em>faster</em> for inner areas. All sectors same physical length → maximum density but harder random access.</p>
+    </div>
+  </div>
+
+  <!-- Card 5: Disk Performance Parameters -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Disk Performance Parameters</h3></div>
+    <div class="card-body">
+      <div class="label">Three Components of Access Time</div>
+      <div class="formula">T_access = T_seek + T_rotation + T_transfer</div>
+      <div class="label">Seek Time (T_seek)</div>
+      <p>Time to move arm to target track. Two components: <strong>startup time</strong> + <strong>traversal time</strong> (non-linear; includes settling time). Typical average: <code>&lt; 10 ms</code> on modern drives.</p>
+      <div class="label">Rotational Latency (T_rotation)</div>
+      <p>Time waiting for target sector to rotate under head. Average = <strong>½ rotation period</strong>.</p>
+      <div class="formula">T_rotation_avg = 1 / (2r)   where r = rev/sec</div>
+      <p style="font-size:11px;color:var(--text-muted);">Example: 15,000 rpm → r = 250 rev/s → avg latency = 2 ms</p>
+      <div class="label">Transfer Time (T_transfer)</div>
+      <div class="formula">T_transfer = b / (r × N)</div>
+      <p style="font-size:11px;color:var(--text-muted);">b = bytes to transfer; N = bytes per track; r = rev/sec</p>
+      <div class="label">Full Formula (Eq. 6.1)</div>
+      <div class="formula">T_total = T_s + 1/(2r) + b/(rN)</div>
+      <div class="label">Additional Delays (in practice)</div>
+      <ul class="items">
+        <li><strong>Wait for device</strong> — queued behind other processes</li>
+        <li><strong>Wait for channel</strong> — shared I/O channel busy</li>
+        <li><strong>RPS miss</strong> — rotational positional sensing miss → extra full revolution penalty</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 6: Timing Example -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Access Time Worked Example</h3></div>
+    <div class="card-body">
+      <div class="info">
+        <div class="i-title">Given</div>
+        Avg seek = 4 ms · 15,000 rpm · 512 B/sector · 500 sectors/track<br>
+        Read 2500 sectors (= 5 tracks × 500 sectors)
+      </div>
+      <div class="label">Sequential Access (Best Case)</div>
+      <table class="tbl">
+        <tr><th>Operation</th><th>Time</th></tr>
+        <tr><td>Avg seek (1st track)</td><td>4 ms</td></tr>
+        <tr><td>Avg rotational delay</td><td>2 ms</td></tr>
+        <tr><td>Read 500 sectors</td><td>4 ms</td></tr>
+        <tr><td><strong>First track total</strong></td><td><strong>10 ms</strong></td></tr>
+        <tr><td>4 remaining tracks (2+4 each)</td><td>4 × 6 = 24 ms</td></tr>
+        <tr><td><strong style="color:var(--accent2);">Total sequential</strong></td><td><strong style="color:var(--accent2);">34 ms</strong></td></tr>
+      </table>
+      <div class="label" style="margin-top:10px;">Random Access (Worst Case)</div>
+      <table class="tbl">
+        <tr><th>Per sector</th><th>Time</th></tr>
+        <tr><td>Avg seek</td><td>4 ms</td></tr>
+        <tr><td>Rotational delay</td><td>2 ms</td></tr>
+        <tr><td>Read 1 sector</td><td>0.008 ms</td></tr>
+        <tr><td><strong>Per sector total</strong></td><td><strong>6.008 ms</strong></td></tr>
+        <tr><td><strong style="color:var(--accent3);">Total random (2500×)</strong></td><td><strong style="color:var(--accent3);">15,020 ms ≈ 15 s</strong></td></tr>
+      </table>
+      <div class="warn" style="margin-top:8px;">
+        <div class="w-title">Key Insight</div>
+        Sequential vs random: <strong>~440× performance difference!</strong> This motivates disk scheduling algorithms.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═════════════ DISK SCHEDULING ════════════ -->
+<div class="section-gap">
+  <div class="section-title">§6.1 — Disk Scheduling Algorithms</div>
+  <div class="grid-2">
+
+    <!-- Card 7: Scheduling Algorithms -->
+    <div class="card blue">
+      <div class="card-header"><div class="dot"></div><h3>Disk Scheduling Algorithms</h3></div>
+      <div class="card-body">
+        <table class="tbl">
+          <tr>
+            <th>Algorithm</th>
+            <th>Description</th>
+            <th>Pros</th>
+            <th>Cons</th>
+          </tr>
+          <tr>
+            <td><code style="color:var(--accent);">FIFO</code></td>
+            <td>Service requests in arrival order</td>
+            <td>Fair; no starvation</td>
+            <td>Poor performance; no seek optimization</td>
+          </tr>
+          <tr>
+            <td><code style="color:var(--accent2);">SSTF</code></td>
+            <td>Shortest Seek Time First — always serve nearest track</td>
+            <td>Better avg seek time than FIFO</td>
+            <td>Starvation of distant requests; not truly optimal</td>
+          </tr>
+          <tr>
+            <td><code style="color:var(--yellow);">SCAN</code></td>
+            <td>Head sweeps back and forth; services requests in current direction (like elevator)</td>
+            <td>No starvation; better than SSTF fairness</td>
+            <td>Requests just passed must wait full sweep</td>
+          </tr>
+          <tr>
+            <td><code style="color:var(--accent4);">LOOK</code></td>
+            <td>Like SCAN but reverses at last request (not physical disk edge)</td>
+            <td>Avoids unnecessary travel to disk edge</td>
+            <td>Same fairness issues as SCAN</td>
+          </tr>
+          <tr>
+            <td><code style="color:var(--accent5);">C-SCAN</code></td>
+            <td>Circular SCAN: sweeps one direction only; jumps back to start (no service on return)</td>
+            <td>More uniform wait times</td>
+            <td>Wasted return sweep</td>
+          </tr>
+          <tr>
+            <td><code style="color:var(--accent3);">C-LOOK</code></td>
+            <td>Circular LOOK: one-direction sweep, jump back to nearest pending request</td>
+            <td>Best practical balance of performance + fairness</td>
+            <td>Slightly complex implementation</td>
+          </tr>
+        </table>
+        <div class="tip" style="margin-top:10px;">
+          <div class="t-title">Performance Order</div>
+          FIFO &lt; SSTF &lt; SCAN/LOOK ≈ C-SCAN/C-LOOK (for uniformly distributed requests)
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 8: Disk Parameters Table -->
+    <div class="card green">
+      <div class="card-header"><div class="dot"></div><h3>Typical HDD Parameters (Stallings Table 6.2)</h3></div>
+      <div class="card-body">
+        <table class="tbl">
+          <tr>
+            <th>Parameter</th>
+            <th>Enterprise</th>
+            <th>Desktop</th>
+            <th>Server NAS</th>
+            <th>Laptop</th>
+          </tr>
+          <tr>
+            <td>Capacity</td>
+            <td>6 TB</td>
+            <td>3 TB</td>
+            <td>600 GB</td>
+            <td>2 TB</td>
+          </tr>
+          <tr>
+            <td>Avg Seek</td>
+            <td>4.16 ms</td>
+            <td>N/A</td>
+            <td>3.9/4.2 ms</td>
+            <td>13 ms</td>
+          </tr>
+          <tr>
+            <td>Spindle Speed</td>
+            <td>7200 rpm</td>
+            <td>7200 rpm</td>
+            <td>10,075 rpm</td>
+            <td>5400 rpm</td>
+          </tr>
+          <tr>
+            <td>Avg Latency</td>
+            <td>4.16 ms</td>
+            <td>4.16 ms</td>
+            <td>2.98 ms</td>
+            <td>5.6 ms</td>
+          </tr>
+          <tr>
+            <td>Max Transfer</td>
+            <td>216 MB/s</td>
+            <td>149 MB/s</td>
+            <td>97 MB/s</td>
+            <td>300 MB/s</td>
+          </tr>
+          <tr>
+            <td>Bytes/Sector</td>
+            <td>512 / 4096</td>
+            <td>512</td>
+            <td>512</td>
+            <td>4096</td>
+          </tr>
+          <tr>
+            <td>Surfaces</td>
+            <td>8</td>
+            <td>10</td>
+            <td>8</td>
+            <td>4</td>
+          </tr>
+          <tr>
+            <td>Cache</td>
+            <td>128 MB</td>
+            <td>64 MB</td>
+            <td>16 MB</td>
+            <td>8 MB</td>
+          </tr>
+        </table>
+        <div class="note" style="margin-top:10px;">
+          <div class="n-title">Disk Interfaces</div>
+          <strong>SATA</strong> (Serial ATA) — consumer/desktop drives, up to 600 MB/s<br>
+          <strong>SCSI/SAS</strong> — enterprise/server, higher reliability &amp; throughput<br>
+          <strong>PCIe/NVMe</strong> — SSDs, ultra-low latency
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════ §6.2 RAID ════════════════════════════ -->
+<div class="section-gap">
+  <div class="section-title">§6.2 — RAID (Redundant Array of Independent Disks)</div>
+  <div class="grid">
+
+    <!-- Card 9: RAID Overview -->
+    <div class="card blue">
+      <div class="card-header"><div class="dot"></div><h3>RAID Overview &amp; Motivation</h3></div>
+      <div class="card-body">
+        <div class="label">Why RAID?</div>
+        <p>CPU/DRAM performance improves much faster than disk I/O. RAID uses <strong>multiple parallel disks</strong> to close this gap — improving both <strong>performance</strong> and <strong>reliability</strong>.</p>
+        <div class="label">3 Common Characteristics of All RAID Levels</div>
+        <ol class="steps">
+          <li>Multiple physical disks appear as a <strong>single logical drive</strong> to the OS</li>
+          <li>Data distributed across drives via <strong>striping</strong> (round-robin allocation of strips)</li>
+          <li>Redundant capacity stores <strong>parity information</strong> for data recoverability<br><em style="font-size:10px;color:var(--text-muted);">(Exception: RAID 0 has no redundancy; RAID 1 uses mirroring not parity)</em></li>
+        </ol>
+        <div class="label" style="margin-top:10px;">Key Terminology</div>
+        <ul class="items">
+          <li><strong>Strip</strong> — unit of data on a single disk (can be sector, block, or user-defined)</li>
+          <li><strong>Stripe</strong> — one strip per disk in the array (n strips forming a logical row)</li>
+          <li><strong>Parallel access</strong> — all disks participate in every I/O (RAID 2, 3)</li>
+          <li><strong>Independent access</strong> — disks can serve separate I/O requests (RAID 4, 5, 6)</li>
+        </ul>
+        <div class="info" style="margin-top:8px;">
+          <div class="i-title">Origin</div>
+          Coined by Patterson, Gibson, Katz at UC Berkeley (1988). Originally "Inexpensive Disks" → now "Independent Disks."
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 10: RAID 0 & 1 -->
+    <div class="card green">
+      <div class="card-header"><div class="dot"></div><h3>RAID 0 &amp; RAID 1</h3></div>
+      <div class="card-body">
+        <div class="label"><span class="raid-badge r0">RAID 0</span> Striping — No Redundancy</div>
+        <ul class="items">
+          <li>Data striped round-robin across N disks. No parity/mirroring.</li>
+          <li>Multiple concurrent I/O requests → served from different disks in parallel</li>
+          <li>Single large I/O → split across all N disks → N× effective transfer rate</li>
+          <li><strong>Disks required:</strong> N (no overhead)</li>
+          <li><strong>Storage efficiency:</strong> 100%</li>
+        </ul>
+        <div class="warn">
+          <div class="w-title">Critical Risk</div>
+          One disk failure = ALL data lost. No fault tolerance whatsoever.
+        </div>
+        <div class="label"><span class="raid-badge r1">RAID 1</span> Mirroring</div>
+        <ul class="items">
+          <li>Every strip written to TWO disks simultaneously (mirror copy)</li>
+          <li><strong>Read:</strong> served from either disk → choose lowest seek + latency → up to 2× read rate</li>
+          <li><strong>Write:</strong> both disks updated in parallel → speed of the slower write (no extra parity overhead)</li>
+          <li>Disk failure: data fully available from mirror instantly</li>
+          <li><strong>Disks required:</strong> 2N</li>
+          <li><strong>Storage efficiency:</strong> 50% (100% overhead)</li>
+        </ul>
+        <div class="tip">
+          <div class="t-title">Best Use Cases</div>
+          RAID 0: video production, image editing (high bandwidth, tolerance for risk)<br>
+          RAID 1: OS drives, critical databases, financial systems
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 11: RAID 2, 3 -->
+    <div class="card purple">
+      <div class="card-header"><div class="dot"></div><h3>RAID 2 &amp; RAID 3 (Parallel Access)</h3></div>
+      <div class="card-body">
+        <div class="label"><span class="raid-badge r2">RAID 2</span> Hamming Code ECC</div>
+        <ul class="items">
+          <li>Very small strips (single byte or word). All disks synchronized (spindles aligned).</li>
+          <li>Error-Correcting Code (Hamming) computed across corresponding bits of each data disk</li>
+          <li>ECC bits stored on separate <strong>m parity disks</strong> (m ∝ log₂N)</li>
+          <li>Can correct single-bit errors, detect double-bit errors</li>
+          <li><strong>Disks required:</strong> N + m</li>
+        </ul>
+        <div class="warn">
+          <div class="w-title">Practical Note</div>
+          High ratio of ECC to data disks for small arrays. Modern drives have built-in ECC → RAID 2 is not commercially used.
+        </div>
+        <div class="label"><span class="raid-badge r3">RAID 3</span> Bit-Interleaved Parity</div>
+        <ul class="items">
+          <li>Similar to RAID 2 but only <strong>1 dedicated parity disk</strong> regardless of array size</li>
+          <li>Very small strips (bit/byte level). All disks participate in every I/O.</li>
+          <li>Parity: <code>P(i) = X3(i) ⊕ X2(i) ⊕ X1(i) ⊕ X0(i)</code></li>
+          <li>Failed drive data: <code>Xi(j) = P(j) ⊕ (all other disks' j-th bit)</code></li>
+          <li>Excellent for large sequential transfers; poor for many small random I/Os</li>
+          <li><strong>Disks required:</strong> N + 1 · <strong>Efficiency:</strong> N/(N+1)</li>
+        </ul>
+        <div class="info">
+          <div class="i-title">Reduced Mode</div>
+          In case of failure, missing data are regenerated on-the-fly via XOR. Full recovery only after physical disk replacement.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RAID 4, 5, 6 row -->
+  <div class="grid section-gap">
+
+    <!-- Card 12: RAID 4 -->
+    <div class="card orange">
+      <div class="card-header"><div class="dot"></div><h3>RAID 4 — Block-Level Parity</h3></div>
+      <div class="card-body">
+        <div class="label"><span class="raid-badge r4">RAID 4</span> Independent Access + Dedicated Parity</div>
+        <ul class="items">
+          <li>Large strips (block-level). Independent access: each disk can serve a separate I/O request.</li>
+          <li>Bit-by-bit parity computed across corresponding strips of each data disk</li>
+          <li>Parity stored on <strong>one dedicated parity disk</strong></li>
+        </ul>
+        <div class="label">Write Penalty (Small Writes)</div>
+        <div class="formula">New_P = Old_P ⊕ Old_Data ⊕ New_Data</div>
+        <p style="font-size:11px;">Each small write requires: <strong>2 reads</strong> (old data + old parity) + <strong>2 writes</strong> (new data + new parity) → <span class="highlight">4 disk operations per logical write</span></p>
+        <div class="warn">
+          <div class="w-title">Bottleneck</div>
+          Every write involves the parity disk → parity disk becomes a bottleneck under heavy write loads. Not commercially implemented.
+        </div>
+        <div class="label">Specs</div>
+        <ul class="items">
+          <li><strong>Disks required:</strong> N + 1</li>
+          <li><strong>Storage efficiency:</strong> N/(N+1)</li>
+          <li><strong>Read performance:</strong> Similar to RAID 0</li>
+          <li><strong>Write performance:</strong> Much lower than single disk</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Card 13: RAID 5 -->
+    <div class="card yellow">
+      <div class="card-header"><div class="dot"></div><h3>RAID 5 — Distributed Parity ⭐</h3></div>
+      <div class="card-body">
+        <div class="label"><span class="raid-badge r5">RAID 5</span> Block-Interleaved Distributed Parity</div>
+        <ul class="items">
+          <li>Like RAID 4 but parity strips <strong>distributed round-robin</strong> across all disks</li>
+          <li>First N stripes: parity on disk 0, 1, …, N-1; pattern repeats</li>
+          <li>Eliminates the RAID 4 parity disk bottleneck</li>
+          <li>Independent access: multiple I/O requests served in parallel</li>
+        </ul>
+        <div class="label">Specs</div>
+        <ul class="items">
+          <li><strong>Disks required:</strong> N + 1 (min. 3)</li>
+          <li><strong>Storage efficiency:</strong> N/(N+1)</li>
+          <li><strong>Tolerates:</strong> 1 disk failure</li>
+        </ul>
+        <div class="tip">
+          <div class="t-title">Most Popular RAID Level</div>
+          Best balance of performance, storage efficiency, and fault tolerance. Used in file servers, database servers, web servers, and intranet servers. <strong>Most versatile RAID level.</strong>
+        </div>
+        <div class="note">
+          <div class="n-title">RAID 10 (1+0)</div>
+          Combination: stripe across mirrored pairs. Provides RAID 0 performance with RAID 1 redundancy. Requires 2N disks. Popular in high-demand environments.
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 14: RAID 6 -->
+    <div class="card red">
+      <div class="card-header"><div class="dot"></div><h3>RAID 6 — Dual Distributed Parity</h3></div>
+      <div class="card-body">
+        <div class="label"><span class="raid-badge r6">RAID 6</span> Block-Interleaved Dual Distributed Parity</div>
+        <ul class="items">
+          <li>Two independent parity calculations (P and Q) stored on <strong>separate disks</strong></li>
+          <li><strong>P</strong> = standard XOR parity (same as RAID 5)</li>
+          <li><strong>Q</strong> = independent second check algorithm (e.g., Reed-Solomon)</li>
+          <li>Can recover from <strong>any 2 simultaneous disk failures</strong></li>
+        </ul>
+        <div class="label">Specs</div>
+        <ul class="items">
+          <li><strong>Disks required:</strong> N + 2 (min. 4)</li>
+          <li><strong>Storage efficiency:</strong> N/(N+2)</li>
+          <li><strong>Read performance:</strong> Similar to RAID 0 / RAID 5</li>
+          <li><strong>Write performance:</strong> Each write affects 2 parity blocks → &gt;30% write penalty vs RAID 5</li>
+        </ul>
+        <div class="label">When to Use</div>
+        <div class="info">
+          <div class="i-title">Ideal For</div>
+          Mission-critical applications, large disk arrays (where double-failure probability is non-negligible), archival storage, disaster recovery systems.
+        </div>
+        <div class="warn">
+          <div class="w-title">Write Overhead</div>
+          Performance benchmarks show RAID 6 controllers suffer 30%+ write performance drop compared to RAID 5.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ RAID Comparison Table (Full Width) ════════════ -->
+<div class="section-gap">
+  <div class="card blue col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>RAID Levels — Complete Comparison Table</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr>
+          <th>Level</th>
+          <th>Name</th>
+          <th>Disks</th>
+          <th>Efficiency</th>
+          <th>Fault Tolerance</th>
+          <th>Redundancy Method</th>
+          <th>Large Transfer</th>
+          <th>Small I/O Rate</th>
+          <th>Access Type</th>
+          <th>Best Applications</th>
+        </tr>
+        <tr>
+          <td><span class="raid-badge r0">0</span></td>
+          <td>Striping</td>
+          <td>N</td>
+          <td style="color:var(--accent2);">100%</td>
+          <td style="color:var(--accent3);">None</td>
+          <td>—</td>
+          <td style="color:var(--accent2);">Very High</td>
+          <td style="color:var(--accent2);">Very High (R&amp;W)</td>
+          <td>Independent</td>
+          <td>Video prod., image editing, high-BW apps</td>
+        </tr>
+        <tr>
+          <td><span class="raid-badge r1">1</span></td>
+          <td>Mirroring</td>
+          <td>2N</td>
+          <td style="color:var(--accent3);">50%</td>
+          <td style="color:var(--accent2);">1+ disks</td>
+          <td>Full mirror copy</td>
+          <td>High (read &gt; single)</td>
+          <td>2× read; = single write</td>
+          <td>Independent</td>
+          <td>Accounting, payroll, critical files, OS drives</td>
+        </tr>
+        <tr>
+          <td><span class="raid-badge r2">2</span></td>
+          <td>Hamming ECC</td>
+          <td>N+m</td>
+          <td style="color:var(--accent5);">Variable</td>
+          <td style="color:var(--accent2);">Single-bit correct</td>
+          <td>Hamming code</td>
+          <td style="color:var(--accent2);">Highest</td>
+          <td>~2× single disk</td>
+          <td>Parallel</td>
+          <td>Rarely used (no commercial impl.)</td>
+        </tr>
+        <tr>
+          <td><span class="raid-badge r3">3</span></td>
+          <td>Bit-interleaved parity</td>
+          <td>N+1</td>
+          <td style="color:var(--accent2);">N/(N+1)</td>
+          <td style="color:var(--accent2);">1 disk</td>
+          <td>XOR parity (1 disk)</td>
+          <td style="color:var(--accent2);">Highest</td>
+          <td>= single disk</td>
+          <td>Parallel</td>
+          <td>Video/live stream, large sequential transfers</td>
+        </tr>
+        <tr>
+          <td><span class="raid-badge r4">4</span></td>
+          <td>Block-level parity</td>
+          <td>N+1</td>
+          <td style="color:var(--accent2);">N/(N+1)</td>
+          <td style="color:var(--accent2);">1 disk</td>
+          <td>XOR parity (dedicated disk)</td>
+          <td>≈ RAID 0 (read)</td>
+          <td style="color:var(--accent3);">Much lower (write)</td>
+          <td>Independent</td>
+          <td>Rarely used (no commercial impl.; parity bottleneck)</td>
+        </tr>
+        <tr>
+          <td><span class="raid-badge r5">5</span></td>
+          <td>Distributed parity</td>
+          <td>N+1</td>
+          <td style="color:var(--accent2);">N/(N+1)</td>
+          <td style="color:var(--accent2);">1 disk</td>
+          <td>XOR parity (distributed)</td>
+          <td>≈ RAID 0 (read)</td>
+          <td>≈ RAID 0 (read); lower write</td>
+          <td>Independent</td>
+          <td>File/app/DB servers, web/email, most versatile</td>
+        </tr>
+        <tr>
+          <td><span class="raid-badge r6">6</span></td>
+          <td>Dual distributed parity</td>
+          <td>N+2</td>
+          <td style="color:var(--accent5);">N/(N+2)</td>
+          <td style="color:var(--accent2);">2 disks</td>
+          <td>P+Q dual parity (distributed)</td>
+          <td>≈ RAID 5 (read)</td>
+          <td style="color:var(--accent3);">&lt; RAID 5 write (30%+)</td>
+          <td>Independent</td>
+          <td>Mission-critical, large arrays, disaster recovery</td>
+        </tr>
+      </table>
+      <div style="margin-top:10px;display:flex;gap:12px;flex-wrap:wrap;">
+        <div class="tip" style="flex:1;min-width:200px;margin-bottom:0;">
+          <div class="t-title">Most Common in Practice</div>
+          <strong>RAID 5</strong> — best all-around (file/DB servers)<br>
+          <strong>RAID 6</strong> — when 2-fault tolerance needed<br>
+          <strong>RAID 10</strong> — performance + redundancy (high-transaction DBs)
+        </div>
+        <div class="note" style="flex:1;min-width:200px;margin-bottom:0;">
+          <div class="n-title">Parity XOR Formula</div>
+          <code style="color:var(--yellow);">P = D0 ⊕ D1 ⊕ D2 ⊕ … ⊕ Dn</code><br>
+          Recovery: <code style="color:var(--yellow);">Dx = P ⊕ D0 ⊕ … ⊕ D(x-1) ⊕ D(x+1) ⊕ …</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════ §6.3 SSD ══════════════════════════ -->
+<div class="section-gap">
+  <div class="section-title">§6.3 — Solid State Drives (SSD)</div>
+  <div class="grid">
+
+    <!-- Card 15: SSD vs HDD -->
+    <div class="card blue">
+      <div class="card-header"><div class="dot"></div><h3>SSD vs HDD Comparison</h3></div>
+      <div class="card-body">
+        <table class="tbl">
+          <tr><th>Parameter</th><th>SSD (NAND Flash)</th><th>HDD</th></tr>
+          <tr>
+            <td>Read/Write Speed</td>
+            <td style="color:var(--accent2);">200–550 MB/s</td>
+            <td>50–120 MB/s</td>
+          </tr>
+          <tr>
+            <td>Random Access</td>
+            <td style="color:var(--accent2);">&lt;0.1 ms (no seek)</td>
+            <td>5–15 ms (mechanical)</td>
+          </tr>
+          <tr>
+            <td>IOPS</td>
+            <td style="color:var(--accent2);">Up to 100,000+</td>
+            <td>75–150</td>
+          </tr>
+          <tr>
+            <td>Power Draw</td>
+            <td style="color:var(--accent2);">2–3 watts</td>
+            <td>6–7 watts</td>
+          </tr>
+          <tr>
+            <td>Storage Capacity</td>
+            <td>≤512 GB (notebook), 1 TB (desktop)</td>
+            <td style="color:var(--accent2);">500 GB–4 TB+ widely available</td>
+          </tr>
+          <tr>
+            <td>Cost/GB</td>
+            <td style="color:var(--accent3);">~$0.50 / GB</td>
+            <td style="color:var(--accent2);">~$0.15 / GB</td>
+          </tr>
+          <tr>
+            <td>Mechanical Shock</td>
+            <td style="color:var(--accent2);">Highly resistant</td>
+            <td style="color:var(--accent3);">Vulnerable</td>
+          </tr>
+          <tr>
+            <td>Noise/Heat</td>
+            <td style="color:var(--accent2);">Silent, cool</td>
+            <td>Audible, warmer</td>
+          </tr>
+          <tr>
+            <td>Lifespan</td>
+            <td>Limited write cycles (~100K P/E)</td>
+            <td style="color:var(--accent2);">No write cycle limit</td>
+          </tr>
+        </table>
+        <div class="note" style="margin-top:8px;">
+          <div class="n-title">Trend</div>
+          SSD cost/GB falling rapidly. Performance gap vs HDD growing. SSDs now standard in laptops and enterprise servers.
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 16: SSD Architecture -->
+    <div class="card green">
+      <div class="card-header"><div class="dot"></div><h3>SSD Architecture &amp; Organization</h3></div>
+      <div class="card-body">
+        <div class="label">SSD System Architecture (Fig 6.8)</div>
+        <div class="rule">OS Software → File System → I/O Driver → [Interface] → SSD Controller</div>
+        <div class="label">SSD Internal Components</div>
+        <ul class="items">
+          <li><strong>Controller</strong> — Device-level interfacing; runs firmware; manages all internal ops</li>
+          <li><strong>Addressing Logic</strong> — Selection function across flash memory chips; manages logical-to-physical mapping (FTL)</li>
+          <li><strong>Data Buffer / Cache</strong> — High-speed RAM for speed-matching; increases throughput</li>
+          <li><strong>Error Correction Logic</strong> — ECC for detecting and correcting read errors</li>
+          <li><strong>NAND Flash Chips</strong> — Actual non-volatile storage (arrays of floating-gate transistors)</li>
+        </ul>
+        <div class="label" style="margin-top:10px;">Host Interfaces</div>
+        <ul class="items">
+          <li><strong>PCIe / NVMe</strong> — Internal high-performance SSDs (ultra-low latency)</li>
+          <li><strong>SATA</strong> — Legacy interface, 600 MB/s max, common in older laptops/desktops</li>
+          <li><strong>USB</strong> — External SSDs</li>
+        </ul>
+        <div class="label">Flash Memory Hierarchy</div>
+        <ul class="items">
+          <li><strong>Page</strong> — Smallest read/write unit; typically <code>4 KB</code></li>
+          <li><strong>Block</strong> — Smallest erasable unit; typically <code>512 KB</code> (~128 pages)</li>
+          <li>Flash can be read/written at page level but <strong>erased only at block level</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Card 17: SSD Practical Issues -->
+    <div class="card red">
+      <div class="card-header"><div class="dot"></div><h3>SSD Practical Issues &amp; Solutions</h3></div>
+      <div class="card-body">
+        <div class="label">Issue 1: Write Amplification / Performance Degradation</div>
+        <p>Writing a single page requires read-modify-write at the <strong>block level</strong>:</p>
+        <ol class="steps">
+          <li>Read entire block (512 KB) into RAM buffer</li>
+          <li>Update the target page in RAM buffer</li>
+          <li>Erase the entire block in flash memory</li>
+          <li>Write entire block from RAM back to flash</li>
+        </ol>
+        <p style="margin-top:6px;">As drive fills up → more fragmentation → more blocks affected per write → <span class="highlight">performance degrades</span>.</p>
+        <div class="label">Solutions to Degradation</div>
+        <ul class="items">
+          <li><strong>Over-provisioning</strong> — Reserve extra flash capacity (not exposed to OS) for write operations</li>
+          <li><strong>Garbage Collection</strong> — During idle time, consolidate valid pages, erase stale blocks</li>
+          <li><strong>TRIM command</strong> — OS informs SSD which blocks are no longer in use → SSD can pre-erase them</li>
+        </ul>
+        <hr class="divider">
+        <div class="label">Issue 2: Wear-Out (Limited P/E Cycles)</div>
+        <p>Flash cells degrade after repeated write/erase cycles. Typical limit: <code>~100,000 P/E cycles</code>.</p>
+        <div class="label">Solutions to Wear-Out</div>
+        <ul class="items">
+          <li><strong>Wear Leveling</strong> — Distribute writes evenly across all blocks (FTL algorithm)</li>
+          <li><strong>Write Caching</strong> — Front-end RAM cache delays/groups write operations</li>
+          <li><strong>Bad Block Management</strong> — Map out worn cells; maintain spare blocks</li>
+          <li><strong>RAID for SSDs</strong> — Further reduce probability of data loss</li>
+          <li><strong>Self-monitoring</strong> — Drives estimate remaining lifetime; trigger preemptive alerts</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════ §6.4 OPTICAL MEMORY ══════════════════════════ -->
+<div class="section-gap">
+  <div class="section-title">§6.4 — Optical Memory</div>
+  <div class="grid">
+
+    <!-- Card 18: CD Technology -->
+    <div class="card purple">
+      <div class="card-header"><div class="dot"></div><h3>CD Technology: CD-ROM, CD-R, CD-RW</h3></div>
+      <div class="card-body">
+        <div class="label">CD Construction &amp; Read Mechanism</div>
+        <ul class="items">
+          <li>Polycarbonate resin disk; digitized data as microscopic <strong>pits</strong> (low reflectivity) and <strong>lands</strong> (high reflectivity)</li>
+          <li>Coated with reflective aluminum/gold layer + clear acrylic protective coat</li>
+          <li>780-nm laser reads pit/land transitions; photosensor detects intensity changes</li>
+          <li>Transition (pit↔land) = <code>1</code> ; no change between intervals = <code>0</code></li>
+        </ul>
+        <div class="label">Spiral Track + CLV</div>
+        <p>Single spiral track from center outward. Uses <strong>CLV (Constant Linear Velocity)</strong>: disk spins faster for inner tracks, slower for outer tracks. All sectors same physical length → maximum density. Capacity: <strong>~680 MB</strong>.</p>
+        <div class="label">CD-ROM Block Format (Fig 6.10) — 2352 bytes/block</div>
+        <table class="tbl">
+          <tr><th>Field</th><th>Size</th><th>Description</th></tr>
+          <tr><td>Sync</td><td>12 B</td><td>0x00, 10×0xFF, 0x00 — block delimiter</td></tr>
+          <tr><td>ID/Header</td><td>4 B</td><td>Address (min, sec, sector) + mode byte</td></tr>
+          <tr><td>Data</td><td>2048 B</td><td>User data (Mode 1) or 2336 B (Mode 2)</td></tr>
+          <tr><td>L-ECC</td><td>288 B</td><td>Layered error-correction code (Mode 1)</td></tr>
+        </table>
+        <hr class="divider">
+        <div class="label">CD-R (Write-Once)</div>
+        <p>Dye layer activated by high-intensity laser → permanent change in reflectivity. Readable on standard CD-ROM drives. Good for archival storage.</p>
+        <div class="label">CD-RW (Rewritable)</div>
+        <p>Uses <strong>phase-change material</strong>: amorphous state (low reflectivity) ↔ crystalline state (high reflectivity), switched by laser power. Rewritable 500K–1M times. Eventually loses phase-change properties permanently.</p>
+      </div>
+    </div>
+
+    <!-- Card 19: DVD & Blu-ray -->
+    <div class="card orange">
+      <div class="card-header"><div class="dot"></div><h3>DVD &amp; High-Definition Optical Disks</h3></div>
+      <div class="card-body">
+        <div class="label">DVD Capacity Improvements vs CD</div>
+        <ol class="steps">
+          <li><strong>Smaller pits &amp; tighter tracks</strong> — DVD: pit spacing 0.4 µm / track pitch 0.74 µm vs CD: 0.834 µm / 1.6 µm → ~7× capacity → <strong>4.7 GB per layer per side</strong></li>
+          <li><strong>Dual layers</strong> — Second semireflective layer on top → read by adjusting laser focus → ~8.5 GB (single side, dual layer)</li>
+          <li><strong>Double-sided</strong> — Data on both sides → max <strong>17 GB</strong> (dual-layer, double-sided)</li>
+        </ol>
+        <div class="label">Optical Disk Formats Comparison</div>
+        <table class="tbl">
+          <tr><th>Format</th><th>Laser λ</th><th>Track Pitch</th><th>Capacity</th><th>Notes</th></tr>
+          <tr><td>CD-ROM</td><td>780 nm</td><td>1.6 µm</td><td style="color:var(--accent2);">680 MB</td><td>Read-only, CLV, 12 cm</td></tr>
+          <tr><td>CD-R/RW</td><td>780 nm</td><td>1.6 µm</td><td>680 MB</td><td>Write-once / rewritable</td></tr>
+          <tr><td>DVD-ROM</td><td>650 nm</td><td>0.74 µm</td><td style="color:var(--accent2);">4.7–17 GB</td><td>1–4 layers, 1–2 sides</td></tr>
+          <tr><td>DVD-R/RW</td><td>650 nm</td><td>0.74 µm</td><td>4.7 GB</td><td>Single-sided only</td></tr>
+          <tr><td>HD-DVD</td><td>405 nm</td><td>0.4 µm</td><td>15 GB/layer</td><td>Discontinued</td></tr>
+          <tr><td style="color:var(--accent2);font-weight:600;">Blu-ray</td><td style="color:var(--accent2);">405 nm</td><td style="color:var(--accent2);">0.32 µm</td><td style="color:var(--accent2);">25 GB/layer</td><td style="color:var(--accent2);">Market winner; BD-ROM/BD-R/BD-RE</td></tr>
+        </table>
+        <div class="label" style="margin-top:10px;">Blu-ray Details</div>
+        <ul class="items">
+          <li>Blue-violet laser (405 nm) → smaller beam → smaller pits → tighter tracks</li>
+          <li>Data layer positioned <strong>closer to laser</strong> → tighter focus, less distortion</li>
+          <li>Single layer/side: <strong>25 GB</strong>; dual layer/side: 50 GB</li>
+          <li>Three variants: <code>BD-ROM</code> (read-only) · <code>BD-R</code> (recordable) · <code>BD-RE</code> (rewritable)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Card 20: Optical Advantages/Disadvantages -->
+    <div class="card yellow">
+      <div class="card-header"><div class="dot"></div><h3>Optical Memory: Pros, Cons &amp; CLV vs CAV</h3></div>
+      <div class="card-body">
+        <div class="label">CD-ROM Advantages</div>
+        <ul class="items">
+          <li>Mass replication is cheap — stamp from master disk</li>
+          <li>Removable media — disk itself IS the archive; no drive needed to store data</li>
+          <li>Very high durability for read-only data</li>
+          <li>Standardized format — universal compatibility</li>
+        </ul>
+        <div class="label">CD-ROM Disadvantages</div>
+        <ul class="items">
+          <li>Read-only — cannot update existing data</li>
+          <li>Access time much longer than HDD (up to 0.5 seconds)</li>
+          <li>CLV makes random access difficult (must adjust speed + find sector)</li>
+        </ul>
+        <div class="label" style="margin-top:10px;">CAV vs CLV Summary</div>
+        <table class="tbl">
+          <tr><th>Feature</th><th>CAV (HDD)</th><th>CLV (CD/DVD)</th></tr>
+          <tr><td>Track shape</td><td>Concentric rings</td><td>Single spiral</td></tr>
+          <tr><td>Rotation speed</td><td>Constant</td><td>Variable (slower outside)</td></tr>
+          <tr><td>Bits per track</td><td>Constant (or MZR zones)</td><td>Constant (all sectors same length)</td></tr>
+          <tr><td>Random access</td><td>Fast</td><td>Slow (adjust speed + seek)</td></tr>
+          <tr><td>Storage density</td><td>Limited by innermost track</td><td>Maximum (uniform across disk)</td></tr>
+        </table>
+        <div class="info" style="margin-top:10px;">
+          <div class="i-title">Optical Disk Products (Table 6.6)</div>
+          <strong>CD</strong>: 60+ min audio · <strong>CD-ROM</strong>: 650+ MB · <strong>CD-R</strong>: write once · <strong>CD-RW</strong>: rewritable · <strong>DVD</strong>: up to 17 GB · <strong>Blu-ray</strong>: 25 GB/layer
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════ §6.5 MAGNETIC TAPE ══════════════════════════ -->
+<div class="section-gap">
+  <div class="section-title">§6.5 — Magnetic Tape &amp; LTO</div>
+  <div class="grid-2">
+
+    <!-- Card 21: Magnetic Tape -->
+    <div class="card blue">
+      <div class="card-header"><div class="dot"></div><h3>Magnetic Tape Technology</h3></div>
+      <div class="card-body">
+        <div class="label">Physical Structure</div>
+        <ul class="items">
+          <li>Flexible polyester tape coated with magnetizable material (pure metal particles or vapor-plated films)</li>
+          <li>Widths: 0.38 cm (digital cameras) to 1.27 cm (LTO standard)</li>
+          <li>Housed in cartridges (open reels now obsolete)</li>
+          <li>Data organized as parallel tracks running lengthwise</li>
+        </ul>
+        <div class="label">Recording Methods Evolution</div>
+        <table class="tbl">
+          <tr><th>Era</th><th>Method</th><th>Details</th></tr>
+          <tr><td>Early</td><td>Parallel recording</td><td>9 tracks: 8 data + 1 parity (one byte at a time); later 18 or 36 tracks</td></tr>
+          <tr><td>Modern</td><td>Serial recording</td><td>Bits laid sequentially along each track (like disk)</td></tr>
+        </table>
+        <div class="label" style="margin-top:10px;">Serpentine Recording</div>
+        <ul class="items">
+          <li>Record along full tape length → reverse at end → record new track in opposite direction → repeat</li>
+          <li>Multiple adjacent tracks written simultaneously (typically 2–8) for speed</li>
+          <li>Blocks on adjacent tracks interleaved sequentially (Fig 6.13b)</li>
+        </ul>
+        <div class="label">Sequential vs Direct Access</div>
+        <div class="warn">
+          <div class="w-title">Sequential-Only Access</div>
+          Tape is a <strong>sequential-access device</strong>. To read record N, must read all records 1 through N-1 first. If head is past the target, must rewind. Tape moves ONLY during read/write (vs disk which spins continuously).
+        </div>
+        <div class="tip">
+          <div class="t-title">Role in Memory Hierarchy</div>
+          Tape = lowest cost, slowest speed member of the memory hierarchy. Ideal for backup, archival, and disaster recovery at massive scale.
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 22: LTO Generations -->
+    <div class="card green">
+      <div class="card-header"><div class="dot"></div><h3>LTO (Linear Tape-Open) Generations</h3></div>
+      <div class="card-body">
+        <div class="label">LTO Overview</div>
+        <p>Dominant tape standard developed in late 1990s as open-source alternative to proprietary systems. All versions use 1.27 cm wide tape.</p>
+        <table class="tbl">
+          <tr><th>Gen</th><th>Year</th><th>Capacity (Compressed)</th><th>Transfer Rate</th><th>Tracks</th><th>Features</th></tr>
+          <tr><td style="color:var(--text-muted);">LTO-1</td><td>2000</td><td>200 GB</td><td>40 MB/s</td><td>384</td><td>—</td></tr>
+          <tr><td style="color:var(--text-muted);">LTO-2</td><td>2003</td><td>400 GB</td><td>80 MB/s</td><td>512</td><td>—</td></tr>
+          <tr><td style="color:var(--text-muted);">LTO-3</td><td>2005</td><td>800 GB</td><td>160 MB/s</td><td>704</td><td>WORM</td></tr>
+          <tr><td style="color:var(--text-muted);">LTO-4</td><td>2007</td><td>1.6 TB</td><td>240 MB/s</td><td>896</td><td>Encryption</td></tr>
+          <tr><td style="color:var(--text-muted);">LTO-5</td><td>2010</td><td>3.2 TB</td><td>280 MB/s</td><td>1280</td><td>Partitioning</td></tr>
+          <tr><td style="color:var(--accent2);font-weight:600;">LTO-6</td><td>2012</td><td style="color:var(--accent2);">8 TB</td><td>400 MB/s</td><td>2176</td><td>All features</td></tr>
+          <tr><td style="color:var(--yellow);font-weight:600;">LTO-7</td><td>TBA</td><td style="color:var(--yellow);">16 TB</td><td>788 MB/s</td><td>—</td><td>All features</td></tr>
+          <tr><td style="color:var(--accent5);font-weight:600;">LTO-8</td><td>TBA</td><td style="color:var(--accent5);">32 TB</td><td>1.18 GB/s</td><td>—</td><td>All features</td></tr>
+        </table>
+        <div class="label" style="margin-top:10px;">Optional Features Added Over Generations</div>
+        <ul class="items">
+          <li><strong>WORM</strong> (Write Once Read Many) — from LTO-3</li>
+          <li><strong>Hardware Encryption</strong> — from LTO-4 (AES-256)</li>
+          <li><strong>Partitioning</strong> — from LTO-5 (allows LTFS file system)</li>
+        </ul>
+        <div class="note">
+          <div class="n-title">Density Growth</div>
+          Linear density: LTO-1 = 4,880 bits/mm → LTO-6 = 15,143 bits/mm (~3× improvement over 6 generations). Capacity doubles approximately every 2 years.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════════════ Summary Quick-Reference ════════════ -->
+<div class="section-gap">
+  <div class="section-title">Quick Reference Summary</div>
+  <div class="grid">
+
+    <!-- Card 23: Key Formulas -->
+    <div class="card purple">
+      <div class="card-header"><div class="dot"></div><h3>Key Formulas &amp; Equations</h3></div>
+      <div class="card-body">
+        <div class="label">Disk Access Time (Eq. 6.1)</div>
+        <div class="formula">T_total = T_seek + 1/(2r) + b/(r×N)</div>
+        <p style="font-size:11px;color:var(--text-muted);">T_seek = avg seek time · r = rev/sec · b = bytes transferred · N = bytes/track</p>
+
+        <div class="label">Transfer Time Only</div>
+        <div class="formula">T_transfer = b / (r × N)</div>
+
+        <div class="label">Average Rotational Latency</div>
+        <div class="formula">T_rot_avg = 1 / (2r) = 30 / RPM  [in seconds]</div>
+        <p style="font-size:11px;color:var(--text-muted);">7200 rpm → 4.17 ms · 10,000 rpm → 3.0 ms · 15,000 rpm → 2.0 ms</p>
+
+        <div class="label">RAID 3 Parity Calculation</div>
+        <div class="formula">X4(i) = X3(i) ⊕ X2(i) ⊕ X1(i) ⊕ X0(i)</div>
+
+        <div class="label">RAID 4/5 Parity Update (Small Write)</div>
+        <div class="formula">X4_new(i) = X4(i) ⊕ X1(i) ⊕ X1_new(i)</div>
+        <p style="font-size:11px;color:var(--text-muted);">Requires: read old data + read old parity + write new data + write new parity = 4 ops</p>
+
+        <div class="label">Storage Efficiency</div>
+        <div class="formula">RAID 0: 100%  |  RAID 1: 50%  |  RAID 5: N/(N+1)  |  RAID 6: N/(N+2)</div>
+      </div>
+    </div>
+
+    <!-- Card 24: Memory Hierarchy Context -->
+    <div class="card orange">
+      <div class="card-header"><div class="dot"></div><h3>External Memory in the Hierarchy</h3></div>
+      <div class="card-body">
+        <div class="label">Memory Hierarchy Position</div>
+        <table class="tbl">
+          <tr><th>Level</th><th>Type</th><th>Speed</th><th>Capacity</th><th>Cost</th></tr>
+          <tr><td>1</td><td>CPU Registers</td><td>~1 ns</td><td>Bytes</td><td>Highest</td></tr>
+          <tr><td>2</td><td>L1/L2/L3 Cache</td><td>1–10 ns</td><td>KB–MB</td><td>Very High</td></tr>
+          <tr><td>3</td><td>DRAM (Main Memory)</td><td>~100 ns</td><td>GB</td><td>High</td></tr>
+          <tr><td style="color:var(--accent2);font-weight:600;">4</td><td style="color:var(--accent2);">SSD</td><td style="color:var(--accent2);">&lt;0.1 ms</td><td style="color:var(--accent2);">GB–TB</td><td style="color:var(--accent2);">Medium</td></tr>
+          <tr><td style="color:var(--accent5);font-weight:600;">5</td><td style="color:var(--accent5);">HDD</td><td style="color:var(--accent5);">5–15 ms</td><td style="color:var(--accent5);">TB</td><td style="color:var(--accent5);">Low</td></tr>
+          <tr><td style="color:var(--accent4);font-weight:600;">6</td><td style="color:var(--accent4);">Optical (CD/DVD/BR)</td><td style="color:var(--accent4);">100s ms</td><td style="color:var(--accent4);">GB</td><td style="color:var(--accent4);">Very Low</td></tr>
+          <tr><td style="color:var(--text-muted);font-weight:600;">7</td><td style="color:var(--text-muted);">Magnetic Tape</td><td style="color:var(--text-muted);">Seconds</td><td style="color:var(--text-muted);">TB–PB</td><td style="color:var(--text-muted);">Lowest</td></tr>
+        </table>
+        <div class="label" style="margin-top:10px;">Key Characteristics of External Memory</div>
+        <ul class="items">
+          <li><strong>Non-volatile</strong> — Data persists without power</li>
+          <li><strong>Large capacity</strong> — Orders of magnitude more than RAM</li>
+          <li><strong>Low cost per bit</strong> — Magnetic tape = cheapest; tape ~50× cheaper than HDD/GB</li>
+          <li><strong>Slow access</strong> — Mechanical (HDD/tape) or electronic (SSD) but slower than DRAM</li>
+          <li><strong>Secondary role</strong> — Stores programs/data not currently in use by CPU</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Card 25: Exam Key Points -->
+    <div class="card red">
+      <div class="card-header"><div class="dot"></div><h3>Exam Key Points &amp; Common Questions</h3></div>
+      <div class="card-body">
+        <div class="label">Disk Structure</div>
+        <ul class="items">
+          <li>Track → Cylinder: all tracks at same radial position across all platters</li>
+          <li>Typical sector size: <code>512 bytes</code> (modern drives: <code>4096 bytes</code>)</li>
+          <li>Fixed-head disk: one head per track (fast, expensive, rare)</li>
+          <li>Movable-head disk: one head per surface (common; requires seek)</li>
+        </ul>
+        <div class="label">Performance</div>
+        <ul class="items">
+          <li>Sequential access >> random access (up to 440× faster in example)</li>
+          <li>RPS miss adds one full revolution of latency to I/O timeline</li>
+          <li>Average seek time ≠ maximum seek time; non-linear traversal</li>
+        </ul>
+        <div class="label">RAID Key Facts</div>
+        <ul class="items">
+          <li>RAID 0: No redundancy — never use alone for critical data</li>
+          <li>RAID 1: Best for write-heavy, highly available, mission-critical data</li>
+          <li>RAID 2: Not commercially used — modern drives have built-in ECC</li>
+          <li>RAID 3: Parallel access only → bad for transaction workloads</li>
+          <li>RAID 4: Parity disk bottleneck → superseded by RAID 5</li>
+          <li>RAID 5: Most popular — distributed parity eliminates bottleneck</li>
+          <li>RAID 6: Best fault tolerance — survives 2 simultaneous failures</li>
+        </ul>
+        <div class="label">SSD</div>
+        <ul class="items">
+          <li>Flash erased at block level, not page level → write amplification</li>
+          <li>Wear leveling + TRIM + garbage collection extend SSD lifespan</li>
+          <li>SSD: 10× faster random access than HDD; still more expensive/GB</li>
+        </ul>
+        <div class="label">Optical / Tape</div>
+        <ul class="items">
+          <li>CD/DVD use CLV; HDD uses CAV (or MZR)</li>
+          <li>Blu-ray beats HD-DVD; 405-nm blue-violet laser; 25 GB/layer</li>
+          <li>Tape = sequential access only; serpentine recording</li>
+          <li>LTO dominates tape market; capacity doubles every ~2 years</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← Back to Menu</a>
+  <span>Computer Organization &amp; Architecture, 10th Ed. · Stallings · Chapter 6: External Memory · Pages 194–224</span>
+  <span>COA10e · CH06</span>
+</div>
+
+</body>
+</html>

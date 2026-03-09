@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH07 – Input/Output</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;--accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;} .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;} .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;} ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;} ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;} .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Input/Output — Chapter 7</h1>
+    <h2>Computer Organization &amp; Architecture, 10th Ed · Stallings</h2>
+    <div style="margin-top:10px;" class="toc">
+      <span class="toc-item">§7.1 External Devices</span>
+      <span class="toc-item">§7.2 I/O Modules</span>
+      <span class="toc-item">§7.3 Programmed I/O</span>
+      <span class="toc-item">§7.4 Interrupt-Driven I/O</span>
+      <span class="toc-item">§7.5 DMA</span>
+      <span class="toc-item">§7.6 Direct Cache Access</span>
+      <span class="toc-item">§7.7 I/O Channels</span>
+      <span class="toc-item">§7.8 Interconnection Standards</span>
+      <span class="toc-item">§7.9 IBM zEC12</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+    <span class="badge">COA10e · CH07</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ROW 1: External Devices + I/O Module Functions ═══════════════════════════ -->
+<div class="grid">
+
+  <!-- §7.1 External Devices -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§7.1 External Devices</h3></div>
+    <div class="card-body">
+      <p>An <strong>external device</strong> attaches to the computer via a link to an I/O module. The link carries <em>control</em>, <em>status</em>, and <em>data</em> signals. Why not connect peripherals directly to system bus?</p>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>Wide variety of peripherals with different operation methods</li>
+        <li>Data transfer rate of peripherals often much slower than memory/CPU</li>
+        <li>Some peripherals are faster → mismatch causes inefficiency</li>
+        <li>Peripherals use different data formats and word lengths</li>
+      </ul>
+      <div class="label">Three Categories of External Devices</div>
+      <table class="tbl">
+        <tr><th>Category</th><th>Description</th><th>Examples</th></tr>
+        <tr><td style="color:var(--accent2);">Human-Readable</td><td>For communicating with users</td><td>VDT, keyboard, printer</td></tr>
+        <tr><td style="color:var(--accent5);">Machine-Readable</td><td>For communicating with equipment</td><td>Disk, tape, sensors, actuators</td></tr>
+        <tr><td style="color:var(--accent4);">Communication</td><td>For communicating with remote devices</td><td>Modems, NICs, terminals</td></tr>
+      </table>
+      <div class="label" style="margin-top:8px;">External Device Internals</div>
+      <ul class="items">
+        <li><strong>Transducer</strong> — converts electrical ↔ physical energy (input/output)</li>
+        <li><strong>Buffer</strong> — temporarily holds data during transfer (8–16 bits for serial; larger for block devices)</li>
+        <li><strong>Control logic</strong> — controls device in response to I/O module commands</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- §7.2 I/O Module Functions -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§7.2 I/O Module Functions</h3></div>
+    <div class="card-body">
+      <p>The I/O module interfaces the system bus to one or more peripheral devices. It hides the details of timing, formats, and electromechanics from the CPU.</p>
+      <div class="label">Five Major Functions</div>
+      <ul class="items">
+        <li><strong>Control &amp; Timing</strong> — coordinates flow between internal resources and external devices; arbitrates bus access</li>
+        <li><strong>Processor Communication</strong> — command decoding, data exchange, status reporting (BUSY/READY), address recognition</li>
+        <li><strong>Device Communication</strong> — issues commands, monitors status, exchanges data with peripheral</li>
+        <li><strong>Data Buffering</strong> — absorbs speed mismatch; buffers bursts from memory, sends at device rate</li>
+        <li><strong>Error Detection</strong> — detects mechanical/electrical faults; checks parity bits; reports errors to CPU</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">I/O Module Structure (Figure 7.3)</div>
+      <ul class="items">
+        <li><strong>Data Registers</strong> — buffer data transferred to/from the module</li>
+        <li><strong>Status/Control Registers</strong> — report device state; accept processor commands</li>
+        <li><strong>I/O Logic</strong> — interfaces control lines, address lines, data lines to system bus</li>
+        <li><strong>External Device Interface Logic</strong> — one per controlled device; handles Data, Status, Control signals</li>
+      </ul>
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">Terminology</div>
+        <strong>I/O Controller / Device Controller</strong> — primitive, requires detailed CPU control (microcomputers). <strong>I/O Channel / I/O Processor</strong> — high-level interface, executes its own programs (mainframes).
+      </div>
+    </div>
+  </div>
+
+  <!-- §7.3 Programmed I/O -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§7.3 Programmed I/O</h3></div>
+    <div class="card-body">
+      <p>CPU directly controls the I/O operation by issuing commands and <strong>busy-waiting (polling)</strong> on the status register until the device is ready. No interrupts are used.</p>
+      <div class="label">Four I/O Command Types</div>
+      <ul class="items">
+        <li><strong>Control</strong> — activate peripheral, tell it what to do (e.g., rewind tape, position disk head)</li>
+        <li><strong>Test</strong> — check status (powered on? ready? errors?)</li>
+        <li><strong>Read</strong> — obtain data from peripheral into I/O module's buffer; CPU retrieves via data bus</li>
+        <li><strong>Write</strong> — send byte/word from data bus through I/O module to peripheral</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Memory-Mapped vs Isolated (I/O-Mapped) I/O</div>
+      <table class="tbl">
+        <tr><th>Feature</th><th>Memory-Mapped</th><th>Isolated I/O</th></tr>
+        <tr><td>Address Space</td><td>Shared with memory</td><td>Separate I/O address space</td></tr>
+        <tr><td>Bus Lines</td><td>Single RD/WR lines</td><td>Separate MEM and I/O cmd lines</td></tr>
+        <tr><td>Instructions</td><td>Full memory instruction set</td><td>Special IN/OUT instructions only</td></tr>
+        <tr><td>Address Range</td><td>Memory space reduced</td><td>Full memory + full I/O range</td></tr>
+        <tr><td>Advantage</td><td>Rich instruction set, efficient code</td><td>No memory space wasted</td></tr>
+      </table>
+      <div class="warn" style="margin-top:8px;">
+        <div class="w-title">Critical Drawback</div>
+        CPU is tied up in a polling loop checking status — wastes processor cycles; transfer rate limited by CPU polling speed.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════ ROW 2: Interrupt-Driven I/O (wide) + Interrupt Design Issues ═══════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- §7.4 Interrupt-Driven I/O -->
+  <div class="card purple col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>§7.4 Interrupt-Driven I/O</h3></div>
+    <div class="card-body">
+      <p>CPU issues I/O command then <strong>continues executing other instructions</strong>. The I/O module signals the CPU via an <strong>interrupt</strong> when it is ready. CPU saves context, runs the ISR, then restores context.</p>
+      <div class="grid-2" style="gap:12px;margin-top:6px;">
+        <div>
+          <div class="label">Interrupt Processing Sequence (Figure 7.6)</div>
+          <ol class="steps">
+            <li><strong>Device issues interrupt signal</strong> to processor over control line</li>
+            <li>Processor <strong>finishes current instruction</strong> before responding</li>
+            <li>Processor <strong>tests for interrupt</strong>, sends ACK to device → device clears interrupt signal</li>
+            <li>Processor saves <strong>PSW + PC</strong> onto the system control stack</li>
+            <li>Processor <strong>loads PC</strong> with entry address of interrupt-handling routine (ISR)</li>
+            <li>ISR saves <strong>all general-purpose registers</strong> onto stack (full process state)</li>
+            <li>ISR <strong>processes the interrupt</strong> — reads data from I/O module, checks status, sends ACKs</li>
+            <li>ISR <strong>restores all saved registers</strong> from stack</li>
+            <li>ISR restores <strong>PSW and PC</strong> from stack → resumes interrupted program</li>
+          </ol>
+        </div>
+        <div>
+          <div class="label">Device Identification Techniques</div>
+          <ul class="items">
+            <li><strong>Multiple Interrupt Lines</strong> — one line per device; impractical for many devices; each line may still have multiple devices</li>
+            <li><strong>Software Poll</strong> — CPU branches to ISR, polls each I/O module via TESTIO command or status register; simple but slow</li>
+            <li><strong>Daisy Chain (Hardware Poll / Vectored)</strong> — all modules share one interrupt line; ACK propagates down the chain; requesting module places <em>vector</em> on data bus; CPU uses vector as pointer to device-specific ISR</li>
+            <li><strong>Bus Arbitration (Vectored)</strong> — I/O module wins bus before raising interrupt; only one active at a time; places vector on data lines after CPU ACK</li>
+          </ul>
+          <div class="divider"></div>
+          <div class="label">Priority Schemes</div>
+          <ul class="items">
+            <li>Multiple lines → CPU picks highest priority line</li>
+            <li>Software poll → poll order determines priority</li>
+            <li>Daisy chain → physical position in chain = priority</li>
+            <li>Bus arbitration → explicit priority scheme in arbitration logic</li>
+          </ul>
+          <div class="divider"></div>
+          <div class="label">Interrupt Types</div>
+          <ul class="items">
+            <li><strong>Maskable</strong> — can be disabled by CPU; used for normal device I/O</li>
+            <li><strong>Non-Maskable (NMI)</strong> — cannot be disabled; reserved for critical events (power failure, memory error)</li>
+            <li><strong>Vectored</strong> — device supplies vector (address of ISR) on data bus</li>
+            <li><strong>Non-Vectored</strong> — all interrupts go to one fixed address; ISR must poll to identify device</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Intel 82C59A PIC -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Intel 82C59A — PIC</h3></div>
+    <div class="card-body">
+      <p>The <strong>82C59A Programmable Interrupt Controller</strong> manages interrupts for the Intel 80386, which has only a single INTR and INTA line.</p>
+      <div class="label">Key Facts</div>
+      <ul class="items">
+        <li>Handles up to <strong>8 I/O modules</strong> per chip</li>
+        <li><strong>Cascade mode</strong>: up to 8 slaves × 8 devices = <strong>64 devices</strong> total</li>
+        <li>Accepts interrupt requests → determines highest priority → raises INTR to CPU</li>
+        <li>CPU responds on INTA → 82C59A places <strong>vector on data bus</strong></li>
+      </ul>
+      <div class="label">Programmable Priority Modes</div>
+      <ul class="items">
+        <li><strong>Fully Nested</strong> — fixed priority IR0 (highest) … IR7 (lowest)</li>
+        <li><strong>Rotating</strong> — equal-priority devices; serviced device receives lowest priority (round-robin)</li>
+        <li><strong>Special Mask</strong> — CPU can inhibit specific device interrupts selectively</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Intel 8255A — Programmable Peripheral Interface</div>
+      <p style="font-size:11px;">General-purpose I/O module with <strong>24 I/O lines</strong> in three 8-bit ports (A, B, C). Used for both programmed and interrupt-driven I/O.</p>
+      <ul class="items">
+        <li><strong>Mode 0</strong> — basic I/O; each port independently input or output</li>
+        <li><strong>Mode 1</strong> — strobe I/O; Port C lines = handshaking + IRQ control</li>
+        <li><strong>Mode 2</strong> — bidirectional; Port A as data, Port B as direction control</li>
+      </ul>
+      <div class="tip" style="margin-top:6px;">
+        <div class="t-title">Key Signals</div>
+        <code>CS</code> Chip Select · <code>RD</code> Read · <code>WR</code> Write · <code>A0/A1</code> Port Select (00=A, 01=B, 10=C, 11=Control) · <code>RESET</code> → all ports set to input mode
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════ ROW 3: DMA ═══════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- §7.5 DMA Overview + Hardware -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§7.5 Direct Memory Access (DMA)</h3></div>
+    <div class="card-body">
+      <p>The <strong>DMA controller</strong> takes over bus control from the CPU to transfer entire blocks of data directly between I/O device and main memory — <em>without CPU involvement</em> during the transfer.</p>
+      <div class="label">Why DMA?</div>
+      <div class="warn">
+        <div class="w-title">Drawbacks of Programmed &amp; Interrupt I/O</div>
+        (1) Transfer rate limited by CPU polling/servicing speed. (2) Every word of data must pass through CPU registers — CPU tied up for each word of the entire block.
+      </div>
+      <div class="label">DMA Controller Registers (Figure 7.12)</div>
+      <ul class="items">
+        <li><strong>Address Register</strong> — starting memory address for transfer</li>
+        <li><strong>Data Count Register</strong> — number of words to transfer; decremented each cycle</li>
+        <li><strong>Control Logic</strong> — manages R/W direction, device address, bus control signals</li>
+        <li><strong>Data Register</strong> — temporary buffer for data in transit</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">DMA Configurations (Figure 7.14)</div>
+      <ul class="items">
+        <li><strong>(a) Single-bus, detached DMA</strong> — DMA + I/O both on system bus; 2 bus cycles per word (slow)</li>
+        <li><strong>(b) Single-bus, integrated DMA-I/O</strong> — DMA has private path to I/O modules; 1 bus cycle per word</li>
+        <li><strong>(c) I/O bus</strong> — I/O modules connected to DMA via I/O bus; DMA uses system bus only for memory</li>
+      </ul>
+      <div class="note" style="margin-top:6px;">
+        <div class="n-title">Cycle Stealing</div>
+        DMA pauses CPU for one bus cycle at a time (between instruction steps). Not a full interrupt — CPU does not save context. CPU executes more slowly but DMA completes transfer.
+      </div>
+    </div>
+  </div>
+
+  <!-- DMA Operation Steps -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>DMA Operation Steps (Intel 8237A)</h3></div>
+    <div class="card-body">
+      <p>The Intel <strong>8237A DMA Controller</strong> interfaces to the 80x86 family and DRAM. It is a <em>fly-by</em> controller — data does not pass through the DMA chip itself (transfers between I/O port and memory only).</p>
+      <div class="label">Transfer Sequence (Memory → Disk)</div>
+      <ol class="steps">
+        <li>Peripheral (disk controller) pulls <code>DREQ</code> high to request DMA service</li>
+        <li>DMA asserts <code>HRQ</code> (hold request) on CPU's <code>HOLD</code> pin</li>
+        <li>CPU finishes current bus cycle, asserts <code>HLDA</code> (hold acknowledge) — grants bus to DMA</li>
+        <li>DMA asserts <code>DACK</code> (DMA acknowledge) → tells peripheral to begin data transfer</li>
+        <li>DMA places memory address on address bus, activates <code>MEMR</code> (read from memory) + <code>IOW</code> (write to I/O); decrements count, increments address pointer; repeats until count = 0</li>
+        <li>DMA deasserts <code>HRQ</code> → CPU regains bus control; DMA sends <strong>interrupt</strong> to notify completion</li>
+      </ol>
+      <div class="divider"></div>
+      <div class="label">8237A Registers</div>
+      <table class="tbl">
+        <tr><th>Register</th><th>Purpose</th></tr>
+        <tr><td><code>Command</code></td><td>Enable/disable DMA, memory-to-memory transfer (ch.0→ch.1), address hold</td></tr>
+        <tr><td><code>Status</code></td><td>D0–D3: TC (terminal count) reached per channel; D4–D7: pending DMA requests</td></tr>
+        <tr><td><code>Mode</code></td><td>Select channel; transfer direction (read/write/verify); single/block/demand/cascade mode; auto-init</td></tr>
+        <tr><td><code>Single Mask</code></td><td>Enable/disable (mask) DREQ for a specific channel</td></tr>
+        <tr><td><code>All Mask</code></td><td>Enable/disable all 4 channels at once</td></tr>
+        <tr><td><code>Address Reg ×4</code></td><td>Starting memory address for each channel</td></tr>
+        <tr><td><code>Count Reg ×4</code></td><td>Number of bytes to transfer for each channel</td></tr>
+      </table>
+      <div class="tip" style="margin-top:6px;">
+        <div class="t-title">4 Independent Channels</div>
+        8237A has 4 independently programmable channels (0–3). Cascade mode allows multiple 8237As to expand beyond 4 channels.
+      </div>
+    </div>
+  </div>
+
+  <!-- DMA Transfer Modes -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>DMA Transfer Modes</h3></div>
+    <div class="card-body">
+      <div class="label">Three Transfer Modes</div>
+      <div class="formula">Mode 1: Burst Mode</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>DMA seizes bus and transfers <strong>entire block</strong> before releasing</li>
+        <li>CPU is blocked for duration of transfer</li>
+        <li>Fastest total throughput</li>
+        <li>High CPU latency — not suitable for real-time systems</li>
+      </ul>
+      <div class="formula">Mode 2: Cycle Stealing</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>DMA steals <strong>one bus cycle</strong> at a time from CPU</li>
+        <li>DMA inserts wait cycles between CPU memory accesses</li>
+        <li>CPU slows down but is not completely blocked</li>
+        <li>Most commonly used mode</li>
+      </ul>
+      <div class="formula">Mode 3: Transparent / Interleaved</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>DMA transfers data only when CPU is <strong>not using the bus</strong></li>
+        <li>No CPU slowdown at all</li>
+        <li>Most complex — requires monitoring CPU bus usage</li>
+        <li>Slowest DMA throughput; zero CPU impact</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">DMA Breakpoints in Instruction Cycle</div>
+      <p style="font-size:11px;">DMA can steal cycles at any of these points: after <em>Fetch Instruction</em>, after <em>Decode</em>, after <em>Fetch Operand</em>, after <em>Execute</em>, or after <em>Store Result</em>. Interrupts can only occur at end of instruction.</p>
+      <div class="info" style="margin-top:6px;">
+        <div class="i-title">Fly-By Limitation</div>
+        8237A can only transfer between one <em>I/O port</em> and one <em>memory address</em> — not two memory locations or two I/O ports. Memory-to-memory uses a temporary register via two channels.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════ ROW 4: I/O Technique Comparison Table (full width) ═══════════════════════════ -->
+<div class="section-gap">
+  <div class="card purple col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>I/O Technique Comparison — Programmed vs Interrupt-Driven vs DMA</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr>
+          <th>Feature</th>
+          <th style="color:var(--accent3);">Programmed I/O</th>
+          <th style="color:var(--accent4);">Interrupt-Driven I/O</th>
+          <th style="color:var(--accent2);">Direct Memory Access (DMA)</th>
+        </tr>
+        <tr>
+          <td><strong>CPU Role During Transfer</strong></td>
+          <td>Continuously polls I/O status register (busy-wait)</td>
+          <td>Issues command; does other work; responds to interrupt</td>
+          <td>Issues DMA command; does other work; notified at completion</td>
+        </tr>
+        <tr>
+          <td><strong>Interrupts Used?</strong></td>
+          <td style="color:var(--accent3);">No</td>
+          <td style="color:var(--accent2);">Yes — per word/byte</td>
+          <td style="color:var(--accent2);">Yes — at block completion only</td>
+        </tr>
+        <tr>
+          <td><strong>Data Path</strong></td>
+          <td>I/O module → CPU → Memory</td>
+          <td>I/O module → CPU → Memory</td>
+          <td>I/O module ↔ Memory directly (CPU bypassed)</td>
+        </tr>
+        <tr>
+          <td><strong>CPU Utilization</strong></td>
+          <td style="color:var(--accent3);">Very low — completely blocked during transfer</td>
+          <td style="color:var(--yellow);">Medium — interrupted per word; overhead per transfer</td>
+          <td style="color:var(--accent2);">High — only involved at start and end of block</td>
+        </tr>
+        <tr>
+          <td><strong>Throughput</strong></td>
+          <td style="color:var(--accent3);">Limited by CPU polling speed</td>
+          <td style="color:var(--yellow);">Limited by interrupt handling overhead</td>
+          <td style="color:var(--accent2);">Limited by bus speed; very high for large blocks</td>
+        </tr>
+        <tr>
+          <td><strong>Implementation Complexity</strong></td>
+          <td style="color:var(--accent2);">Simplest — no special hardware needed</td>
+          <td style="color:var(--yellow);">Moderate — requires interrupt controller</td>
+          <td style="color:var(--accent3);">Most complex — dedicated DMA controller chip required</td>
+        </tr>
+        <tr>
+          <td><strong>Best Use Case</strong></td>
+          <td>Simple microcontrollers; small data amounts</td>
+          <td>Interactive devices (keyboard, mouse); moderate data rates</td>
+          <td>High-volume block transfers (disk I/O, network, video)</td>
+        </tr>
+        <tr>
+          <td><strong>CPU Context Save?</strong></td>
+          <td style="color:var(--accent3);">No — CPU stuck in loop</td>
+          <td style="color:var(--accent2);">Yes — PSW + PC + registers saved per interrupt</td>
+          <td>No — CPU only pauses 1 bus cycle (cycle stealing, no context save)</td>
+        </tr>
+        <tr>
+          <td><strong>Stallings Table 7.1</strong></td>
+          <td>No Interrupts; I/O-to-memory via CPU</td>
+          <td>Uses Interrupts; I/O-to-memory via CPU</td>
+          <td>Direct I/O-to-memory transfer (no CPU intermediary)</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ ROW 5: DCA + I/O Channels ═══════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- §7.6 Direct Cache Access -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§7.6 Direct Cache Access (DCA)</h3></div>
+    <div class="card-body">
+      <p>DMA performance is insufficient for 10-Gbps / 100-Gbps Ethernet rates. <strong>DCA</strong> allows the I/O function to place/read data directly in the <em>last-level cache</em> (L2 or L3) — bypassing main memory bottlenecks.</p>
+      <div class="label">Problem: Traditional DMA + Network I/O</div>
+      <ul class="items">
+        <li>NIC receives packet → DMA writes to <strong>main memory</strong></li>
+        <li>Cache lines for new data are <strong>invalidated</strong> → cache miss when CPU processes packet</li>
+        <li>CPU stalls on memory reads → performance degrades under heavy network load</li>
+        <li>Data copied between system buffer ↔ application buffer wastes cycles</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Intel Direct Data I/O (DDIO) — Xeon E5 Family</div>
+      <div class="label">Input (NIC → Host)</div>
+      <ol class="steps">
+        <li>NIC initiates memory write; <strong>invalidates cache lines</strong> for system buffer</li>
+        <li>DDIO deposits incoming data <strong>directly into last-level cache</strong> (not main memory)</li>
+        <li>CPU reads packet data from cache — no main memory access needed</li>
+      </ol>
+      <div class="label">Output (Host → NIC)</div>
+      <ol class="steps">
+        <li>TCP/IP process creates packet and stores it in <strong>allocated L3 cache space</strong> (not main memory)</li>
+        <li>NIC reads data from L3 cache directly — no main memory evictions</li>
+      </ol>
+      <div class="tip" style="margin-top:6px;">
+        <div class="t-title">DDIO Cache Write Policies</div>
+        <strong>Cache Hit</strong> → write-back update (write update). <strong>Cache Miss</strong> → write-allocate into cache without writing to main memory — data need not be retained after NIC reads it.
+      </div>
+      <div class="info" style="margin-top:6px;">
+        <div class="i-title">Intel Xeon Ring Architecture</div>
+        Xeon E5-2600/4600: up to 8 cores, shared 20 MB L3 (sliced per core). Ring connects cores + L3 + PCIe + IMC. DMA-with-cache: MCH checks L3 before going to DDR3 on reads — avoids off-chip memory access for cached data.
+      </div>
+    </div>
+  </div>
+
+  <!-- §7.7 I/O Channels and Processors -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§7.7 I/O Channels &amp; Processors</h3></div>
+    <div class="card-body">
+      <p>An <strong>I/O channel</strong> is an extension of DMA — it can execute its own I/O <em>instruction programs</em> stored in main memory, completely freeing the CPU from I/O management.</p>
+      <div class="label">Evolution of the I/O Function</div>
+      <ol class="steps">
+        <li><strong>CPU direct control</strong> — CPU controls peripheral directly (simple microcontrollers)</li>
+        <li><strong>I/O module + programmed I/O</strong> — CPU somewhat divorced from device details</li>
+        <li><strong>I/O module + interrupt I/O</strong> — CPU free to run other programs while I/O proceeds</li>
+        <li><strong>DMA</strong> — I/O module accesses memory directly; CPU only involved at start/end</li>
+        <li><strong>I/O Channel</strong> — I/O module executes its own instruction set stored in memory; CPU only issues "execute I/O program" command</li>
+        <li><strong>I/O Processor</strong> — full computer with local memory; manages large sets of I/O devices independently</li>
+      </ol>
+      <div class="divider"></div>
+      <div class="label">Two Types of I/O Channels</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Use Case</th><th>Behaviour</th></tr>
+        <tr>
+          <td style="color:var(--accent);">Selector Channel</td>
+          <td>High-speed devices (disk, tape)</td>
+          <td>Dedicated to <strong>one device</strong> at a time; multiplexes between high-speed I/O controllers</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent2);">Byte Multiplexor Channel</td>
+          <td>Multiple low-speed devices (terminals)</td>
+          <td>Interleaves bytes from multiple devices simultaneously (e.g. A1B1C1A2C2…)</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent5);">Block Multiplexor Channel</td>
+          <td>Multiple high-speed devices</td>
+          <td>Interleaves <strong>blocks</strong> (not bytes) from several high-speed devices</td>
+        </tr>
+      </table>
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">Channel Command Word (CCW)</div>
+        The I/O channel executes a <em>channel program</em> consisting of Channel Command Words stored in main memory. Each CCW specifies: operation, data address, count, and chaining flags. CPU uses a single "start channel" instruction.
+      </div>
+    </div>
+  </div>
+
+  <!-- §7.8 External Interconnection Standards -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§7.8 External Interconnection Standards</h3></div>
+    <div class="card-body">
+      <div class="label">USB — Universal Serial Bus</div>
+      <table class="tbl">
+        <tr><th>Version</th><th>Speed Name</th><th>Data Rate</th></tr>
+        <tr><td>USB 1.0</td><td>Low Speed / Full Speed</td><td>1.5 Mbps / 12 Mbps</td></tr>
+        <tr><td>USB 2.0</td><td>High Speed</td><td>480 Mbps</td></tr>
+        <tr><td>USB 3.0</td><td>SuperSpeed</td><td>5 Gbps signaling / ~4 Gbps usable</td></tr>
+        <tr><td>USB 3.1</td><td>SuperSpeed+</td><td>10 Gbps signaling / 9.7 Gbps usable</td></tr>
+      </table>
+      <ul class="items" style="margin-top:4px;margin-bottom:8px;">
+        <li>Controlled by a <strong>root host controller</strong> — hierarchical tree topology</li>
+        <li>Used for keyboards, mice, printers, disk drives, network adapters</li>
+      </ul>
+      <div class="label">FireWire (IEEE 1394 — High Performance Serial Bus)</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>Daisy-chain: up to <strong>63 devices per port</strong>; up to <strong>1022 buses</strong> via bridges</li>
+        <li>Supports <strong>hot plugging</strong> — connect/disconnect without power-down</li>
+        <li>Automatic configuration — no manual device IDs or termination required</li>
+        <li>Data rates: <strong>25 Mbps to 3.2 Gbps</strong></li>
+        <li>Three protocol layers: Physical → Link → Transaction (request-response)</li>
+      </ul>
+      <div class="label">Thunderbolt (Intel + Apple)</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>Combines data, video, audio, power in <strong>single cable</strong></li>
+        <li><strong>10 Gbps</strong> bidirectional throughput + up to <strong>10 W</strong> power</li>
+      </ul>
+      <div class="label">Other Standards</div>
+      <table class="tbl">
+        <tr><th>Standard</th><th>Key Facts</th></tr>
+        <tr><td>SCSI</td><td>Parallel bus; 16–32 devices; 5 Mbps (SCSI-1) → 160 Mbps (SCSI-3 U3); enterprise storage</td></tr>
+        <tr><td>SATA</td><td>Serial; disk storage; up to 6 Gbps signaling / 300 Mbps per device; desktops</td></tr>
+        <tr><td>InfiniBand</td><td>High-end server fabric; switch-based; up to 64,000 nodes; storage area networks</td></tr>
+        <tr><td>PCIe</td><td>High-speed bus; wide variety of peripherals; see Chapter 3</td></tr>
+        <tr><td>Ethernet</td><td>10 Mbps (1983) → 100 Gbps (2010); switch-based; wired LAN standard</td></tr>
+        <tr><td>Wi-Fi 802.11</td><td>2 Mbps (1997) → 6.76 Gbps 802.11ad (2012); 3.2 Gbps 802.11ac (2014)</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════ ROW 6: IBM zEC12 + Key Concepts Summary ═══════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- §7.9 IBM zEnterprise EC12 -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§7.9 IBM zEnterprise EC12 I/O Structure</h3></div>
+    <div class="card-body">
+      <p>The zEC12 uses a <strong>dedicated I/O subsystem</strong> that completely offloads I/O processing from the main application processors.</p>
+      <div class="label">Physical Layout</div>
+      <ul class="items">
+        <li><strong>A Frame (right)</strong> — Processor cage (4 processor books) + I/O cage (I/O hardware, multiplexors, channels)</li>
+        <li><strong>Z Frame (left)</strong> — Batteries, power supplies, support elements, I/O drawers</li>
+        <li>Each <strong>processor book</strong> = MCM (6 multicore chips + 2 storage control chips) + memory + I/O connections</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Channel Subsystem Structure (Figure 7.19)</div>
+      <table class="tbl">
+        <tr><th>Element</th><th>Details</th></tr>
+        <tr><td><strong>Channel Subsystem (CSS)</strong></td><td>Up to 4 CSSs; each CSS = 1 dedicated core acting as System Assist Processor</td></tr>
+        <tr><td><strong>SAP</strong> (System Assist Processor)</td><td>Core processor configured for I/O; offloads all I/O from application cores</td></tr>
+        <tr><td><strong>HSA</strong> (Hardware System Area)</td><td>32 GB reserved system memory for I/O config; not part of customer memory</td></tr>
+        <tr><td><strong>Logical Partitions</strong></td><td>≤16 per CSS; ≤60 per system; up to 1024 total</td></tr>
+        <tr><td><strong>Subchannels</strong></td><td>≤196k per CSS; one per addressable I/O device; logical device abstraction</td></tr>
+        <tr><td><strong>Channel Paths</strong></td><td>≤256 per CSS; each path = interface between CSS and one or more control units</td></tr>
+        <tr><td><strong>Channels</strong></td><td>Small processors managing data between memory and external device control units (CUs)</td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="label">I/O Interconnects</div>
+      <ul class="items">
+        <li><strong>InfiniBand (HCA fanout)</strong> — processor book → I/O cages &amp; drawers; supports ESCON, Ethernet (1/10 Gbps)</li>
+        <li><strong>PCIe fanout</strong> — processor book → PCIe switches → I/O device controllers (Ethernet, Fiber Channel)</li>
+        <li>Each book: up to <strong>8 HCA+PCIe fanouts</strong> × 32 connections = <strong>256 connections/book</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- I/O Module Communication Sequence -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>I/O Module Communication Sequence</h3></div>
+    <div class="card-body">
+      <p>General sequence for CPU-initiated data transfer from external device to memory (§7.2):</p>
+      <ol class="steps">
+        <li>CPU interrogates I/O module — checks status of attached device</li>
+        <li>I/O module returns <strong>device status</strong> (READY / NOT-READY / ERROR)</li>
+        <li>If device READY: CPU issues <strong>READ command</strong> to I/O module</li>
+        <li>I/O module obtains unit of data (8 or 16 bits) from external device</li>
+        <li>Data transferred from I/O module to CPU over data bus</li>
+        <li>CPU writes data to main memory</li>
+      </ol>
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Bus Arbitration Note</div>
+        With a shared system bus, each CPU ↔ I/O module interaction requires one or more bus arbitration cycles.
+      </div>
+      <div class="divider"></div>
+      <div class="label">Processor Communication Functions (I/O Module)</div>
+      <ul class="items">
+        <li><strong>Command Decoding</strong> — interprets commands from control bus (e.g., READ SECTOR, SEEK, SCAN)</li>
+        <li><strong>Data Exchange</strong> — transfers data over the data bus</li>
+        <li><strong>Status Reporting</strong> — returns BUSY/READY signals and error conditions</li>
+        <li><strong>Address Recognition</strong> — each I/O module has unique address(es) for its device(s)</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Error Detection Methods</div>
+      <ul class="items">
+        <li><strong>Parity Bit</strong> — 8th bit set so total 1s = even (even parity) or odd; detects single-bit errors</li>
+        <li><strong>Mechanical/Electrical fault detection</strong> — paper jam, bad disk track, etc.</li>
+        <li>IRA character = 7 bits + 1 parity bit = 1 byte</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Key Concepts + Definitions Quick Reference -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Key Concepts &amp; Definitions</h3></div>
+    <div class="card-body">
+      <div class="label">Core Terminology</div>
+      <table class="tbl">
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td><code>ISR</code></td><td>Interrupt Service Routine — code that handles a specific interrupt</td></tr>
+        <tr><td><code>PSW</code></td><td>Program Status Word — processor status saved/restored on interrupt</td></tr>
+        <tr><td><code>Vector</code></td><td>Address/identifier placed on data bus by device to identify ISR</td></tr>
+        <tr><td><code>Daisy Chain</code></td><td>Hardware interrupt identification; ACK propagates through chain</td></tr>
+        <tr><td><code>DREQ/DACK</code></td><td>DMA Request / DMA Acknowledge signals between device and DMA</td></tr>
+        <tr><td><code>HRQ/HLDA</code></td><td>Hold Request / Hold Acknowledge between DMA and CPU for bus control</td></tr>
+        <tr><td><code>TC</code></td><td>Terminal Count — DMA transfer complete (count reaches zero)</td></tr>
+        <tr><td><code>Fly-by DMA</code></td><td>Data moves directly bus→memory; does not pass through DMA chip</td></tr>
+        <tr><td><code>CCW</code></td><td>Channel Command Word — I/O channel instruction specifying operation</td></tr>
+        <tr><td><code>DDIO</code></td><td>Intel Direct Data I/O — DCA implementation on Xeon E5 family</td></tr>
+        <tr><td><code>SAP</code></td><td>System Assist Processor — dedicated I/O core in IBM zEC12</td></tr>
+        <tr><td><code>NMI</code></td><td>Non-Maskable Interrupt — cannot be disabled; used for critical events</td></tr>
+        <tr><td><code>IRA</code></td><td>International Reference Alphabet (≈ASCII); 7-bit character codes</td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="label">I/O Addressing</div>
+      <div class="rule">Memory-Mapped:  I/O regs share memory address space → use MOV, LOAD, STORE</div>
+      <div class="rule">Isolated I/O:    Separate address space → use special IN / OUT instructions only</div>
+      <div class="tip">
+        <div class="t-title">Exam Tip</div>
+        <strong>Interrupt vs DMA distinction:</strong> Both use interrupts at completion. The key difference is that in interrupt I/O, <em>every word</em> passes through CPU; in DMA, the <em>entire block</em> transfers without CPU involvement — CPU only interrupted once per block.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════ ROW 7: DMA Signal Flow Diagram + I/O Channel CCW + Interrupt Context Save ═══════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Interrupt Context Save Detail -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Interrupt Context Save/Restore Detail</h3></div>
+    <div class="card-body">
+      <p>When interrupt occurs after instruction at location <strong>N</strong> (Figure 7.7):</p>
+      <div class="label">On Interrupt (Hardware Phase)</div>
+      <div class="formula">Stack ← PSW, PC (= N+1)</div>
+      <ul class="items">
+        <li>Stack Pointer updated to new top</li>
+        <li>PC loaded with ISR entry address (T)</li>
+        <li>CPU proceeds to fetch instruction at T</li>
+      </ul>
+      <div class="label">ISR Entry (Software Phase)</div>
+      <div class="formula">Stack ← All General-Purpose Registers</div>
+      <ul class="items">
+        <li>ISR saves all registers it may modify</li>
+        <li>Stack pointer points to saved register block</li>
+      </ul>
+      <div class="label">ISR Processing</div>
+      <ul class="items">
+        <li>Read data from I/O module</li>
+        <li>Check status, handle errors</li>
+        <li>Send additional commands/ACKs if needed</li>
+      </ul>
+      <div class="label">ISR Exit (Software Phase)</div>
+      <div class="formula">Registers ← Stack (pop all saved registers)</div>
+      <div class="label">Return from Interrupt (Hardware)</div>
+      <div class="formula">PSW, PC ← Stack → resume at instruction N+1</div>
+      <div class="note" style="margin-top:6px;">
+        <div class="n-title">Why Save All State?</div>
+        Interrupts can occur at any point in any program — unpredictably. The interrupted program must resume exactly as if nothing happened. Even one unsaved register would cause program corruption.
+      </div>
+    </div>
+  </div>
+
+  <!-- DMA 8237A Transfer Detail Signal Diagram -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>8237A Signal Flow &amp; Bus Handshake</h3></div>
+    <div class="card-body">
+      <div class="label">Signal Lines (Figure 7.15)</div>
+      <table class="tbl">
+        <tr><th>Signal</th><th>Direction</th><th>Meaning</th></tr>
+        <tr><td><code>DREQ</code></td><td>Device → DMA</td><td>Device requests DMA transfer service</td></tr>
+        <tr><td><code>HRQ</code></td><td>DMA → CPU</td><td>DMA requests bus (HOLD request)</td></tr>
+        <tr><td><code>HLDA</code></td><td>CPU → DMA</td><td>CPU grants bus to DMA (HOLD acknowledge)</td></tr>
+        <tr><td><code>DACK</code></td><td>DMA → Device</td><td>DMA acknowledges; device starts transferring</td></tr>
+        <tr><td><code>MEMR</code></td><td>DMA → Memory</td><td>Memory Read (read byte from memory)</td></tr>
+        <tr><td><code>MEMW</code></td><td>DMA → Memory</td><td>Memory Write (write byte to memory)</td></tr>
+        <tr><td><code>IOR</code></td><td>DMA → Device</td><td>I/O Read from device</td></tr>
+        <tr><td><code>IOW</code></td><td>DMA → Device</td><td>I/O Write to device</td></tr>
+        <tr><td><code>IRQ</code></td><td>DMA → CPU</td><td>Interrupt on transfer completion</td></tr>
+      </table>
+      <div class="label" style="margin-top:8px;">Transfer Cycle (per word)</div>
+      <div class="rule">Address Bus ← Memory Address Register</div>
+      <div class="rule">Assert MEMR → byte goes to data bus → Assert IOW → byte written to device</div>
+      <div class="rule">Decrement Count Register; Increment Address Register</div>
+      <div class="rule">If Count == 0: deassert HRQ; send IRQ to CPU</div>
+      <div class="tip" style="margin-top:6px;">
+        <div class="t-title">Processor State During DMA</div>
+        CPU does NOT save any context during cycle stealing — it simply <em>pauses for one bus cycle</em>. Compare to interrupt where full context save occurs. DMA is far less disruptive per-transfer.
+      </div>
+    </div>
+  </div>
+
+  <!-- I/O Evolution + Channel Program -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>I/O Channel: Program &amp; Architecture</h3></div>
+    <div class="card-body">
+      <p>An I/O channel executes a <strong>channel program</strong> in main memory without CPU involvement. CPU only issues a <em>"start I/O channel"</em> instruction.</p>
+      <div class="label">Channel Command Word (CCW) Fields</div>
+      <table class="tbl">
+        <tr><th>Field</th><th>Purpose</th></tr>
+        <tr><td>Operation Code</td><td>Type of operation: READ, WRITE, SENSE, CONTROL, etc.</td></tr>
+        <tr><td>Data Address</td><td>Starting address in main memory for data buffer</td></tr>
+        <tr><td>Count</td><td>Number of bytes to transfer</td></tr>
+        <tr><td>Flags</td><td>Chain data (CD): link to next CCW; Chain command (CC): chain commands; Suppress length indication (SLI)</td></tr>
+      </table>
+      <div class="label" style="margin-top:8px;">Channel Program Example</div>
+      <div class="rule">CCW1: READ  addr=0x1000  count=512  CC=1</div>
+      <div class="rule">CCW2: READ  addr=0x1200  count=512  CC=0</div>
+      <p style="font-size:11px;color:var(--text-muted);">CPU issues one "start channel" command pointing to CCW1. Channel executes both READs autonomously, then interrupts CPU when both are done.</p>
+      <div class="divider"></div>
+      <div class="label">Selector vs Multiplexor (Summary)</div>
+      <table class="tbl">
+        <tr><th>Channel</th><th>Devices</th><th>Method</th></tr>
+        <tr><td style="color:var(--accent);">Selector</td><td>Few high-speed (disk, tape)</td><td>One device exclusively at a time</td></tr>
+        <tr><td style="color:var(--accent2);">Byte Multiplexor</td><td>Many low-speed (terminals)</td><td>Byte-interleaved across multiple devices</td></tr>
+        <tr><td style="color:var(--accent5);">Block Multiplexor</td><td>Multiple high-speed</td><td>Block-interleaved; handles concurrent block transfers</td></tr>
+      </table>
+      <div class="info" style="margin-top:6px;">
+        <div class="i-title">Channel vs DMA</div>
+        DMA transfers a block defined at initiation time. I/O channel executes a full program — can handle sequences of transfers, error recovery, conditional branching — a true offload processor.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════ ROW 8: USB Architecture + Wi-Fi + Ethernet timelines ═══════════════════════════ -->
+<div class="grid-2 section-gap">
+
+  <!-- USB Architecture Detail -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>USB Architecture &amp; Transfer Types</h3></div>
+    <div class="card-body">
+      <div class="label">Topology</div>
+      <ul class="items">
+        <li><strong>Root Host Controller</strong> — master of the USB network; sits in PC/host system</li>
+        <li><strong>Hubs</strong> — expand connectivity; can be chained to create tree topology</li>
+        <li><strong>Devices</strong> — leaf nodes (keyboards, drives, NICs)</li>
+        <li>Strictly hierarchical tree — all communication goes through root</li>
+      </ul>
+      <div class="label">USB Transfer Types</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Use</th><th>Characteristics</th></tr>
+        <tr><td><strong>Control</strong></td><td>Device configuration, commands</td><td>Guaranteed delivery; error-checked; used at enumeration</td></tr>
+        <tr><td><strong>Interrupt</strong></td><td>Keyboard, mouse, HID</td><td>Periodic polling; low latency guarantee; small payloads</td></tr>
+        <tr><td><strong>Bulk</strong></td><td>File transfers, printers</td><td>Large payloads; error-checked; no latency guarantee; uses spare bandwidth</td></tr>
+        <tr><td><strong>Isochronous</strong></td><td>Audio, video streaming</td><td>Constant data rate; no error retransmission; latency guaranteed</td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="label">FireWire Protocol Stack (IEEE 1394)</div>
+      <table class="tbl">
+        <tr><th>Layer</th><th>Function</th></tr>
+        <tr><td>Transaction Layer</td><td>Request-response protocol; hides lower-layer details from applications</td></tr>
+        <tr><td>Link Layer</td><td>Packet transmission and reception; addressing, error detection</td></tr>
+        <tr><td>Physical Layer</td><td>Transmission media, electrical/signaling specs; 25 Mbps – 3.2 Gbps</td></tr>
+      </table>
+      <div class="tip" style="margin-top:6px;">
+        <div class="t-title">FireWire Key Features</div>
+        Hot plugging · Automatic configuration · No termination · No manual device IDs · Up to 63 devices/port · Up to 1022 buses via bridges · Tree-structured topology possible
+      </div>
+    </div>
+  </div>
+
+  <!-- Ethernet + Wi-Fi Timeline + Complete Summary -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Ethernet &amp; Wi-Fi Evolution + Chapter Summary</h3></div>
+    <div class="card-body">
+      <div class="grid-2" style="gap:12px;">
+        <div>
+          <div class="label">Ethernet Chronology (IEEE 802.3)</div>
+          <table class="tbl">
+            <tr><th>Year</th><th>Speed</th><th>Architecture</th></tr>
+            <tr><td>1983</td><td>10 Mbps</td><td>Bus-based coaxial</td></tr>
+            <tr><td>1995</td><td>100 Mbps</td><td>Switch-based (Fast Ethernet)</td></tr>
+            <tr><td>1998</td><td>1 Gbps</td><td>Gigabit Ethernet</td></tr>
+            <tr><td>2003</td><td>10 Gbps</td><td>10 Gigabit Ethernet</td></tr>
+            <tr><td>2010</td><td>40/100 Gbps</td><td>Switched fabric</td></tr>
+          </table>
+        </div>
+        <div>
+          <div class="label">Wi-Fi Chronology (IEEE 802.11)</div>
+          <table class="tbl">
+            <tr><th>Standard</th><th>Year</th><th>Max Rate</th></tr>
+            <tr><td>802.11</td><td>1997</td><td>2 Mbps</td></tr>
+            <tr><td>802.11b</td><td>1999</td><td>11 Mbps</td></tr>
+            <tr><td>802.11a/g</td><td>1999/2003</td><td>54 Mbps</td></tr>
+            <tr><td>802.11n</td><td>1999</td><td>600 Mbps</td></tr>
+            <tr><td>802.11ac</td><td>2014</td><td>3.2 Gbps</td></tr>
+            <tr><td>802.11ad</td><td>2012</td><td>6.76 Gbps</td></tr>
+          </table>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="label">Chapter 7 — Big Picture Summary</div>
+      <table class="tbl">
+        <tr><th>Technique</th><th>CPU Overhead</th><th>Hardware</th><th>Best For</th></tr>
+        <tr><td style="color:var(--accent3);">Programmed I/O</td><td>Highest (busy-wait)</td><td>Minimal</td><td>Simple embedded controllers</td></tr>
+        <tr><td style="color:var(--accent4);">Interrupt I/O</td><td>Medium (per-word ISR)</td><td>Interrupt controller</td><td>Interactive devices</td></tr>
+        <tr><td style="color:var(--accent2);">DMA</td><td>Low (per-block IRQ)</td><td>DMA controller</td><td>Bulk disk/network transfers</td></tr>
+        <tr><td style="color:var(--accent5);">DCA/DDIO</td><td>Very low (cache-direct)</td><td>Smart NIC + cache-aware MCH</td><td>High-speed network (10/100 Gbps)</td></tr>
+        <tr><td style="color:var(--accent);">I/O Channel</td><td>Minimal (program offload)</td><td>I/O processor chip</td><td>Mainframe large-scale I/O</td></tr>
+      </table>
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">Key Design Principle</div>
+        The evolution of I/O techniques consistently moves processing burden <em>away from the CPU</em> — from busy-wait polling → interrupt-per-word → block DMA → cache-direct DCA → fully autonomous I/O channel with its own instruction set. Each step increases CPU availability for application code.
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← Back to Menu</a>
+  <span>Computer Organization &amp; Architecture 10e · Stallings · Chapter 7: Input/Output · §7.1–§7.9</span>
+  <span>Pages 228–270</span>
+</div>
+
+</body>
+</html>

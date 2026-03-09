@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH21 – Microprogrammed Control</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--yellow);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--yellow);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--yellow);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .formula{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-left:3px solid var(--accent);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent);margin-bottom:6px;}
+  .formula-g{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-left:3px solid var(--accent2);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent2);margin-bottom:6px;}
+  .formula-y{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-left:3px solid var(--yellow);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula-o{background:rgba(255,166,87,0.07);border:1px solid rgba(255,166,87,0.25);border-left:3px solid var(--accent5);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent5);margin-bottom:6px;}
+  .formula-p{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  .formula-r{background:rgba(247,129,102,0.07);border:1px solid rgba(247,129,102,0.25);border-left:3px solid var(--accent3);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent3);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--yellow);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;line-height:18px;text-align:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .tbl td.mono{font-family:'IBM Plex Mono',monospace;color:var(--accent);}
+  .tbl td.grn{font-family:'IBM Plex Mono',monospace;color:var(--accent2);}
+  .tbl td.yel{font-family:'IBM Plex Mono',monospace;color:var(--yellow);}
+  .tbl td.ora{font-family:'IBM Plex Mono',monospace;color:var(--accent5);}
+  .tbl td.red{font-family:'IBM Plex Mono',monospace;color:var(--accent3);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  /* Microinstruction format visualizer */
+  .uinstr{display:flex;flex-direction:column;gap:3px;font-family:'IBM Plex Mono',monospace;font-size:10px;}
+  .uinstr-row{display:flex;align-items:stretch;gap:2px;}
+  .uinstr-field{padding:4px 6px;border-radius:3px;text-align:center;border:1px solid;flex:1;font-size:9px;font-weight:600;}
+  .uf-ctrl{background:rgba(88,166,255,0.15);border-color:rgba(88,166,255,0.4);color:var(--accent);}
+  .uf-seq{background:rgba(63,185,80,0.15);border-color:rgba(63,185,80,0.4);color:var(--accent2);}
+  .uf-alu{background:rgba(255,166,87,0.15);border-color:rgba(255,166,87,0.4);color:var(--accent5);}
+  .uf-cond{background:rgba(210,168,255,0.15);border-color:rgba(210,168,255,0.4);color:var(--accent4);}
+  .uf-addr{background:rgba(247,129,102,0.15);border-color:rgba(247,129,102,0.4);color:var(--accent3);}
+  .uf-data{background:rgba(227,179,65,0.15);border-color:rgba(227,179,65,0.4);color:var(--yellow);}
+  .uf-misc{background:rgba(255,255,255,0.06);border-color:var(--border);color:var(--text-muted);}
+  /* Spectrum bar */
+  .spectrum-bar{height:16px;border-radius:4px;background:linear-gradient(to right,rgba(88,166,255,0.6),rgba(63,185,80,0.4),rgba(227,179,65,0.4),rgba(247,129,102,0.6));margin:8px 0;border:1px solid var(--border);}
+  .spectrum-labels{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);margin-bottom:8px;}
+  /* Control memory diagram */
+  .cmem{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:8px 10px;font-family:'IBM Plex Mono',monospace;font-size:10px;}
+  .cmem-row{display:flex;align-items:center;gap:6px;margin-bottom:3px;}
+  .cmem-addr{color:var(--text-dim);min-width:40px;text-align:right;}
+  .cmem-label{color:var(--text-muted);font-size:9px;min-width:80px;}
+  .cmem-bar{flex:1;height:18px;border-radius:3px;padding:2px 6px;display:flex;align-items:center;font-size:9px;font-weight:600;}
+  .cmem-fetch{background:rgba(88,166,255,0.2);border:1px solid rgba(88,166,255,0.4);color:var(--accent);}
+  .cmem-ind{background:rgba(210,168,255,0.2);border:1px solid rgba(210,168,255,0.4);color:var(--accent4);}
+  .cmem-int{background:rgba(247,129,102,0.2);border:1px solid rgba(247,129,102,0.4);color:var(--accent3);}
+  .cmem-exec{background:rgba(63,185,80,0.2);border:1px solid rgba(63,185,80,0.4);color:var(--accent2);}
+  .cmem-add{background:rgba(255,166,87,0.2);border:1px solid rgba(255,166,87,0.4);color:var(--accent5);}
+  .cmem-div{border-top:1px dashed var(--border);margin:4px 0;}
+  /* Sequencing flow */
+  .seq-flow{display:flex;align-items:center;gap:4px;flex-wrap:wrap;margin:6px 0;}
+  .seq-box{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:4px 8px;border-radius:3px;font-weight:600;}
+  .sq-a{background:rgba(88,166,255,0.15);border:1px solid rgba(88,166,255,0.4);color:var(--accent);}
+  .sq-b{background:rgba(63,185,80,0.15);border:1px solid rgba(63,185,80,0.4);color:var(--accent2);}
+  .sq-c{background:rgba(227,179,65,0.15);border:1px solid rgba(227,179,65,0.4);color:var(--yellow);}
+  .sq-d{background:rgba(247,129,102,0.15);border:1px solid rgba(247,129,102,0.4);color:var(--accent3);}
+  .sq-arr{color:var(--text-dim);font-size:12px;}
+  /* Section header */
+  .sec-header{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:15px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin:20px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--border);}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════ HEADER ═══════════════════════════════════ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Microprogrammed Control — Chapter 21</h1>
+    <h2>Computer Organization &amp; Architecture, 10th Edition &nbsp;|&nbsp; Stallings &nbsp;|&nbsp; pp. 729–763 &nbsp;|&nbsp; Complete Study Reference</h2>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+    <span class="badge">COA10e · CH21</span>
+    <div class="toc">
+      <span class="toc-item">§21.1 Basic Concepts</span>
+      <span class="toc-item">Control Word</span>
+      <span class="toc-item">Microprogrammed CU</span>
+      <span class="toc-item">Wilkes Control</span>
+      <span class="toc-item">Adv/Disadv</span>
+      <span class="toc-item">§21.2 Sequencing</span>
+      <span class="toc-item">2-Field / 1-Field / Variable</span>
+      <span class="toc-item">Address Generation</span>
+      <span class="toc-item">LSI-11 Sequencing</span>
+      <span class="toc-item">§21.3 Execution</span>
+      <span class="toc-item">Horiz vs Vertical</span>
+      <span class="toc-item">Encoding</span>
+      <span class="toc-item">LSI-11 / IBM 3033</span>
+      <span class="toc-item">§21.4 TI 8800</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SECTION 21.1 — BASIC CONCEPTS ════════════════════ -->
+<div class="sec-header">§21.1 — Basic Concepts</div>
+
+<div class="grid">
+
+  <!-- CARD 1: Why Microprogramming -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Motivation &amp; History of Microprogramming</h3></div>
+    <div class="card-body">
+      <p><strong>M. V. Wilkes</strong> proposed microprogramming in 1951 as an organized, systematic alternative to complex hardwired control unit design.</p>
+      <div class="label">The Problem with Hardwired Control</div>
+      <ul class="items">
+        <li>Must implement logic for: sequencing μOPs, executing μOPs, interpreting opcodes, testing ALU flags</li>
+        <li>Difficult to design, debug, and test</li>
+        <li>Inflexible — adding a new machine instruction requires redesigning the hardware</li>
+      </ul>
+      <div class="label">The Microprogramming Solution</div>
+      <p>Replace complex logic circuits with a <strong>small program</strong> (microprogram) stored in <em>control memory</em>. The control unit becomes a simple microprogram sequencer + executor.</p>
+      <div class="formula-y">
+        Microprogram = sequence of microinstructions<br>
+        Microinstruction = one set of control signals (one row)<br>
+        Control memory = ROM holding the microprogram
+      </div>
+      <div class="note">
+        <div class="n-title">Historical Milestone</div>
+        IBM System/360 (announced April 1964) used microprogramming for all but the largest models, making it mainstream. Previously, major manufacturers had dismissed the technique as impractical.
+      </div>
+      <div class="tip">
+        <div class="t-title">Firmware = Midway between HW and SW</div>
+        Microprogram is called <em>firmware</em>: easier to write than hardware circuits, harder than software. Can be updated without hardware redesign.
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 2: Control Word and Microinstruction -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Control Word · Microinstruction · Microprogram</h3></div>
+    <div class="card-body">
+      <p>Each micro-operation only requires the CU to set some control lines ON (1) and others OFF (0). This can be encoded as a binary <strong>control word</strong>.</p>
+      <div class="label">Control Word (CW)</div>
+      <div class="uinstr">
+        <div class="uinstr-row">
+          <div class="uinstr-field uf-ctrl" style="flex:4;">Internal CPU Control Lines<br><span style="font-size:8px;">1 bit per control line</span></div>
+          <div class="uinstr-field uf-seq" style="flex:2;">System Bus Control Lines</div>
+          <div class="uinstr-field uf-cond" style="flex:1;">Cond</div>
+          <div class="uinstr-field uf-addr" style="flex:2;">Next Addr</div>
+        </div>
+      </div>
+      <div class="label" style="margin-top:8px;">Execution Rules for a Microinstruction</div>
+      <ol class="steps">
+        <li>Turn ON all control lines where bit = 1; leave OFF all lines where bit = 0. This executes a set of micro-operations.</li>
+        <li>If the <em>condition field</em> evaluates FALSE → fetch the <em>next sequential</em> microinstruction.</li>
+        <li>If the condition evaluates TRUE → fetch the microinstruction at the <em>address field</em>.</li>
+      </ol>
+      <div class="label">Key Terminology</div>
+      <table class="tbl">
+        <thead><tr><th>Term</th><th>Definition</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">Microinstruction</td><td>One row of control memory = one control word; defines one set of simultaneous micro-operations</td></tr>
+          <tr><td class="mono">Microprogram</td><td>Sequence of microinstructions implementing one instruction cycle (also called <em>firmware</em>)</td></tr>
+          <tr><td class="mono">Control memory</td><td>ROM (or writable RAM) storing all microprograms; addressed by control address register (CAR)</td></tr>
+          <tr><td class="mono">Control address register (CAR)</td><td>Holds address of next microinstruction to be fetched</td></tr>
+          <tr><td class="mono">Control buffer register (CBR)</td><td>Holds the current microinstruction being executed</td></tr>
+          <tr><td class="mono">Microroutine</td><td>Microprogram segment implementing one machine instruction</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CARD 3: Microprogrammed Control Unit -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Microprogrammed Control Unit (Fig 21.4)</h3></div>
+    <div class="card-body">
+      <p>The microprogrammed CU replaces combinational logic with a program stored in control memory. Same I/O interface as hardwired CU — just different implementation.</p>
+      <div class="cmem" style="margin-bottom:8px;">
+        <div style="color:var(--yellow);font-size:9px;font-weight:600;margin-bottom:4px;text-transform:uppercase;">Control Unit Structure</div>
+        <div class="cmem-row"><div class="cmem-bar cmem-fetch" style="flex:none;width:100%;">▲ IR / ALU Flags / Clock — INPUTS</div></div>
+        <div class="cmem-row" style="margin-top:4px;">
+          <div class="cmem-bar sq-a" style="flex:1;height:22px;">Sequencing Logic<br><span style="font-size:8px;">generates next CAR address</span></div>
+        </div>
+        <div class="cmem-row">
+          <div class="cmem-bar sq-b" style="flex:none;width:100%;">Control Memory (ROM)<br><span style="font-size:8px;">microprogram stored here</span></div>
+        </div>
+        <div class="cmem-row">
+          <div class="cmem-bar sq-c" style="flex:none;width:100%;">Control Buffer Register (CBR)<br><span style="font-size:8px;">holds current microinstruction</span></div>
+        </div>
+        <div class="cmem-row">
+          <div class="cmem-bar sq-d" style="flex:none;width:100%;">▼ Control Signals — OUTPUTS (to CPU + system bus)</div>
+        </div>
+      </div>
+      <div class="label">One Clock Pulse Cycle</div>
+      <ol class="steps">
+        <li>Sequencing logic issues READ to control memory at address in CAR.</li>
+        <li>Microinstruction at that address → loaded into CBR.</li>
+        <li>Left portion of CBR drives control signal lines directly (horizontal) or via decoder (vertical).</li>
+        <li>Sequencing logic reads CBR's next-address info + ALU flags → loads new address into CAR.</li>
+      </ol>
+      <div class="label">Three Sequencing Decisions per Cycle</div>
+      <ul class="items">
+        <li><strong>Increment:</strong> CAR ← CAR + 1 (sequential execution)</li>
+        <li><strong>Branch:</strong> CAR ← address field in CBR (jump microinstruction)</li>
+        <li><strong>Map from IR:</strong> CAR ← f(opcode) via upper decoder (start of machine instruction's microroutine)</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- Row 2: Control Memory Organization + Wilkes + Advantages -->
+<div class="grid section-gap">
+
+  <!-- CARD 4: Control Memory Organization -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Control Memory Organization (Fig 21.2)</h3></div>
+    <div class="card-body">
+      <p>Control memory is organized into groups of microinstructions (<em>microroutines</em>), one per instruction type. An <em>execute cycle routine</em> dispatches to the appropriate microroutine based on the opcode.</p>
+      <div class="cmem">
+        <div class="cmem-row"><div class="cmem-addr">0000</div><div class="cmem-label">Fetch routine</div><div class="cmem-bar cmem-fetch">FETCH μOP 1 &nbsp;→ Jump to indirect or execute</div></div>
+        <div class="cmem-row"><div class="cmem-addr">…</div><div class="cmem-label"></div><div class="cmem-bar cmem-fetch">FETCH μOP 2, 3… end: jump</div></div>
+        <div class="cmem-div"></div>
+        <div class="cmem-row"><div class="cmem-addr">0010</div><div class="cmem-label">Indirect routine</div><div class="cmem-bar cmem-ind">INDIRECT μOP 1,2,3 → Jump to execute</div></div>
+        <div class="cmem-div"></div>
+        <div class="cmem-row"><div class="cmem-addr">0020</div><div class="cmem-label">Interrupt routine</div><div class="cmem-bar cmem-int">INTERRUPT μOP 1,2,3 → Jump to fetch</div></div>
+        <div class="cmem-div"></div>
+        <div class="cmem-row"><div class="cmem-addr">0030</div><div class="cmem-label">Execute cycle</div><div class="cmem-bar cmem-exec">Dispatch → to opcode microroutine</div></div>
+        <div class="cmem-div"></div>
+        <div class="cmem-row"><div class="cmem-addr">0040</div><div class="cmem-label">AND routine</div><div class="cmem-bar cmem-add">AND μOP sequence → jump to fetch/intr</div></div>
+        <div class="cmem-row"><div class="cmem-addr">0050</div><div class="cmem-label">ADD routine</div><div class="cmem-bar cmem-add">ADD μOP sequence → jump to fetch/intr</div></div>
+        <div class="cmem-row"><div class="cmem-addr">…</div><div class="cmem-label">Other opcodes</div><div class="cmem-bar" style="background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text-dim);">one microroutine per machine instruction</div></div>
+      </div>
+      <div class="label" style="margin-top:8px;">Two Decoders in the CU (Fig 21.4)</div>
+      <ul class="items">
+        <li><strong>Upper decoder:</strong> maps opcode from IR → starting control memory address of that instruction's microroutine</li>
+        <li><strong>Lower decoder:</strong> only used for <em>vertical</em> microinstructions — decodes encoded fields into individual control signals</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CARD 5: Wilkes Control -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Wilkes Control (1951) — First Microprogrammed CU</h3></div>
+    <div class="card-body">
+      <p>Wilkes's original design used a <strong>diode matrix</strong>. Each row = one microinstruction; activated by a pulse on that row's address line.</p>
+      <div class="label">Matrix Layout</div>
+      <ul class="items">
+        <li><strong>Part 1 of row:</strong> control signals for the current μOP (dot = signal active)</li>
+        <li><strong>Part 2 of row:</strong> address of the next microinstruction to activate</li>
+      </ul>
+      <div class="label">Operation</div>
+      <ol class="steps">
+        <li>Register I holds current row address → feeds decoder</li>
+        <li>Clock pulse activates decoder → pulses one row of matrix</li>
+        <li>Row part 1 generates control signals (micro-operations)</li>
+        <li>Row part 2 OR instruction register opcode → loaded into Register II</li>
+        <li>Second clock transfers Register II → Register I (two registers prevent feedback instability)</li>
+      </ol>
+      <div class="label">Key Difference from Fig 21.1a</div>
+      <div class="warn">
+        <div class="w-title">No Increment</div>
+        In Wilkes's scheme, the <em>next address is embedded in every microinstruction</em> — no incrementer. To branch, a row contains two alternative addresses controlled by a flag (conditional signal). This requires more bits per microinstruction.
+      </div>
+      <div class="label">Wilkes Example Machine Registers</div>
+      <ul class="items">
+        <li><strong>A, B, C, D:</strong> Accumulator (split into halves), shift register</li>
+        <li><strong>E (MAR), F (PC), G:</strong> control-only registers (not user-visible)</li>
+        <li>38 microinstructions define the complete control unit for the example machine</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CARD 6: Advantages and Disadvantages -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Advantages &amp; Disadvantages</h3></div>
+    <div class="card-body">
+      <div class="label">Advantages of Microprogramming</div>
+      <ul class="items">
+        <li><strong>Simpler design:</strong> CU logic reduces to sequencer + control memory — simpler than hardwired logic</li>
+        <li><strong>Lower cost:</strong> cheaper and less error-prone to implement</li>
+        <li><strong>Flexibility:</strong> new instructions added by updating ROM/RAM, not redesigning circuits</li>
+        <li><strong>Error correction:</strong> bugs fixed via firmware update rather than chip respin</li>
+        <li><strong>Emulation:</strong> run another ISA's instructions by providing its microprogram</li>
+        <li><strong>Regularity:</strong> control memory behaves uniformly, making design systematic</li>
+      </ul>
+      <div class="label">Disadvantages</div>
+      <ul class="items">
+        <li><strong>Slower:</strong> must access control memory every microinstruction cycle; hardwired is faster with comparable technology</li>
+        <li><strong>Extra hardware:</strong> control memory, CAR, CBR, sequencer all add complexity + cost</li>
+        <li><strong>Propagation delay:</strong> vertical format requires additional decode logic — more delay than horizontal</li>
+      </ul>
+      <div class="label">Current Relevance</div>
+      <table class="tbl">
+        <thead><tr><th>Architecture</th><th>Control Strategy</th></tr></thead>
+        <tbody>
+          <tr><td>CISC (e.g., x86)</td><td>Historically microprogrammed; modern CPUs use hybrid (RISC core + microcode for complex instr)</td></tr>
+          <tr><td>RISC</td><td>Hardwired — simpler ISA makes this practical and fast</td></tr>
+          <tr><td>Pentium 4</td><td>Most instructions → RISC-like μOPs (hardwired); some → microprogram</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════ SECTION 21.2 — MICROINSTRUCTION SEQUENCING ════════════════════ -->
+<div class="sec-header">§21.2 — Microinstruction Sequencing</div>
+
+<div class="grid">
+
+  <!-- CARD 7: Sequencing Design Considerations -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Sequencing Design Considerations</h3></div>
+    <div class="card-body">
+      <p>Every microinstruction cycle, the sequencer must determine the address of the <em>next</em> microinstruction. Two competing design goals:</p>
+      <div class="formula-y">
+        Goal 1: Minimize control memory SIZE<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(fewer address bits = smaller memory)<br>
+        Goal 2: Minimize address GENERATION TIME<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(execute microinstructions as fast as possible)
+      </div>
+      <div class="label">Three Categories for "Next Address"</div>
+      <table class="tbl">
+        <thead><tr><th>#</th><th>Source</th><th>When Used</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>IR (opcode mapping)</td><td>Exactly once per machine instruction — at start of execute cycle, opcode maps to microroutine start address</td></tr>
+          <tr><td>2</td><td>Next sequential (+1)</td><td>Most common — when executing in-order microinstructions</td></tr>
+          <tr><td>3</td><td>Branch (conditional / unconditional)</td><td>At end of subcycles (fetch → execute), loops, conditional actions. ~1 in 3–4 microinstructions is a branch</td></tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <div class="n-title">Branch Frequency</div>
+        Studies show ~1 in every 3–4 microinstructions is a branch. Cannot optimize only for sequential access — branch efficiency is critical.
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 8: Sequencing Techniques -->
+  <div class="card blue col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Three Sequencing Techniques (Figs 21.6, 21.7, 21.8)</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div>
+          <div class="label">① Two Address Fields (Fig 21.6)</div>
+          <div class="uinstr">
+            <div class="uinstr-row">
+              <div class="uinstr-field uf-ctrl">Control Signals</div>
+              <div class="uinstr-field uf-cond">Cond</div>
+              <div class="uinstr-field uf-addr">Addr 1</div>
+              <div class="uinstr-field uf-addr" style="background:rgba(247,129,102,0.25);">Addr 2</div>
+            </div>
+          </div>
+          <p style="margin-top:6px;font-size:12px;">A multiplexer selects between: <strong>Addr 1</strong>, <strong>Addr 2</strong>, or <strong>IR opcode</strong> as the next CAR value. Branch logic selects based on condition flags.</p>
+          <ul class="items" style="margin-top:4px;">
+            <li><strong>Pros:</strong> Simple, straightforward</li>
+            <li><strong>Cons:</strong> Requires more bits — two full addresses per instruction</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">② Single Address Field (Fig 21.7)</div>
+          <div class="uinstr">
+            <div class="uinstr-row">
+              <div class="uinstr-field uf-ctrl">Control Signals</div>
+              <div class="uinstr-field uf-cond">Cond</div>
+              <div class="uinstr-field uf-addr">Address</div>
+            </div>
+          </div>
+          <p style="margin-top:6px;font-size:12px;">Multiplexer selects from 3 options: <strong>Address field</strong>, <strong>IR opcode mapping</strong>, or <strong>CAR+1</strong> (increment).</p>
+          <ul class="items" style="margin-top:4px;">
+            <li><strong>Pros:</strong> Fewer bits than two-address</li>
+            <li><strong>Cons:</strong> Address field often unused (inefficiency). Same cycle for control + branch.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">③ Variable Format (Fig 21.8)</div>
+          <div class="uinstr">
+            <div class="uinstr-row">
+              <div class="uinstr-field uf-ctrl" style="flex:3;">Control Signals (Format 0)</div>
+              <div class="uinstr-field uf-misc" style="flex:1;">F=0</div>
+            </div>
+            <div class="uinstr-row" style="margin-top:2px;">
+              <div class="uinstr-field uf-cond" style="flex:2;">Branch Control</div>
+              <div class="uinstr-field uf-addr" style="flex:2;">Address</div>
+              <div class="uinstr-field uf-misc" style="flex:1;">F=1</div>
+            </div>
+          </div>
+          <p style="margin-top:6px;font-size:12px;">1-bit format flag selects interpretation. F=0: entire word = control signals, next = +1 or IR. F=1: branch instruction with condition + address.</p>
+          <ul class="items" style="margin-top:4px;">
+            <li><strong>Pros:</strong> Very compact encoding</li>
+            <li><strong>Cons:</strong> Branch consumes an entire cycle — control signals not generated simultaneously</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Row 2: Address Generation Techniques + LSI-11 Sequencing -->
+<div class="grid section-gap">
+
+  <!-- CARD 9: Address Generation Techniques -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Address Generation Techniques (Table 21.3)</h3></div>
+    <div class="card-body">
+      <p>Beyond the three format-based approaches, address generation techniques can be categorized as <strong>explicit</strong> (address in microinstruction) or <strong>implicit</strong> (computed by logic).</p>
+      <table class="tbl">
+        <thead>
+          <tr><th>Category</th><th>Technique</th><th>How It Works</th></tr>
+        </thead>
+        <tbody>
+          <tr><td rowspan="3" style="color:var(--accent);vertical-align:middle;"><strong>Explicit</strong></td><td>Two-field</td><td>Two alternate addresses in microinstruction; multiplexer selects based on flag</td></tr>
+          <tr><td>Unconditional branch</td><td>Single address field; always load it into CAR</td></tr>
+          <tr><td>Conditional branch</td><td>Single address field; load only if condition true, else +1</td></tr>
+          <tr><td rowspan="3" style="color:var(--yellow);vertical-align:middle;"><strong>Implicit</strong></td><td>Mapping</td><td>Opcode portion of IR → special logic → starting address of microroutine. Required in virtually ALL designs.</td></tr>
+          <tr><td>Addition</td><td>Two parts of address are combined/added (e.g., IBM 3033: high 8 bits from BA field + lower 5 bits computed from condition flags). Defines a block of microinstructions.</td></tr>
+          <tr><td>Residual control</td><td>Previously saved address (return register or stack) used as next address. Supports micro-subroutines (e.g., LSI-11).</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Conditional Branch Condition Sources</div>
+      <ul class="items">
+        <li>ALU condition codes (zero, overflow, carry, sign)</li>
+        <li>Parts of the opcode or address mode fields of the machine instruction</li>
+        <li>Sign bit or other bits of a selected register</li>
+        <li>Status bits internal to the control unit</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CARD 10: LSI-11 Sequencing -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>LSI-11 Microinstruction Sequencing</h3></div>
+    <div class="card-body">
+      <p>The LSI-11 (PDP-11 single-board) uses a <strong>22-bit microinstruction</strong> and 2K × 22-bit control memory. Demonstrates residual control (subroutine facility).</p>
+      <div class="label">Five Next-Address Mechanisms</div>
+      <ol class="steps">
+        <li><strong>Next sequential:</strong> CAR ← CAR + 1 (default)</li>
+        <li><strong>Opcode mapping:</strong> start of each instruction cycle, opcode determines starting microroutine address</li>
+        <li><strong>Subroutine facility:</strong> 1 dedicated bit in every microinstruction; when set, loads 11-bit return register with updated CAR. A subsequent <em>return</em> microinstruction loads CAR from return register.</li>
+        <li><strong>Interrupt testing:</strong> specific microinstructions test for pending interrupts; if found, determines next address</li>
+        <li><strong>Conditional/unconditional branch:</strong> 4-bit test code tests ALU condition codes; if false → +1; if true → load 8 low-order bits from microinstruction (256-word page branch)</li>
+      </ol>
+      <div class="label">IBM 3033 — Addition-Based Addressing (Fig 21.9)</div>
+      <p style="font-size:12px;">13-bit CAR divided into two parts:</p>
+      <div class="formula-g">
+        Bits 00–07 (high): copied from BA field of microinstruction<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ selects a 32-microinstruction BLOCK<br>
+        Bits 08–12 (low):  each bit set by a 4–7-bit condition field<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;→ specifies OFFSET within that block
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 11: Horizontal vs Vertical Spectrum -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Horizontal vs. Vertical Microinstructions (Table 21.4)</h3></div>
+    <div class="card-body">
+      <p>Microinstruction format falls on a spectrum from <strong>totally unencoded (horizontal)</strong> to <strong>highly encoded (vertical)</strong>.</p>
+      <div class="spectrum-bar"></div>
+      <div class="spectrum-labels"><span>← HORIZONTAL</span><span>VERTICAL →</span></div>
+      <table class="tbl">
+        <thead><tr><th>Characteristic</th><th style="color:var(--accent);">Horizontal (Unencoded)</th><th style="color:var(--accent3);">Vertical (Encoded)</th></tr></thead>
+        <tbody>
+          <tr><td>Width</td><td class="mono">40–100 bits</td><td class="mono">16–40 bits</td></tr>
+          <tr><td>Bits per control signal</td><td>1 bit = 1 signal</td><td>Encoded — n bits → decoder → signals</td></tr>
+          <tr><td>Control logic</td><td class="grn">Little or none needed</td><td class="red">Complex decode logic required</td></tr>
+          <tr><td>Execution speed</td><td class="grn">Faster (no decode delay)</td><td class="red">Slower (decode adds propagation)</td></tr>
+          <tr><td>Concurrency</td><td class="grn">All signals individually controllable</td><td class="red">Some combinations prevented by encoding</td></tr>
+          <tr><td>Programming difficulty</td><td class="red">Hard — must know all signal details</td><td class="grn">Easier — like machine-language coding</td></tr>
+          <tr><td>View of hardware</td><td>Very detailed</td><td>Aggregated / abstracted</td></tr>
+          <tr><td>Terminology</td><td>Unpacked, Hard</td><td>Packed, Soft</td></tr>
+          <tr><td>Memory cost</td><td class="red">More bits → larger control memory</td><td class="grn">Fewer bits → smaller memory</td></tr>
+          <tr><td>Optimization target</td><td>Performance</td><td>Ease of microprogramming</td></tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <div class="n-title">Design Strategy</div>
+        IBM 3033 → near horizontal (performance). LSI-11 → near vertical (ease of programming — microinstruction set resembles PDP-11 machine ISA).
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════ SECTION 21.3 — MICROINSTRUCTION EXECUTION ════════════════════ -->
+<div class="sec-header">§21.3 — Microinstruction Execution</div>
+
+<div class="grid">
+
+  <!-- CARD 12: Execution Overview -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Microinstruction Execution Overview</h3></div>
+    <div class="card-body">
+      <p>Each microinstruction cycle = <strong>fetch + execute</strong>. The execute phase generates control signals from the microinstruction bits, causing micro-operations in the CPU.</p>
+      <div class="label">Control Unit Organization (Fig 21.10)</div>
+      <ul class="items">
+        <li><strong>Sequencing logic module:</strong> generates next CAR address using IR, ALU flags, CAR (for +1), and CBR (for branch address)</li>
+        <li><strong>Control logic module:</strong> generates control signals from bits in the current microinstruction (CBR); complexity depends on degree of encoding</li>
+        <li><strong>Clock:</strong> drives all timing in the microinstruction cycle</li>
+      </ul>
+      <div class="label">Control Signal Types Generated</div>
+      <table class="tbl">
+        <thead><tr><th>Type</th><th>Examples</th></tr></thead>
+        <tbody>
+          <tr><td>Internal control signals</td><td>Open gate PC→MAR; activate ALU add; move MBR→IR</td></tr>
+          <tr><td>External control signals</td><td>Memory READ/WRITE; I/O read/write on system bus</td></tr>
+        </tbody>
+      </table>
+      <div class="info">
+        <div class="i-title">Emulation</div>
+        By loading a different microprogram, the same CPU hardware can execute a completely different ISA. E.g., an IBM 360 model could emulate a prior IBM 1401 architecture via a different microprogram.
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 13: Microinstruction Encoding -->
+  <div class="card green col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Microinstruction Encoding — Direct vs. Indirect (Fig 21.11)</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div>
+          <div class="label">Why Encode?</div>
+          <p style="font-size:12px;">With K total control signals, pure unencoded format needs K bits. But many combinations are physically impossible or mutually exclusive:</p>
+          <ul class="items">
+            <li>Two sources cannot be gated to the same destination simultaneously</li>
+            <li>A register cannot be both source and destination in one time unit</li>
+            <li>Only one ALU function can be active at a time</li>
+            <li>Only one pattern on the external control bus at a time</li>
+          </ul>
+          <p style="font-size:12px;margin-top:6px;">With Q valid combinations (Q &lt; 2ᴷ), we only need log₂Q bits minimum. In practice, use more than log₂Q for programmability, but fewer than K.</p>
+          <div class="label">Field-Based Encoding (Direct, Fig 21.11a)</div>
+          <div class="uinstr" style="margin-bottom:8px;">
+            <div class="uinstr-row">
+              <div class="uinstr-field uf-ctrl">Field 1</div>
+              <div class="uinstr-field uf-alu">Field 2</div>
+              <div class="uinstr-field uf-seq">Field 3</div>
+              <div class="uinstr-field uf-misc">…</div>
+              <div class="uinstr-field uf-addr">Fld N</div>
+            </div>
+          </div>
+          <ul class="items">
+            <li>Each field → its own decoder → its own subset of control signals</li>
+            <li>N fields → N simultaneous independent actions per microinstruction</li>
+            <li>Actions within one field are <em>mutually exclusive</em> (only one code per field at a time)</li>
+            <li>Actions from <em>different fields</em> can occur simultaneously</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">Direct vs Indirect Encoding</div>
+          <table class="tbl" style="margin-bottom:8px;">
+            <thead><tr><th>Type</th><th>Mechanism</th><th>Trade-off</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Direct</strong></td><td>Each field decoded independently → control signals</td><td>Simpler logic, single decode level</td></tr>
+              <tr><td><strong>Indirect</strong></td><td>One field determines interpretation of another field (two-level decoding)</td><td>More compact, but adds propagation delay (two decode stages)</td></tr>
+            </tbody>
+          </table>
+          <div class="info">
+            <div class="i-title">Indirect Encoding Example</div>
+            ALU has 8 arithmetic ops + 8 shift ops. Use 1-bit field to select arithmetic vs. shift; then 3-bit field for the specific operation. Total = 4 bits instead of 4 bits for direct (same here, but can be more efficient in complex cases).
+          </div>
+          <div class="label">Field Design Rules</div>
+          <ol class="steps">
+            <li>Organize into <em>independent</em> fields — actions from different fields must be able to occur simultaneously.</li>
+            <li>Within each field, the alternative actions must be <em>mutually exclusive</em> — only one can occur at a given time.</li>
+          </ol>
+          <div class="label">Encoding Approaches</div>
+          <ul class="items">
+            <li><strong>Functional:</strong> one field per function type (e.g., all data sources for accumulator in one field)</li>
+            <li><strong>Resource:</strong> one field per hardware resource (ALU field, I/O field, memory field)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Row 2: LSI-11 + IBM 3033 execution formats -->
+<div class="grid section-gap">
+
+  <!-- CARD 14: Vertical Format Example (LSI-11 microinstruction) -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>LSI-11 Microinstruction — Vertical Format (22 bits)</h3></div>
+    <div class="card-body">
+      <p>The LSI-11 uses an extremely vertical 22-bit format that resembles the PDP-11 machine ISA it implements.</p>
+      <div class="label">22-bit Format (Fig 21.15)</div>
+      <div class="uinstr" style="margin-bottom:8px;">
+        <div class="uinstr-row">
+          <div class="uinstr-field uf-misc" style="flex:1;">Spec<br>Fns<br>(4)</div>
+          <div class="uinstr-field uf-cond" style="flex:1;">Tr<br>(1)</div>
+          <div class="uinstr-field uf-addr" style="flex:1;">LRR<br>(1)</div>
+          <div class="uinstr-field uf-ctrl" style="flex:5;">Highly Encoded μOPs (16 bits)<br><span style="font-size:8px;">Variable-length opcode + 1–2 operands</span></div>
+        </div>
+      </div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <thead><tr><th>Field</th><th>Bits</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td>Special Functions</td><td>4</td><td>Control special processor board functions</td></tr>
+          <tr><td>Translate (Tr)</td><td>1</td><td>Enable translation array to check for pending interrupts</td></tr>
+          <tr><td>Load Return Reg (LRR)</td><td>1</td><td>At end of microroutine, load next addr from return register</td></tr>
+          <tr><td>Encoded μOPs</td><td>16</td><td>Variable-length opcode + operands; looks like machine code</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Encoded μOP Sub-formats (Fig 21.15b)</div>
+      <div class="uinstr">
+        <div class="uinstr-row" style="margin-bottom:2px;">
+          <div class="uinstr-field uf-addr" style="flex:2;">Opcode(5)</div>
+          <div class="uinstr-field uf-ctrl" style="flex:3;">Jump Address (11)</div>
+          <div class="uinstr-field uf-misc" style="flex:2;">Unconditional Jump</div>
+        </div>
+        <div class="uinstr-row" style="margin-bottom:2px;">
+          <div class="uinstr-field uf-addr" style="flex:2;">Op(4)</div>
+          <div class="uinstr-field uf-cond" style="flex:2;">Test(4)</div>
+          <div class="uinstr-field uf-ctrl" style="flex:2;">Jump Addr(8)</div>
+          <div class="uinstr-field uf-misc" style="flex:2;">Conditional Jump</div>
+        </div>
+        <div class="uinstr-row" style="margin-bottom:2px;">
+          <div class="uinstr-field uf-addr" style="flex:2;">Op(4)</div>
+          <div class="uinstr-field uf-alu" style="flex:2;">A Reg(4)</div>
+          <div class="uinstr-field uf-seq" style="flex:2;">Literal(8)</div>
+          <div class="uinstr-field uf-misc" style="flex:2;">Literal Op</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 15: IBM 3033 Format -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>IBM 3033 — Horizontal Microinstruction (108/126 bits)</h3></div>
+    <div class="card-body">
+      <p>The IBM 3033 uses a <strong>near-horizontal</strong> format (108 or 126 bits). Encoding still used but primarily optimizing performance.</p>
+      <div class="label">Control Memory: 4K words</div>
+      <ul class="items">
+        <li>Addresses 0000–07FF: 108-bit microinstructions</li>
+        <li>Addresses 0800–0FFF: 126-bit microinstructions</li>
+      </ul>
+      <div class="label">Major Field Groups (Fig 21.16, Table 21.6)</div>
+      <table class="tbl">
+        <thead><tr><th>Group</th><th>Fields</th><th>Function</th></tr></thead>
+        <tbody>
+          <tr><td class="yel">ALU Control</td><td>AA, AB, AC, AD</td><td>Load A, B, C, D internal registers from data registers</td></tr>
+          <tr><td class="yel">ALU Control</td><td>AE, AF</td><td>Route A/B bits to ALU inputs</td></tr>
+          <tr><td class="yel">ALU Control</td><td>AG (5-bit)</td><td>Specify ALU arithmetic operation on A input</td></tr>
+          <tr><td class="yel">ALU Control</td><td>AH (4-bit)</td><td>Specify ALU arithmetic operation on B input</td></tr>
+          <tr><td class="yel">ALU Control</td><td>AK (4-bit)</td><td>Route arithmetic output to shifter</td></tr>
+          <tr><td class="yel">Shift</td><td>CA, CB, CC, CE</td><td>Load F register; activate shifter; logical/carry; shift amount</td></tr>
+          <tr><td style="color:var(--accent2);">Sequencing</td><td>AL (1-bit)</td><td>End operation and perform branch</td></tr>
+          <tr><td style="color:var(--accent2);">Sequencing</td><td>BA (8-bit)</td><td>Set high-order bits 00–07 of CAR (selects 32-word block)</td></tr>
+          <tr><td style="color:var(--accent2);">Sequencing</td><td>BB, BC, BD, BE (4-bit each)</td><td>Condition for setting CAR bits 8–11 respectively</td></tr>
+          <tr><td style="color:var(--accent2);">Sequencing</td><td>BF (7-bit)</td><td>Condition for setting CAR bit 12</td></tr>
+        </tbody>
+      </table>
+      <div class="tip">
+        <div class="t-title">3033 ALU Internal Registers A, B, C, D</div>
+        These four registers are non-user-visible. Microinstruction fields load them from user-visible registers, perform ALU ops, and route results back. User registers updated as a consequence.
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 16: Simple Microinstruction Format Examples -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Simple Machine Formats (Fig 21.12)</h3></div>
+    <div class="card-body">
+      <p>Concrete comparison of vertical vs. horizontal formats for a simple single-accumulator machine with a few registers.</p>
+      <div class="label">Vertical Format (Fig 21.12a) — 8 bits total</div>
+      <div class="uinstr" style="margin-bottom:8px;">
+        <div class="uinstr-row">
+          <div class="uinstr-field uf-addr" style="flex:1;">Type<br>(3 bits)</div>
+          <div class="uinstr-field uf-ctrl" style="flex:1;">Op<br>(3 bits)</div>
+          <div class="uinstr-field uf-alu" style="flex:1;">Reg Sel<br>(2 bits)</div>
+        </div>
+      </div>
+      <table class="tbl" style="margin-bottom:10px;">
+        <thead><tr><th>Type Code</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">001</td><td>Register transfer (MDR ↔ Register)</td></tr>
+          <tr><td class="mono">010</td><td>Memory operation (Read/Write)</td></tr>
+          <tr><td class="mono">011</td><td>ALU operation (ADD/SUB/etc.)</td></tr>
+          <tr><td class="mono">100</td><td>Special sequencing (CSAR←MDR/Const, Skip)</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Horizontal Format (Fig 21.12b) — wider, field-per-function</div>
+      <div class="uinstr" style="margin-bottom:8px;">
+        <div class="uinstr-row">
+          <div class="uinstr-field uf-ctrl" style="flex:1;">Reg Xfer<br>(Fld 1)</div>
+          <div class="uinstr-field uf-seq" style="flex:1;">Mem Op<br>(Fld 2)</div>
+          <div class="uinstr-field uf-cond" style="flex:1;">Seq Op<br>(Fld 3)</div>
+          <div class="uinstr-field uf-alu" style="flex:1;">ALU Op<br>(Fld 4)</div>
+          <div class="uinstr-field uf-addr" style="flex:1;">Reg Sel<br>(Fld 5)</div>
+          <div class="uinstr-field uf-data" style="flex:1;">Const<br>(Fld 6)</div>
+        </div>
+      </div>
+      <ul class="items">
+        <li>Multiple independent functions can all be specified in one microinstruction</li>
+        <li>Each field independently decoded → N simultaneous independent micro-actions</li>
+        <li>More bits required but far more parallel operations per cycle</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════ SECTION 21.4 — TI 8800 ════════════════════ -->
+<div class="sec-header">§21.4 — TI 8800 (Microprogrammable 32-bit Processor)</div>
+
+<div class="grid">
+
+  <!-- CARD 17: TI 8800 Overview -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>TI 8800 Software Development Board Overview</h3></div>
+    <div class="card-body">
+      <p>Texas Instruments 8800 SDB: a <strong>writable control store</strong> (RAM-based, not ROM) microprogrammable 32-bit computer card. Used for prototyping and education.</p>
+      <div class="label">Key Components (Fig 21.17)</div>
+      <table class="tbl">
+        <thead><tr><th>Component</th><th>Specification</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Microcode memory</strong></td><td>32K × 128 bits</td><td>Writable control store (RAM); stores microprogram</td></tr>
+          <tr><td><strong>Microinstruction pipeline register</strong></td><td>128 bits</td><td>Holds current microinstruction being executed</td></tr>
+          <tr><td><strong>ACT8818 Microsequencer</strong></td><td>15-bit output</td><td>Generates next microinstruction address</td></tr>
+          <tr><td><strong>ACT8832 Registered ALU</strong></td><td>32-bit + 64 regs</td><td>Arithmetic/logic; configurable 32/16/8-bit modes</td></tr>
+          <tr><td><strong>ACT8847 FP/Int Processor</strong></td><td>32-bit</td><td>Floating-point and integer operations</td></tr>
+          <tr><td><strong>Local data memory</strong></td><td>32K × 32 bits</td><td>Local storage for data values</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Two Internal Buses</div>
+      <ul class="items">
+        <li><strong>DA bus (32-bit):</strong> carries WCS data field from microinstruction to ALU, FP processor, or microsequencer (for branch addresses)</li>
+        <li><strong>System Y bus (32-bit):</strong> connects ALU and FP processor to local memory and external modules via PC/AT interface</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Writable Control Store</div>
+        RAM-based control store is slower and less dense than ROM but allows dynamic reprogramming — ideal for prototype development. The host PC (PC/AT interface) loads and debugs microprograms.
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 18: TI 8800 Microinstruction Format -->
+  <div class="card blue col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>TI 8800 — 128-bit Microinstruction Format (Table 21.7)</h3></div>
+    <div class="card-body">
+      <div class="label">Format Overview — 30 Fields, 5 Groups</div>
+      <div class="uinstr" style="margin-bottom:10px;">
+        <div class="uinstr-row">
+          <div class="uinstr-field uf-misc" style="flex:2;">Board Control<br>(Flds 1–6, ~9 bits)</div>
+          <div class="uinstr-field uf-ctrl" style="flex:3;">8847 FP/Int Processor<br>(Flds 7–16, ~32 bits)</div>
+          <div class="uinstr-field uf-alu" style="flex:3;">8832 Registered ALU<br>(Flds 17–27, ~39 bits)</div>
+          <div class="uinstr-field uf-seq" style="flex:2;">8818 Microsequencer<br>(Fld 28, 12 bits)</div>
+          <div class="uinstr-field uf-data" style="flex:2;">WCS Data Field<br>(Flds 29–30, 32 bits)</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <div class="label">Board Control Fields (1–6)</div>
+          <table class="tbl">
+            <thead><tr><th>Field</th><th>Bits</th><th>Function</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>5</td><td>Select condition code input (1 bit polarity + 4 bit selection)</td></tr>
+              <tr><td>2</td><td>1</td><td>Enable/disable external I/O request signal</td></tr>
+              <tr><td>3</td><td>2</td><td>Enable/disable local data memory read/write</td></tr>
+              <tr><td>4</td><td>1</td><td>Load status / do not load status</td></tr>
+              <tr><td>5</td><td>2</td><td>Determine unit driving system Y bus</td></tr>
+              <tr><td>6</td><td>2</td><td>Determine unit driving DA bus</td></tr>
+            </tbody>
+          </table>
+          <div class="label" style="margin-top:8px;">8832 Registered ALU Fields (17–27)</div>
+          <table class="tbl">
+            <thead><tr><th>Field</th><th>Bits</th><th>Function</th></tr></thead>
+            <tbody>
+              <tr><td>17</td><td>2</td><td>Write enable: full 32, high 16, low 16, or no write</td></tr>
+              <tr><td>18</td><td>2</td><td>Register file source: DA bus, DB bus, ALU Y, system Y</td></tr>
+              <tr><td>19</td><td>3</td><td>Shift instruction modifier (end-fill, shift-out bits)</td></tr>
+              <tr><td>20</td><td>1</td><td>Carry in: force or do not force</td></tr>
+              <tr><td>21</td><td>2</td><td>ALU mode: 32-bit, 16-bit (×2), or 8-bit (×4)</td></tr>
+              <tr><td>24</td><td>6</td><td>Destination register address (write to register file)</td></tr>
+              <tr><td>25</td><td>6</td><td>Source register B for read</td></tr>
+              <tr><td>26</td><td>6</td><td>Source register A for write</td></tr>
+              <tr><td>27</td><td>8</td><td>ALU function select</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="label">8818 Microsequencer Field (28) — 12 bits</div>
+          <table class="tbl">
+            <thead><tr><th>Sub-field</th><th>Bits</th><th>Function</th></tr></thead>
+            <tbody>
+              <tr><td>OSEL</td><td>1</td><td>Output select: stack or RCA → DRA MUX</td></tr>
+              <tr><td>SELDR</td><td>1</td><td>Select DR bus: external DA bus (1) or internal MUX (0)</td></tr>
+              <tr><td>ZEROIN</td><td>1</td><td>Conditional branch flag indicator</td></tr>
+              <tr><td>RC2–RC0</td><td>3</td><td>Register controls: retain/decrement/load RCA and RCB</td></tr>
+              <tr><td>S2–S0</td><td>3</td><td>Stack operation: clear/pop/push/read/hold/load-SP</td></tr>
+              <tr><td>MUX2–MUX0</td><td>3</td><td>Y output MUX: selects next address from stack/DRA/DRB/MPC</td></tr>
+            </tbody>
+          </table>
+          <div class="label" style="margin-top:8px;">8818 Next-Address Sources (5 options)</div>
+          <ol class="steps">
+            <li><strong>MPC:</strong> Repeat (same address) or Continue (increment)</li>
+            <li><strong>Stack (65 × 16-bit):</strong> subroutine calls, iterative loops, interrupt returns</li>
+            <li><strong>DRA/DRB ports:</strong> address from WCS data field of current microinstruction or from ALU result</li>
+            <li><strong>RCA/RCB counters:</strong> loop counters; auto-decrement; can hold branch addresses</li>
+            <li><strong>Y port (external):</strong> supports external interrupt-driven branching</li>
+          </ol>
+          <div class="label">Example Microsequencer Mnemonics (Table 21.8)</div>
+          <table class="tbl">
+            <thead><tr><th>Mnemonic</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td class="mono">INC88181</td><td>Continue: next sequential address if condition=1</td></tr>
+              <tr><td class="mono">BRA88181</td><td>Branch to address in DRA</td></tr>
+              <tr><td class="mono">CAL88181</td><td>Jump to subroutine at DRA address (push return)</td></tr>
+              <tr><td class="mono">RET8818</td><td>Return from subroutine (pop stack)</td></tr>
+              <tr><td class="mono">DECRDRA</td><td>Decrement RCA counter; branch if not zero</td></tr>
+              <tr><td class="mono">LOADDRA</td><td>Load DRA counter from DA bus</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ════════════════════ SUMMARY / COMPARISON CARDS ════════════════════ -->
+<div class="sec-header">Summary &amp; Comparison</div>
+
+<div class="grid">
+
+  <!-- CARD 19: Complete Comparison Table -->
+  <div class="card yellow col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Microprogrammed vs. Hardwired — Complete Reference Comparison</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead>
+          <tr><th>Attribute</th><th style="color:var(--accent);">Hardwired Control</th><th style="color:var(--yellow);">Microprogrammed Control</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Implementation basis</td><td>Sequential/combinational logic gates, flip-flops</td><td>Stored microprogram in control memory (ROM or RAM)</td></tr>
+          <tr><td>Speed</td><td class="grn">Faster — gate delay only</td><td class="red">Slower — must access control memory each cycle</td></tr>
+          <tr><td>Design complexity</td><td class="red">High — intricate logic for sequencing + decoding</td><td class="grn">Lower — write microprogram like software</td></tr>
+          <tr><td>Cost</td><td>Low silicon for simple ISA; high for complex</td><td>Add cost of control memory + registers</td></tr>
+          <tr><td>Flexibility / Modifiability</td><td class="red">Very rigid — ISA change = hardware redesign</td><td class="grn">High — update ROM/RAM for new instructions</td></tr>
+          <tr><td>Bug fixing</td><td class="red">Hardware respin required</td><td class="grn">Firmware update (if writable control store)</td></tr>
+          <tr><td>ISA emulation</td><td class="red">Impractical</td><td class="grn">Load different microprogram → run different ISA</td></tr>
+          <tr><td>Instruction set complexity</td><td>Best for RISC (simple, regular ISA)</td><td>Best for CISC (many complex instructions)</td></tr>
+          <tr><td>Microinstruction width</td><td>N/A</td><td>Horizontal: 40–100 bits; Vertical: 16–40 bits</td></tr>
+          <tr><td>Concurrency</td><td>Multiple simultaneous μOPs supported</td><td>Horizontal: full; Vertical: limited by encoding</td></tr>
+          <tr><td>Debugging</td><td class="red">Logic analyzer required</td><td class="grn">Can inspect/modify control memory</td></tr>
+          <tr><td>Examples</td><td>RISC CPUs, ARM Cortex-A (fast path)</td><td>IBM S/360, VAX, Intel 8086 (early); modern x86 complex instrs</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CARD 20: Key Terms -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Definitions</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li><strong>Microinstruction:</strong> one control word; one row of control memory; activates a set of control lines</li>
+        <li><strong>Microprogram (Firmware):</strong> sequence of microinstructions implementing the CU behavior; between HW and SW</li>
+        <li><strong>Control memory:</strong> ROM/RAM holding all microprograms; addressed by CAR</li>
+        <li><strong>CAR (Control Address Register):</strong> holds address of next microinstruction</li>
+        <li><strong>CBR (Control Buffer Register):</strong> holds currently executing microinstruction</li>
+        <li><strong>Horizontal μinstruction:</strong> unencoded; 1 bit per control line; wide; fast; hard to program</li>
+        <li><strong>Vertical μinstruction:</strong> encoded; few bits → decoder → signals; narrow; slower; easier to program</li>
+        <li><strong>Mapping:</strong> implicit address generation — opcode → microroutine start address via special logic</li>
+        <li><strong>Residual control:</strong> use previously saved address from return register/stack for next microinstruction</li>
+        <li><strong>Emulation:</strong> microprogramming an ISA on hardware designed for a different ISA</li>
+        <li><strong>Hard microprogramming:</strong> fixed microprogram in ROM; optimized for performance</li>
+        <li><strong>Soft microprogramming:</strong> writable control store; user-programmable; flexible</li>
+        <li><strong>Writable Control Store (WCS):</strong> RAM-based control memory; allows dynamic microprogramming</li>
+        <li><strong>Microroutine:</strong> set of microinstructions implementing one machine-level instruction</li>
+        <li><strong>Field:</strong> group of bits in a microinstruction encoding mutually exclusive actions</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← Back to Menu</a>
+  <span>Chapter 21 · Microprogrammed Control · COA10e Stallings · pp. 729–763</span>
+  <span>Microinstructions · Sequencing · Horizontal/Vertical · LSI-11 · IBM 3033 · TI 8800</span>
+</div>
+
+</body>
+</html>

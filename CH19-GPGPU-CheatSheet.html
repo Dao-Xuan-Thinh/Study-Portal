@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH19 – General-Purpose GPUs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+  --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;
+  --accent5:#ffa657;--text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;
+  --yellow:#e3b341;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+
+/* ── HEADER ── */
+.header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent3);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+.header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent3);letter-spacing:-0.5px;line-height:1.1;}
+.header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+.badge{background:var(--accent3);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+
+/* ── GRID ── */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px;}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px;}
+.col-span-2{grid-column:span 2;}
+.col-span-3{grid-column:span 3;}
+.section-gap{margin-top:28px;}
+
+/* ── CARD ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.card-header{display:flex;align-items:center;gap:8px;padding:9px 12px;background:var(--surface2);border-bottom:1px solid var(--border);}
+.card-header h3{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.card-body{padding:12px;}
+
+/* ── COLOR VARIANTS ── */
+.blue .dot{background:var(--accent);}
+.blue .card-header h3{color:var(--accent);}
+.green .dot{background:var(--accent2);}
+.green .card-header h3{color:var(--accent2);}
+.red .dot{background:var(--accent3);}
+.red .card-header h3{color:var(--accent3);}
+.purple .dot{background:var(--accent4);}
+.purple .card-header h3{color:var(--accent4);}
+.orange .dot{background:var(--accent5);}
+.orange .card-header h3{color:var(--accent5);}
+.yellow .dot{background:var(--yellow);}
+.yellow .card-header h3{color:var(--yellow);}
+
+/* ── LABEL ── */
+.label{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:1px 6px;border-radius:3px;margin-right:4px;vertical-align:middle;}
+.label.blue{background:rgba(88,166,255,.15);color:var(--accent);}
+.label.green{background:rgba(63,185,80,.15);color:var(--accent2);}
+.label.red{background:rgba(247,129,102,.15);color:var(--accent3);}
+.label.purple{background:rgba(210,168,255,.15);color:var(--accent4);}
+.label.orange{background:rgba(255,166,87,.15);color:var(--accent5);}
+.label.yellow{background:rgba(227,179,65,.15);color:var(--yellow);}
+
+/* ── CODE ── */
+code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:3px;color:var(--accent4);}
+.code-block{font-family:'IBM Plex Mono',monospace;font-size:11px;background:#010409;border:1px solid var(--border);border-radius:6px;padding:10px 12px;line-height:1.7;overflow-x:auto;color:#c9d1d9;}
+.code-block .kw{color:var(--accent3);}
+.code-block .num{color:var(--accent5);}
+.code-block .cm{color:var(--text-dim);}
+
+/* ── RULE ── */
+.rule{width:100%;border:none;border-top:1px solid var(--border);margin:10px 0;}
+
+/* ── FORMULA ── */
+.formula{font-family:'IBM Plex Mono',monospace;font-size:12px;background:#010409;border-left:3px solid var(--accent3);padding:8px 12px;border-radius:0 4px 4px 0;margin:6px 0;color:var(--yellow);}
+
+/* ── LISTS ── */
+ul.items{list-style:none;display:flex;flex-direction:column;gap:5px;}
+ul.items li{padding-left:14px;position:relative;color:var(--text);}
+ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-muted);}
+ol.steps{padding-left:18px;display:flex;flex-direction:column;gap:5px;}
+ol.steps li{color:var(--text);}
+
+/* ── TABLE ── */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{background:var(--surface2);color:var(--text-muted);text-align:left;padding:6px 10px;font-size:10px;letter-spacing:.5px;text-transform:uppercase;border-bottom:1px solid var(--border);}
+.tbl td{padding:6px 10px;border-bottom:1px solid rgba(48,54,61,.6);vertical-align:top;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(255,255,255,.02);}
+
+/* ── CALLOUT BOXES ── */
+.warn{background:rgba(247,129,102,.08);border-left:3px solid var(--accent3);padding:8px 12px;border-radius:0 4px 4px 0;margin:6px 0;font-size:12px;}
+.info{background:rgba(88,166,255,.08);border-left:3px solid var(--accent);padding:8px 12px;border-radius:0 4px 4px 0;margin:6px 0;font-size:12px;}
+.tip{background:rgba(63,185,80,.08);border-left:3px solid var(--accent2);padding:8px 12px;border-radius:0 4px 4px 0;margin:6px 0;font-size:12px;}
+.note{background:rgba(255,166,87,.08);border-left:3px solid var(--accent5);padding:8px 12px;border-radius:0 4px 4px 0;margin:6px 0;font-size:12px;}
+.warn strong,.info strong,.tip strong,.note strong{display:block;font-size:10px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px;}
+.warn strong{color:var(--accent3);}
+.info strong{color:var(--accent);}
+.tip strong{color:var(--accent2);}
+.note strong{color:var(--accent5);}
+
+/* ── MISC ── */
+.divider{display:flex;align-items:center;gap:10px;margin:20px 0 12px;}
+.divider span{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);text-transform:uppercase;letter-spacing:.8px;white-space:nowrap;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+
+.footer{margin-top:32px;padding-top:16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.footer-note{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+
+/* ── STAT ROW ── */
+.stat-row{display:flex;gap:10px;margin:6px 0;}
+.stat{flex:1;background:var(--surface2);border-radius:5px;padding:7px 10px;text-align:center;}
+.stat .val{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;}
+.stat .lbl{font-size:10px;color:var(--text-muted);margin-top:2px;}
+
+/* ── HIERARCHY DIAGRAM ── */
+.hier-container{background:#010409;border:1px solid var(--border);border-radius:6px;padding:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;}
+.hier-level-0{color:var(--accent3);font-weight:600;margin-bottom:4px;}
+.hier-level-1{color:var(--accent5);margin-left:16px;margin-bottom:3px;}
+.hier-level-2{color:var(--accent);margin-left:32px;margin-bottom:2px;}
+.hier-level-3{color:var(--accent2);margin-left:48px;margin-bottom:2px;}
+.hier-connector{color:var(--text-dim);}
+
+/* ── MEMORY BAND ── */
+.mem-band{display:flex;border-radius:5px;overflow:hidden;height:32px;margin:8px 0;}
+.mem-seg{display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:600;color:#000;}
+
+/* ── WARP VISUAL ── */
+.warp-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:2px;margin:8px 0;}
+.warp-thread{background:rgba(88,166,255,.2);border:1px solid var(--accent);border-radius:3px;height:20px;display:flex;align-items:center;justify-content:center;font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--accent);}
+.warp-thread.diverged{background:rgba(247,129,102,.2);border-color:var(--accent3);color:var(--accent3);}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════ -->
+<header class="header">
+  <div class="header-left">
+    <h1>General-Purpose GPUs — Chapter 19</h1>
+    <h2>Computer Organization &amp; Architecture · Stallings 10th Ed · CUDA · GPU vs CPU · Fermi Architecture · Intel Gen8 · GPGPU Applications</h2>
+  </div>
+  <span class="badge">COA10e · CH19</span>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     ROW 1: CUDA BASICS §19.1
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§19.1 CUDA Basics</span></div>
+<div class="grid">
+
+  <!-- CUDA PROGRAMMING MODEL -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>CUDA Programming Model</h3></div>
+    <div class="card-body">
+      <div class="info"><strong>CUDA Definition</strong>Compute Unified Device Architecture — NVIDIA's parallel computing platform and programming model. CUDA C extends C/C++ with GPU execution abstractions.</div>
+      <hr class="rule">
+      <p style="font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:600;">THREE SECTIONS OF A CUDA PROGRAM</p>
+      <ol class="steps" style="font-size:12px;">
+        <li><strong>Host code</strong> — runs on CPU; serial logic, orchestration</li>
+        <li><strong>Device code (kernel)</strong> — runs on GPU; massively parallel</li>
+        <li><strong>Data transfer code</strong> — moves data between host and device memory</li>
+      </ol>
+      <hr class="rule">
+      <div class="note"><strong>Kernel</strong>Data-parallel function executed by thousands of threads simultaneously on the GPU. Should have <em>few or no branching statements</em> — branching forces serial execution in hardware.</div>
+      <div class="tip" style="margin-top:6px;"><strong>Why Thousands of Threads?</strong>Maximises GPU core utilisation and available speedup. Thread count typically in the thousands.</div>
+    </div>
+  </div>
+
+  <!-- CUDA THREAD HIERARCHY -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>CUDA Thread / Block / Grid Hierarchy</h3></div>
+    <div class="card-body">
+      <!-- Hierarchy diagram -->
+      <div class="hier-container">
+        <div class="hier-level-0">┌─ GRID (= the GPU)</div>
+        <div class="hier-level-1">├─ Block (0,0) &nbsp;&nbsp;&nbsp;├─ Block (1,0) &nbsp;&nbsp;&nbsp;├─ Block (2,0)</div>
+        <div class="hier-level-1">├─ Block (0,1) &nbsp;&nbsp;&nbsp;├─ Block (1,1) &nbsp;&nbsp;&nbsp;└─ Block (2,1)</div>
+        <div class="hier-level-2">  └─ Thread(0,0) Thread(1,0) Thread(2,0) Thread(3,0)</div>
+        <div class="hier-level-2">     Thread(0,1) Thread(1,1) Thread(2,1) Thread(3,1)</div>
+        <div class="hier-level-3">       Each thread = one CUDA core instance</div>
+      </div>
+      <table class="tbl" style="margin-top:8px;">
+        <thead><tr><th>CUDA Term</th><th>Definition</th><th>HW Equivalent</th></tr></thead>
+        <tbody>
+          <tr><td><span class="label red">Kernel</span></td><td>Parallel function to run on GPU</td><td>Program (not a HW unit)</td></tr>
+          <tr><td><span class="label orange">Thread</span></td><td>Single instance of the kernel</td><td>CUDA processor core</td></tr>
+          <tr><td><span class="label blue">Block</span></td><td>Group of threads assigned to one SM; never split across SMs</td><td>Streaming Multiprocessor (SM)</td></tr>
+          <tr><td><span class="label green">Grid</span></td><td>All blocks launched by one kernel call</td><td>The GPU chip</td></tr>
+        </tbody>
+      </table>
+      <div class="warn" style="margin-top:8px;"><strong>Critical Rule</strong>A block is NEVER split between SMs. Thread block count ≥ number of SMs to keep all SMs busy. Grid and block dimensions can each be 1D, 2D, or 3D independently.</div>
+    </div>
+  </div>
+
+  <!-- WARP & SIMT -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Warp &amp; SIMT Execution Model</h3></div>
+    <div class="card-body">
+      <div class="stat-row">
+        <div class="stat"><div class="val" style="color:var(--accent4);">32</div><div class="lbl">Threads per Warp</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent3);">SIMT</div><div class="lbl">Execution Model</div></div>
+      </div>
+      <p style="font-size:12px;margin-top:8px;"><strong>Warp</strong> — bundle of 32 threads with consecutive IDs that start at the same instruction address. The fundamental GPU scheduling unit.</p>
+      <hr class="rule">
+      <p style="font-size:11px;color:var(--text-muted);margin-bottom:4px;font-weight:600;">SIMT = Single Instruction Multiple Threads</p>
+      <p style="font-size:12px;margin-bottom:8px;">All 32 threads in a warp execute the <em>same instruction</em> simultaneously but on <em>different data</em>. Each thread has its own PC, registers, and can branch independently.</p>
+      <!-- Warp divergence visual -->
+      <p style="font-size:10px;color:var(--text-muted);margin-bottom:4px;font-family:'IBM Plex Mono',monospace;">WARP OF 32 THREADS ──</p>
+      <div class="warp-grid">
+        <div class="warp-thread">T0</div><div class="warp-thread">T1</div>
+        <div class="warp-thread diverged">T2</div><div class="warp-thread diverged">T3</div>
+        <div class="warp-thread">T4</div><div class="warp-thread">T5</div>
+        <div class="warp-thread diverged">T6</div><div class="warp-thread">T7</div>
+        <div class="warp-thread">T8</div><div class="warp-thread">T9</div>
+        <div class="warp-thread">T10</div><div class="warp-thread diverged">T11</div>
+        <div class="warp-thread">T12</div><div class="warp-thread">T13</div>
+        <div class="warp-thread diverged">T14</div><div class="warp-thread">T15</div>
+        <div class="warp-thread">T16</div><div class="warp-thread">T17</div>
+        <div class="warp-thread">T18</div><div class="warp-thread diverged">T19</div>
+        <div class="warp-thread">T20</div><div class="warp-thread">T21</div>
+        <div class="warp-thread">T22</div><div class="warp-thread">T23</div>
+        <div class="warp-thread">T24</div><div class="warp-thread">T25</div>
+        <div class="warp-thread">T26</div><div class="warp-thread">T27</div>
+        <div class="warp-thread">T28</div><div class="warp-thread">T29</div>
+        <div class="warp-thread">T30</div><div class="warp-thread">T31</div>
+      </div>
+      <p style="font-size:10px;color:var(--text-muted);margin-top:4px;"><span style="color:var(--accent);">■</span> Active &nbsp; <span style="color:var(--accent3);">■</span> Diverged (masked)</p>
+      <div class="warn" style="margin-top:6px;"><strong>Warp Divergence</strong>When threads in a warp take different branches (if/else), the warp executes each branch path serially — inactive threads are masked. Severely degrades performance. Best kernels have <em>no branching</em>.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     CUDA MEMORY TYPES — Full-width Table
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§19.1 CUDA Memory Types</span></div>
+<div style="margin-bottom:14px;">
+<div class="card blue">
+  <div class="card-header"><div class="dot"></div><h3>GPU Memory Hierarchy — Complete Reference Table</h3></div>
+  <div class="card-body">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Memory Type</th>
+          <th>Location</th>
+          <th>Access Type</th>
+          <th>Scope</th>
+          <th>Lifetime</th>
+          <th>Relative Speed</th>
+          <th>Typical Use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="label green">Registers</span></td>
+          <td>On-chip (per SM, 32k × 32-bit in Fermi)</td>
+          <td>R/W</td>
+          <td>Single thread only (no sharing)</td>
+          <td>Thread lifetime</td>
+          <td style="color:var(--accent2);">⚡ Fastest (1–2 cycles)</td>
+          <td>Thread-private variables, loop counters</td>
+        </tr>
+        <tr>
+          <td><span class="label blue">Shared Memory</span></td>
+          <td>On-chip (per SM, up to 48 kB in Fermi)</td>
+          <td>R/W</td>
+          <td>All threads in the same block (SM)</td>
+          <td>Block lifetime</td>
+          <td style="color:var(--accent2);">⚡ Fast (~same as registers, ~ns)</td>
+          <td>Inter-thread data sharing within SM; tiling for matrix multiply; reduce redundant global reads</td>
+        </tr>
+        <tr>
+          <td><span class="label orange">Local Memory</span></td>
+          <td>Off-chip (GDDR DRAM — despite name)</td>
+          <td>R/W</td>
+          <td>Single thread only</td>
+          <td>Thread lifetime</td>
+          <td style="color:var(--accent3);">🐢 100–150× slower than registers</td>
+          <td>Register spill area (automatic); large arrays private to thread</td>
+        </tr>
+        <tr>
+          <td><span class="label red">Global Memory</span></td>
+          <td>Off-chip (GDDR5 DRAM, up to 6 GB in Fermi)</td>
+          <td>R/W</td>
+          <td>All threads + host (CPU)</td>
+          <td>Application lifetime</td>
+          <td style="color:var(--accent3);">🐢 100–150× slower than registers</td>
+          <td>Main data store; input/output arrays; host↔device transfers</td>
+        </tr>
+        <tr>
+          <td><span class="label purple">Constant Memory</span></td>
+          <td>Off-chip (dedicated 64 kB cached on-chip)</td>
+          <td>R only</td>
+          <td>All threads + host</td>
+          <td>Application lifetime</td>
+          <td style="color:var(--yellow);">⚡ Fast when broadcast (all threads same addr)</td>
+          <td>Kernel parameters, lookup tables, coefficients — read-only data broadcast to all threads</td>
+        </tr>
+        <tr>
+          <td><span class="label yellow">Texture Memory</span></td>
+          <td>Off-chip (cached via texture cache)</td>
+          <td>R only</td>
+          <td>All threads + host</td>
+          <td>Application lifetime</td>
+          <td style="color:var(--yellow);">⚡ Fast for 2D spatial locality</td>
+          <td>Image data, 2D spatial access patterns; sampler hardware for filtering</td>
+        </tr>
+        <tr style="background:rgba(63,185,80,.03);">
+          <td><span class="label green">L1 Cache</span></td>
+          <td>On-chip per SM (configurable: up to 48 kB)</td>
+          <td>Auto-managed</td>
+          <td>Per-SM</td>
+          <td>Auto</td>
+          <td style="color:var(--accent2);">⚡ Fast</td>
+          <td>Register spill cache; automatic caching of local/global accesses</td>
+        </tr>
+        <tr style="background:rgba(63,185,80,.03);">
+          <td><span class="label blue">L2 Cache</span></td>
+          <td>On-chip (768 kB shared across all SMs in Fermi)</td>
+          <td>Auto-managed</td>
+          <td>All SMs</td>
+          <td>Auto</td>
+          <td style="color:var(--accent);">Moderate</td>
+          <td>Shared L2 between all SMs; L1 misses + L1/shared mem config</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-top:8px;"><strong>Shared vs L1 Config (Fermi)</strong>The 64 kB on-chip SRAM per SM is <em>configurable</em>: 48 kB shared + 16 kB L1, <strong>or</strong> 16 kB shared + 48 kB L1. Programmer chooses based on workload. Optimising shared memory use is the single biggest GPGPU programming lever — eliminating 100–150× off-chip accesses.</div>
+    <div class="warn" style="margin-top:6px;"><strong>Register Spill Chain</strong>Thread registers → L1 cache (spill) → L2 cache → Local memory (off-chip DRAM). Programmer must minimise register usage per thread to keep all registers on-chip.</div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ROW 2: GPU vs CPU §19.2
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§19.2 GPU versus CPU</span></div>
+<div class="grid">
+
+  <!-- DIE AREA PHILOSOPHY -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Fundamental Architecture Difference</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <!-- CPU Die -->
+        <div style="background:#010409;border:1px solid var(--border);border-radius:5px;padding:8px;text-align:center;">
+          <p style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);margin-bottom:6px;">CPU DIE AREA</p>
+          <div style="background:rgba(88,166,255,.15);border:1px solid var(--accent);border-radius:3px;padding:8px;margin-bottom:4px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--accent);">CONTROL LOGIC<br><span style="font-size:9px;color:var(--text-muted);">Branch predictor, OOO, hazard detection</span></div>
+          <div style="background:rgba(63,185,80,.15);border:1px solid var(--accent2);border-radius:3px;padding:8px;margin-bottom:4px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--accent2);">LARGE CACHE<br><span style="font-size:9px;color:var(--text-muted);">L1/L2/L3 hierarchy, low latency</span></div>
+          <div style="background:rgba(255,166,87,.15);border:1px solid var(--accent5);border-radius:3px;padding:6px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--accent5);">FEW ALUs<br><span style="font-size:9px;color:var(--text-muted);">Complex, high-speed cores (4–16)</span></div>
+        </div>
+        <!-- GPU Die -->
+        <div style="background:#010409;border:1px solid var(--border);border-radius:5px;padding:8px;text-align:center;">
+          <p style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-muted);margin-bottom:6px;">GPU DIE AREA</p>
+          <div style="background:rgba(247,129,102,.12);border:1px solid var(--accent3);border-radius:3px;padding:2px 8px;margin-bottom:2px;font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--accent3);">small ctrl</div>
+          <div style="background:rgba(247,129,102,.2);border:1px solid var(--accent3);border-radius:3px;padding:10px 8px;margin-bottom:2px;font-size:10px;font-family:'IBM Plex Mono',monospace;color:var(--accent3);">THOUSANDS OF ALUs<br><span style="font-size:9px;">CUDA cores (simple, ~GHz)</span></div>
+          <div style="background:rgba(88,166,255,.12);border:1px solid var(--accent);border-radius:3px;padding:4px;font-size:9px;font-family:'IBM Plex Mono',monospace;color:var(--accent);">GDDR DRAM (high-BW)</div>
+        </div>
+      </div>
+      <div class="tip"><strong>Design Philosophy</strong>CPU: optimised to minimise <em>latency</em> for sequential code. GPU: optimised to maximise <em>throughput</em> for parallel data-parallel workloads. GPU hides latency via massive thread-level parallelism context-switching.</div>
+    </div>
+  </div>
+
+  <!-- GPU vs CPU COMPARISON TABLE -->
+  <div class="card blue col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>GPU vs CPU — Detailed Comparison</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead>
+          <tr><th>Feature</th><th>CPU (e.g., Intel Core i7)</th><th>GPU (e.g., NVIDIA Fermi)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Core Count</td><td>4–16 complex cores</td><td>512–thousands of simple CUDA cores (16 SMs × 32 = 512 in Fermi)</td></tr>
+          <tr><td>Clock Speed</td><td>2–5 GHz</td><td>~0.7–1.5 GHz (lower, but compensated by parallelism)</td></tr>
+          <tr><td>Execution Model</td><td>Out-of-order scalar/vector; branch prediction; speculative execution</td><td>SIMT — 32 threads execute same instruction (warp); no branch prediction per thread</td></tr>
+          <tr><td>Latency Hiding</td><td>Large caches, prefetching, OOO execution, branch prediction</td><td>Context-switch to another warp while current warp waits for memory (zero-overhead switching)</td></tr>
+          <tr><td>Memory Bandwidth</td><td>~25–100 GB/s (DDR3/DDR4)</td><td>~150–900 GB/s (GDDR5/6, HBM) — critical for feeding hundreds of cores</td></tr>
+          <tr><td>Cache per Core</td><td>Large (MB per core)</td><td>Very small (shared 48 kB per SM shared across 32 cores)</td></tr>
+          <tr><td>Thread Overhead</td><td>OS thread context switch: microseconds</td><td>HW warp switch: zero cycles (register state always resident)</td></tr>
+          <tr><td>Control Logic</td><td>Complex: branch predictor, OOO engine, hazard detection, register rename</td><td>Minimal: warp scheduler + scoreboard</td></tr>
+          <tr><td>Peak FLOPs (single)</td><td>Intel i7: ~120–200 GFLOPS</td><td>NVIDIA Kepler: 1–4.5 TFLOPS</td></tr>
+          <tr><td>Performance/Watt</td><td>Good for serial workloads</td><td>Kepler: 3× better than Fermi; exponential divergence over CPUs</td></tr>
+          <tr><td>Best For</td><td>Serial, control-heavy, low-latency, branch-intensive code</td><td>Data-parallel, matrix ops, large data sets, embarrassingly parallel algorithms</td></tr>
+          <tr><td>Connection</td><td>Connects to main memory natively</td><td>Connected to CPU via PCIe (adds transfer overhead)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ROW 3: GPU ARCHITECTURE §19.3
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§19.3 GPU Architecture Overview — NVIDIA Fermi</span></div>
+<div class="grid">
+
+  <!-- FULL CHIP LAYOUT -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Fermi GPU Full Chip Layout</h3></div>
+    <div class="card-body">
+      <div class="stat-row">
+        <div class="stat"><div class="val" style="color:var(--accent5);">16</div><div class="lbl">SMs</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent5);">32</div><div class="lbl">CUDA Cores/SM</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent3);">512</div><div class="lbl">Total CUDA Cores</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent);">768 kB</div><div class="lbl">L2 Cache</div></div>
+      </div>
+      <hr class="rule">
+      <ul class="items">
+        <li><strong>L2 cache centrally located</strong> — 8 SMs above, 8 below for equal-distance access</li>
+        <li><strong>6 GDDR5 DRAM I/O interfaces</strong> — each 64-bit → 384-bit total memory interface; up to 6 GB GDDR5</li>
+        <li><strong>Host Interface</strong> (left side) — PCIe connectivity between GPU and CPU</li>
+        <li><strong>GigaThread global scheduler</strong> — distributes thread blocks to all SM warp schedulers</li>
+        <li>Each SM: 2 columns of 16 CUDA cores, 16 load/store units, 4 SFUs, registers + L1/shared mem at top/bottom</li>
+      </ul>
+      <div class="info" style="margin-top:8px;"><strong>GPU Evolution Phases</strong><br>
+        <span class="label orange">Phase 1</span> Early 1980s–late 1990s: fixed, non-programmable pipeline<br>
+        <span class="label blue">Phase 2</span> ~2000–2006: iterative modification to fully programmable processor<br>
+        <span class="label green">Phase 3</span> 2006+ (GeForce 8800 GTX): GPGPU — added true cache hierarchy + user-addressable shared memory → CUDA
+      </div>
+    </div>
+  </div>
+
+  <!-- SM ARCHITECTURE -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Streaming Multiprocessor (SM) Architecture</h3></div>
+    <div class="card-body">
+      <div style="background:#010409;border:1px solid var(--border);border-radius:5px;padding:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;margin-bottom:8px;">
+        <div style="color:var(--accent2);font-weight:600;margin-bottom:4px;">SM (FERMI) ─────────────────────────</div>
+        <div style="color:var(--accent);margin-bottom:2px;">  Register File: 32k × 32-bit (128 kB per SM)</div>
+        <div style="color:var(--accent);margin-bottom:2px;">  Instruction Cache (L1-I: 64 kB)</div>
+        <div style="color:var(--accent5);margin-bottom:2px;">  ┌─ Warp Scheduler ─────────────────┐</div>
+        <div style="color:var(--accent5);margin-bottom:2px;">  │  Dual Warp Scheduler + 2× Dispatch│</div>
+        <div style="color:var(--accent5);margin-bottom:2px;">  └───────────────────────────────────┘</div>
+        <div style="color:var(--text-muted);margin-bottom:2px;">  32× CUDA Core (16 INT unit + 16 FP unit)</div>
+        <div style="color:var(--text-muted);margin-bottom:2px;">  16× Load/Store Units</div>
+        <div style="color:var(--text-muted);margin-bottom:2px;">   4× SFU (sin/cos/recip/sqrt)</div>
+        <div style="color:var(--accent3);margin-bottom:2px;">  64 kB L1 data cache / Shared Memory</div>
+        <div style="color:var(--text-dim);margin-bottom:0;">  (configurable: 16+48 or 48+16 kB)</div>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Component</th><th>Count</th><th>Role</th></tr></thead>
+        <tbody>
+          <tr><td><span class="label green">CUDA Core</span></td><td>32/SM</td><td>Each has INT + FP pipeline; 1 FP32 op or ½ FP64 per cycle</td></tr>
+          <tr><td><span class="label blue">Warp Sched.</span></td><td>2 dual</td><td>Issues 2 warps/2 cycles; scoreboard tracks hazards &amp; memory latency</td></tr>
+          <tr><td><span class="label orange">Ld/St Units</span></td><td>16/SM</td><td>Calculate source/dest addresses for cache or DRAM</td></tr>
+          <tr><td><span class="label red">SFU</span></td><td>4/SM</td><td>Transcendental ops (sin, cos, reciprocal, sqrt) in 1 cycle; warp needs 8 cycles (4 SFU × 8 = 32 threads)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- WARP SCHEDULING & LATENCY HIDING -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Warp Scheduling &amp; Latency Hiding</h3></div>
+    <div class="card-body">
+      <div class="tip"><strong>Zero-Overhead Context Switching</strong>Each warp's register state is <em>always resident</em> in the register file — no saving/restoring. Switching to a new warp costs 0 cycles.</div>
+      <hr class="rule">
+      <p style="font-size:11px;color:var(--text-muted);margin-bottom:4px;font-weight:600;">DUAL WARP SCHEDULER TIMELINE</p>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:4px;padding:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;">
+        <div style="color:var(--text-muted);margin-bottom:4px;">Cycle  &nbsp; Scheduler-1 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Scheduler-2</div>
+        <div style="color:var(--accent5);">T+1 &nbsp;&nbsp;  Warp8  instr11 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Warp9  instr11</div>
+        <div style="color:var(--accent);">T+2 &nbsp;&nbsp;  Warp2  instr42 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Warp3  instr33</div>
+        <div style="color:var(--accent5);">T+3 &nbsp;&nbsp;  Warp14 instr95 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Warp15 instr95</div>
+        <div style="color:var(--accent);">T+4 &nbsp;&nbsp;  Warp8  instr12 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Warp9  instr12</div>
+        <div style="color:var(--text-muted);font-size:9px;margin-top:4px;">(warps with pending memory wait are skipped)</div>
+      </div>
+      <hr class="rule">
+      <p style="font-size:12px;margin-bottom:6px;"><strong>Main Sources of SM Under-utilisation:</strong></p>
+      <ul class="items" style="font-size:12px;">
+        <li><span class="label red">Structural Hazard</span>Limited SFUs, double-precision multiplication — only 4 SFUs for 32-thread warp</li>
+        <li><span class="label orange">Branch Divergence</span>Branches within a warp cause serial execution of paths</li>
+        <li><span class="label blue">Memory Latency</span>Off-chip DRAM: 100–150× slower than registers — warp stalls and is swapped out</li>
+      </ul>
+      <div class="note" style="margin-top:6px;"><strong>Optimal Block Size</strong>Block size &gt; total CUDA cores per SM; must be multiple of 32 (warp size) to achieve near-optimal SM utilisation.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- CUDA CORE DETAILS + SHARED MEMORY PROGRAMMING -->
+<div class="grid-2">
+
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>CUDA Core Details (Fermi)</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li>Each CUDA core = <strong>INT unit pipeline</strong> + <strong>FP unit pipeline</strong> (only one active per cycle)</li>
+        <li>INT: 32-bit, 64-bit integer and logic/bitwise operations</li>
+        <li>FP unit: single-precision FP (FP32); double-precision (FP64) requires 2 cores</li>
+        <li>Fermi upgraded to <strong>IEEE 754-2008</strong> (was 754-1985) — adds <strong>FMA (Fused Multiply-Add)</strong>: single rounding at end, better accuracy</li>
+        <li>FMA compresses to 1 cycle: 32 FP32 FMA/cycle/SM or 16 FP64 FMA/cycle/SM</li>
+        <li>Kepler fix: added dedicated DP units per SM to avoid ÷2 penalty on FP64</li>
+      </ul>
+      <hr class="rule">
+      <div class="info"><strong>Max Registers per Thread (Fermi)</strong>32k × 32-bit / SM ÷ max active warps per SM ÷ 32 threads/warp = <strong>64 registers per thread</strong> (CUDA Compute Capability 2.x). Exceeding spills to L1→L2→local DRAM.</div>
+    </div>
+  </div>
+
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Shared Memory: The Key Optimisation</h3></div>
+    <div class="card-body">
+      <div class="tip"><strong>Why Shared Memory?</strong>Off-chip global memory is 100–150× slower. Programmers explicitly load data into per-SM shared memory to avoid repeated off-chip reads — unlike CPU where cache management is automatic.</div>
+      <hr class="rule">
+      <p style="font-size:11px;color:var(--text-muted);margin-bottom:4px;font-weight:600;">THREE WAYS SHARED MEMORY ACCELERATES CODE</p>
+      <ol class="steps" style="font-size:12px;">
+        <li><strong>Reuse</strong> — load data once from global to shared; all threads in block read shared (e.g. matrix-matrix multiplication tiling)</li>
+        <li><strong>Coalescing helper</strong> — select threads load global→shared to eliminate redundant reads; other threads read from shared</li>
+        <li><strong>Coalesced access</strong> — programmer arranges global accesses to be coalesced (sequential addresses) for maximum bandwidth</li>
+      </ol>
+      <div class="warn" style="margin-top:8px;"><strong>Synchronisation Required!</strong>After writing to shared memory, all threads must call <code>__syncthreads()</code> before any thread reads — prevents RAW hazards.</div>
+      <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">Shared data lifetime = block lifetime. Once all threads of a block complete, shared memory is invalid.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- FERMI MEMORY ARCHITECTURE DIAGRAM CARD -->
+<div class="grid-2" style="grid-template-columns:1fr 2fr;">
+
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Fermi Memory Architecture</h3></div>
+    <div class="card-body">
+      <div style="background:#010409;border:1px solid var(--border);border-radius:5px;padding:10px;font-family:'IBM Plex Mono',monospace;font-size:10px;">
+        <div style="color:var(--yellow);font-weight:600;margin-bottom:6px;">PER SM</div>
+        <div style="color:var(--accent2);">  128 kB Register File</div>
+        <div style="color:var(--accent);"> &lt;─── L1 data cache</div>
+        <div style="color:var(--accent5);">  x kB Shared Mem</div>
+        <div style="color:var(--accent);">  (64-x) kB L1 D$</div>
+        <div style="color:var(--accent);">  64 kB L1 I$</div>
+        <div style="color:var(--text-dim);margin-top:6px;">CHIP-WIDE</div>
+        <div style="color:var(--accent3);">  768 kB L2 Cache</div>
+        <div style="color:var(--text-dim);">  ↕ to/from SMs</div>
+        <div style="color:var(--text-muted);margin-top:6px;">OFF-CHIP</div>
+        <div style="color:var(--text-muted);">  GDDR5 DRAM (≤6 GB)</div>
+        <div style="color:var(--text-muted);">  384-bit bus</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>CUDA Memory Scope Diagram</h3></div>
+    <div class="card-body">
+      <div style="background:#010409;border:1px solid var(--border);border-radius:5px;padding:12px;font-family:'IBM Plex Mono',monospace;font-size:10px;">
+        <div style="color:var(--text-muted);margin-bottom:8px;">GPU DEVICE GRID</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+          <div style="border:1px solid var(--accent5);border-radius:4px;padding:6px;">
+            <div style="color:var(--accent5);margin-bottom:4px;">Block (0,0)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+              <div style="border:1px solid var(--accent);border-radius:3px;padding:3px;text-align:center;font-size:9px;color:var(--accent);">Regs<br>T(0,0)</div>
+              <div style="border:1px solid var(--accent);border-radius:3px;padding:3px;text-align:center;font-size:9px;color:var(--accent);">Regs<br>T(1,0)</div>
+            </div>
+            <div style="border:1px dashed var(--accent2);border-radius:3px;padding:3px;text-align:center;font-size:9px;color:var(--accent2);margin-top:4px;">Shared Memory</div>
+          </div>
+          <div style="border:1px solid var(--accent5);border-radius:4px;padding:6px;">
+            <div style="color:var(--accent5);margin-bottom:4px;">Block (1,0)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+              <div style="border:1px solid var(--accent);border-radius:3px;padding:3px;text-align:center;font-size:9px;color:var(--accent);">Regs<br>T(0,0)</div>
+              <div style="border:1px solid var(--accent);border-radius:3px;padding:3px;text-align:center;font-size:9px;color:var(--accent);">Regs<br>T(1,0)</div>
+            </div>
+            <div style="border:1px dashed var(--accent2);border-radius:3px;padding:3px;text-align:center;font-size:9px;color:var(--accent2);margin-top:4px;">Shared Memory</div>
+          </div>
+        </div>
+        <div style="border:1px solid var(--accent3);border-radius:4px;padding:6px;text-align:center;color:var(--accent3);margin-bottom:4px;font-size:10px;">Global Memory (R/W all threads + host)</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;">
+          <div style="border:1px solid var(--yellow);border-radius:3px;padding:4px;text-align:center;font-size:9px;color:var(--yellow);">Constant Mem (R, all)</div>
+          <div style="border:1px solid var(--text-muted);border-radius:3px;padding:4px;text-align:center;font-size:9px;color:var(--text-muted);">HOST (CPU)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ROW 4: INTEL GEN8 GPU §19.4
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§19.4 Intel Gen8 GPU (Integrated Graphics)</span></div>
+<div class="grid">
+
+  <!-- EXECUTION UNIT -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Execution Unit (EU)</h3></div>
+    <div class="card-body">
+      <div class="stat-row">
+        <div class="stat"><div class="val" style="color:var(--accent);">7</div><div class="lbl">SMT Threads/EU</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent2);">2</div><div class="lbl">SIMD FPUs/EU</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent5);">128</div><div class="lbl">GRF Regs/Thread</div></div>
+      </div>
+      <hr class="rule">
+      <ul class="items">
+        <li>EU = SMT architecture with <strong>7 simultaneous threads</strong>; superscalar pipeline design</li>
+        <li><strong>2 SIMD Floating-Point Units</strong> — each performs simultaneous add + multiply per cycle (FMA)</li>
+        <li><strong>Branch unit</strong> — dedicated to branch instructions</li>
+        <li><strong>Send unit</strong> — dedicated to memory operations</li>
+        <li>Each thread has <strong>128 general-purpose registers (GRF)</strong>, each storing 32 bytes (SIMD 8-element vector of 32-bit)</li>
+        <li>Total GRF per EU: 7 threads × 128 regs × 32 bytes = <strong>28 kB per EU</strong></li>
+        <li>Can issue <strong>up to 4 different instructions simultaneously</strong> from different threads</li>
+        <li><strong>Thread arbiter</strong> dispatches instructions to functional units</li>
+        <li>Per-thread architectural state in dedicated <strong>ARF</strong> (Architecture Register File)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SUBSLICE -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Subslice — 8 EUs</h3></div>
+    <div class="card-body">
+      <div class="stat-row">
+        <div class="stat"><div class="val" style="color:var(--accent2);">8</div><div class="lbl">EUs/Subslice</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent2);">56</div><div class="lbl">Simultaneous Threads</div></div>
+      </div>
+      <hr class="rule">
+      <ul class="items">
+        <li>Contains 8 EUs + <strong>local thread dispatcher</strong> unit + dedicated instruction caches</li>
+        <li><strong>Sampler</strong> unit — texture &amp; image surface sampling with local L1+L2 sampler cache; supports bilinear, trilinear, anisotropic filtering; fixed-function compression/decompression</li>
+        <li><strong>Data port</strong> — efficient R/W operations, attempts to consolidate reads from different threads to cache line size</li>
+        <li>Each subslice = 8 EUs × 7 threads = 56 simultaneous hardware threads with dedicated resources</li>
+      </ul>
+      <div style="background:#010409;border:1px solid var(--border);border-radius:4px;padding:8px;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;">
+        <div style="color:var(--accent2);margin-bottom:2px;">SUBSLICE ─────────────────</div>
+        <div style="color:var(--text-muted);">EU EU EU EU EU EU EU EU</div>
+        <div style="color:var(--accent);">  Instruction Cache</div>
+        <div style="color:var(--accent5);">  Local Thread Dispatcher</div>
+        <div style="color:var(--yellow);">  Sampler (L1+L2 cache)</div>
+        <div style="color:var(--accent3);">  Data Port</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLICE & SOC -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Slice (3 Subslices = 24 EUs) &amp; SoC</h3></div>
+    <div class="card-body">
+      <div class="stat-row">
+        <div class="stat"><div class="val" style="color:var(--accent5);">3</div><div class="lbl">Subslices/Slice</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent5);">24</div><div class="lbl">EUs/Slice</div></div>
+        <div class="stat"><div class="val" style="color:var(--accent5);">168</div><div class="lbl">Threads/Slice</div></div>
+      </div>
+      <ul class="items" style="margin-top:8px;">
+        <li>Slice adds: <strong>thread dispatch routing</strong>, fixed-function graphics logic, <strong>shared L3 data cache</strong>, <strong>shared local memory</strong> (addressable by EUs — for temp variable sharing)</li>
+        <li><strong>Cache banking</strong> for L3 — divided into equal-size banks accessed simultaneously; n non-conflicting addresses = n× bandwidth; bank conflicts serialise access</li>
+        <li>SoC product architect creates families by placing 1–N slices on die</li>
+      </ul>
+      <hr class="rule">
+      <div class="note"><strong>Intel Core M + Gen8 GPU SoC</strong>Includes: Gen8 GPU slice (24 EUs) + CPU cores + LLC cache slices + System Agent (DRAM ctrl, display ctrl, PCIe) — all connected via <strong>SoC ring interconnect</strong> (same ring topology as Xeon). GPU connects to rest of SoC via <strong>GTI</strong> (Graphics Technology Interface).</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     ROW 5: WHEN TO USE A GPU §19.5
+══════════════════════════════════════════════ -->
+<div class="divider"><span>§19.5 When to Use a GPU as a Coprocessor</span></div>
+<div class="grid-2">
+
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>GPU Candidate Workload Criteria</h3></div>
+    <div class="card-body">
+      <div class="tip"><strong>Ideal GPU Candidate</strong>Code that is massively data-parallel — the same computation on thousands of elements concurrently, with no/minimal data dependency between iterations.</div>
+      <hr class="rule">
+      <p style="font-size:11px;color:var(--text-muted);margin-bottom:6px;font-weight:600;">CHECKLIST: IS YOUR CODE GPU-SUITABLE?</p>
+      <ul class="items" style="font-size:12px;">
+        <li><span class="label green">✓ Parallel</span>Large iteration loops performing the same calculation on different data elements (e.g. matrix arithmetic)</li>
+        <li><span class="label green">✓ No Dependency</span>No data dependency between loop iterations — iterations are independent</li>
+        <li><span class="label green">✓ Significant Fraction</span>Parallelisable section makes up large % of total runtime (Amdahl's Law — maximise f)</li>
+        <li><span class="label green">✓ Lightweight Threads</span>Each thread = small snippet of code (few branches, little state)</li>
+        <li><span class="label red">✗ Control-Heavy</span>Lots of branching, conditional logic, pointer chasing → poor fit</li>
+        <li><span class="label red">✗ Serial Critical Path</span>If serial fraction is large, GPU offloading gives minimal speedup</li>
+        <li><span class="label orange">⚠ Transfer Cost</span>CPU↔GPU PCIe transfer time must be small relative to GPU computation time</li>
+      </ul>
+      <div class="info" style="margin-top:8px;"><strong>Profiling Step</strong>Use <code>gprof</code> (GNU) or <code>nvprof</code> (NVIDIA visual) to identify hotspots before attempting GPU acceleration. Profile on representative input data.</div>
+    </div>
+  </div>
+
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>GPU vs CPU: When &amp; How to Decide</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead><tr><th>Scenario</th><th>Best Architecture</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Matrix multiply / dense linear algebra</td><td><span class="label green">GPU</span></td><td>Embarrassingly parallel; high FLOPs/byte; shared memory tiling</td></tr>
+          <tr><td>FFT over large data sets</td><td><span class="label green">GPU</span></td><td>Regular access patterns; data-parallel stages</td></tr>
+          <tr><td>Deep neural network inference/training</td><td><span class="label green">GPU</span></td><td>GEMM operations dominate; tensor cores on modern GPUs</td></tr>
+          <tr><td>Molecular dynamics / physics simulation</td><td><span class="label green">GPU</span></td><td>Many particles with same force calculations</td></tr>
+          <tr><td>Database query (complex join)</td><td><span class="label orange">CPU</span></td><td>Irregular access patterns, complex branching, index traversal</td></tr>
+          <tr><td>OS scheduler / kernel</td><td><span class="label orange">CPU</span></td><td>Inherently serial, latency-sensitive, heavy branching</td></tr>
+          <tr><td>Web server request handling</td><td><span class="label orange">CPU</span></td><td>Each request is independent small task; low latency needed</td></tr>
+          <tr><td>Image/video processing</td><td><span class="label green">GPU</span></td><td>Pixel operations naturally parallel; 2D spatial locality</td></tr>
+        </tbody>
+      </table>
+      <hr class="rule">
+      <p style="font-size:11px;color:var(--text-muted);margin-bottom:4px;font-weight:600;">CODE CONVERSION OPTIONS</p>
+      <ul class="items" style="font-size:12px;">
+        <li><span class="label green">Manual CUDA</span>Best performance; complex planning; full control of memory hierarchy</li>
+        <li><span class="label blue">OpenCL</span>Vendor-agnostic alternative to CUDA; similar model</li>
+        <li><span class="label orange">OpenACC / hiCUDA</span>Compiler directive approach — annotate serial code; simpler but sub-optimal; supported by CUDA compiler</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     KEY TERMS QUICK REFERENCE
+══════════════════════════════════════════════ -->
+<div class="divider"><span>Key Terms Quick Reference</span></div>
+<div class="grid">
+
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>CUDA / Programming Terms</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li><code>CUDA</code> Compute Unified Device Architecture — NVIDIA GPU programming model</li>
+        <li><code>Kernel</code> Data-parallel function executed on GPU; launched by host</li>
+        <li><code>Thread</code> Single instance of kernel = one CUDA core assignment</li>
+        <li><code>Block</code> Group of threads assigned to one SM; up to 1024 threads</li>
+        <li><code>Grid</code> All blocks launched in one kernel call</li>
+        <li><code>Warp</code> 32 consecutive threads; fundamental HW scheduling unit</li>
+        <li><code>SIMT</code> Single Instruction Multiple Threads — all threads in warp execute same instruction</li>
+        <li><code>GPGPU</code> General-Purpose Computing using GPU — non-graphics workloads on GPU</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>GPU Hardware Terms</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li><code>SM</code> Streaming Multiprocessor — contains 32 CUDA cores + warp scheduler + shared mem</li>
+        <li><code>CUDA Core</code> GPU processor core; each has INT + FP pipeline</li>
+        <li><code>SFU</code> Special Function Unit — sin, cos, reciprocal, sqrt in 1 cycle; 4/SM</li>
+        <li><code>GigaThread</code> Global thread block scheduler distributing blocks to SM warp schedulers</li>
+        <li><code>GDDR5</code> Graphics DDR5 — high-bandwidth off-chip memory (384-bit bus in Fermi)</li>
+        <li><code>EU</code> Execution Unit — Intel Gen8 equivalent of SM; 7-thread SMT, 2 SIMD FPUs</li>
+        <li><code>Subslice</code> Intel Gen8: 8 EUs + dispatcher + sampler + data port</li>
+        <li><code>GTI</code> Graphics Technology Interface — connects Gen8 GPU to SoC ring</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Performance &amp; Architecture Terms</h3></div>
+    <div class="card-body">
+      <ul class="items">
+        <li><code>FMA</code> Fused Multiply-Add — single-rounding combined ×+ op; IEEE 754-2008</li>
+        <li><code>Warp Divergence</code> Branches in warp force serial execution of different paths</li>
+        <li><code>Register Spill</code> Thread uses more registers than available → overflow to L1→local DRAM</li>
+        <li><code>Memory Coalescing</code> Adjacent threads access consecutive addresses → served in 1 transaction</li>
+        <li><code>Bank Conflict</code> Two addresses in same memory bank → serialised access; n-way conflict = n× throughput loss</li>
+        <li><code>Occupancy</code> Ratio of active warps to max warps per SM — key performance metric</li>
+        <li><code>Roofline Model</code> Visualises performance limit: compute-bound (FLOPs peak) or memory-bound (bandwidth peak)</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← Back to Menu</a>
+  <span class="footer-note">Stallings · Computer Organization &amp; Architecture 10e · Chapter 19 · General-Purpose GPUs · Contributed by Peter Zeno</span>
+</footer>
+
+</body>
+</html>

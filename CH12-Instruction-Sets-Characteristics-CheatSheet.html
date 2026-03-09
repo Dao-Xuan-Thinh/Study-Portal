@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH12 – Instruction Sets: Characteristics and Functions</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --accent5: #ffa657;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --yellow: #e3b341;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    gap: 20px;
+  }
+  .header-left h1 {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-size: 28px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .header-left h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-top: 4px;
+  }
+  .badge {
+    background: var(--accent);
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .toc-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: default;
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .col-span-2 { grid-column: span 2; }
+  .col-span-3 { grid-column: span 3; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .card-header h3 {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .card-body { padding: 12px; }
+
+  /* COLORS PER SECTION */
+  .blue .card-header { background: rgba(88,166,255,0.08); }
+  .blue .dot { background: var(--accent); }
+  .blue h3 { color: var(--accent); }
+
+  .green .card-header { background: rgba(63,185,80,0.08); }
+  .green .dot { background: var(--accent2); }
+  .green h3 { color: var(--accent2); }
+
+  .red .card-header { background: rgba(247,129,102,0.08); }
+  .red .dot { background: var(--accent3); }
+  .red h3 { color: var(--accent3); }
+
+  .purple .card-header { background: rgba(210,168,255,0.08); }
+  .purple .dot { background: var(--accent4); }
+  .purple h3 { color: var(--accent4); }
+
+  .orange .card-header { background: rgba(255,166,87,0.08); }
+  .orange .dot { background: var(--accent5); }
+  .orange h3 { color: var(--accent5); }
+
+  .yellow .card-header { background: rgba(227,179,65,0.08); }
+  .yellow .dot { background: var(--yellow); }
+  .yellow h3 { color: var(--yellow); }
+
+  /* CONTENT ELEMENTS */
+  p { color: var(--text); margin-bottom: 6px; }
+  p:last-child { margin-bottom: 0; }
+
+  .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    margin-top: 10px;
+  }
+  .label:first-child { margin-top: 0; }
+
+  .rule {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 7px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--yellow);
+    margin-bottom: 6px;
+  }
+  .rule:last-child { margin-bottom: 0; }
+
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--accent3);
+  }
+
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+  }
+
+  /* BINARY / INSTRUCTION FORMAT BLOCKS */
+  .bin-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .bin-block:last-child { margin-bottom: 0; }
+  .bin-block .title {
+    color: var(--text-muted);
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  .bin-block .line { color: var(--text); }
+  .bin-block .result { color: var(--accent2); font-weight: 600; }
+  .bin-block .note { color: var(--text-dim); font-size: 10px; margin-top: 3px; }
+
+  /* INSTRUCTION FORMAT VISUAL */
+  .iformat {
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    border: 1px solid var(--border);
+  }
+  .iformat-seg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px 4px;
+    border-right: 1px solid var(--bg);
+    min-width: 0;
+  }
+  .iformat-seg:last-child { border-right: none; }
+  .iformat-seg .seg-label { font-size: 9px; color: var(--text-dim); margin-bottom: 2px; white-space: nowrap; }
+  .iformat-seg .seg-val { font-weight: 700; font-size: 11px; }
+  .iformat-seg .seg-bits { font-size: 8px; color: var(--text-dim); margin-top: 2px; }
+
+  .seg-op   { background: rgba(88,166,255,0.18); flex: 0 0 auto; }
+  .seg-op .seg-val   { color: var(--accent); }
+  .seg-addr1 { background: rgba(63,185,80,0.14); flex: 1; }
+  .seg-addr1 .seg-val { color: var(--accent2); }
+  .seg-addr2 { background: rgba(255,166,87,0.14); flex: 1; }
+  .seg-addr2 .seg-val { color: var(--accent5); }
+  .seg-addr3 { background: rgba(210,168,255,0.14); flex: 1; }
+  .seg-addr3 .seg-val { color: var(--accent4); }
+  .seg-mode  { background: rgba(247,129,102,0.14); flex: 0 0 auto; }
+  .seg-mode .seg-val { color: var(--accent3); }
+  .seg-imm   { background: rgba(227,179,65,0.14); flex: 1; }
+  .seg-imm .seg-val  { color: var(--yellow); }
+  .seg-unused { background: rgba(255,255,255,0.03); flex: 1; }
+  .seg-unused .seg-val { color: var(--text-dim); }
+
+  /* TABLE */
+  .tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  .tbl th {
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  .tbl td {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    vertical-align: top;
+  }
+  .tbl tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .pos { color: var(--accent); }
+  .neg { color: var(--accent3); }
+  .zero { color: var(--accent2); }
+  .special { color: var(--yellow); }
+
+  /* LIST */
+  ul.items { list-style: none; padding: 0; }
+  ul.items li {
+    padding: 4px 0;
+    padding-left: 14px;
+    position: relative;
+    color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  ul.items li:last-child { border-bottom: none; }
+  ul.items li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+  }
+
+  /* STEP LIST */
+  ol.steps { list-style: none; padding: 0; counter-reset: steps; }
+  ol.steps li {
+    padding: 5px 0 5px 26px;
+    position: relative;
+    color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    counter-increment: steps;
+  }
+  ol.steps li:last-child { border-bottom: none; }
+  ol.steps li::before {
+    content: counter(steps);
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 18px;
+    height: 18px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 18px;
+    text-align: center;
+  }
+
+  /* CALLOUT BOXES */
+  .warn {
+    background: rgba(247,129,102,0.08);
+    border: 1px solid rgba(247,129,102,0.3);
+    border-radius: 4px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .warn .w-title {
+    color: var(--accent3);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .info {
+    background: rgba(88,166,255,0.07);
+    border: 1px solid rgba(88,166,255,0.25);
+    border-radius: 4px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .info .i-title {
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .tip {
+    background: rgba(63,185,80,0.07);
+    border: 1px solid rgba(63,185,80,0.25);
+    border-radius: 4px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .tip .t-title {
+    color: var(--accent2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 10px 0;
+  }
+
+  .section-gap { margin-top: 20px; }
+
+  /* FORMULA */
+  .formula {
+    background: rgba(210,168,255,0.07);
+    border: 1px solid rgba(210,168,255,0.25);
+    border-left: 3px solid var(--accent4);
+    border-radius: 4px;
+    padding: 7px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent4);
+    margin-bottom: 6px;
+  }
+
+  /* ADDR COMPARE TABLE */
+  .addr-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 100px;
+    gap: 6px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    align-items: start;
+  }
+  .addr-row:last-child { border-bottom: none; }
+  .addr-tag {
+    background: var(--surface2);
+    border-radius: 3px;
+    padding: 2px 6px;
+    text-align: center;
+    font-weight: 600;
+  }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 24px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+    border: 1px solid rgba(88,166,255,0.3);
+    padding: 4px 10px;
+    border-radius: 3px;
+    transition: background 0.15s;
+  }
+  .footer a:hover { background: rgba(88,166,255,0.1); }
+
+  @media print {
+    body { background: white; color: black; font-size: 11px; padding: 10px; }
+    .card { border: 1px solid #ccc; break-inside: avoid; }
+    .card-header { background: #f0f0f0 !important; }
+    h3 { color: #333 !important; }
+    code, .mono, .bin-block, .rule, .formula { background: #f5f5f5; color: #333 !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 12 — Instruction Sets: Characteristics and Functions</h1>
+    <h2>Computer Organization &amp; Architecture, 10th Edition &nbsp;|&nbsp; William Stallings &nbsp;|&nbsp; Complete Study Reference</h2>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+    <span class="badge">COA10e · CH12</span>
+    <div class="toc">
+      <span class="toc-item">Machine Instr.</span>
+      <span class="toc-item">Operand Types</span>
+      <span class="toc-item">Numbers</span>
+      <span class="toc-item">Characters</span>
+      <span class="toc-item">Logical Data</span>
+      <span class="toc-item">Data Transfer</span>
+      <span class="toc-item">Arithmetic</span>
+      <span class="toc-item">Logical Ops</span>
+      <span class="toc-item">Conversion</span>
+      <span class="toc-item">I/O</span>
+      <span class="toc-item">Sys Control</span>
+      <span class="toc-item">Branches</span>
+      <span class="toc-item">Procedures</span>
+      <span class="toc-item">x86 Data Types</span>
+      <span class="toc-item">ARM Data Types</span>
+      <span class="toc-item">Endianness</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════
+     ROW 1 — Machine Instruction Characteristics (3 cols)
+     ═══════════════════════════════════════════════════════ -->
+<div class="grid">
+
+  <!-- CARD 1: Machine Instruction Elements -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Machine Instruction Elements</h3></div>
+    <div class="card-body">
+      <p>A <strong>machine instruction</strong> is a binary-encoded command that the processor fetches and executes. The full collection of instructions a processor can execute is its <strong>instruction set</strong>.</p>
+      <div class="label">Four Required Elements</div>
+      <ul class="items">
+        <li><strong>Operation Code (Opcode)</strong> — binary code specifying the operation (ADD, SUB, LOAD…)</li>
+        <li><strong>Source Operand Reference</strong> — one or more inputs for the operation</li>
+        <li><strong>Result Operand Reference</strong> — destination for the computed result</li>
+        <li><strong>Next Instruction Reference</strong> — address of next instruction to fetch (usually implicit via PC)</li>
+      </ul>
+      <div class="label">Operand Locations</div>
+      <ul class="items">
+        <li><strong>Main / Virtual Memory</strong> — full address must be supplied</li>
+        <li><strong>Processor Register</strong> — unique name/number; fewer bits needed</li>
+        <li><strong>Immediate</strong> — value is embedded directly in the instruction field</li>
+        <li><strong>I/O Device</strong> — I/O module + device ID (or memory-mapped address)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CARD 2: Instruction Representation & Mnemonics -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Instruction Representation</h3></div>
+    <div class="card-body">
+      <p>Each instruction is a sequence of bits divided into fields. Programmers use <strong>symbolic (mnemonic) representations</strong> instead of raw binary.</p>
+      <div class="label">Simple 16-bit Format (Fig. 12.2)</div>
+      <div class="iformat">
+        <div class="iformat-seg seg-op" style="flex:0 0 68px">
+          <div class="seg-label">OPCODE</div>
+          <div class="seg-val">OP</div>
+          <div class="seg-bits">4 bits</div>
+        </div>
+        <div class="iformat-seg seg-addr1" style="flex:1">
+          <div class="seg-label">OPERAND 1</div>
+          <div class="seg-val">SRC</div>
+          <div class="seg-bits">6 bits</div>
+        </div>
+        <div class="iformat-seg seg-addr2" style="flex:1">
+          <div class="seg-label">OPERAND 2</div>
+          <div class="seg-val">DST</div>
+          <div class="seg-bits">6 bits</div>
+        </div>
+      </div>
+      <div class="label">Common Mnemonics</div>
+      <table class="tbl">
+        <tr><th>Mnemonic</th><th>Operation</th></tr>
+        <tr><td class="pos">ADD</td><td>Add two operands</td></tr>
+        <tr><td class="pos">SUB</td><td>Subtract</td></tr>
+        <tr><td class="pos">MUL</td><td>Multiply</td></tr>
+        <tr><td class="pos">DIV</td><td>Divide</td></tr>
+        <tr><td class="special">LOAD</td><td>Load from memory → register</td></tr>
+        <tr><td class="special">STOR</td><td>Store register → memory</td></tr>
+      </table>
+      <div class="label">Example Symbolic Instruction</div>
+      <div class="rule">ADD R, Y   ; R ← R + mem[Y]</div>
+    </div>
+  </div>
+
+  <!-- CARD 3: Instruction Types & Categories -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Instruction Types</h3></div>
+    <div class="card-body">
+      <p>Any program written in a high-level language must be translatable to machine language. The instruction set must be sufficient to express <em>all</em> HLL constructs.</p>
+      <div class="label">Four Category Model</div>
+      <table class="tbl">
+        <tr><th>Category</th><th>Purpose</th></tr>
+        <tr><td class="pos">Data Processing</td><td>Arithmetic &amp; logic ops</td></tr>
+        <tr><td class="pos">Data Storage</td><td>Move data ↔ register / memory</td></tr>
+        <tr><td class="special">Data Movement</td><td>I/O instructions</td></tr>
+        <tr><td class="neg">Control</td><td>Test and branch</td></tr>
+      </table>
+      <div class="label">HLL→Machine Expansion Example</div>
+      <div class="bin-block">
+        <div class="title">BASIC: X = X + Y  →  3 Machine Instructions</div>
+        <div class="line">1. LOAD  R, 513    ; R ← mem[513] (X)</div>
+        <div class="line">2. ADD   R, 514    ; R ← R + mem[514] (Y)</div>
+        <div class="line">3. STOR  513, R    ; mem[513] ← R</div>
+      </div>
+      <div class="tip"><div class="t-title">Key Point</div>One HLL statement → multiple machine instructions. HLL is algebraic; machine language is move-based.</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══════════════════════════════════════════════════════
+     ROW 2 — Number of Addresses + Instruction Set Design
+     ═══════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- CARD 4: Number of Addresses -->
+  <div class="card orange col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Number of Addresses per Instruction</h3></div>
+    <div class="card-body">
+      <p>A fundamental design decision. More addresses → shorter programs but longer, more complex instructions.</p>
+      <div class="label">Address Count Summary (Table 12.1)</div>
+      <table class="tbl">
+        <tr><th>Addresses</th><th>Symbolic Form</th><th>Interpretation</th><th>Note</th></tr>
+        <tr><td class="special">3</td><td><code>OP A, B, C</code></td><td>A ← B OP C</td><td>Most explicit; long format</td></tr>
+        <tr><td class="pos">2</td><td><code>OP A, B</code></td><td>A ← A OP B</td><td>A is both source &amp; dest</td></tr>
+        <tr><td class="zero">1</td><td><code>OP A</code></td><td>AC ← AC OP A</td><td>Accumulator (AC) implicit</td></tr>
+        <tr><td class="neg">0</td><td><code>OP</code></td><td>T ← (T−1) OP T</td><td>Stack: top two elements</td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="label">Computing Y = (A−B) / [C+(D×E)] — Instruction Count Comparison</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+        <div class="bin-block">
+          <div class="title">3-Address (4 instrs)</div>
+          <div class="line">SUB Y, A, B  ; Y←A−B</div>
+          <div class="line">MPY T, D, E  ; T←D×E</div>
+          <div class="line">ADD T, T, C  ; T←T+C</div>
+          <div class="line">DIV Y, Y, T  ; Y←Y÷T</div>
+        </div>
+        <div class="bin-block">
+          <div class="title">2-Address (6 instrs)</div>
+          <div class="line">MOVE Y, A</div>
+          <div class="line">SUB  Y, B</div>
+          <div class="line">MOVE T, D</div>
+          <div class="line">MPY  T, E</div>
+          <div class="line">ADD  T, C</div>
+          <div class="line">DIV  Y, T</div>
+        </div>
+        <div class="bin-block">
+          <div class="title">1-Address (8 instrs)</div>
+          <div class="line">LOAD D ; AC←D</div>
+          <div class="line">MPY  E</div>
+          <div class="line">ADD  C</div>
+          <div class="line">STOR Y</div>
+          <div class="line">LOAD A</div>
+          <div class="line">SUB  B</div>
+          <div class="line">DIV  Y</div>
+          <div class="line">STOR Y</div>
+        </div>
+      </div>
+      <div class="warn"><div class="w-title">Trade-off</div>Fewer addresses → more instructions &amp; longer execution time, but shorter, simpler instruction formats. Most modern ISAs use a mix of 2- and 3-address instructions with multiple general-purpose registers.</div>
+    </div>
+  </div>
+
+  <!-- CARD 5: Instruction Set Design Issues -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Instruction Set Design Issues</h3></div>
+    <div class="card-body">
+      <p>One of the most analyzed aspects of computer design — fundamental decisions remain disputed even today (see RISC vs. CISC in Chapter 15).</p>
+      <div class="label">Five Core Design Dimensions</div>
+      <ul class="items">
+        <li><strong>Operation Repertoire</strong> — how many ops, how complex</li>
+        <li><strong>Data Types</strong> — types upon which operations act</li>
+        <li><strong>Instruction Format</strong> — length, field sizes, # of addresses</li>
+        <li><strong>Registers</strong> — count and usage of processor registers</li>
+        <li><strong>Addressing Modes</strong> — how operand addresses are specified</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Design Pathway (this book)</div>
+      <ul class="items">
+        <li>CH12 → Data types &amp; operation repertoire</li>
+        <li>CH13 → Addressing modes &amp; instruction formats</li>
+        <li>CH15 → RISC architecture &amp; design philosophy</li>
+      </ul>
+      <div class="info"><div class="i-title">Key Insight</div>All five dimensions are highly interrelated and must be considered together — no single dimension can be optimized in isolation.</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══════════════════════════════════════════════════════
+     ROW 3 — Types of Operands
+     ═══════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- CARD 6: Numbers -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Operand Type: Numbers</h3></div>
+    <div class="card-body">
+      <p>All machine languages support numeric data. Even non-numeric programs need numbers for counters, field widths, etc.</p>
+      <div class="label">Three Numeric Types</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Details</th></tr>
+        <tr><td class="pos">Binary Integer<br>(Fixed-point)</td><td>Twos complement; most common; fast ALU ops</td></tr>
+        <tr><td class="special">Binary Float</td><td>IEEE 754; sign + exponent + significand</td></tr>
+        <tr><td class="zero">Packed Decimal</td><td>4 bits/digit, 2 digits/byte; avoids I/O conversion</td></tr>
+      </table>
+      <div class="label">Packed Decimal Encoding</div>
+      <div class="bin-block">
+        <div class="title">Digit → 4-bit BCD code</div>
+        <div class="line">0=0000  1=0001  2=0010  3=0011</div>
+        <div class="line">4=0100  5=0101  6=0110  7=0111</div>
+        <div class="line">8=1000  9=1001  (10–15 unused)</div>
+        <div class="result">246 → 0000 0010 0100 0110</div>
+        <div class="note">Sign: +12 (1100) | −13 (1101) appended as 4-bit nibble</div>
+      </div>
+      <div class="warn"><div class="w-title">Limitation</div>Numbers on machines are finite in magnitude and precision. Programmers must handle rounding, overflow, and underflow.</div>
+    </div>
+  </div>
+
+  <!-- CARD 7: Characters -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Operand Type: Characters</h3></div>
+    <div class="card-body">
+      <p>Text data is most natural for humans but must be encoded as bit patterns for digital systems.</p>
+      <div class="label">Major Character Codes</div>
+      <table class="tbl">
+        <tr><th>Code</th><th>Bits</th><th>Chars</th><th>Notes</th></tr>
+        <tr><td class="pos">IRA / ASCII</td><td>7</td><td>128</td><td>US standard; stored in 8 bits</td></tr>
+        <tr><td class="special">EBCDIC</td><td>8</td><td>256</td><td>IBM mainframes; 8-bit</td></tr>
+        <tr><td class="zero">Unicode</td><td>16+</td><td>65536+</td><td>Global standard</td></tr>
+      </table>
+      <div class="label">ASCII ↔ Packed Decimal Compatibility</div>
+      <div class="bin-block">
+        <div class="title">IRA pattern 011XXXX</div>
+        <div class="line">Digits 0–9 → 0110000 … 0111001</div>
+        <div class="line">Lower 4 bits = BCD equivalent</div>
+        <div class="result">Facilitates IRA ↔ packed decimal conversion</div>
+      </div>
+      <div class="label">Parity Bit (8th bit)</div>
+      <ul class="items">
+        <li><strong>Odd parity</strong> — total 1-bits always odd</li>
+        <li><strong>Even parity</strong> — total 1-bits always even</li>
+        <li><strong>Zero</strong> — parity unused; 8th bit = 0</li>
+      </ul>
+      <div class="info"><div class="i-title">EBCDIC Digits</div>Codes 11110000–11111001 (0xF0–0xF9) represent digits 0–9, compatible with packed decimal.</div>
+    </div>
+  </div>
+
+  <!-- CARD 8: Logical Data -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Operand Type: Logical Data</h3></div>
+    <div class="card-body">
+      <p>An <em>n</em>-bit unit is treated as <strong>n independent 1-bit items</strong> (Boolean values), each being 0 (false) or 1 (true).</p>
+      <div class="label">Two Advantages of Bit-Oriented View</div>
+      <ol class="steps">
+        <li>Store Boolean arrays with maximum memory efficiency (1 bit per element)</li>
+        <li>Manipulate individual bits — e.g., shift significand in software float, extract BCD digits from IRA bytes</li>
+      </ol>
+      <div class="label">Common Bitwise Masking Techniques</div>
+      <div class="bin-block">
+        <div class="title">AND as mask (isolate lower nibble)</div>
+        <div class="line">R1 = 1010 0101</div>
+        <div class="line">R2 = 0000 1111</div>
+        <div class="result">R1 AND R2 = 0000 0101  ← masked</div>
+      </div>
+      <div class="bin-block">
+        <div class="title">XOR with all-1s = ones complement</div>
+        <div class="line">R1 = 1010 0101</div>
+        <div class="line">R2 = 1111 1111</div>
+        <div class="result">R1 XOR R2 = 0101 1010</div>
+      </div>
+      <div class="tip"><div class="t-title">Type Polymorphism</div>The same data can be logical, numeric, or text — determined by the operation applied, not a stored type tag.</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══════════════════════════════════════════════════════
+     ROW 4 — x86 and ARM Data Types
+     ═══════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- CARD 9: x86 Data Types -->
+  <div class="card purple col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Intel x86 Data Types</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <div class="label">General Data Widths</div>
+          <table class="tbl">
+            <tr><th>Type</th><th>Bits</th></tr>
+            <tr><td class="pos">Byte</td><td>8</td></tr>
+            <tr><td class="pos">Word</td><td>16</td></tr>
+            <tr><td class="pos">Doubleword</td><td>32</td></tr>
+            <tr><td class="pos">Quadword</td><td>64</td></tr>
+            <tr><td class="pos">Double Quadword</td><td>128</td></tr>
+          </table>
+          <div class="label">Special Data Types</div>
+          <table class="tbl">
+            <tr><th>Type</th><th>Description</th></tr>
+            <tr><td class="special">Integer</td><td>Signed twos complement (byte/word/dword)</td></tr>
+            <tr><td class="special">Ordinal</td><td>Unsigned integer</td></tr>
+            <tr><td class="zero">Unpacked BCD</td><td>1 digit per byte, range 0–9</td></tr>
+            <tr><td class="zero">Packed BCD</td><td>2 digits per byte, range 0–99</td></tr>
+            <tr><td class="neg">Near Pointer</td><td>16/32/64-bit segment offset</td></tr>
+            <tr><td class="neg">Far Pointer</td><td>16-bit selector + 16/32/64-bit offset</td></tr>
+            <tr><td class="pos">Bit Field</td><td>Contiguous bits, up to 32 bits</td></tr>
+            <tr><td class="pos">Bit String</td><td>Up to 2²³−1 bits</td></tr>
+            <tr><td class="pos">Byte String</td><td>Up to 2²³−1 bytes</td></tr>
+          </table>
+        </div>
+        <div>
+          <div class="label">x86 Numeric Formats (Fig. 12.4)</div>
+          <div class="bin-block">
+            <div class="title">Unsigned Integers</div>
+            <div class="line">Byte  [0────────7]</div>
+            <div class="line">Word  [0──────────15]</div>
+            <div class="line">DWord [0──────────────31]</div>
+            <div class="line">QWord [0──────────────────────63]</div>
+          </div>
+          <div class="bin-block">
+            <div class="title">Signed (Twos Complement)</div>
+            <div class="line">Byte  [S|0──────6]</div>
+            <div class="line">Word  [S|0──────────14]</div>
+            <div class="line">DWord [S|0──────────────30]</div>
+            <div class="line">QWord [S|0──────────────────────62]</div>
+          </div>
+          <div class="bin-block">
+            <div class="title">IEEE 754 Floating-Point</div>
+            <div class="line">Half   [S|exp(5)|sig(10)]  16b</div>
+            <div class="line">Single [S|exp(8)|sig(23)]  32b</div>
+            <div class="line">Double [S|exp(11)|sig(52)] 64b</div>
+            <div class="line">Ext.   [S|exp(15)|int|sig(63)] 80b</div>
+          </div>
+          <div class="label">Packed SIMD (MMX/SSE)</div>
+          <ul class="items">
+            <li>Packed byte/word/dword/qword into 64-bit or 128-bit register</li>
+            <li>Multiple operands processed in parallel</li>
+            <li>Optimized for multimedia applications</li>
+          </ul>
+          <div class="tip"><div class="t-title">Endianness</div>x86 uses <strong>little-endian</strong>: least significant byte stored at lowest address.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 10: ARM Data Types -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>ARM Data Types</h3></div>
+    <div class="card-body">
+      <div class="label">Supported Widths</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Bits</th><th>Alignment</th></tr>
+        <tr><td class="pos">Byte</td><td>8</td><td>Any address</td></tr>
+        <tr><td class="pos">Halfword</td><td>16</td><td>Halfword-aligned</td></tr>
+        <tr><td class="pos">Word</td><td>32</td><td>Word-aligned</td></tr>
+      </table>
+      <div class="label">Unaligned Access Handling</div>
+      <ul class="items">
+        <li><strong>Default (truncate)</strong> — address bits[1:0] treated as 0 for word; bit[0]=0 for halfword</li>
+        <li><strong>Alignment Check</strong> — data abort on misaligned access (control bit set)</li>
+        <li><strong>Unaligned Access</strong> — processor uses multiple memory accesses transparently</li>
+      </ul>
+      <div class="label">Endian Support (E-bit)</div>
+      <div class="bin-block">
+        <div class="title">ARM E-bit (PSR) — Word Load/Store</div>
+        <div class="line">E=0 (Little-endian):  Byte0→Lane0, Byte3→Lane3</div>
+        <div class="line">E=1 (Big-endian):     Byte0→Lane3, Byte3→Lane0</div>
+        <div class="note">SETEND instruction toggles E-bit at runtime</div>
+      </div>
+      <div class="label">Floating-Point</div>
+      <p>Most ARM implementations <strong>omit FP hardware</strong> (saves power/area). FP can be done in software, or via optional coprocessor supporting IEEE 754 single &amp; double precision.</p>
+    </div>
+  </div>
+
+</div><!-- /grid row 4 -->
+
+<!-- ═══════════════════════════════════════════════════════
+     ROW 5 — Types of Operations: Data Transfer + Arithmetic
+     ═══════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- CARD 11: All Operation Types Overview -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Seven Categories of Operations</h3></div>
+    <div class="card-body">
+      <p>Every ISA, regardless of architecture, provides these fundamental operation categories:</p>
+      <table class="tbl">
+        <tr><th>#</th><th>Category</th><th>Processor Action</th></tr>
+        <tr><td class="special">1</td><td class="pos">Data Transfer</td><td>Move data between locations; may involve cache/VMem lookup</td></tr>
+        <tr><td class="special">2</td><td class="pos">Arithmetic</td><td>ALU compute + data transfer before/after + flag update</td></tr>
+        <tr><td class="special">3</td><td class="pos">Logical</td><td>Same as arithmetic; bitwise Boolean ops</td></tr>
+        <tr><td class="special">4</td><td class="pos">Conversion</td><td>Like arithmetic; may involve special conversion logic</td></tr>
+        <tr><td class="special">5</td><td class="pos">I/O</td><td>Command to I/O module; memory-mapped I/O uses VMem addr</td></tr>
+        <tr><td class="special">6</td><td class="pos">System Control</td><td>Privileged; OS-only; reads/writes control registers</td></tr>
+        <tr><td class="special">7</td><td class="pos">Transfer of Control</td><td>Update PC to new address (branch/call/return)</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- CARD 12: Data Transfer Operations -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Data Transfer Operations</h3></div>
+    <div class="card-body">
+      <p>Most fundamental instruction type. Must specify: <strong>source location</strong>, <strong>destination location</strong>, <strong>data length</strong>, and <strong>addressing mode</strong>.</p>
+      <div class="label">Common Data Transfer Instructions</div>
+      <table class="tbl">
+        <tr><th>Instr</th><th>Description</th></tr>
+        <tr><td class="pos">MOVE</td><td>Transfer word/block source → dest</td></tr>
+        <tr><td class="pos">LOAD</td><td>Memory → processor register</td></tr>
+        <tr><td class="pos">STORE</td><td>Register → memory</td></tr>
+        <tr><td class="special">EXCHANGE</td><td>Swap source ↔ destination</td></tr>
+        <tr><td class="zero">CLEAR</td><td>Write 0s to destination</td></tr>
+        <tr><td class="zero">SET</td><td>Write 1s to destination</td></tr>
+        <tr><td class="neg">PUSH</td><td>Source → top of stack</td></tr>
+        <tr><td class="neg">POP</td><td>Top of stack → destination</td></tr>
+      </table>
+      <div class="label">Processor Steps (memory operand)</div>
+      <ol class="steps">
+        <li>Calculate effective memory address</li>
+        <li>Translate virtual → physical address</li>
+        <li>Check cache for data</li>
+        <li>If cache miss → issue read/write to memory module</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- CARD 13: Arithmetic Operations -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Arithmetic Operations</h3></div>
+    <div class="card-body">
+      <p>Provided for signed integer (fixed-point) numbers; often extended to floating-point and packed decimal.</p>
+      <div class="label">Binary (Two-Operand)</div>
+      <table class="tbl">
+        <tr><th>Op</th><th>Result</th></tr>
+        <tr><td class="pos">ADD</td><td>Sum of two operands</td></tr>
+        <tr><td class="pos">SUBTRACT</td><td>Difference of two operands</td></tr>
+        <tr><td class="pos">MULTIPLY</td><td>Product</td></tr>
+        <tr><td class="pos">DIVIDE</td><td>Quotient</td></tr>
+      </table>
+      <div class="label">Unary (Single-Operand)</div>
+      <table class="tbl">
+        <tr><th>Op</th><th>Action</th></tr>
+        <tr><td class="special">ABSOLUTE</td><td>|operand|</td></tr>
+        <tr><td class="special">NEGATE</td><td>−operand (change sign)</td></tr>
+        <tr><td class="zero">INCREMENT</td><td>operand + 1</td></tr>
+        <tr><td class="zero">DECREMENT</td><td>operand − 1</td></tr>
+      </table>
+      <div class="info"><div class="i-title">Execution Flow</div>Arithmetic execution may involve data transfers to/from ALU, plus condition code / flag updates (zero, overflow, sign).</div>
+    </div>
+  </div>
+
+</div><!-- /grid row 5 -->
+
+<!-- ═══════════════════════════════════════════════════════
+     ROW 6 — Logical, Conversion, I/O, System Control
+     ═══════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- CARD 14: Logical Operations -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Logical Operations &amp; Shifts</h3></div>
+    <div class="card-body">
+      <div class="label">Basic Boolean Operations (Table 12.6)</div>
+      <table class="tbl">
+        <tr><th>P</th><th>Q</th><th>NOT P</th><th>AND</th><th>OR</th><th>XOR</th><th>EQUAL</th></tr>
+        <tr><td>0</td><td>0</td><td class="zero">1</td><td class="neg">0</td><td class="neg">0</td><td class="neg">0</td><td class="zero">1</td></tr>
+        <tr><td>0</td><td>1</td><td class="zero">1</td><td class="neg">0</td><td class="pos">1</td><td class="pos">1</td><td class="neg">0</td></tr>
+        <tr><td>1</td><td>0</td><td class="neg">0</td><td class="neg">0</td><td class="pos">1</td><td class="pos">1</td><td class="neg">0</td></tr>
+        <tr><td>1</td><td>1</td><td class="neg">0</td><td class="pos">1</td><td class="pos">1</td><td class="neg">0</td><td class="zero">1</td></tr>
+      </table>
+      <div class="label">Shift &amp; Rotate Operations (Table 12.7)</div>
+      <table class="tbl">
+        <tr><th>Input</th><th>Operation</th><th>Result</th></tr>
+        <tr><td>10100110</td><td class="pos">Logical Right (3)</td><td class="zero">00010100</td></tr>
+        <tr><td>10100110</td><td class="pos">Logical Left (3)</td><td class="zero">00110000</td></tr>
+        <tr><td>10100110</td><td class="special">Arith. Right (3)</td><td class="yellow">11110100</td></tr>
+        <tr><td>10100110</td><td class="special">Arith. Left (3)</td><td class="yellow">10110000</td></tr>
+        <tr><td>10100110</td><td class="neg">Right Rotate (3)</td><td class="neg">11010100</td></tr>
+        <tr><td>10100110</td><td class="neg">Left Rotate (3)</td><td class="neg">00110101</td></tr>
+      </table>
+      <div class="label">Shift Types</div>
+      <ul class="items">
+        <li><strong>Logical</strong> — shifts in 0; discards bits shifted out</li>
+        <li><strong>Arithmetic Right</strong> — replicates sign bit; ÷2 for twos complement</li>
+        <li><strong>Arithmetic Left</strong> — same as logical left (×2 if no overflow)</li>
+        <li><strong>Rotate (Cyclic)</strong> — bits wrap around; no bits lost</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CARD 15: Conversion + I/O + System Control -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Conversion, I/O &amp; System Control</h3></div>
+    <div class="card-body">
+      <div class="label">Conversion Operations</div>
+      <p>Change data format or representation. Example: EAS/390 <code>TR</code> (Translate) instruction:</p>
+      <div class="bin-block">
+        <div class="title">TR R1(L), R2  — Table-driven translation</div>
+        <div class="line">R2 → base address of 256-byte table</div>
+        <div class="line">L bytes at R1 each replaced by table[byte]</div>
+        <div class="result">EBCDIC→IRA: table at 1000–10FF hex</div>
+        <div class="note">F1F9F8F4 (EBCDIC "1984") → 31393834 (IRA)</div>
+      </div>
+      <div class="divider"></div>
+      <div class="label">I/O Operations</div>
+      <table class="tbl">
+        <tr><th>Op</th><th>Description</th></tr>
+        <tr><td class="pos">INPUT</td><td>I/O port/device → memory or register</td></tr>
+        <tr><td class="pos">OUTPUT</td><td>Register/memory → I/O port/device</td></tr>
+        <tr><td class="special">START I/O</td><td>Send instructions to I/O processor</td></tr>
+        <tr><td class="special">TEST I/O</td><td>Read I/O system status → destination</td></tr>
+      </table>
+      <div class="divider"></div>
+      <div class="label">System Control (Privileged)</div>
+      <ul class="items">
+        <li>Executable only in <strong>privileged / supervisor mode</strong></li>
+        <li>Read/alter control registers (Ch. 14)</li>
+        <li>Read/modify storage protection key (EAS/390)</li>
+        <li>Access process control blocks (multiprogramming)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- CARD 16: Transfer of Control — Branches & Skips -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Transfer of Control: Branches &amp; Skips</h3></div>
+    <div class="card-body">
+      <p>Updates the Program Counter to a new address rather than incrementing sequentially. Essential for loops, decisions, and subroutines.</p>
+      <div class="label">Three Reasons Transfer-of-Control is Needed</div>
+      <ol class="steps">
+        <li>Repeat instructions (loops) for iterative data processing</li>
+        <li>Conditional execution based on test results</li>
+        <li>Modular programming via procedures/subroutines</li>
+      </ol>
+      <div class="label">Branch Instruction Types</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Behavior</th></tr>
+        <tr><td class="pos">Unconditional Branch</td><td>Always load PC ← specified address</td></tr>
+        <tr><td class="special">Conditional Branch</td><td>Load PC only if condition code met</td></tr>
+        <tr><td class="zero">Skip (ISZ)</td><td>Increment + skip-if-zero; no address field</td></tr>
+      </table>
+      <div class="label">Condition Code Examples</div>
+      <div class="bin-block">
+        <div class="line">BRP X  — branch if result Positive</div>
+        <div class="line">BRN X  — branch if result Negative</div>
+        <div class="line">BRZ X  — branch if result Zero</div>
+        <div class="line">BRO X  — branch if Overflow</div>
+        <div class="line">BRE R1,R2,X — branch if R1 = R2</div>
+      </div>
+      <div class="label">ISZ Loop Pattern</div>
+      <div class="bin-block">
+        <div class="line">; R1 = −N (negative count)</div>
+        <div class="line">301: [loop body]</div>
+        <div class="line">309: ISZ R1   ; R1++; skip if R1=0</div>
+        <div class="line">310: BR  301  ; else branch back</div>
+        <div class="line">311: [continue]</div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 6 -->
+
+<!-- ═══════════════════════════════════════════════════════
+     ROW 7 — Procedure Calls + Endianness
+     ═══════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- CARD 17: Procedure Calls -->
+  <div class="card blue col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Transfer of Control: Procedure Calls</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <p>A <strong>procedure</strong> is a self-contained program invoked from a larger program. The two key instructions are <code>CALL</code> and <code>RETURN</code>.</p>
+          <div class="label">Why Procedures?</div>
+          <ul class="items">
+            <li><strong>Economy</strong> — reuse code; reduce memory footprint</li>
+            <li><strong>Modularity</strong> — decompose large tasks into manageable units</li>
+          </ul>
+          <div class="label">Three Return Address Storage Methods</div>
+          <table class="tbl">
+            <tr><th>Method</th><th>CALL X does…</th></tr>
+            <tr><td class="pos">Register (RN)</td><td>RN ← PC+Δ; PC ← X</td></tr>
+            <tr><td class="special">Start of Proc</td><td>mem[X] ← PC+Δ; PC ← X+1</td></tr>
+            <tr><td class="zero">Top of Stack</td><td>push(PC+Δ); PC ← X — supports re-entrancy</td></tr>
+          </table>
+          <div class="warn"><div class="w-title">Re-entrancy</div>Register &amp; start-of-procedure methods do not support reentrant (concurrent/recursive) calls. Only the <strong>stack method</strong> fully supports re-entrancy and nesting.</div>
+        </div>
+        <div>
+          <div class="label">Nested Procedure Execution (Fig. 12.8)</div>
+          <div class="bin-block">
+            <div class="title">Address layout</div>
+            <div class="line">4000: [Main program]</div>
+            <div class="line">4100:   CALL PROC1 (→4500)</div>
+            <div class="line">4101: [continues after return]</div>
+            <div class="line">4500: [PROC1]</div>
+            <div class="line">4600:   CALL PROC2 (→4800)</div>
+            <div class="line">4601: [continues after return]</div>
+            <div class="line">4650:   CALL PROC2 (→4800)</div>
+            <div class="line">4651: [continues after return]</div>
+            <div class="line">4xxx:   RETURN → caller</div>
+            <div class="line">4800: [PROC2]</div>
+            <div class="line">4xxx:   RETURN → caller</div>
+          </div>
+          <div class="label">Three Important Properties</div>
+          <ol class="steps">
+            <li>A procedure can be called from multiple locations</li>
+            <li>Procedures can call other procedures (arbitrary nesting depth)</li>
+            <li>Every CALL is matched by exactly one RETURN</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 18: Endianness -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Endianness (Appendix 12A)</h3></div>
+    <div class="card-body">
+      <p>Defines byte order in which a multi-byte value is stored in memory.</p>
+      <div class="label">Little-Endian (x86)</div>
+      <div class="bin-block">
+        <div class="title">Value 0x12345678 at address 100</div>
+        <div class="line">Addr 100: 0x78  (LSB first)</div>
+        <div class="line">Addr 101: 0x56</div>
+        <div class="line">Addr 102: 0x34</div>
+        <div class="line">Addr 103: 0x12  (MSB last)</div>
+      </div>
+      <div class="label">Big-Endian (e.g., network order)</div>
+      <div class="bin-block">
+        <div class="title">Value 0x12345678 at address 100</div>
+        <div class="line">Addr 100: 0x12  (MSB first)</div>
+        <div class="line">Addr 101: 0x34</div>
+        <div class="line">Addr 102: 0x56</div>
+        <div class="line">Addr 103: 0x78  (LSB last)</div>
+      </div>
+      <div class="label">Bi-Endian (ARM)</div>
+      <p>ARM supports both via the <strong>E-bit</strong> in the Program Status Register. The <code>SETEND</code> instruction switches endianness at runtime. Address of each byte in memory is fixed; only the register byte lane assignment differs.</p>
+    </div>
+  </div>
+
+</div><!-- /grid row 7 -->
+
+<!-- ═══════════════════════════════════════════════════════
+     ROW 8 — x86 & ARM Operation Types (2-col wide cards)
+     ═══════════════════════════════════════════════════════ -->
+<div class="grid-2 section-gap">
+
+  <!-- CARD 19: x86 Operation Types -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>x86 Operation Types (§12.5)</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div class="label">Data Transfer</div>
+          <ul class="items">
+            <li><code>MOV</code> — general move (reg↔reg, mem↔reg)</li>
+            <li><code>PUSH/POP</code> — stack operations</li>
+            <li><code>XCHG</code> — exchange</li>
+            <li><code>LEA</code> — load effective address</li>
+            <li><code>MOVSX/MOVZX</code> — move with sign/zero extend</li>
+          </ul>
+          <div class="label">Arithmetic</div>
+          <ul class="items">
+            <li><code>ADD, ADC</code> — add (with carry)</li>
+            <li><code>SUB, SBB</code> — subtract (with borrow)</li>
+            <li><code>IMUL, MUL</code> — signed/unsigned multiply</li>
+            <li><code>IDIV, DIV</code> — signed/unsigned divide</li>
+            <li><code>INC, DEC</code> — increment/decrement</li>
+            <li><code>NEG</code> — negate (twos complement)</li>
+          </ul>
+          <div class="label">Logical</div>
+          <ul class="items">
+            <li><code>AND, OR, XOR, NOT</code> — bitwise</li>
+            <li><code>SHL/SHR</code> — logical shift L/R</li>
+            <li><code>SAR/SAL</code> — arithmetic shift R/L</li>
+            <li><code>ROL/ROR</code> — rotate left/right</li>
+            <li><code>TEST, CMP</code> — set flags without storing</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">Transfer of Control</div>
+          <ul class="items">
+            <li><code>JMP</code> — unconditional jump</li>
+            <li><code>Jcc</code> — conditional jump (JE, JNE, JL, JG…)</li>
+            <li><code>CALL/RET</code> — procedure call/return</li>
+            <li><code>LOOP</code> — decrement CX; jump if nonzero</li>
+            <li><code>INT/IRET</code> — software interrupt / return</li>
+          </ul>
+          <div class="label">String Operations</div>
+          <ul class="items">
+            <li><code>MOVS</code> — move string</li>
+            <li><code>CMPS</code> — compare string</li>
+            <li><code>SCAS</code> — scan string</li>
+            <li><code>LODS/STOS</code> — load/store string</li>
+            <li><code>REP</code> prefix — repeat operation CX times</li>
+          </ul>
+          <div class="label">I/O &amp; Control</div>
+          <ul class="items">
+            <li><code>IN/OUT</code> — port I/O</li>
+            <li><code>HLT</code> — halt processor</li>
+            <li><code>NOP</code> — no operation</li>
+            <li><code>CPUID</code> — CPU identification</li>
+            <li><code>RDTSC</code> — read timestamp counter</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CARD 20: ARM Operation Types -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>ARM Operation Types (§12.5)</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div>
+          <div class="label">Data Processing</div>
+          <ul class="items">
+            <li><code>MOV, MVN</code> — move / move negated</li>
+            <li><code>ADD, ADC</code> — add (with carry)</li>
+            <li><code>SUB, SBC, RSB, RSC</code> — subtract variants</li>
+            <li><code>MUL, MLA</code> — multiply / multiply-accumulate</li>
+            <li><code>AND, ORR, EOR, BIC</code> — logical</li>
+            <li><code>CMP, CMN, TST, TEQ</code> — compare/test (flags only)</li>
+          </ul>
+          <div class="label">Load / Store</div>
+          <ul class="items">
+            <li><code>LDR, STR</code> — load/store word</li>
+            <li><code>LDRB, STRB</code> — byte</li>
+            <li><code>LDRH, STRH</code> — halfword</li>
+            <li><code>LDM, STM</code> — multiple registers (up to 17!)</li>
+            <li><code>SWP</code> — swap register and memory</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">Branch &amp; Control</div>
+          <ul class="items">
+            <li><code>B</code> — branch (unconditional / conditional)</li>
+            <li><code>BL</code> — branch with link (stores return addr in LR)</li>
+            <li><code>BX</code> — branch and exchange (ARM↔Thumb)</li>
+            <li><code>SWI</code> — software interrupt (system call)</li>
+          </ul>
+          <div class="label">Condition Codes</div>
+          <p>All ARM data processing instructions can be made conditional by appending a 2-bit condition suffix (EQ, NE, GT, LT, GE, LE, CS, CC…) — eliminates many branch instructions.</p>
+          <div class="label">Shift in Data Path</div>
+          <p>Every ARM data processing instruction includes a <strong>barrel shifter</strong> on the second operand: <code>ADD R0, R1, R2 LSL #2</code> computes R0 = R1 + (R2 × 4).</p>
+          <div class="tip"><div class="t-title">Load/Store Multiple</div>LDM/STM can transfer up to 17 registers in a single instruction — useful for procedure prologue/epilogue.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 8 -->
+
+<!-- ═══════════════════════════════════════════════════════
+     ROW 9 — IBM EAS/390 Data Transfer Table + Operations Summary
+     ═══════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- CARD 21: IBM EAS/390 Data Transfer -->
+  <div class="card purple col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>IBM EAS/390 Data Transfer Examples (Table 12.5)</h3></div>
+    <div class="card-body">
+      <p>Demonstrates ISA design trade-off: <strong>opcode-specified location</strong> (more mnemonics, more compact) vs. <strong>operand-specified location</strong> (fewer mnemonics, VAX style).</p>
+      <table class="tbl">
+        <tr>
+          <th>Mnemonic</th><th>Name</th><th>Bits</th><th>Direction</th>
+        </tr>
+        <tr><td class="pos">L</td><td>Load</td><td>32</td><td>Memory → Register</td></tr>
+        <tr><td class="pos">LH</td><td>Load Halfword</td><td>16</td><td>Memory → Register</td></tr>
+        <tr><td class="pos">LR</td><td>Load</td><td>32</td><td>Register → Register</td></tr>
+        <tr><td class="special">LER</td><td>Load (short FP)</td><td>32</td><td>FP Register → FP Register</td></tr>
+        <tr><td class="special">LE</td><td>Load (short FP)</td><td>32</td><td>Memory → FP Register</td></tr>
+        <tr><td class="special">LDR</td><td>Load (long FP)</td><td>64</td><td>FP Register → FP Register</td></tr>
+        <tr><td class="special">LD</td><td>Load (long FP)</td><td>64</td><td>Memory → FP Register</td></tr>
+        <tr><td class="zero">ST</td><td>Store</td><td>32</td><td>Register → Memory</td></tr>
+        <tr><td class="zero">STH</td><td>Store Halfword</td><td>16</td><td>Register → Memory</td></tr>
+        <tr><td class="zero">STC</td><td>Store Character</td><td>8</td><td>Register → Memory</td></tr>
+        <tr><td class="neg">STE</td><td>Store (short FP)</td><td>32</td><td>FP Register → Memory</td></tr>
+        <tr><td class="neg">STD</td><td>Store (long FP)</td><td>64</td><td>FP Register → Memory</td></tr>
+      </table>
+      <div class="info"><div class="i-title">Design Lesson</div>IBM encodes source/destination in the opcode itself (separate mnemonics per transfer direction). VAX uses a single MOV + operand specifiers. IBM = more compact encoding; VAX = simpler programmer model.</div>
+    </div>
+  </div>
+
+  <!-- CARD 22: Complete Operations Reference Table -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Operations: Processor Actions Summary</h3></div>
+    <div class="card-body">
+      <p>What the processor actually does for each operation category (Table 12.4):</p>
+      <table class="tbl">
+        <tr><th>Category</th><th>Key Processor Actions</th></tr>
+        <tr>
+          <td class="pos">Data Transfer</td>
+          <td>Calc addr → virtual→physical translate → cache check → mem read/write</td>
+        </tr>
+        <tr>
+          <td class="pos">Arithmetic</td>
+          <td>Optional data xfer before/after → ALU compute → set condition codes &amp; flags</td>
+        </tr>
+        <tr>
+          <td class="special">Logical</td>
+          <td>Same pipeline as arithmetic; bitwise Boolean in ALU</td>
+        </tr>
+        <tr>
+          <td class="special">Conversion</td>
+          <td>Like arithmetic/logical; may include special code-conversion hardware</td>
+        </tr>
+        <tr>
+          <td class="zero">Transfer of Control</td>
+          <td>Update PC; for CALL/RETURN: manage parameter passing &amp; linkage</td>
+        </tr>
+        <tr>
+          <td class="neg">I/O</td>
+          <td>Issue command to I/O module; memory-mapped I/O → determine mapped addr</td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /grid row 9 -->
+
+<!-- ═══════════════════════════════════════════════════════
+     ROW 10 — Instruction Set Design Deep Dive
+     ═══════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- CARD 23: Key Formulas and Bit Allocation Principles -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Instruction Format Principles</h3></div>
+    <div class="card-body">
+      <p>Instruction length and field layout are critical design decisions affecting program size, memory bandwidth, and implementation complexity.</p>
+      <div class="label">Format Design Variables</div>
+      <ul class="items">
+        <li><strong>Instruction length</strong> — total bits (8, 16, 32, 64-bit common)</li>
+        <li><strong>Number of addresses</strong> — 0, 1, 2, or 3 address fields</li>
+        <li><strong>Field sizes</strong> — bits for opcode vs. operand specifiers</li>
+        <li><strong>Addressing mode</strong> — may consume extra bits</li>
+      </ul>
+      <div class="label">Bit Allocation Trade-offs</div>
+      <div class="formula">Opcode bits: k → up to 2ᵏ distinct operations
+Operand bits: n → up to 2ⁿ addressable locations
+Register bits: r → up to 2ʳ registers (r &lt;&lt; n)</div>
+      <div class="info"><div class="i-title">Register vs. Memory Reference</div>Register references need far fewer bits than memory references (e.g., 3 bits for 8 registers vs. 32 bits for 4GB memory). This is a key motivation for register-rich ISAs.</div>
+      <div class="label">Fixed vs. Variable Length</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Pro</th><th>Con</th></tr>
+        <tr><td class="pos">Fixed</td><td>Simple decode; aligned fetch</td><td>Wasted bits for simple ops</td></tr>
+        <tr><td class="special">Variable</td><td>Compact encoding; efficient</td><td>Complex decode; alignment issues</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- CARD 24: Comprehensive Operations Taxonomy (Table 12.3) -->
+  <div class="card green col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Complete Operations Taxonomy (Table 12.3)</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div>
+          <div class="label">Data Transfer</div>
+          <ul class="items">
+            <li><span class="pos">Move/Transfer</span> — word/block src→dst</li>
+            <li><span class="pos">Store</span> — processor→memory</li>
+            <li><span class="pos">Load/Fetch</span> — memory→processor</li>
+            <li><span class="special">Exchange</span> — swap src ↔ dst</li>
+            <li><span class="special">Clear/Reset</span> — write 0s to dst</li>
+            <li><span class="special">Set</span> — write 1s to dst</li>
+            <li><span class="zero">Push</span> — src→top of stack</li>
+            <li><span class="zero">Pop</span> — top of stack→dst</li>
+          </ul>
+          <div class="label">Arithmetic</div>
+          <ul class="items">
+            <li><span class="pos">Add</span> — sum of two operands</li>
+            <li><span class="pos">Subtract</span> — difference</li>
+            <li><span class="pos">Multiply</span> — product</li>
+            <li><span class="pos">Divide</span> — quotient</li>
+            <li><span class="special">Absolute</span> — |operand|</li>
+            <li><span class="special">Negate</span> — change sign</li>
+            <li><span class="zero">Increment</span> — +1</li>
+            <li><span class="zero">Decrement</span> — −1</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">Logical</div>
+          <ul class="items">
+            <li><span class="pos">AND</span> — bitwise AND</li>
+            <li><span class="pos">OR</span> — bitwise OR</li>
+            <li><span class="pos">NOT</span> — bitwise complement</li>
+            <li><span class="pos">XOR</span> — exclusive OR</li>
+            <li><span class="special">Test</span> — test condition → flags</li>
+            <li><span class="special">Compare</span> — compare → flags</li>
+            <li><span class="zero">Set Control Vars</span> — protection/interrupt/timer</li>
+            <li><span class="zero">Shift L/R</span> — shift with 0-fill</li>
+            <li><span class="zero">Rotate L/R</span> — cyclic shift</li>
+          </ul>
+          <div class="label">Conversion</div>
+          <ul class="items">
+            <li><span class="pos">Translate</span> — table-driven byte map</li>
+            <li><span class="pos">Convert</span> — packed decimal ↔ binary etc.</li>
+          </ul>
+          <div class="label">Input / Output</div>
+          <ul class="items">
+            <li><span class="pos">Input/Read</span> — device → mem/reg</li>
+            <li><span class="pos">Output/Write</span> — mem/reg → device</li>
+            <li><span class="special">Start I/O</span> — initiate DMA/IOP</li>
+            <li><span class="special">Test I/O</span> — read I/O status</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">Transfer of Control</div>
+          <ul class="items">
+            <li><span class="pos">Jump/Branch</span> — unconditional PC←addr</li>
+            <li><span class="pos">Jump Conditional</span> — PC←addr if condition</li>
+            <li><span class="special">Jump to Subroutine</span> — save PC; jump</li>
+            <li><span class="special">Return</span> — restore PC from saved</li>
+            <li><span class="zero">Execute</span> — fetch operand as instruction</li>
+            <li><span class="zero">Skip</span> — PC ← PC + 2·instrLen</li>
+            <li><span class="zero">Skip Conditional</span> — skip if condition</li>
+            <li><span class="neg">Halt</span> — stop execution</li>
+            <li><span class="neg">Wait/Hold</span> — poll condition → resume</li>
+            <li><span class="neg">No Operation</span> — NOP; continue</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 10 -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <a href="index.html">← Back to Menu</a>
+  <span>Chapter 12 · Instruction Sets: Characteristics and Functions</span>
+  <span>Computer Organization &amp; Architecture, 10th Ed. — William Stallings</span>
+</div>
+
+</body>
+</html>

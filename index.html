@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Computer Organization &amp; Architecture — Cheatsheet Collection</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.5;padding:0;min-height:100vh;}
+
+  /* ── Hero ── */
+  .hero{
+    background:linear-gradient(160deg,#0d1117 0%,#161b22 60%,#1a1f2e 100%);
+    border-bottom:1px solid var(--border);
+    padding:60px 40px 48px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:'';
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse 700px 400px at 70% 50%, rgba(88,166,255,0.06) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .hero-inner{max-width:1200px;margin:0 auto;position:relative;}
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;
+    color:var(--accent);letter-spacing:1px;text-transform:uppercase;
+    background:rgba(88,166,255,0.1);border:1px solid rgba(88,166,255,0.25);
+    border-radius:4px;padding:4px 10px;margin-bottom:20px;
+  }
+  .hero-eyebrow::before{content:'◈';font-size:10px;}
+  .hero h1{
+    font-family:'IBM Plex Sans Condensed',sans-serif;
+    font-size:clamp(32px,5vw,56px);
+    font-weight:700;
+    color:var(--text);
+    letter-spacing:-1.5px;
+    line-height:1.05;
+    margin-bottom:12px;
+  }
+  .hero h1 span{color:var(--accent);}
+  .hero-subtitle{
+    font-size:16px;color:var(--text-muted);font-weight:300;
+    margin-bottom:24px;letter-spacing:0.2px;
+  }
+  .hero-subtitle strong{color:var(--text);font-weight:600;}
+  .hero-stats{display:flex;gap:24px;flex-wrap:wrap;}
+  .hero-stat{
+    display:flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-muted);
+  }
+  .hero-stat .dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);flex-shrink:0;}
+  .hero-stat.r .dot{background:var(--accent3);}
+  .hero-stat.p .dot{background:var(--accent4);}
+
+  /* ── Main content ── */
+  .main{max-width:1200px;margin:0 auto;padding:40px 40px 60px;}
+
+  /* ── Part sections ── */
+  .part{margin-bottom:48px;}
+  .part-header{
+    display:flex;align-items:center;gap:14px;
+    margin-bottom:20px;padding-bottom:14px;
+    border-bottom:1px solid var(--border);
+  }
+  .part-bar{width:4px;height:36px;border-radius:2px;flex-shrink:0;}
+  .part-header-text{}
+  .part-label{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;
+    text-transform:uppercase;letter-spacing:1px;
+    margin-bottom:3px;
+  }
+  .part-title{
+    font-family:'IBM Plex Sans Condensed',sans-serif;
+    font-size:20px;font-weight:700;letter-spacing:-0.3px;
+    color:var(--text);
+  }
+  .part-count{
+    margin-left:auto;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;
+    color:var(--text-dim);background:var(--surface2);
+    border:1px solid var(--border);border-radius:3px;
+    padding:3px 8px;white-space:nowrap;
+  }
+
+  /* Part color themes */
+  .part-blue .part-bar{background:var(--accent);}
+  .part-blue .part-label{color:var(--accent);}
+  .part-green .part-bar{background:var(--accent2);}
+  .part-green .part-label{color:var(--accent2);}
+  .part-red .part-bar{background:var(--accent3);}
+  .part-red .part-label{color:var(--accent3);}
+  .part-purple .part-bar{background:var(--accent4);}
+  .part-purple .part-label{color:var(--accent4);}
+  .part-orange .part-bar{background:var(--accent5);}
+  .part-orange .part-label{color:var(--accent5);}
+  .part-yellow .part-bar{background:var(--yellow);}
+  .part-yellow .part-label{color:var(--yellow);}
+
+  /* ── Chapter cards grid ── */
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+  }
+  @media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.cards{grid-template-columns:1fr;}.hero{padding:40px 20px 36px;}.main{padding:28px 20px 48px;}}
+
+  /* ── Chapter card ── */
+  .chapter-card{
+    display:block;text-decoration:none;color:inherit;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:8px;overflow:hidden;
+    transition:transform 0.18s ease,border-color 0.18s ease,box-shadow 0.18s ease;
+    position:relative;
+  }
+  .chapter-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  /* Blue */
+  .part-blue .chapter-card:hover{border-color:rgba(88,166,255,0.6);}
+  .part-blue .card-accent{background:var(--accent);}
+  .part-blue .ch-num{color:var(--accent);border-color:rgba(88,166,255,0.3);background:rgba(88,166,255,0.08);}
+  .part-blue .card-desc{color:var(--text-muted);}
+  /* Green */
+  .part-green .chapter-card:hover{border-color:rgba(63,185,80,0.6);}
+  .part-green .card-accent{background:var(--accent2);}
+  .part-green .ch-num{color:var(--accent2);border-color:rgba(63,185,80,0.3);background:rgba(63,185,80,0.08);}
+  /* Red */
+  .part-red .chapter-card:hover{border-color:rgba(247,129,102,0.6);}
+  .part-red .card-accent{background:var(--accent3);}
+  .part-red .ch-num{color:var(--accent3);border-color:rgba(247,129,102,0.3);background:rgba(247,129,102,0.08);}
+  /* Purple */
+  .part-purple .chapter-card:hover{border-color:rgba(210,168,255,0.6);}
+  .part-purple .card-accent{background:var(--accent4);}
+  .part-purple .ch-num{color:var(--accent4);border-color:rgba(210,168,255,0.3);background:rgba(210,168,255,0.08);}
+  /* Orange */
+  .part-orange .chapter-card:hover{border-color:rgba(255,166,87,0.6);}
+  .part-orange .card-accent{background:var(--accent5);}
+  .part-orange .ch-num{color:var(--accent5);border-color:rgba(255,166,87,0.3);background:rgba(255,166,87,0.08);}
+  /* Yellow */
+  .part-yellow .chapter-card:hover{border-color:rgba(227,179,65,0.6);}
+  .part-yellow .card-accent{background:var(--yellow);}
+  .part-yellow .ch-num{color:var(--yellow);border-color:rgba(227,179,65,0.3);background:rgba(227,179,65,0.08);}
+
+  .card-accent{height:3px;width:100%;}
+
+  .card-inner{padding:14px 16px 16px;}
+  .card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+  .ch-num{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;
+    border:1px solid;border-radius:4px;padding:3px 7px;
+    white-space:nowrap;flex-shrink:0;margin-top:1px;letter-spacing:0.5px;
+  }
+  .card-title{
+    font-family:'IBM Plex Sans Condensed',sans-serif;
+    font-size:15px;font-weight:700;
+    color:var(--text);line-height:1.25;letter-spacing:-0.2px;
+  }
+  .card-desc{
+    font-size:12px;color:var(--text-muted);
+    line-height:1.5;
+  }
+  .card-arrow{
+    position:absolute;bottom:14px;right:14px;
+    font-size:13px;color:var(--text-dim);
+    transition:color 0.18s ease,transform 0.18s ease;
+  }
+  .chapter-card:hover .card-arrow{color:var(--text-muted);transform:translate(2px,-1px);}
+
+  /* ── Footer ── */
+  .footer{
+    border-top:1px solid var(--border);
+    background:var(--surface);
+    padding:20px 40px;
+  }
+  .footer-inner{
+    max-width:1200px;margin:0 auto;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);
+  }
+  .footer-inner span:first-child{color:var(--text-muted);}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">COA 10th Edition · Study Reference</div>
+    <h1>Computer Organization<br>&amp; <span>Architecture</span></h1>
+    <p class="hero-subtitle"><strong>10th Edition — William Stallings</strong> &nbsp;·&nbsp; Complete Cheatsheet Collection</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="dot"></div>20 Chapters Covered</div>
+      <div class="hero-stat r"><div class="dot"></div>6 Parts</div>
+      <div class="hero-stat p"><div class="dot"></div>Quick-Reference Format</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+
+  <!-- ━━━ PART 1 ━━━ -->
+  <section class="part part-blue">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 1</div>
+        <div class="part-title">Overview</div>
+      </div>
+      <div class="part-count">2 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH01-Basic-Concepts-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH01</span>
+            <span class="card-title">Basic Concepts &amp; Computer Evolution</span>
+          </div>
+          <div class="card-desc">Architecture vs. organization, structure &amp; function hierarchy, history from vacuum tubes to modern systems, Intel x86 &amp; ARM evolution.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH02-Performance-Issues-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH02</span>
+            <span class="card-title">Performance Issues</span>
+          </div>
+          <div class="card-desc">Clock speed, CPI, MIPS, Amdahl's Law, memory &amp; I/O bottlenecks, benchmarking methodologies, and the performance design challenge.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ━━━ PART 2 ━━━ -->
+  <section class="part part-green">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 2</div>
+        <div class="part-title">Computer Organization</div>
+      </div>
+      <div class="part-count">6 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH03-Computer-Function-Interconnection-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH03</span>
+            <span class="card-title">Computer Function &amp; Interconnection</span>
+          </div>
+          <div class="card-desc">Instruction cycle, interrupts, bus structure, system bus operation, point-to-point interconnects, and PCI Express.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH04-Cache-Memory-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH04</span>
+            <span class="card-title">Cache Memory</span>
+          </div>
+          <div class="card-desc">Locality of reference, direct/associative/set-associative mapping, replacement policies, write strategies, and multilevel cache hierarchies.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH05-Internal-Memory-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH05</span>
+            <span class="card-title">Internal Memory</span>
+          </div>
+          <div class="card-desc">SRAM vs. DRAM, SDRAM, DDR generations, ROM types, flash memory, error detection &amp; correction (Hamming, ECC).</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH06-External-Memory-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH06</span>
+            <span class="card-title">External Memory</span>
+          </div>
+          <div class="card-desc">Magnetic disk geometry, RAID levels 0–6, optical storage (CD/DVD/Blu-ray), solid-state drives, and storage system performance.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH07-Input-Output-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH07</span>
+            <span class="card-title">Input / Output</span>
+          </div>
+          <div class="card-desc">Programmed I/O, interrupt-driven I/O, DMA, I/O channels, USB, FireWire, and I/O performance considerations.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH08-OS-Support-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH08</span>
+            <span class="card-title">Operating System Support</span>
+          </div>
+          <div class="card-desc">Process management, scheduling, memory management, virtual memory, paging, segmentation, and hardware OS interaction.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ━━━ PART 3 ━━━ -->
+  <section class="part part-red">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 3</div>
+        <div class="part-title">Arithmetic</div>
+      </div>
+      <div class="part-count">2 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH09-Number-Systems-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH09</span>
+            <span class="card-title">Number Systems &amp; Arithmetic</span>
+          </div>
+          <div class="card-desc">Binary, hex, octal conversions, signed magnitude, one's complement, two's complement, BCD, and IEEE 754 floating-point representation.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH10-Computer-Arithmetic-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH10</span>
+            <span class="card-title">Computer Arithmetic</span>
+          </div>
+          <div class="card-desc">Integer addition/subtraction, overflow detection, multiplication (Booth's algorithm), division, floating-point arithmetic operations.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ━━━ PART 4 ━━━ -->
+  <section class="part part-purple">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 4</div>
+        <div class="part-title">Instruction Sets</div>
+      </div>
+      <div class="part-count">3 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH12-Instruction-Sets-Characteristics-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH12</span>
+            <span class="card-title">Instruction Sets: Characteristics &amp; Functions</span>
+          </div>
+          <div class="card-desc">Machine instruction elements, operand types, zero/one/two/three-address formats, data transfer, arithmetic, logic, and control-flow instructions.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH13-Addressing-Modes-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH13</span>
+            <span class="card-title">Addressing Modes</span>
+          </div>
+          <div class="card-desc">Immediate, direct, indirect, register, register-indirect, displacement, stack, and relative addressing; x86 &amp; ARM addressing examples.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH14-Processor-Structure-Function-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH14</span>
+            <span class="card-title">Processor Structure &amp; Function</span>
+          </div>
+          <div class="card-desc">CPU organization, register types, ALU, instruction fetch-decode-execute cycle, pipelining fundamentals, hazards, and branch prediction.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ━━━ PART 5 ━━━ -->
+  <section class="part part-orange">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 5</div>
+        <div class="part-title">Processor Design</div>
+      </div>
+      <div class="part-count">5 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH15-RISC-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH15</span>
+            <span class="card-title">RISC</span>
+          </div>
+          <div class="card-desc">RISC vs. CISC philosophy, large register files, register windows, delayed branching, RISC pipeline design, and ARM as a case study.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH16-ILP-Superscalar-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH16</span>
+            <span class="card-title">Instruction-Level Parallelism &amp; Superscalar</span>
+          </div>
+          <div class="card-desc">Superscalar execution, out-of-order issue, Tomasulo's algorithm, register renaming, speculative execution, and VLIW processors.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH17-Parallel-Processing-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH17</span>
+            <span class="card-title">Parallel Processing</span>
+          </div>
+          <div class="card-desc">Flynn's taxonomy (SISD/SIMD/MISD/MIMD), symmetric multiprocessors, cache coherence protocols, NUMA, and cluster architectures.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH18-Multicore-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH18</span>
+            <span class="card-title">Multicore</span>
+          </div>
+          <div class="card-desc">Multicore architecture motivation, shared vs. private caches, hardware multithreading, x86 &amp; ARM multicore designs, software challenges.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH19-GPGPU-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH19</span>
+            <span class="card-title">GPGPU</span>
+          </div>
+          <div class="card-desc">GPU architecture overview, SIMT execution model, CUDA programming model, streaming multiprocessors, memory hierarchy, and GPU vs. CPU trade-offs.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ━━━ PART 6 ━━━ -->
+  <section class="part part-yellow">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 6</div>
+        <div class="part-title">Control Unit</div>
+      </div>
+      <div class="part-count">2 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH20-Control-Unit-Operation-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH20</span>
+            <span class="card-title">Control Unit Operation</span>
+          </div>
+          <div class="card-desc">Hardwired control unit design, micro-operations, register transfers, instruction fetch/decode/execute micro-op sequences, and timing signals.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH21-Microprogrammed-Control-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH21</span>
+            <span class="card-title">Microprogrammed Control</span>
+          </div>
+          <div class="card-desc">Control memory, microinstructions, horizontal vs. vertical microprogramming, microprogram sequencing, and emulation via microprogramming.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <span>Computer Organization and Architecture, 10th Edition — William Stallings</span>
+    <span>Study cheatsheets generated for personal academic use</span>
+  </div>
+</footer>
+
+</body>
+</html>
