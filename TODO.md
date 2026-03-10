@@ -1,6 +1,6 @@
 TODO
 Now:
-    - Add the missing chapter 11 to COA.
+    - (done) Add the missing chapter 11 to COA.
 
 Long-Term:
     - Navigation Bar (Hamburger order) (Not sure yet)

@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH11 – Digital Logic Cheat Sheet</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2330;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #3fb950;
+    --accent3: #f78166;
+    --accent4: #d2a8ff;
+    --accent5: #ffa657;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --yellow: #e3b341;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 16px;
+    margin-bottom: 24px;
+    gap: 20px;
+  }
+  .header-left h1 {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-size: 28px;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .header-left h2 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-top: 4px;
+  }
+  .badge {
+    background: var(--accent);
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .toc-item {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 3px;
+    cursor: default;
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  .col-span-2 { grid-column: span 2; }
+  .col-span-3 { grid-column: span 3; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-header .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .card-header h3 {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+  .card-body { padding: 12px; }
+
+  /* COLORS PER SECTION */
+  .blue .card-header { background: rgba(88,166,255,0.08); }
+  .blue .dot { background: var(--accent); }
+  .blue h3 { color: var(--accent); }
+
+  .green .card-header { background: rgba(63,185,80,0.08); }
+  .green .dot { background: var(--accent2); }
+  .green h3 { color: var(--accent2); }
+
+  .red .card-header { background: rgba(247,129,102,0.08); }
+  .red .dot { background: var(--accent3); }
+  .red h3 { color: var(--accent3); }
+
+  .purple .card-header { background: rgba(210,168,255,0.08); }
+  .purple .dot { background: var(--accent4); }
+  .purple h3 { color: var(--accent4); }
+
+  .orange .card-header { background: rgba(255,166,87,0.08); }
+  .orange .dot { background: var(--accent5); }
+  .orange h3 { color: var(--accent5); }
+
+  .yellow .card-header { background: rgba(227,179,65,0.08); }
+  .yellow .dot { background: var(--yellow); }
+  .yellow h3 { color: var(--yellow); }
+
+  /* CONTENT ELEMENTS */
+  p { color: var(--text); margin-bottom: 6px; }
+  p:last-child { margin-bottom: 0; }
+
+  .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    margin-top: 10px;
+  }
+  .label:first-child { margin-top: 0; }
+
+  .rule {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 7px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--yellow);
+    margin-bottom: 6px;
+  }
+  .rule:last-child { margin-bottom: 0; }
+
+  code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--accent3);
+  }
+
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+  }
+
+  /* BINARY EXAMPLES */
+  .bin-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+  .bin-block:last-child { margin-bottom: 0; }
+  .bin-block .title {
+    color: var(--text-muted);
+    font-size: 10px;
+    margin-bottom: 4px;
+  }
+  .bin-block .line { color: var(--text); }
+  .bin-block .result { color: var(--accent2); font-weight: 600; }
+  .bin-block .overflow { color: var(--accent3); font-weight: 600; }
+  .bin-block .note { color: var(--text-dim); font-size: 10px; margin-top: 3px; }
+
+  /* TABLE */
+  .tbl {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+  }
+  .tbl th {
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 5px 8px;
+    border: 1px solid var(--border);
+    text-align: left;
+  }
+  .tbl td {
+    padding: 4px 8px;
+    border: 1px solid var(--border);
+    font-family: 'IBM Plex Mono', monospace;
+    vertical-align: top;
+  }
+  .tbl tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  .pos { color: var(--accent); }
+  .neg { color: var(--accent3); }
+  .zero { color: var(--accent2); }
+  .special { color: var(--yellow); }
+
+  /* LIST */
+  ul.items { list-style: none; padding: 0; }
+  ul.items li {
+    padding: 4px 0;
+    padding-left: 14px;
+    position: relative;
+    color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  ul.items li:last-child { border-bottom: none; }
+  ul.items li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+  }
+
+  /* STEP LIST */
+  ol.steps { list-style: none; padding: 0; counter-reset: steps; }
+  ol.steps li {
+    padding: 5px 0 5px 26px;
+    position: relative;
+    color: var(--text);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    counter-increment: steps;
+  }
+  ol.steps li:last-child { border-bottom: none; }
+  ol.steps li::before {
+    content: counter(steps);
+    position: absolute;
+    left: 0;
+    top: 5px;
+    width: 18px;
+    height: 18px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 18px;
+    text-align: center;
+  }
+
+  /* SPECIAL CASE BOX */
+  .warn {
+    background: rgba(247,129,102,0.08);
+    border: 1px solid rgba(247,129,102,0.3);
+    border-radius: 4px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .warn .w-title {
+    color: var(--accent3);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .info {
+    background: rgba(88,166,255,0.07);
+    border: 1px solid rgba(88,166,255,0.25);
+    border-radius: 4px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .info .i-title {
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .tip {
+    background: rgba(63,185,80,0.07);
+    border: 1px solid rgba(63,185,80,0.25);
+    border-radius: 4px;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+  .tip .t-title {
+    color: var(--accent2);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 10px 0;
+  }
+
+  .section-gap { margin-top: 20px; }
+
+  /* FORMULA */
+  .formula {
+    background: rgba(210,168,255,0.07);
+    border: 1px solid rgba(210,168,255,0.25);
+    border-left: 3px solid var(--accent4);
+    border-radius: 4px;
+    padding: 7px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent4);
+    margin-bottom: 6px;
+  }
+
+  /* BOOTH TABLE */
+  .booth-row {
+    display: grid;
+    grid-template-columns: 40px 40px 1fr;
+    gap: 6px;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    align-items: center;
+  }
+  .booth-row:last-child { border-bottom: none; }
+  .booth-row .bits {
+    background: var(--surface2);
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-align: center;
+  }
+  .add-m { color: var(--accent2); }
+  .sub-m { color: var(--accent3); }
+  .shift-only { color: var(--text-muted); }
+
+  /* FLOAT FORMAT VISUAL */
+  .float-format {
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+  }
+  .float-seg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px 8px;
+    border-right: 1px solid var(--bg);
+  }
+  .float-seg:last-child { border-right: none; }
+  .float-seg .seg-label { font-size: 9px; color: var(--text-dim); margin-bottom: 2px; }
+  .float-seg .seg-val { font-weight: 600; }
+  .seg-sign { background: rgba(247,129,102,0.2); flex: 0 0 auto; min-width: 36px; }
+  .seg-sign .seg-val { color: var(--accent3); }
+  .seg-exp8 { background: rgba(88,166,255,0.15); flex: 0 0 auto; min-width: 70px; }
+  .seg-exp11 { background: rgba(88,166,255,0.15); flex: 0 0 auto; min-width: 88px; }
+  .seg-exp15 { background: rgba(88,166,255,0.15); flex: 0 0 auto; min-width: 110px; }
+  .seg-exp .seg-val { color: var(--accent); }
+  .seg-sig { background: rgba(63,185,80,0.12); flex: 1; }
+  .seg-sig .seg-val { color: var(--accent2); }
+
+  /* RANGE REGIONS */
+  .regions {
+    display: flex;
+    gap: 0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .region {
+    padding: 5px 6px;
+    text-align: center;
+    flex: 1;
+    border-right: 1px solid var(--bg);
+  }
+  .region:last-child { border-right: none; }
+  .region .rlabel { font-size: 9px; margin-top: 2px; }
+
+  /* FOOTER */
+  .footer {
+    margin-top: 20px;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+
+  @media print {
+    body { background: white; color: black; font-size: 11px; padding: 10px; }
+    .card { border: 1px solid #ccc; break-inside: avoid; }
+    .card-header { background: #f0f0f0 !important; }
+    h3 { color: #333 !important; }
+    code, .mono, .bin-block, .rule, .formula { background: #f5f5f5; color: #333 !important; }
+    .rule, .formula { border-color: #999; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>Digital Logic — Chapter 11</h1>
+    <h2>Computer Organization &amp; Architecture, 11th Edition &nbsp;|&nbsp; Complete Study Reference</h2>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+    <span class="badge">COA10e · CH11</span>
+    <div class="toc">
+      <span class="toc-item">Boolean Algebra</span>
+      <span class="toc-item">Logic Gates</span>
+      <span class="toc-item">Truth Tables</span>
+      <span class="toc-item">Combinational Circuits</span>
+      <span class="toc-item">Adders</span>
+      <span class="toc-item">Multiplexers</span>
+      <span class="toc-item">Decoders</span>
+      <span class="toc-item">Sequential Circuits</span>
+      <span class="toc-item">Flip-Flops</span>
+      <span class="toc-item">Registers</span>
+      <span class="toc-item">Counters</span>
+      <span class="toc-item">Memories</span>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 1: Boolean Algebra (col-span-2) + Logic Gates (1 col) -->
+<div class="grid">
+
+  <!-- BOOLEAN ALGEBRA -->
+  <div class="card blue col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Boolean Algebra — Postulates &amp; Theorems</h3></div>
+    <div class="card-body">
+      <p>Boolean algebra is a two-valued (0/1) algebraic system used to describe, simplify, and implement digital logic circuits. Variables take only values 0 or 1; three basic operations: AND (·), OR (+), NOT (').</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <div class="label">Identity &amp; Null Laws</div>
+          <div class="rule">A + 0 = A &nbsp;&nbsp; A · 1 = A &nbsp;&nbsp; (Identity)</div>
+          <div class="rule">A + 1 = 1 &nbsp;&nbsp; A · 0 = 0 &nbsp;&nbsp; (Null / Dominance)</div>
+          <div class="label">Idempotent &amp; Inverse</div>
+          <div class="rule">A + A = A &nbsp;&nbsp; A · A = A &nbsp;&nbsp; (Idempotent)</div>
+          <div class="rule">A + A' = 1 &nbsp;&nbsp; A · A' = 0 &nbsp;&nbsp; (Inverse / Complement)</div>
+          <div class="rule">A'' = A &nbsp;&nbsp; (Double Negation / Involution)</div>
+          <div class="label">Commutative &amp; Associative</div>
+          <div class="rule">A + B = B + A &nbsp;&nbsp; A · B = B · A</div>
+          <div class="rule">(A + B) + C = A + (B + C)</div>
+          <div class="rule">(A · B) · C = A · (B · C)</div>
+        </div>
+        <div>
+          <div class="label">Distributive &amp; Absorption</div>
+          <div class="rule">A · (B + C) = A·B + A·C &nbsp;&nbsp; (AND over OR)</div>
+          <div class="rule">A + (B · C) = (A+B) · (A+C) &nbsp;&nbsp; (OR over AND)</div>
+          <div class="rule">A + A·B = A &nbsp;&nbsp; (Absorption)</div>
+          <div class="rule">A · (A + B) = A &nbsp;&nbsp; (Absorption)</div>
+          <div class="label">DeMorgan's Theorems</div>
+          <div class="rule">(A · B)' = A' + B' &nbsp;&nbsp; NAND → NOR of complements</div>
+          <div class="rule">(A + B)' = A' · B' &nbsp;&nbsp; NOR → NAND of complements</div>
+          <div class="label">Canonical Forms</div>
+          <div class="formula">SOP (Sum of Products): F = A'B + AB' + AB</div>
+          <div class="formula">POS (Product of Sums): F = (A+B)·(A'+B)·(A+B')</div>
+          <div class="tip"><div class="t-title">Simplification</div>Use Boolean postulates or Karnaugh maps (K-maps) to minimize the number of gates. SOP → OR of minterms; POS → AND of maxterms.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGIC GATES -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Logic Gates — All Basic Types</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead>
+          <tr><th>Gate</th><th>Expression</th><th>Y=1 when…</th><th>Property</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="zero">AND</td><td>Y = A·B</td><td>All inputs = 1</td><td>Conjunction</td></tr>
+          <tr><td class="pos">OR</td><td>Y = A+B</td><td>Any input = 1</td><td>Disjunction</td></tr>
+          <tr><td class="neg">NOT</td><td>Y = A'</td><td>Input = 0</td><td>Inversion</td></tr>
+          <tr><td class="neg">NAND</td><td>Y = (A·B)'</td><td>Any input = 0</td><td>Universal gate</td></tr>
+          <tr><td class="pos">NOR</td><td>Y = (A+B)'</td><td>All inputs = 0</td><td>Universal gate</td></tr>
+          <tr><td class="special">XOR</td><td>Y = A⊕B</td><td>Odd # of 1s</td><td>Parity / diff</td></tr>
+          <tr><td class="pos">XNOR</td><td>Y = (A⊕B)'</td><td>Even # of 1s</td><td>Equality check</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Multi-Input Extensions</div>
+      <ul class="items">
+        <li><strong>AND/OR/NAND/NOR</strong> scale to n inputs directly</li>
+        <li><strong>XOR</strong> n-input: Y=1 when odd number of inputs are 1</li>
+        <li><strong>NOT</strong> is always single-input (unary)</li>
+      </ul>
+      <div class="info"><div class="i-title">Fan-In / Fan-Out</div>Fan-in = max inputs a gate accepts. Fan-out = max gates driven by one output without signal degradation.</div>
+    </div>
+  </div>
+
+</div><!-- end row 1 grid -->
+
+<!-- ROW 2: Truth Tables (col-span-2) + Gate Properties (1 col) -->
+<div class="grid section-gap">
+
+  <!-- TRUTH TABLES COMBINED -->
+  <div class="card purple col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Truth Tables — All Basic Gates (2-Input)</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead>
+          <tr><th>A</th><th>B</th><th>AND (A·B)</th><th>OR (A+B)</th><th>NAND (A·B)'</th><th>NOR (A+B)'</th><th>XOR (A⊕B)</th><th>XNOR (A⊕B)'</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td class="neg">0</td><td class="neg">0</td><td class="zero">1</td><td class="zero">1</td><td class="neg">0</td><td class="zero">1</td></tr>
+          <tr><td>0</td><td>1</td><td class="neg">0</td><td class="zero">1</td><td class="zero">1</td><td class="neg">0</td><td class="zero">1</td><td class="neg">0</td></tr>
+          <tr><td>1</td><td>0</td><td class="neg">0</td><td class="zero">1</td><td class="zero">1</td><td class="neg">0</td><td class="zero">1</td><td class="neg">0</td></tr>
+          <tr><td>1</td><td>1</td><td class="zero">1</td><td class="zero">1</td><td class="neg">0</td><td class="neg">0</td><td class="neg">0</td><td class="zero">1</td></tr>
+        </tbody>
+      </table>
+      <div class="divider"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div>
+          <div class="label">Key Observations</div>
+          <ul class="items">
+            <li><strong>AND</strong>: output 1 only when A=1 AND B=1 (1 out of 4 cases)</li>
+            <li><strong>OR</strong>: output 0 only when A=0 AND B=0 (3 out of 4 cases → 1)</li>
+            <li><strong>NAND</strong>: complement of AND; output 0 only for A=B=1</li>
+            <li><strong>NOR</strong>: complement of OR; output 1 only for A=B=0</li>
+            <li><strong>XOR</strong>: output 1 when inputs differ (A≠B)</li>
+            <li><strong>XNOR</strong>: output 1 when inputs are equal (A=B)</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">Minterms vs Maxterms</div>
+          <div class="formula">Minterm m_i: AND term that = 1 for row i only</div>
+          <div class="formula">Maxterm M_i: OR term that = 0 for row i only</div>
+          <div class="tip"><div class="t-title">Canonical SOP</div>F = Σm(minterms where F=1). For XNOR: F = Σm(0,3) = A'B' + AB.</div>
+          <div class="tip"><div class="t-title">Canonical POS</div>F = ΠM(maxterms where F=0). For XOR: F = ΠM(0,3) = (A+B)·(A'+B').</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GATE PROPERTIES & UNIVERSAL -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Universal Gates &amp; Functional Completeness</h3></div>
+    <div class="card-body">
+      <p>A gate is <strong>universal</strong> if any Boolean function can be implemented using only that gate type.</p>
+      <div class="label">NAND as Universal Gate</div>
+      <div class="bin-block">
+        <div class="title">NOT from NAND: A'</div>
+        <div class="line">A ─┬─ NAND ─ A'</div>
+        <div class="line">A ─┘ (tie both inputs)</div>
+      </div>
+      <div class="bin-block">
+        <div class="title">AND from NAND: A·B</div>
+        <div class="line">NAND(A,B) → NAND with itself</div>
+        <div class="result">= ((A·B)')' = A·B  ✓</div>
+      </div>
+      <div class="bin-block">
+        <div class="title">OR from NAND (DeMorgan's)</div>
+        <div class="line">NAND(A',B') = (A'·B')' = A+B</div>
+        <div class="note">Invert each input, then NAND</div>
+      </div>
+      <div class="label">NOR as Universal Gate</div>
+      <div class="bin-block">
+        <div class="title">NOT, AND, OR from NOR</div>
+        <div class="line">NOT: NOR(A,A) = (A+A)' = A'</div>
+        <div class="line">OR:  NOR(NOR(A,B),NOR(A,B)) = A+B</div>
+        <div class="line">AND: NOR(A',B') = (A'+B')' = A·B</div>
+      </div>
+      <div class="label">XOR Properties</div>
+      <ul class="items">
+        <li>A⊕0 = A &nbsp; (identity)</li>
+        <li>A⊕1 = A' &nbsp; (complement)</li>
+        <li>A⊕A = 0 &nbsp; (self-inverse)</li>
+        <li>A⊕A' = 1 &nbsp; (always true)</li>
+        <li>Associative: (A⊕B)⊕C = A⊕(B⊕C)</li>
+        <li>Used in: parity, adders, encryption</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- end row 2 -->
+
+<!-- ROW 3: Combinational Overview (1 col) + Half/Full Adder (col-span-2) -->
+<div class="grid section-gap">
+
+  <!-- COMBINATIONAL OVERVIEW -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Combinational Circuits — Overview</h3></div>
+    <div class="card-body">
+      <p>A <strong>combinational circuit</strong> has outputs that depend <em>only</em> on current inputs — no memory, no feedback, no clock needed.</p>
+      <div class="label">Key Types</div>
+      <ul class="items">
+        <li><strong>Adders</strong> — half adder, full adder, RCA, CLA</li>
+        <li><strong>Multiplexers</strong> — data selector (MUX)</li>
+        <li><strong>Demultiplexers</strong> — data distributor (DEMUX)</li>
+        <li><strong>Decoders</strong> — n → 2ⁿ, one-hot output</li>
+        <li><strong>Encoders</strong> — 2ⁿ → n, priority encoder</li>
+        <li><strong>Comparators</strong> — A=B, A>B, A&lt;B outputs</li>
+        <li><strong>ALU</strong> — combines add, sub, AND, OR, shift</li>
+        <li><strong>Parity generators/checkers</strong> — XOR trees</li>
+      </ul>
+      <div class="label">Design Process</div>
+      <ol class="steps">
+        <li>Define inputs, outputs, and behavior in words</li>
+        <li>Construct truth table for all input combinations</li>
+        <li>Write Boolean expression (SOP or POS)</li>
+        <li>Simplify using Boolean algebra or K-map</li>
+        <li>Implement with gates; verify timing constraints</li>
+      </ol>
+      <div class="info"><div class="i-title">Propagation Delay</div>Real gates introduce delay (t_pd). In chains, delays add; critical path = longest delay path, limits clock speed.</div>
+    </div>
+  </div>
+
+  <!-- HALF ADDER & FULL ADDER -->
+  <div class="card green col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Half Adder, Full Adder &amp; Carry Architectures</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div>
+          <div class="label">Half Adder (HA)</div>
+          <p>Adds two 1-bit inputs A and B. Produces Sum and Carry out. <em>No carry-in</em> — only usable for the LSB position.</p>
+          <div class="formula">Sum  = A ⊕ B</div>
+          <div class="formula">Cout = A · B</div>
+          <table class="tbl" style="margin-top:6px;">
+            <thead><tr><th>A</th><th>B</th><th>Sum</th><th>Cout</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td class="neg">0</td><td class="neg">0</td></tr>
+              <tr><td>0</td><td>1</td><td class="zero">1</td><td class="neg">0</td></tr>
+              <tr><td>1</td><td>0</td><td class="zero">1</td><td class="neg">0</td></tr>
+              <tr><td>1</td><td>1</td><td class="neg">0</td><td class="zero">1</td></tr>
+            </tbody>
+          </table>
+          <div class="label">Implementation</div>
+          <ul class="items">
+            <li>Sum: 1 XOR gate</li>
+            <li>Cout: 1 AND gate</li>
+            <li>Total: 2 gates</li>
+          </ul>
+        </div>
+        <div>
+          <div class="label">Full Adder (FA)</div>
+          <p>Adds two 1-bit inputs A, B <em>plus carry-in</em> (Cin). Produces Sum and Cout. Chainable for multi-bit addition.</p>
+          <div class="formula">Sum  = A ⊕ B ⊕ Cin</div>
+          <div class="formula">Cout = A·B + Cin·(A⊕B)</div>
+          <table class="tbl" style="margin-top:6px;">
+            <thead><tr><th>A</th><th>B</th><th>Cin</th><th>Sum</th><th>Cout</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>0</td><td class="neg">0</td><td class="neg">0</td></tr>
+              <tr><td>0</td><td>0</td><td>1</td><td class="zero">1</td><td class="neg">0</td></tr>
+              <tr><td>0</td><td>1</td><td>0</td><td class="zero">1</td><td class="neg">0</td></tr>
+              <tr><td>0</td><td>1</td><td>1</td><td class="neg">0</td><td class="zero">1</td></tr>
+              <tr><td>1</td><td>0</td><td>0</td><td class="zero">1</td><td class="neg">0</td></tr>
+              <tr><td>1</td><td>0</td><td>1</td><td class="neg">0</td><td class="zero">1</td></tr>
+              <tr><td>1</td><td>1</td><td>0</td><td class="neg">0</td><td class="zero">1</td></tr>
+              <tr><td>1</td><td>1</td><td>1</td><td class="zero">1</td><td class="zero">1</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <div class="label">Ripple Carry Adder (RCA)</div>
+          <p>n full adders chained; Cout of FA_i feeds Cin of FA_{i+1}.</p>
+          <div class="bin-block">
+            <div class="title">4-bit RCA Example: 0110 + 0111</div>
+            <div class="line">  0110  (6)</div>
+            <div class="line">+ 0111  (7)</div>
+            <div class="result">= 1101  (13)</div>
+            <div class="note">Carry propagates bit-by-bit → slow</div>
+          </div>
+          <div class="warn"><div class="w-title">Propagation Delay</div>RCA delay = n × t_FA. For 32-bit adder: 32 × gate delays. Slow for wide buses.</div>
+          <div class="label">Carry Lookahead Adder (CLA)</div>
+          <p>Computes all carries in parallel using <em>generate</em> and <em>propagate</em> signals:</p>
+          <div class="formula">G_i = A_i · B_i &nbsp;&nbsp; (generate carry)</div>
+          <div class="formula">P_i = A_i ⊕ B_i &nbsp;&nbsp; (propagate carry)</div>
+          <div class="formula">C_{i+1} = G_i + P_i·C_i</div>
+          <div class="tip"><div class="t-title">CLA Advantage</div>All carry bits computed simultaneously in O(1) logic levels (2 gate delays). Much faster than RCA for wide adders.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end row 3 -->
+
+<!-- ROW 4: MUX/DEMUX + Decoders/Encoders + PLA/ROM/PAL -->
+<div class="grid section-gap">
+
+  <!-- MUX & DEMUX -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Multiplexers (MUX) &amp; Demultiplexers</h3></div>
+    <div class="card-body">
+      <p>A <strong>multiplexer</strong> selects one of 2ⁿ data inputs and routes it to a single output, controlled by n select lines.</p>
+      <div class="label">2-to-1 MUX</div>
+      <div class="formula">Y = S'·I₀ + S·I₁</div>
+      <table class="tbl">
+        <thead><tr><th>S</th><th>Output Y</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td class="pos">I₀</td></tr>
+          <tr><td>1</td><td class="pos">I₁</td></tr>
+        </tbody>
+      </table>
+      <div class="label">4-to-1 MUX (2 select lines)</div>
+      <div class="formula">Y = S₁'S₀'·I₀ + S₁'S₀·I₁ + S₁S₀'·I₂ + S₁S₀·I₃</div>
+      <table class="tbl">
+        <thead><tr><th>S₁</th><th>S₀</th><th>Output Y</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td class="pos">I₀</td></tr>
+          <tr><td>0</td><td>1</td><td class="pos">I₁</td></tr>
+          <tr><td>1</td><td>0</td><td class="pos">I₂</td></tr>
+          <tr><td>1</td><td>1</td><td class="pos">I₃</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Demultiplexer (DEMUX)</div>
+      <p>Routes 1 input to one of 2ⁿ outputs. The select lines choose which output receives the input; all others = 0.</p>
+      <div class="formula">1-to-4 DEMUX: Y_i = D · (select = i)</div>
+      <div class="label">Use Cases</div>
+      <ul class="items">
+        <li>MUX: data routing, bus sharing, function generation</li>
+        <li>MUX as universal logic: implement any truth table with 2ⁿ-to-1 MUX</li>
+        <li>DEMUX: address decoding, data distribution</li>
+        <li>Combined MUX+DEMUX: time-division multiplexing</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DECODERS & ENCODERS -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Decoders &amp; Encoders</h3></div>
+    <div class="card-body">
+      <p>A <strong>decoder</strong> converts an n-bit binary code to one of 2ⁿ unique output lines (one-hot). Exactly one output is active at a time.</p>
+      <div class="label">2-to-4 Decoder Truth Table</div>
+      <table class="tbl">
+        <thead><tr><th>A₁</th><th>A₀</th><th>Y₀</th><th>Y₁</th><th>Y₂</th><th>Y₃</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td class="zero">1</td><td class="neg">0</td><td class="neg">0</td><td class="neg">0</td></tr>
+          <tr><td>0</td><td>1</td><td class="neg">0</td><td class="zero">1</td><td class="neg">0</td><td class="neg">0</td></tr>
+          <tr><td>1</td><td>0</td><td class="neg">0</td><td class="neg">0</td><td class="zero">1</td><td class="neg">0</td></tr>
+          <tr><td>1</td><td>1</td><td class="neg">0</td><td class="neg">0</td><td class="neg">0</td><td class="zero">1</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Decoder Equations</div>
+      <div class="formula">Y₀ = A₁'·A₀'  Y₁ = A₁'·A₀</div>
+      <div class="formula">Y₂ = A₁·A₀'   Y₃ = A₁·A₀</div>
+      <div class="label">Encoder (reverse of decoder)</div>
+      <p>2ⁿ inputs → n-bit binary output. Only one input active at a time.</p>
+      <div class="label">Priority Encoder</div>
+      <p>If multiple inputs are active simultaneously, the <em>highest-priority</em> (highest-numbered) active input determines the output. Includes a valid (V) output flag.</p>
+      <table class="tbl">
+        <thead><tr><th>I₃</th><th>I₂</th><th>I₁</th><th>I₀</th><th>D₁</th><th>D₀</th><th>V</th></tr></thead>
+        <tbody>
+          <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>X</td><td>X</td><td class="neg">0</td></tr>
+          <tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td class="zero">1</td></tr>
+          <tr><td>0</td><td>0</td><td>1</td><td>X</td><td>0</td><td>1</td><td class="zero">1</td></tr>
+          <tr><td>0</td><td>1</td><td>X</td><td>X</td><td>1</td><td>0</td><td class="zero">1</td></tr>
+          <tr><td>1</td><td>X</td><td>X</td><td>X</td><td>1</td><td>1</td><td class="zero">1</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Applications</div>
+      <ul class="items">
+        <li>Memory address decoding (select one chip/bank)</li>
+        <li>Instruction opcode decoding in CPU</li>
+        <li>Keyboard encoder (key code → binary)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- PROGRAMMABLE LOGIC -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Programmable Logic: ROM, PLA, PAL, FPGA</h3></div>
+    <div class="card-body">
+      <p>Programmable devices implement arbitrary combinational (and sequential) logic without wiring discrete gates.</p>
+      <div class="label">Comparison Table</div>
+      <table class="tbl">
+        <thead><tr><th>Device</th><th>AND Array</th><th>OR Array</th><th>Flexibility</th></tr></thead>
+        <tbody>
+          <tr><td class="special">ROM</td><td>Fixed</td><td>Programmable</td><td>Low</td></tr>
+          <tr><td class="zero">PLA</td><td>Programmable</td><td>Programmable</td><td>Highest</td></tr>
+          <tr><td class="pos">PAL</td><td>Programmable</td><td>Fixed</td><td>Medium</td></tr>
+          <tr><td class="neg">FPGA</td><td colspan="2">LUT-based CLBs</td><td>Very high</td></tr>
+        </tbody>
+      </table>
+      <div class="label">ROM (Read-Only Memory)</div>
+      <ul class="items">
+        <li>n address inputs → 2ⁿ word locations, each m bits wide</li>
+        <li>Implements any truth table: address = input, data = output</li>
+        <li>AND array is complete decoder (fixed); OR array is user-programmable</li>
+        <li>Use: lookup tables, microprogram stores, boot code</li>
+      </ul>
+      <div class="label">PLA (Programmable Logic Array)</div>
+      <ul class="items">
+        <li>Both AND and OR planes are programmable</li>
+        <li>Implements sum-of-products for multiple outputs</li>
+        <li>More area-efficient than ROM (only needed minterms)</li>
+      </ul>
+      <div class="label">PAL (Programmable Array Logic)</div>
+      <ul class="items">
+        <li>Programmable AND plane, fixed OR plane</li>
+        <li>Simpler to program than PLA; most widely used in practice</li>
+        <li>Some PALs include registered (flip-flop) outputs for sequential logic</li>
+      </ul>
+      <div class="label">FPGA (Field-Programmable Gate Array)</div>
+      <ul class="items">
+        <li>Array of <strong>configurable logic blocks (CLBs)</strong> + interconnect</li>
+        <li>CLB contains LUT (look-up table), flip-flop, carry chain</li>
+        <li>Reprogrammable; used for prototyping and production</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- end row 4 -->
+
+<!-- ROW 5: Sequential Overview (1 col) + Flip-Flops (col-span-2) -->
+<div class="grid section-gap">
+
+  <!-- SEQUENTIAL CIRCUITS OVERVIEW -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Sequential Circuits — Overview</h3></div>
+    <div class="card-body">
+      <p>A <strong>sequential circuit</strong> has outputs that depend on <em>both</em> current inputs and the circuit's past history (internal state). State is stored in flip-flops.</p>
+      <div class="label">Key Characteristics</div>
+      <ul class="items">
+        <li>Requires a <strong>clock signal</strong> for synchronization</li>
+        <li><strong>State register</strong>: flip-flops hold current state Q</li>
+        <li><strong>Next-state logic</strong>: combinational circuit computes Q_next from Q and inputs</li>
+        <li><strong>Output logic</strong>: combinational circuit computes outputs</li>
+      </ul>
+      <div class="label">Synchronous vs Asynchronous</div>
+      <table class="tbl">
+        <thead><tr><th>Type</th><th>State changes</th><th>Clock</th></tr></thead>
+        <tbody>
+          <tr><td class="pos">Synchronous</td><td>Only on clock edge</td><td>Required</td></tr>
+          <tr><td class="neg">Asynchronous</td><td>Any time (input change)</td><td>Not used</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Mealy vs Moore Machine</div>
+      <table class="tbl">
+        <thead><tr><th>Model</th><th>Output depends on</th><th>Output changes</th></tr></thead>
+        <tbody>
+          <tr><td class="special">Mealy</td><td>State + current inputs</td><td>Immediately with inputs</td></tr>
+          <tr><td class="pos">Moore</td><td>State only</td><td>Only on clock edge</td></tr>
+        </tbody>
+      </table>
+      <div class="info"><div class="i-title">State Machine Design</div>Define states → state transition diagram → state table → flip-flop excitation equations → implement.</div>
+      <div class="label">Timing Parameters</div>
+      <ul class="items">
+        <li><strong>Setup time (t_su)</strong>: input must be stable BEFORE clock edge</li>
+        <li><strong>Hold time (t_h)</strong>: input must be stable AFTER clock edge</li>
+        <li><strong>Propagation delay (t_pd)</strong>: clock edge to output change</li>
+        <li><strong>Clock period</strong>: must be &gt; t_pd + t_su + routing delay</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- FLIP-FLOPS -->
+  <div class="card purple col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>Flip-Flops — SR, D, JK, T</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;">
+        <!-- SR -->
+        <div>
+          <div class="label">SR (Set-Reset) Flip-Flop</div>
+          <p>Fundamental bistable element. S=1 sets Q=1; R=1 resets Q=0; both 0 → hold state.</p>
+          <table class="tbl">
+            <thead><tr><th>S</th><th>R</th><th>Q(t)</th><th>Q(t+1)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>0</td><td class="neg">0</td></tr>
+              <tr><td>0</td><td>0</td><td>1</td><td class="zero">1</td></tr>
+              <tr><td>0</td><td>1</td><td>X</td><td class="neg">0</td></tr>
+              <tr><td>1</td><td>0</td><td>X</td><td class="zero">1</td></tr>
+              <tr><td>1</td><td>1</td><td>X</td><td class="neg">?</td></tr>
+            </tbody>
+          </table>
+          <div class="warn"><div class="w-title">Forbidden State</div>S=R=1 drives both Q and Q' to 1 simultaneously — violates Q'=complement(Q). Behaviour unpredictable on release.</div>
+          <div class="formula">Char. Eq: Q+ = S + R'Q</div>
+          <div class="formula">Constraint: S·R = 0</div>
+        </div>
+        <!-- D -->
+        <div>
+          <div class="label">D (Data / Delay) Flip-Flop</div>
+          <p>Single data input D. On active clock edge, Q captures D. Eliminates the forbidden state of SR by tying R = D'.</p>
+          <table class="tbl">
+            <thead><tr><th>D</th><th>Q(t)</th><th>Q(t+1)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td class="neg">0</td></tr>
+              <tr><td>0</td><td>1</td><td class="neg">0</td></tr>
+              <tr><td>1</td><td>0</td><td class="zero">1</td></tr>
+              <tr><td>1</td><td>1</td><td class="zero">1</td></tr>
+            </tbody>
+          </table>
+          <div class="formula">Char. Eq: Q(t+1) = D</div>
+          <div class="label">Key Properties</div>
+          <ul class="items">
+            <li>Most common FF in registers</li>
+            <li>Output = input delayed by 1 clock cycle</li>
+            <li>Transparent latch: D latch (level-triggered)</li>
+            <li>Edge-triggered: captures on ↑ or ↓ edge only</li>
+          </ul>
+        </div>
+        <!-- JK -->
+        <div>
+          <div class="label">JK Flip-Flop</div>
+          <p>Enhancement of SR: J=Set, K=Reset, J=K=1 → <strong>toggle</strong>. No forbidden state.</p>
+          <table class="tbl">
+            <thead><tr><th>J</th><th>K</th><th>Q(t)</th><th>Q(t+1)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td>0</td><td class="neg">0</td></tr>
+              <tr><td>0</td><td>0</td><td>1</td><td class="zero">1</td></tr>
+              <tr><td>0</td><td>1</td><td>X</td><td class="neg">0</td></tr>
+              <tr><td>1</td><td>0</td><td>X</td><td class="zero">1</td></tr>
+              <tr><td>1</td><td>1</td><td>0</td><td class="zero">1</td></tr>
+              <tr><td>1</td><td>1</td><td>1</td><td class="neg">0</td></tr>
+            </tbody>
+          </table>
+          <div class="formula">Char. Eq: Q+ = J·Q' + K'·Q</div>
+          <div class="label">Most Versatile FF</div>
+          <ul class="items">
+            <li>Can implement D-FF: J=D, K=D'</li>
+            <li>Can implement T-FF: J=K=T</li>
+            <li>Used in counters (toggle mode)</li>
+          </ul>
+        </div>
+        <!-- T -->
+        <div>
+          <div class="label">T (Toggle) Flip-Flop</div>
+          <p>Single input T. T=1 → toggles output; T=0 → holds state. Built from JK with J=K=T.</p>
+          <table class="tbl">
+            <thead><tr><th>T</th><th>Q(t)</th><th>Q(t+1)</th></tr></thead>
+            <tbody>
+              <tr><td>0</td><td>0</td><td class="neg">0</td></tr>
+              <tr><td>0</td><td>1</td><td class="zero">1</td></tr>
+              <tr><td>1</td><td>0</td><td class="zero">1</td></tr>
+              <tr><td>1</td><td>1</td><td class="neg">0</td></tr>
+            </tbody>
+          </table>
+          <div class="formula">Char. Eq: Q(t+1) = T ⊕ Q(t)</div>
+          <div class="label">Key Properties</div>
+          <ul class="items">
+            <li>Natural counter element</li>
+            <li>T=1 always: free-running toggle (÷2 frequency)</li>
+            <li>Used in ripple &amp; synchronous counters</li>
+          </ul>
+          <div class="label">Edge-Triggered Summary</div>
+          <div class="info"><div class="i-title">Level vs Edge</div>Level-triggered (latch): transparent while CLK=1. Edge-triggered (FF): captures only on ↑ or ↓ clock edge. Edge-triggered is preferred in synchronous design to prevent races.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end row 5 -->
+
+<!-- ROW 6: Registers + Counters + Memory Elements -->
+<div class="grid section-gap">
+
+  <!-- REGISTERS -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Registers</h3></div>
+    <div class="card-body">
+      <p>A <strong>register</strong> is a group of flip-flops that stores an n-bit word. All FFs share a common clock and (optionally) a load/enable control.</p>
+      <div class="label">Parallel Load Register</div>
+      <ul class="items">
+        <li>All n bits loaded simultaneously on one clock edge</li>
+        <li>Load signal (LD): LD=1 → capture data; LD=0 → hold</li>
+        <li>Uses D flip-flops: D_i = LD·Data_i + LD'·Q_i</li>
+        <li>Most common: CPU general-purpose registers (R0–R15)</li>
+      </ul>
+      <div class="label">Shift Registers</div>
+      <p>Each FF's output feeds the next FF's input. Data moves one position per clock cycle.</p>
+      <table class="tbl">
+        <thead><tr><th>Type</th><th>In</th><th>Out</th><th>Use</th></tr></thead>
+        <tbody>
+          <tr><td class="pos">SISO</td><td>Serial</td><td>Serial</td><td>Delay line</td></tr>
+          <tr><td class="zero">SIPO</td><td>Serial</td><td>Parallel</td><td>Serial→Parallel</td></tr>
+          <tr><td class="special">PISO</td><td>Parallel</td><td>Serial</td><td>Parallel→Serial</td></tr>
+          <tr><td class="neg">PIPO</td><td>Parallel</td><td>Parallel</td><td>Buffer register</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Universal Shift Register</div>
+      <ul class="items">
+        <li>Can: shift left, shift right, parallel load, hold</li>
+        <li>Controlled by 2 mode select bits (S1, S0)</li>
+        <li>S1S0=00: hold; 01: shift right; 10: shift left; 11: parallel load</li>
+      </ul>
+      <div class="label">Applications</div>
+      <ul class="items">
+        <li>Serial communication (UART): PISO + SIPO pair</li>
+        <li>Multiplication by 2 (left shift), division by 2 (right shift)</li>
+        <li>CRC computation, pseudo-random number generation (LFSR)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- COUNTERS -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Counters</h3></div>
+    <div class="card-body">
+      <p>A <strong>counter</strong> is a sequential circuit that cycles through a defined sequence of states on each clock pulse.</p>
+      <div class="label">Ripple Counter (Asynchronous)</div>
+      <ul class="items">
+        <li>MSB FF clocked by system clock; each subsequent FF clocked by Q of previous</li>
+        <li>Carries <em>ripple</em> through chain → increasing delay with bit width</li>
+        <li>Simple, low power; glitches present during propagation</li>
+      </ul>
+      <div class="bin-block">
+        <div class="title">3-bit ripple counter sequence</div>
+        <div class="line">000 → 001 → 010 → 011</div>
+        <div class="line">100 → 101 → 110 → 111 → 000</div>
+        <div class="note">FF0 toggles every cycle; FF1 toggles every 2; FF2 every 4</div>
+      </div>
+      <div class="label">Synchronous Counter</div>
+      <ul class="items">
+        <li>All FFs share the same clock; no ripple delay</li>
+        <li>Faster, glitch-free; uses combinational logic for each FF's J/K or T input</li>
+        <li>T₀=1 always; T₁=Q₀; T₂=Q₁·Q₀; T₃=Q₂·Q₁·Q₀ (binary)</li>
+      </ul>
+      <div class="label">Modulus Counters</div>
+      <table class="tbl">
+        <thead><tr><th>Counter</th><th>Sequence</th><th>Reset condition</th></tr></thead>
+        <tbody>
+          <tr><td class="pos">Mod-N</td><td>0 to N-1</td><td>Count = N → clear</td></tr>
+          <tr><td class="special">BCD (Mod-10)</td><td>0000–1001</td><td>Count = 1010 → clear</td></tr>
+          <tr><td class="zero">Mod-6</td><td>000–101</td><td>Count = 110 → clear</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Up/Down Counter</div>
+      <ul class="items">
+        <li>Direction control input: UP=1 → count up; UP=0 → count down</li>
+        <li>T input conditioned on direction and lower bits</li>
+      </ul>
+      <div class="label">Johnson &amp; Ring Counters</div>
+      <ul class="items">
+        <li><strong>Ring counter</strong>: single 1 rotates through n bits; Mod-n with n FFs</li>
+        <li><strong>Johnson (twisted ring)</strong>: Q' of last FF feeds first FF; 2n states from n FFs; easy decode</li>
+      </ul>
+      <div class="tip"><div class="t-title">Counter Applications</div>Clock dividers, event counters, address generators, PWM, timing circuits, program counters in CPUs.</div>
+    </div>
+  </div>
+
+  <!-- MEMORY ELEMENTS -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Memory Elements — SRAM, DRAM, ROM Types</h3></div>
+    <div class="card-body">
+      <p>Memory is organized as an array of cells. An <strong>address</strong> selects a row (word line) and column selector reads/writes data bits.</p>
+      <div class="label">SRAM vs DRAM</div>
+      <table class="tbl">
+        <thead><tr><th>Property</th><th>SRAM</th><th>DRAM</th></tr></thead>
+        <tbody>
+          <tr><td>Cell type</td><td class="pos">6-T FF</td><td class="pos">1T + 1C</td></tr>
+          <tr><td>Density</td><td class="neg">Low</td><td class="zero">High</td></tr>
+          <tr><td>Speed</td><td class="zero">Fast (1–5 ns)</td><td class="neg">Slow (50+ ns)</td></tr>
+          <tr><td>Refresh</td><td class="zero">Not needed</td><td class="neg">Every ~64 ms</td></tr>
+          <tr><td>Cost/bit</td><td class="neg">High</td><td class="zero">Low</td></tr>
+          <tr><td>Use</td><td>Cache L1/L2/L3</td><td>Main memory</td></tr>
+        </tbody>
+      </table>
+      <div class="label">SRAM Cell Operation</div>
+      <ul class="items">
+        <li>6 transistors form a cross-coupled inverter pair (bistable)</li>
+        <li>Word line selects row; bit lines (BL, BL') read or write</li>
+        <li>Static: holds data as long as power is on, no refresh</li>
+      </ul>
+      <div class="label">DRAM Cell Operation</div>
+      <ul class="items">
+        <li>1 transistor + 1 capacitor per cell (1T1C)</li>
+        <li>Capacitor stores charge (1) or no charge (0)</li>
+        <li>Leaks charge → must refresh periodically (read+rewrite)</li>
+        <li>Row access (RAS) then column access (CAS) with separate strobes</li>
+      </ul>
+      <div class="label">ROM Types</div>
+      <table class="tbl">
+        <thead><tr><th>Type</th><th>Programmed</th><th>Erasable</th></tr></thead>
+        <tbody>
+          <tr><td class="neg">Mask ROM</td><td>Factory (IC fab)</td><td class="neg">No</td></tr>
+          <tr><td class="pos">PROM</td><td>Once by user (fuse)</td><td class="neg">No</td></tr>
+          <tr><td class="special">EPROM</td><td>User; UV light erases</td><td class="zero">UV light</td></tr>
+          <tr><td class="zero">EEPROM</td><td>User; electrically erases</td><td class="zero">Byte-level</td></tr>
+          <tr><td class="pos">Flash</td><td>User; electrically erases</td><td class="zero">Block-level</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Memory Cell Array Organization</div>
+      <div class="formula">Address bits → Row decoder (2^r rows) + Column selector</div>
+      <div class="formula">Capacity = 2^n words × m bits/word</div>
+      <div class="tip"><div class="t-title">Memory Hierarchy Fit</div>SRAM → L1/L2/L3 cache (fast, expensive). DRAM → main RAM (slow, cheap, dense). Flash → SSDs, firmware storage (non-volatile).</div>
+    </div>
+  </div>
+
+</div><!-- end row 6 -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>CH11 · Digital Logic</span>
+  <span>Computer Organization &amp; Architecture · Stallings</span>
+</div>
+
+</body>
+</html>
