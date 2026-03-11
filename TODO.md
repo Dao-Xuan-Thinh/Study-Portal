@@ -1,8 +1,8 @@
 TODO
 Now:
-    - (Done): all Plan.md tasks (restructure, MAE placeholders, hover tooltips, CH17 toggle)
+    - all plans in Plan.md
 
-Long-Term:
+Long-Term: (Dont do anything about these yet)
     - Fix text based diagrams.
     - Navigation Bar (Hamburger order) (Not sure yet)
     - Move styles to its own css file
@@ -10,7 +10,7 @@ Long-Term:
     - Improve UI/UX
         - Navigation buttons within page
         - Light/Dark Mode
-
+    - Pop up for each indivitual subject
     - Intergate with the SSA project ??? maybe
 
 --- Copilot's Ideas (let's talk about these) ---
@@ -19,6 +19,5 @@ Long-Term:
     - Reading progress bar: thin accent-color bar that grows as you scroll down each chapter page
     - Bookmark system: star/unstar chapters, persisted in localStorage — starred chapters float to top
     - Chapter completion tracker: "Mark as studied" button per chapter, progress % shown on CEA/COA.html hero
-    - Floating in-page TOC: sidebar that shows section headings for current chapter, highlights active section on scroll
     - Print / PDF stylesheet: @media print rules so chapters export cleanly as study handouts
     - PWA / offline support: service worker + manifest so the site works offline (great for exam cramming with no wifi)
