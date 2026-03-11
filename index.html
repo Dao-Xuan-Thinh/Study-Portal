@@ -96,6 +96,8 @@
   .area-cea .area-label{color:var(--accent);}
   .area-mae .area-bar{background:var(--accent2);}
   .area-mae .area-label{color:var(--accent2);}
+  .area-csi .area-bar{background:var(--accent4);}
+  .area-csi .area-label{color:var(--accent4);}
 
   /* ── Subject cards grid ── */
   .cards{
@@ -124,10 +126,12 @@
   .card-accent{height:3px;width:100%;}
   .area-cea .card-accent{background:var(--accent);}
   .area-mae .card-accent{background:var(--accent2);}
+  .area-csi .card-accent{background:var(--accent4);}
 
   /* Card hover border color */
   .area-cea .subject-card:not(.coming-soon):hover{border-color:rgba(88,166,255,0.6);}
   .area-mae .subject-card:not(.coming-soon):hover{border-color:rgba(63,185,80,0.6);}
+  .area-csi .subject-card:not(.coming-soon):hover{border-color:rgba(210,168,255,0.6);}
 
   .card-inner{padding:16px 18px 18px;}
   .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
@@ -142,6 +146,9 @@
   }
   .area-mae .subject-code{
     color:var(--accent2);border-color:rgba(63,185,80,0.3);background:rgba(63,185,80,0.08);
+  }
+  .area-csi .subject-code{
+    color:var(--accent4);border-color:rgba(210,168,255,0.3);background:rgba(210,168,255,0.08);
   }
 
   .badge-soon{
@@ -189,6 +196,43 @@
     font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);
   }
   .footer-inner span:first-child{color:var(--text-muted);}
+
+  /* ── Search ── */
+  .search-wrap{
+    max-width:1200px;margin:0 auto;padding:20px 40px 0;
+  }
+  @media(max-width:560px){.search-wrap{padding:16px 20px 0;}}
+  .search-box{
+    display:flex;align-items:center;gap:10px;
+    background:var(--surface);border:1px solid var(--border);border-radius:8px;
+    padding:10px 14px;transition:border-color 0.18s;
+  }
+  .search-box:focus-within{border-color:rgba(88,166,255,0.5);}
+  .search-icon{color:var(--text-dim);font-size:14px;flex-shrink:0;}
+  .search-input{
+    flex:1;background:none;border:none;outline:none;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;
+    color:var(--text);caret-color:var(--accent);
+  }
+  .search-input::placeholder{color:var(--text-dim);}
+  .search-clear{
+    background:none;border:none;cursor:pointer;
+    color:var(--text-dim);font-size:16px;padding:0 2px;
+    display:none;line-height:1;transition:color 0.15s;
+  }
+  .search-clear:hover{color:var(--text-muted);}
+  .search-count{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;
+    color:var(--text-dim);white-space:nowrap;
+  }
+  .no-results{
+    text-align:center;padding:32px;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-dim);
+    display:none;
+  }
+  .area.hidden{display:none;}
+  .subject-card.hidden{display:none;}
+  .search-highlight{background:rgba(227,179,65,0.25);color:var(--yellow);border-radius:2px;padding:0 1px;}
 </style>
 </head>
 <body>
@@ -200,15 +244,26 @@
     <h1>Study Reference <span>Portal</span></h1>
     <p class="hero-subtitle"><strong>Quick-reference cheatsheets</strong> &nbsp;·&nbsp; Organized by subject area</p>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="dot"></div>2 Subject Areas</div>
-      <div class="hero-stat r"><div class="dot"></div>1 Active Subject · 3 Coming Soon</div>
-      <div class="hero-stat p"><div class="dot"></div>21 Chapters Available</div>
+      <div class="hero-stat"><div class="dot"></div>3 Subject Areas</div>
+      <div class="hero-stat r"><div class="dot"></div>2 Active · 3 Coming Soon</div>
+      <div class="hero-stat p"><div class="dot"></div>41 Chapters Available</div>
     </div>
   </div>
 </header>
 
 <!-- ═══ MAIN ═══ -->
 <main class="main">
+
+<!-- ── Search bar ── -->
+<div class="search-wrap">
+  <div class="search-box">
+    <span class="search-icon">⌕</span>
+    <input class="search-input" id="searchInput" type="search" placeholder="Search subjects, chapters, topics…" autocomplete="off" spellcheck="false">
+    <span class="search-count" id="searchCount"></span>
+    <button class="search-clear" id="searchClear" title="Clear search">✕</button>
+  </div>
+</div>
+<div class="no-results" id="noResults">No subjects match "<span id="noResultsQuery"></span>"</div>
 
   <!-- ━━━ CEA ━━━ -->
   <section class="area area-cea">
@@ -234,6 +289,38 @@
           </div>
           <div class="card-footer">
             <span class="card-edition">10th Ed. · Stallings</span>
+            <span class="card-arrow">↗</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ━━━ CSI ━━━ -->
+  <section class="area area-csi">
+    <div class="area-header">
+      <div class="area-bar"></div>
+      <div class="area-header-text">
+        <div class="area-label">CSI</div>
+        <div class="area-title">Computer Science &amp; Informatics</div>
+      </div>
+      <div class="area-desc">1 subject · 20 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="subject-card" href="CSI/CSI.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="subject-code">FCS</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">Foundations of Computer Science</div>
+            <div class="card-meta">20 Chapters</div>
+          </div>
+          <div class="card-footer">
+            <span class="card-edition">4th Ed. · Forouzan</span>
             <span class="card-arrow">↗</span>
           </div>
         </div>
@@ -317,6 +404,74 @@
     <span>© 2025</span>
   </div>
 </footer>
+
+<script>
+(function(){
+  var input = document.getElementById('searchInput');
+  var clearBtn = document.getElementById('searchClear');
+  var countEl = document.getElementById('searchCount');
+  var noResults = document.getElementById('noResults');
+  var noResultsQuery = document.getElementById('noResultsQuery');
+  var cards = Array.from(document.querySelectorAll('.subject-card'));
+  var areas = Array.from(document.querySelectorAll('.area'));
+
+  function getText(card){
+    return card.textContent.toLowerCase();
+  }
+
+  function highlight(el, query){
+    if(!query) return;
+    var nodes = el.querySelectorAll('.card-title,.card-meta,.subject-code,.card-edition');
+    nodes.forEach(function(n){
+      var orig = n.getAttribute('data-orig') || n.textContent;
+      n.setAttribute('data-orig', orig);
+      if(!query){ n.textContent = orig; return; }
+      var re = new RegExp('('+query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+      n.innerHTML = orig.replace(re,'<mark class="search-highlight">$1</mark>');
+    });
+  }
+
+  function clearHighlight(){
+    document.querySelectorAll('.card-title,.card-meta,.subject-code,.card-edition').forEach(function(n){
+      var orig = n.getAttribute('data-orig');
+      if(orig){ n.textContent = orig; n.removeAttribute('data-orig'); }
+    });
+  }
+
+  function doSearch(){
+    var q = input.value.trim().toLowerCase();
+    clearBtn.style.display = q ? 'block' : 'none';
+    clearHighlight();
+
+    if(!q){
+      cards.forEach(function(c){ c.classList.remove('hidden'); });
+      areas.forEach(function(a){ a.classList.remove('hidden'); });
+      countEl.textContent = '';
+      noResults.style.display = 'none';
+      return;
+    }
+
+    var visible = 0;
+    cards.forEach(function(c){
+      var match = getText(c).includes(q);
+      c.classList.toggle('hidden', !match);
+      if(match){ highlight(c, q); visible++; }
+    });
+
+    areas.forEach(function(a){
+      var anyVisible = Array.from(a.querySelectorAll('.subject-card')).some(function(c){ return !c.classList.contains('hidden'); });
+      a.classList.toggle('hidden', !anyVisible);
+    });
+
+    countEl.textContent = visible + ' result' + (visible===1?'':'s');
+    noResultsQuery.textContent = input.value.trim();
+    noResults.style.display = visible ? 'none' : 'block';
+  }
+
+  input.addEventListener('input', doSearch);
+  clearBtn.addEventListener('click', function(){ input.value=''; doSearch(); input.focus(); });
+})();
+</script>
 
 </body>
 </html>

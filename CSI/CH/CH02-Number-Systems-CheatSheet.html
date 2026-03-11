@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH02 – Number Systems | FCS</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     HEADER
+═══════════════════════════════════════════════════════════════ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Number Systems — Chapter 2</h1>
+    <h2>Foundations of Computer Science, 4th Edition | Complete Study Reference</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§2.1 Positional Systems</span>
+      <span class="toc-item">§2.2 Binary</span>
+      <span class="toc-item">§2.3 Octal</span>
+      <span class="toc-item">§2.4 Hexadecimal</span>
+      <span class="toc-item">§2.5 Conversions</span>
+      <span class="toc-item">§2.6 Non-Positional</span>
+    </div>
+  </div>
+  <div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+    <span class="badge">FCS4e · CH02</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 1 — 3 cards
+═══════════════════════════════════════════════════════════════ -->
+<div class="grid">
+
+  <!-- Card 1: Positional Systems Overview (blue) -->
+  <div class="card blue">
+    <div class="card-header"><span class="dot"></span><h3>§2.1 Positional Systems Overview</h3></div>
+    <div class="card-body">
+      <div class="rule">In a positional system, the value of each digit depends on both the digit and its position</div>
+      <div class="label">General Formula</div>
+      <p class="mono" style="font-size:11px;margin-bottom:6px;">Value = Σ (digit<sub>i</sub> × base<sup>i</sup>) for i from 0 to n−1</p>
+      <div class="formula">(d<sub>n</sub> d<sub>n−1</sub> ... d<sub>1</sub> d<sub>0</sub>)<sub>b</sub> = d<sub>n</sub>×b<sup>n</sup> + ... + d<sub>1</sub>×b<sup>1</sup> + d<sub>0</sub>×b<sup>0</sup></div>
+      <div class="label">Worked Formula Example: (3A2)₁₆</div>
+      <ul class="items">
+        <li>d<sub>2</sub>=3, d<sub>1</sub>=A(10), d<sub>0</sub>=2, base=16</li>
+        <li>3×16² + 10×16¹ + 2×16⁰</li>
+        <li>= 3×256 + 10×16 + 2×1 = 768 + 160 + 2 = <strong>930₁₀</strong></li>
+      </ul>
+      <div class="label">Four Systems Used in Computing</div>
+      <table class="tbl">
+        <thead>
+          <tr><th>System</th><th>Base</th><th>Digits</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Decimal</td><td>10</td><td>0–9</td><td>Human communication</td></tr>
+          <tr><td>Binary</td><td>2</td><td>0, 1</td><td>Computer hardware (voltage levels)</td></tr>
+          <tr><td>Octal</td><td>8</td><td>0–7</td><td>Groups of 3 binary bits</td></tr>
+          <tr><td>Hexadecimal</td><td>16</td><td>0–9, A–F</td><td>Groups of 4 binary bits</td></tr>
+        </tbody>
+      </table>
+      <div style="margin-top:8px;">
+        <span class="tt" data-t="Number system where digit value depends on position — the standard for decimal, binary, octal, and hexadecimal">positional notation</span>
+        &nbsp;&nbsp;
+        <span class="tt" data-t="Another word for base — the number of distinct symbols in a positional number system (binary radix=2, decimal radix=10)">radix</span>
+      </div>
+      <hr class="divider">
+      <div class="label">Number Ranges by Bit Width</div>
+      <table class="tbl">
+        <thead>
+          <tr><th>Bits</th><th>Unsigned range</th><th>Signed range (two's complement)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>4</td><td>0 – 15</td><td>−8 to 7</td></tr>
+          <tr><td>8</td><td>0 – 255</td><td>−128 to 127</td></tr>
+          <tr><td>16</td><td>0 – 65,535</td><td>−32,768 to 32,767</td></tr>
+          <tr><td>32</td><td>0 – 4,294,967,295</td><td>−2,147,483,648 to 2,147,483,647</td></tr>
+          <tr><td>64</td><td>0 – 1.8×10¹⁹</td><td>−9.2×10¹⁸ to 9.2×10¹⁸</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 2: Binary System (green) -->
+  <div class="card green">
+    <div class="card-header"><span class="dot"></span><h3>§2.2 Binary System (Base 2)</h3></div>
+    <div class="card-body">
+      <div class="rule">Binary is the native language of computers — each bit represents a circuit that is OFF (0) or ON (1)</div>
+      <div class="label">Place Values (right to left)</div>
+      <table class="tbl">
+        <thead>
+          <tr><th>Bit position</th><th>7</th><th>6</th><th>5</th><th>4</th><th>3</th><th>2</th><th>1</th><th>0</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2<sup>n</sup></td>
+            <td>128</td><td>64</td><td>32</td><td>16</td><td>8</td><td>4</td><td>2</td><td>1</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="label">Binary → Decimal (sum of bit × place value)</div>
+      <ul class="items">
+        <li>(1011)₂ = 1×8 + 0×4 + 1×2 + 1×1 = 8+0+2+1 = <strong>11₁₀</strong></li>
+        <li>(11001101)₂ = 128+64+8+4+1 = <strong>205₁₀</strong></li>
+      </ul>
+      <div class="label">Decimal → Binary (repeated division by 2)</div>
+      <ol class="steps">
+        <li>Divide decimal number by 2</li>
+        <li>Record remainder (0 or 1)</li>
+        <li>Repeat with quotient</li>
+        <li>Read remainders bottom to top = binary result</li>
+      </ol>
+      <div class="label">Example: 25₁₀ → Binary</div>
+      <p class="mono" style="font-size:11px;margin-bottom:4px;">
+        25÷2=12 r<strong>1</strong>, 12÷2=6 r<strong>0</strong>, 6÷2=3 r<strong>0</strong>, 3÷2=1 r<strong>1</strong>, 1÷2=0 r<strong>1</strong>
+      </p>
+      <p class="mono" style="font-size:11px;margin-bottom:6px;">Read up → <strong>11001</strong>₂ &nbsp; Verify: 16+8+1 = 25 ✓</p>
+      <div style="margin-top:8px;">
+        <span class="tt" data-t="Binary digit — the smallest unit of information; value is 0 or 1 representing two voltage states in hardware">bit</span>
+        &nbsp;&nbsp;
+        <span class="tt" data-t="8 bits — the standard unit of computer memory; can represent 256 different values (0 to 255)">byte</span>
+        &nbsp;&nbsp;
+        <span class="tt" data-t="4 bits — half a byte; represents one hexadecimal digit (0–F)">nibble</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Hexadecimal System (red) -->
+  <div class="card red">
+    <div class="card-header"><span class="dot"></span><h3>§2.4 Hexadecimal System (Base 16)</h3></div>
+    <div class="card-body">
+      <div class="rule">One hex digit = exactly 4 binary bits — the most compact human-readable form of binary</div>
+      <div class="label">Digit Map (all 16 values)</div>
+      <table class="tbl">
+        <thead>
+          <tr><th>Hex</th><th>Binary</th><th>Decimal</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0</td><td>0000</td><td>0</td></tr>
+          <tr><td>1</td><td>0001</td><td>1</td></tr>
+          <tr><td>2</td><td>0010</td><td>2</td></tr>
+          <tr><td>3</td><td>0011</td><td>3</td></tr>
+          <tr><td>4</td><td>0100</td><td>4</td></tr>
+          <tr><td>5</td><td>0101</td><td>5</td></tr>
+          <tr><td>6</td><td>0110</td><td>6</td></tr>
+          <tr><td>7</td><td>0111</td><td>7</td></tr>
+          <tr><td>8</td><td>1000</td><td>8</td></tr>
+          <tr><td>9</td><td>1001</td><td>9</td></tr>
+          <tr><td>A</td><td>1010</td><td>10</td></tr>
+          <tr><td>B</td><td>1011</td><td>11</td></tr>
+          <tr><td>C</td><td>1100</td><td>12</td></tr>
+          <tr><td>D</td><td>1101</td><td>13</td></tr>
+          <tr><td>E</td><td>1110</td><td>14</td></tr>
+          <tr><td>F</td><td>1111</td><td>15</td></tr>
+        </tbody>
+      </table>
+      <div class="label" style="margin-top:8px;">Conversions</div>
+      <ul class="items">
+        <li><strong>Hex → Binary:</strong> (2AF)₁₆ → 0010 1010 1111₂</li>
+        <li><strong>Binary → Hex:</strong> 101001111₂ → 0001 0100 1111 → 14F₁₆</li>
+        <li><strong>Hex → Decimal:</strong> (2AF)₁₆ = 2×256 + 10×16 + 15×1 = 512+160+15 = <strong>687₁₀</strong></li>
+      </ul>
+      <div class="info" style="margin-top:6px;">
+        <div class="i-title">Real-World Use</div>
+        Hex is used everywhere: memory addresses (<code>0x7FFE4000</code>), color codes (<code>#FF5733</code>), machine code dumps, IPv6 (<code>2001:0db8::1</code>), file magic numbers
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .grid row 1 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 2 — 3 cards
+═══════════════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Octal System (purple) -->
+  <div class="card purple">
+    <div class="card-header"><span class="dot"></span><h3>§2.3 Octal System (Base 8)</h3></div>
+    <div class="card-body">
+      <div class="rule">One octal digit = exactly 3 binary bits</div>
+      <p style="font-size:12px;margin-bottom:6px;">Digits: 0–7 only — <strong>8 and 9 do not exist in octal</strong></p>
+      <div class="label">Octal → Binary (replace each digit with 3-bit group)</div>
+      <ul class="items">
+        <li>(247)₈ → 010 100 111₂ = <strong>010100111₂</strong></li>
+      </ul>
+      <div class="label">Binary → Octal (group bits in 3s from right)</div>
+      <ul class="items">
+        <li>10111₂ → 010 111 → <strong>(27)₈</strong></li>
+      </ul>
+      <div class="label">Octal → Decimal</div>
+      <ul class="items">
+        <li>(247)₈ = 2×64 + 4×8 + 7×1 = 128+32+7 = <strong>167₁₀</strong></li>
+      </ul>
+      <div class="label">Decimal → Octal (repeated division by 8)</div>
+      <p class="mono" style="font-size:11px;margin-bottom:4px;">167₁₀ → 167÷8=20 r<strong>7</strong>, 20÷8=2 r<strong>4</strong>, 2÷8=0 r<strong>2</strong> → <strong>(247)₈</strong> ✓</p>
+      <div class="label">Extended Examples</div>
+      <ul class="items">
+        <li>(755)₈ = 111 101 101₂ &nbsp;<span style="color:var(--text-muted);">(chmod rwxr-xr-x)</span></li>
+        <li>(644)₈ = 110 100 100₂ &nbsp;<span style="color:var(--text-muted);">(chmod rw-r--r--)</span></li>
+        <li>(17)₈ = 001 111₂ = 15₁₀</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Historical Note</div>
+        Octal was important in older systems (PDP-11, UNIX file permissions: <code>chmod 755</code> = rwxr-xr-x). Less common today but still appears in Unix/Linux permissions.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Conversion Methods Table (orange) -->
+  <div class="card orange">
+    <div class="card-header"><span class="dot"></span><h3>§2.5 Conversion Methods</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead>
+          <tr><th>From → To</th><th>Method</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Binary → Decimal</td><td>Sum: each bit × 2<sup>position</sup></td></tr>
+          <tr><td>Decimal → Binary</td><td>Divide by 2 repeatedly; read remainders RTL</td></tr>
+          <tr><td>Binary → Hex</td><td>Group 4 bits from right; convert each group</td></tr>
+          <tr><td>Hex → Binary</td><td>Expand each hex digit to exactly 4 bits</td></tr>
+          <tr><td>Binary → Octal</td><td>Group 3 bits from right; convert each group</td></tr>
+          <tr><td>Octal → Binary</td><td>Expand each octal digit to exactly 3 bits</td></tr>
+          <tr><td>Decimal → Hex</td><td>Divide by 16 repeatedly; read remainders RTL</td></tr>
+          <tr><td>Hex → Decimal</td><td>Multiply each digit by 16<sup>position</sup>; sum</td></tr>
+          <tr><td>Octal → Decimal</td><td>Multiply each digit by 8<sup>position</sup>; sum</td></tr>
+          <tr><td>Decimal → Octal</td><td>Divide by 8 repeatedly; read remainders RTL</td></tr>
+        </tbody>
+      </table>
+      <div class="tip" style="margin-top:8px;">
+        <div class="t-title">Fastest Path</div>
+        Binary ↔ Hex (group 4), Binary ↔ Octal (group 3). Go through binary as an intermediate when converting between hex and octal.
+      </div>
+      <hr class="divider">
+      <div class="label">Step-by-Step Example: Decimal 255 → All Bases</div>
+      <ul class="items">
+        <li><strong>255₁₀ → Binary:</strong> 255÷2=127 r1, 127÷2=63 r1, 63÷2=31 r1, 31÷2=15 r1, 15÷2=7 r1, 7÷2=3 r1, 3÷2=1 r1, 1÷2=0 r1 → <strong>11111111₂</strong></li>
+        <li><strong>11111111₂ → Hex:</strong> group 4: 1111 1111 → FF → <strong>FF₁₆</strong></li>
+        <li><strong>11111111₂ → Octal:</strong> group 3: 011 111 111 → <strong>377₈</strong></li>
+        <li><strong>Verify Hex:</strong> F×16 + F×1 = 240+15 = <strong>255 ✓</strong></li>
+        <li><strong>Verify Octal:</strong> 3×64 + 7×8 + 7×1 = 192+56+7 = <strong>255 ✓</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 6: Fractional Conversions (yellow) -->
+  <div class="card yellow">
+    <div class="card-header"><span class="dot"></span><h3>§2.5 Fractional Conversions</h3></div>
+    <div class="card-body">
+      <div class="rule">Fractional parts use negative powers of the base</div>
+      <div class="label">Binary Fractions</div>
+      <div class="formula">0.b₋₁b₋₂b₋₃ = b₋₁×2⁻¹ + b₋₂×2⁻² + b₋₃×2⁻³</div>
+      <ul class="items">
+        <li>(0.101)₂ = 1×0.5 + 0×0.25 + 1×0.125 = <strong>0.625₁₀</strong></li>
+      </ul>
+      <div class="label">Decimal → Binary Fraction (repeated multiplication by 2)</div>
+      <ol class="steps">
+        <li>Multiply by 2</li>
+        <li>Integer part = next binary digit</li>
+        <li>Repeat with fractional part</li>
+        <li>Stop when fraction = 0 or desired precision reached</li>
+      </ol>
+      <div class="label">Example: 0.625₁₀ → Binary</div>
+      <p class="mono" style="font-size:11px;margin-bottom:4px;">
+        ×2=<strong>1</strong>.25 → bit=1 &nbsp; ×2=<strong>0</strong>.5 → bit=0 &nbsp; ×2=<strong>1</strong>.0 → bit=1
+      </p>
+      <p class="mono" style="font-size:11px;margin-bottom:6px;">Result: <strong>(0.101)₂</strong> ✓</p>
+      <div class="label">Example: 0.1₁₀ → Binary (non-terminating)</div>
+      <ul class="items">
+        <li>×2=0.2 → 0, ×2=0.4 → 0, ×2=0.8 → 0, ×2=1.6 → 1</li>
+        <li>×2=1.2 → 1, ×2=0.4 → 0, ×2=0.8 → 0, ×2=1.6 → 1 …</li>
+        <li>0.1₁₀ = <strong>0.0001100110011…₂</strong> (pattern repeats forever)</li>
+      </ul>
+      <div class="warn">
+        <div class="w-title">Floating-Point Warning</div>
+        Many decimal fractions are non-terminating in binary — 0.1₁₀ = 0.000110011...₂ (repeating). This is why floating-point arithmetic has rounding errors (e.g., 0.1+0.2≠0.3 in most languages).
+      </div>
+    </div>
+  </div>
+
+</div><!-- end .grid row 2 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 3 — 2-column grid (span-2 + 1)
+═══════════════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Binary Arithmetic (blue, col-span-2) -->
+  <div class="card blue col-span-2">
+    <div class="card-header"><span class="dot"></span><h3>§2.2 Binary Arithmetic</h3></div>
+    <div class="card-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+          <div class="label">Binary Addition Rules</div>
+          <ul class="items">
+            <li>0 + 0 = 0</li>
+            <li>0 + 1 = 1</li>
+            <li>1 + 0 = 1</li>
+            <li>1 + 1 = 10 &nbsp;<span style="color:var(--text-muted);">(write 0, carry 1)</span></li>
+            <li>1 + 1 + 1 = 11 &nbsp;<span style="color:var(--text-muted);">(write 1, carry 1)</span></li>
+          </ul>
+          <div class="label" style="margin-top:10px;">Multi-bit Example</div>
+          <pre class="mono" style="font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px 12px;color:var(--text);line-height:1.7;"> &nbsp;01101 &nbsp;(13)
++ 01011 &nbsp;(11)
+-------
+ 11000 &nbsp;(24)</pre>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:4px;">Carry trace: 0,1,1,1,0 from right</p>
+        </div>
+        <div>
+          <div class="label">Binary Subtraction (borrow method)</div>
+          <ul class="items">
+            <li>1 − 0 = 1</li>
+            <li>1 − 1 = 0</li>
+            <li>0 − 1 = borrow: 10 − 1 = 1 (borrow 1 from left)</li>
+            <li>Example: 1101(13) − 0101(5) = <strong>1000(8)</strong></li>
+          </ul>
+          <div class="label" style="margin-top:10px;">Subtraction Worked Trace</div>
+          <pre class="mono" style="font-size:12px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:8px 12px;color:var(--text);line-height:1.7;">  1101 &nbsp;(13)
+- 0101 &nbsp;( 5)
+------
+  1000 &nbsp;( 8)</pre>
+          <div class="label" style="margin-top:8px;">Overflow Concept</div>
+          <ul class="items">
+            <li>n-bit result needs n+1 bits → overflow</li>
+            <li>Example (4-bit): 1111 + 0001 = 10000 — carry out of MSB</li>
+            <li>Hardware sets a <strong>carry flag</strong> (CF) when this happens</li>
+          </ul>
+          <div class="tip" style="margin-top:10px;">
+            <div class="t-title">Hardware Reality</div>
+            Computers don't use subtraction directly — they convert A−B into A + (two's complement of B). This is why the same adder circuit handles both addition and subtraction.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 8: Non-Positional Systems (green) -->
+  <div class="card green">
+    <div class="card-header"><span class="dot"></span><h3>§2.6 Non-Positional Systems</h3></div>
+    <div class="card-body">
+      <div class="rule">In non-positional systems, symbol value is fixed regardless of position</div>
+      <div class="label">Roman Numerals</div>
+      <p class="mono" style="font-size:11px;margin-bottom:4px;">I=1 · V=5 · X=10 · L=50 · C=100 · D=500 · M=1000</p>
+      <ul class="items">
+        <li><strong>Additive:</strong> III=3, VIII=8, LXX=70</li>
+        <li><strong>Subtractive</strong> (smaller before larger): IV=4, IX=9, XL=40, CM=900</li>
+        <li>MCMXCIX = 1000+(1000−100)+(100−10)+(10−1) = <strong>1999</strong></li>
+      </ul>
+      <div class="label" style="margin-top:8px;">Problems</div>
+      <ul class="items">
+        <li>No zero symbol</li>
+        <li>Limited range</li>
+        <li>Arithmetic is extremely difficult</li>
+      </ul>
+      <div class="warn" style="margin-top:6px;">
+        <div class="w-title">Why Binary Won</div>
+        Non-positional systems are impractical for computing — imagine multiplying XLVII × XXXIII. Positional binary won because electronics naturally implement two states.
+      </div>
+      <hr class="divider">
+      <p style="font-size:11px;color:var(--text-muted);">Roman numerals persist today in clock faces, book chapters, film credits, and sports championships — but never in arithmetic hardware.</p>
+    </div>
+  </div>
+
+</div><!-- end .grid row 3 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     ROW 4 — 1 wide card (col-span-3)
+═══════════════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 9: Powers of 2 Quick Reference (purple, col-span-3) -->
+  <div class="card purple col-span-3">
+    <div class="card-header"><span class="dot"></span><h3>Powers of 2 — Quick Reference</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead>
+          <tr><th>n</th><th>2ⁿ</th><th>Common Name / Use</th><th>n</th><th>2ⁿ</th><th>Common Name / Use</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td><td>1</td><td style="color:var(--text-muted);">—</td>
+            <td>16</td><td>65,536</td><td>16-bit range</td>
+          </tr>
+          <tr>
+            <td>1</td><td>2</td><td style="color:var(--text-muted);">—</td>
+            <td>20</td><td>1,048,576</td><td>1 MiB</td>
+          </tr>
+          <tr>
+            <td>2</td><td>4</td><td style="color:var(--text-muted);">—</td>
+            <td>24</td><td>16,777,216</td><td>24-bit color range</td>
+          </tr>
+          <tr>
+            <td>3</td><td>8</td><td>1 byte = 8 bits</td>
+            <td>30</td><td>1,073,741,824</td><td>1 GiB</td>
+          </tr>
+          <tr>
+            <td>4</td><td>16</td><td>1 hex digit</td>
+            <td>31</td><td>2,147,483,648</td><td>Max positive 32-bit signed</td>
+          </tr>
+          <tr>
+            <td>7</td><td>128</td><td>Max positive 8-bit signed</td>
+            <td>32</td><td>4,294,967,296</td><td>IPv4 address space</td>
+          </tr>
+          <tr>
+            <td>8</td><td>256</td><td>1 byte values (0–255)</td>
+            <td>40</td><td>1,099,511,627,776</td><td>1 TiB</td>
+          </tr>
+          <tr>
+            <td>10</td><td>1,024</td><td>1 KiB</td>
+            <td>64</td><td>~1.8 × 10¹⁹</td><td>64-bit address space</td>
+          </tr>
+          <tr>
+            <td>15</td><td>32,768</td><td>Max positive 16-bit signed</td>
+            <td></td><td></td><td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- end .grid row 4 -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════════════════════════ -->
+<div class="footer">
+  <span>FCS4e · CH02 · Number Systems</span>
+  <span><a href="CH01-Introduction-CheatSheet.html" style="color:var(--text-muted);text-decoration:none;">← CH01</a> &nbsp;|&nbsp; <a href="../CSI.html" style="color:var(--text-muted);text-decoration:none;">Back to FCS</a> &nbsp;|&nbsp; <a href="CH03-Data-Storage-CheatSheet.html" style="color:var(--text-muted);text-decoration:none;">CH03 →</a></span>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script></body>
+</html>

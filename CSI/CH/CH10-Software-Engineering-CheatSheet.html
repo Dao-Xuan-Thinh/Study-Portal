@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH10 · Software Engineering · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 10</h1>
+    <h2>Software Engineering &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§10.1 SE Fundamentals</span>
+      <span class="toc-item">§10.2 SDLC Models</span>
+      <span class="toc-item">§10.3 Requirements Engineering</span>
+      <span class="toc-item">§10.4 Design Principles</span>
+      <span class="toc-item">§10.5 Testing</span>
+      <span class="toc-item">§10.6 Project Management</span>
+      <span class="toc-item">§10.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH10</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — Cards 1–3 ═══ -->
+<div class="grid">
+
+  <!-- Card 1: SE Fundamentals -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>SE Fundamentals</h3></div>
+    <div class="card-body">
+      <div class="rule">Software Engineering = disciplined application of scientific &amp; mathematical principles to design, develop, test, and maintain software economically and reliably</div>
+      <p><strong><span class="tt" data-t="A discipline that uses engineering principles to build software systematically and within budget">Software Engineering</span></strong> emerged in response to the <em>software crisis</em> of the 1960s–70s: projects were over budget, late, and unreliable.</p>
+
+      <div class="label">The Software Crisis</div>
+      <ul class="items">
+        <li>Projects routinely exceeded cost and schedule estimates</li>
+        <li>Delivered software often failed to meet user needs</li>
+        <li>Code was difficult to maintain and evolve</li>
+        <li>No systematic methods — programming was an art, not engineering</li>
+      </ul>
+
+      <div class="label">Software Quality Attributes</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Attribute</th><th>Meaning</th></tr>
+        <tr><td><span class="tt" data-t="Software does exactly what the specification says">Correctness</span></td><td>Meets its specification exactly</td></tr>
+        <tr><td><span class="tt" data-t="Software performs consistently under defined conditions over time">Reliability</span></td><td>Consistent behaviour; low failure rate</td></tr>
+        <tr><td><span class="tt" data-t="Software continues to function reasonably even under unexpected conditions">Robustness</span></td><td>Handles unexpected inputs gracefully</td></tr>
+        <tr><td><span class="tt" data-t="Software uses minimal CPU, memory, and I/O resources">Efficiency</span></td><td>Economical use of system resources</td></tr>
+        <tr><td><span class="tt" data-t="Software can be easily modified, corrected, or enhanced after delivery">Maintainability</span></td><td>Easy to modify and extend over time</td></tr>
+        <tr><td><span class="tt" data-t="Software can be moved to a different hardware or OS environment with minimal rework">Portability</span></td><td>Runs on different platforms with little change</td></tr>
+      </table>
+
+      <div class="info">
+        <div class="i-title">SE vs. Programming</div>
+        SE addresses the <em>entire</em> lifecycle — planning, analysis, design, coding, testing, deployment, maintenance — not just writing code.
+      </div>
+
+      <div class="note">
+        <div class="n-title">Correctness vs Reliability</div>
+        Correctness is a static, specification-based property. Reliability is a statistical, run-time property measured over many executions.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: SDLC Models -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>SDLC Models</h3></div>
+    <div class="card-body">
+      <div class="rule">SDLC = Software Development Life Cycle — structured process guiding a project from conception to retirement</div>
+      <p>A <strong><span class="tt" data-t="Software Development Life Cycle: the phases through which software passes from inception to decommission">SDLC</span> model</strong> defines the phases, their sequence, and how they interact.</p>
+
+      <div class="label">Waterfall Model</div>
+      <ul class="items">
+        <li><strong>Phases (linear):</strong> Requirements → Design → Implementation → Testing → Maintenance</li>
+        <li><strong>Pro:</strong> Simple, easy to manage; clear milestones</li>
+        <li><strong>Con:</strong> Rigid; late discovery of errors is costly</li>
+        <li><strong>Use:</strong> Well-understood, stable requirements (e.g., embedded firmware)</li>
+      </ul>
+
+      <div class="label">Incremental Model</div>
+      <ul class="items">
+        <li>System built and delivered in increments; each adds functionality</li>
+        <li><strong>Pro:</strong> Early working software; easier to accommodate change</li>
+        <li><strong>Con:</strong> Architecture may degrade without careful management</li>
+        <li><strong>Use:</strong> Large systems where partial delivery has value</li>
+      </ul>
+
+      <div class="label">Spiral Model</div>
+      <ul class="items">
+        <li>Iterates four quadrants: Plan → Risk Analysis → Engineer → Evaluate</li>
+        <li><strong>Pro:</strong> Explicit risk management; supports prototyping</li>
+        <li><strong>Con:</strong> Complex; requires risk expertise; expensive</li>
+        <li><strong>Use:</strong> High-risk, large-scale projects</li>
+      </ul>
+
+      <div class="label">Agile (XP / Scrum)</div>
+      <ul class="items">
+        <li>Short sprints (1–4 weeks); continuous delivery and feedback</li>
+        <li><strong>Pro:</strong> Flexible; customer collaboration; fast response to change</li>
+        <li><strong>Con:</strong> Requires active customer involvement; hard to predict end date</li>
+        <li><strong>Use:</strong> Evolving requirements; web/mobile products</li>
+      </ul>
+
+      <div class="tip">
+        <div class="t-title">Model Comparison Shortcut</div>
+        Waterfall = sequential &amp; predictive · Incremental = builds in layers · Spiral = risk-driven iterations · Agile = people &amp; change over process &amp; plans
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Requirements Engineering -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Requirements Engineering</h3></div>
+    <div class="card-body">
+      <div class="rule">Requirements = description of what the system must do and the constraints under which it must operate</div>
+
+      <div class="label">Functional Requirements</div>
+      <p>Define <strong>what the system does</strong> — specific behaviours, computations, outputs for given inputs.</p>
+      <ul class="items">
+        <li>Example: "The system shall allow users to log in with a username and password."</li>
+        <li>Directly testable; each maps to one or more test cases</li>
+      </ul>
+
+      <div class="label">Non-Functional Requirements</div>
+      <p>Define <strong>how well</strong> the system does it — quality constraints.</p>
+      <ul class="items">
+        <li><code>Performance</code> — response time, throughput</li>
+        <li><code>Security</code> — authentication, encryption standards</li>
+        <li><code>Usability</code> — learnability, accessibility</li>
+        <li><code>Scalability</code> — concurrent user load</li>
+        <li><code>Reliability</code> — uptime SLA, MTBF</li>
+      </ul>
+
+      <div class="label">Use Cases</div>
+      <p>A <span class="tt" data-t="Scenario-based description of how an actor interacts with the system to achieve a goal">use case</span> describes a <em>goal-driven interaction</em> between an <strong>actor</strong> (user or external system) and the system.</p>
+      <ul class="items">
+        <li>Components: actor, precondition, main flow, alternate flow, postcondition</li>
+        <li>Expressed in structured natural language or UML use case diagrams</li>
+      </ul>
+
+      <div class="label">User Stories (Agile)</div>
+      <div class="formula">As a [role], I want [feature] so that [benefit].</div>
+      <ul class="items">
+        <li>Short, informal; acceptance criteria attached</li>
+        <li>Refined into tasks during sprint planning</li>
+      </ul>
+
+      <div class="label">Requirements Specification (SRS)</div>
+      <ul class="items">
+        <li>IEEE 830 / ISO 29148 define standard SRS structure</li>
+        <li>Must be: complete, consistent, unambiguous, verifiable, traceable</li>
+      </ul>
+
+      <div class="warn">
+        <div class="w-title">Requirements Creep</div>
+        Uncontrolled addition of new requirements after baseline is set. Mitigate with formal change-control process.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — Cards 4–6 ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Design Principles -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Design Principles</h3></div>
+    <div class="card-body">
+      <div class="rule">Good design = high cohesion + low coupling + clear abstraction + information hiding</div>
+
+      <div class="label">Modularity</div>
+      <p><span class="tt" data-t="Dividing a system into discrete, self-contained units (modules) that can be developed and tested independently">Modularity</span> partitions a system into independent modules. Benefits: parallel development, easier testing, isolated fault containment.</p>
+
+      <div class="label">Cohesion — Higher is Better ✓</div>
+      <p><span class="tt" data-t="The degree to which elements within a single module belong together and serve a single, well-defined purpose">Cohesion</span> measures how closely related the responsibilities inside one module are.</p>
+      <table class="tbl" style="margin-bottom:6px;">
+        <tr><th>Type</th><th>Description</th><th>Quality</th></tr>
+        <tr><td>Functional</td><td>All elements contribute to one well-defined task</td><td style="color:var(--accent2);">Best</td></tr>
+        <tr><td>Sequential</td><td>Output of one element feeds the next</td><td style="color:var(--accent2);">Good</td></tr>
+        <tr><td>Communicational</td><td>Elements operate on same data</td><td style="color:var(--yellow);">OK</td></tr>
+        <tr><td>Coincidental</td><td>Elements grouped arbitrarily</td><td style="color:var(--accent3);">Worst</td></tr>
+      </table>
+
+      <div class="label">Coupling — Lower is Better ✓</div>
+      <p><span class="tt" data-t="The degree of interdependence between software modules — lower coupling means modules are more independent">Coupling</span> measures how much one module depends on another.</p>
+      <table class="tbl" style="margin-bottom:6px;">
+        <tr><th>Type</th><th>Description</th><th>Quality</th></tr>
+        <tr><td>Data</td><td>Modules share only parameters</td><td style="color:var(--accent2);">Best</td></tr>
+        <tr><td>Control</td><td>One module controls flow of another</td><td style="color:var(--yellow);">OK</td></tr>
+        <tr><td>Content</td><td>One module modifies internals of another</td><td style="color:var(--accent3);">Worst</td></tr>
+      </table>
+
+      <div class="label">Abstraction &amp; Information Hiding</div>
+      <ul class="items">
+        <li><strong>Abstraction:</strong> expose only essential details; suppress irrelevant implementation</li>
+        <li><strong>Information Hiding:</strong> each module conceals its design decisions (Parnas principle)</li>
+        <li>Enables change in one module without impacting others</li>
+      </ul>
+
+      <div class="label">Design Patterns (Overview)</div>
+      <ul class="items">
+        <li><code>Creational</code> — Factory, Singleton, Builder</li>
+        <li><code>Structural</code> — Adapter, Decorator, Facade</li>
+        <li><code>Behavioral</code> — Observer, Strategy, Command</li>
+      </ul>
+      <div class="tip">
+        <div class="t-title">Design Patterns</div>
+        Reusable solutions to recurring design problems (GoF, 1994). They encode expert knowledge, not ready-to-use code.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Testing -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Testing</h3></div>
+    <div class="card-body">
+      <div class="rule">Testing = executing a program with the intent of finding errors (Dijkstra: testing shows presence, not absence of bugs)</div>
+
+      <div class="label">Testing Levels</div>
+      <ol class="steps">
+        <li><strong>Unit Testing</strong> — individual functions or classes; typically by developer; uses stubs and drivers</li>
+        <li><strong>Integration Testing</strong> — combined modules; verifies interfaces; bottom-up, top-down, or big-bang</li>
+        <li><strong>System Testing</strong> — complete system against functional &amp; non-functional requirements</li>
+        <li><strong>Acceptance Testing</strong> — customer validates system meets business needs; alpha/beta variants</li>
+      </ol>
+
+      <hr class="divider">
+
+      <div class="label">Black-Box vs White-Box Testing</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Aspect</th><th>Black-Box</th><th>White-Box</th></tr>
+        <tr><td>Based on</td><td>Specification / requirements</td><td>Internal code structure</td></tr>
+        <tr><td>Tester knows</td><td>Inputs &amp; expected outputs</td><td>Implementation details</td></tr>
+        <tr><td>Techniques</td><td>Equivalence partitioning, boundary value</td><td>Statement, branch, path coverage</td></tr>
+        <tr><td>Best for</td><td>Functional correctness</td><td>Code thoroughness</td></tr>
+      </table>
+
+      <div class="label">Test Case Structure</div>
+      <div class="formula">Test Case = ID + Preconditions + Input + Expected Output + Pass/Fail Criterion</div>
+
+      <div class="label">Debugging vs Testing</div>
+      <table class="tbl">
+        <tr><th></th><th>Testing</th><th>Debugging</th></tr>
+        <tr><td>Goal</td><td>Find defects</td><td>Locate &amp; fix defects</td></tr>
+        <tr><td>Who</td><td>Testers (or devs)</td><td>Developers</td></tr>
+        <tr><td>Output</td><td>Pass/fail report</td><td>Corrected code</td></tr>
+      </table>
+
+      <div class="warn">
+        <div class="w-title">Exhaustive Testing is Impossible</div>
+        For any non-trivial program, the input space is infinite. Strategy: select a representative subset using risk and coverage criteria.
+      </div>
+
+      <div class="note">
+        <div class="n-title">Regression Testing</div>
+        Re-running tests after a change to ensure no previously passing tests now fail. Essential in Agile and CI/CD pipelines.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: Project Management -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Project Management</h3></div>
+    <div class="card-body">
+      <div class="rule">Project Management = planning, organising, staffing, directing, and controlling a software project to meet scope, schedule, and budget goals</div>
+
+      <div class="label">Work Breakdown Structure (WBS)</div>
+      <p>Hierarchical decomposition of all project work into manageable tasks. Each leaf node is a <em>work package</em> that can be estimated and assigned.</p>
+
+      <div class="label">Scheduling Tools</div>
+      <table class="tbl" style="margin-bottom:6px;">
+        <tr><th>Tool</th><th>Description</th></tr>
+        <tr><td><span class="tt" data-t="Bar chart showing task durations and their overlap on a timeline">Gantt Chart</span></td><td>Bar chart; tasks vs time; shows parallelism and progress</td></tr>
+        <tr><td><span class="tt" data-t="Program Evaluation and Review Technique — network-based method for scheduling with uncertainty">PERT</span></td><td>Network diagram; critical path; handles uncertainty via optimistic/pessimistic/most-likely estimates</td></tr>
+        <tr><td>CPM</td><td>Critical Path Method; identifies the longest path → minimum project duration</td></tr>
+      </table>
+
+      <div class="label">PERT Time Formula</div>
+      <div class="formula">T_e = (T_o + 4·T_m + T_p) / 6</div>
+      <p style="font-size:11px;color:var(--text-muted);">T_o = optimistic · T_m = most likely · T_p = pessimistic</p>
+
+      <div class="label">Effort Estimation</div>
+      <ul class="items">
+        <li><strong>LOC (Lines of Code):</strong> straightforward but language-dependent; derived from historical data</li>
+        <li><strong>Function Points:</strong> measure functionality from user perspective (inputs, outputs, queries, files, interfaces); language-independent</li>
+        <li><strong>COCOMO:</strong> Constructive Cost Model — effort = <code>a × (KLOC)^b</code> with calibration constants</li>
+      </ul>
+
+      <div class="label">Risk Management</div>
+      <ol class="steps">
+        <li>Identify risks (technical, schedule, resource, business)</li>
+        <li>Analyse likelihood × impact → risk exposure</li>
+        <li>Plan mitigation strategies (avoid, transfer, reduce, accept)</li>
+        <li>Monitor risks throughout project</li>
+      </ol>
+
+      <div class="label">Team Structures</div>
+      <ul class="items">
+        <li><strong>Chief Programmer Team:</strong> one senior architect directs; efficient but bottleneck risk</li>
+        <li><strong>Democratic (Egoless):</strong> flat structure; peer review culture; good for research-type work</li>
+        <li><strong>Mixed:</strong> hierarchical but collaborative; most common in industry</li>
+      </ul>
+
+      <div class="info">
+        <div class="i-title">Brooks's Law</div>
+        "Adding manpower to a late software project makes it later." New members need onboarding time and increase communication overhead.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Key Terms + Quick Review (col-span-3) ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Key Terms + Quick Review -->
+  <div class="card blue col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review — Chapter 10</h3></div>
+    <div class="card-body">
+
+      <div class="grid-2" style="gap:16px;">
+
+        <!-- Key Terms Table -->
+        <div>
+          <div class="label" style="margin-top:0;">Key Terms</div>
+          <table class="tbl">
+            <tr><th>Term</th><th>Definition</th></tr>
+            <tr>
+              <td><span class="tt" data-t="Software Development Life Cycle — structured set of phases for building software">SDLC</span></td>
+              <td>Structured phases guiding software from conception to retirement</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Linear sequential SDLC model where each phase must complete before the next begins">Waterfall</span></td>
+              <td>Sequential SDLC model; phases do not overlap; suited to stable requirements</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Iterative development methodology valuing individuals, working software, collaboration, and change">Agile</span></td>
+              <td>Iterative, people-centric methodology; embraces change through short sprints</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="A statement of what the system should do or a constraint it must satisfy">Requirement</span></td>
+              <td>Capability or condition the system must satisfy (functional or non-functional)</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Scenario describing how an actor interacts with the system to achieve a specific goal">Use Case</span></td>
+              <td>Actor–system interaction narrative leading to an observable result of value</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Degree to which elements within a module are related and serve a single purpose">Cohesion</span></td>
+              <td>Internal relatedness of a module's elements; high cohesion is desirable</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Degree of interdependence between software modules">Coupling</span></td>
+              <td>Inter-module dependency; low coupling enables independent change</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Testing individual functions or classes in isolation from the rest of the system">Unit Test</span></td>
+              <td>Lowest-level test; validates a single component in isolation</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Testing the interaction and interfaces between combined modules">Integration Test</span></td>
+              <td>Verifies that modules work correctly together across their interfaces</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Process of locating and fixing the root cause of a discovered defect">Debugging</span></td>
+              <td>Fault localisation and correction after a failure is observed</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Bar chart plotting tasks against time to visualise project schedule and progress">Gantt Chart</span></td>
+              <td>Scheduling bar chart; shows task durations, dependencies, and milestones</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="An uncertain event or condition that, if it occurs, has a negative effect on project objectives">Risk</span></td>
+              <td>Potential problem; managed by identification, analysis, planning, and monitoring</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Design principle of dividing a program into separate, manageable, and independently deployable units">Modularity</span></td>
+              <td>Decomposition of software into discrete, interchangeable modules</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="An early, partial implementation of a system used to explore requirements or design options">Prototype</span></td>
+              <td>Throwaway or evolutionary early version used to clarify requirements and reduce risk</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Quick Review -->
+        <div>
+          <div class="label" style="margin-top:0;">Quick Review — Must-Know Facts</div>
+
+          <div class="info">
+            <div class="i-title">SE Definition</div>
+            Software engineering applies engineering discipline to software: systematic, disciplined, quantifiable approach to development, operation, and maintenance.
+          </div>
+
+          <div class="tip">
+            <div class="t-title">SDLC Model Selection</div>
+            Choose <strong>Waterfall</strong> for stable requirements; <strong>Spiral</strong> when risk is high; <strong>Agile</strong> when requirements evolve rapidly; <strong>Incremental</strong> when early delivery provides value.
+          </div>
+
+          <div class="note">
+            <div class="n-title">Cohesion &amp; Coupling Rule</div>
+            Maximise cohesion within modules; minimise coupling between modules. These two principles are the foundation of modular design.
+          </div>
+
+          <div class="warn">
+            <div class="w-title">Testing ≠ Debugging</div>
+            Testing reveals the <em>existence</em> of faults; debugging identifies their <em>location and cause</em> so they can be fixed.
+          </div>
+
+          <div class="info">
+            <div class="i-title">Quality Attributes Recap</div>
+            <strong>C</strong>orrectness · <strong>R</strong>eliability · <strong>R</strong>obustness · <strong>E</strong>fficiency · <strong>M</strong>aintainability · <strong>P</strong>ortability<br>
+            <span style="color:var(--text-muted);font-size:11px;">Mnemonic: <em>CR·REMP</em> or "Can Really Robust Engineers Make Portable code?"</span>
+          </div>
+
+          <div class="tip">
+            <div class="t-title">PERT Expected Time</div>
+            T<sub>e</sub> = (T<sub>o</sub> + 4·T<sub>m</sub> + T<sub>p</sub>) / 6 — weighted average giving most weight to the most-likely estimate.
+          </div>
+
+          <div class="note">
+            <div class="n-title">Function Points</div>
+            Count user-visible functionality (inputs, outputs, queries, internal files, external interfaces), apply complexity weights → language-independent size metric.
+          </div>
+
+          <div class="warn">
+            <div class="w-title">Requirements Must Be…</div>
+            Complete · Consistent · Unambiguous · Verifiable · Traceable. Any violation leads to downstream defects that are exponentially more costly to fix.
+          </div>
+        </div>
+
+      </div><!-- /grid-2 -->
+
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <span>
+    <a href="CH09-Programming-Languages-CheatSheet.html" style="color:var(--accent);text-decoration:none;">← CH09</a>
+    &nbsp;|&nbsp;
+    <a href="../CSI.html" style="color:var(--text-muted);text-decoration:none;">Back to FCS</a>
+    &nbsp;|&nbsp;
+    <a href="CH11-Data-Structures-CheatSheet.html" style="color:var(--accent);text-decoration:none;">CH11 →</a>
+  </span>
+  <span>Foundations of Computer Science, 4th Ed. · Forouzan · CH10 Software Engineering</span>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script></body>
+</html>

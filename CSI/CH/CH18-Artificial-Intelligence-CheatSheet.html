@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH18 · Artificial Intelligence · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}
+</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 18</h1>
+    <h2>Artificial Intelligence &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition &nbsp;|&nbsp; Complete Study Reference</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§18.1 AI Fundamentals</span>
+      <span class="toc-item">§18.2 Search Algorithms</span>
+      <span class="toc-item">§18.3 Knowledge Representation</span>
+      <span class="toc-item">§18.4 Machine Learning</span>
+      <span class="toc-item">§18.5 Neural Networks</span>
+      <span class="toc-item">§18.6 AI Applications</span>
+      <span class="toc-item">§18.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH18</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — Fundamentals · Search · Knowledge ═══ -->
+<div class="grid">
+
+  <!-- Card 1: AI Fundamentals -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>AI Fundamentals</h3></div>
+    <div class="card-body">
+      <div class="rule">AI = the study and design of intelligent agents that perceive their environment and take actions that maximize the chance of success</div>
+      <div class="label">Definition</div>
+      <p><strong><span class="tt" data-t="Artificial Intelligence — field of CS concerned with creating machines that exhibit intelligent behaviour">Artificial Intelligence</span></strong> aims to build systems that can reason, learn, plan, and act in ways that would require intelligence if performed by humans.</p>
+
+      <div class="label">Brief History</div>
+      <ul class="items">
+        <li><strong>1950</strong> — Alan Turing proposes the <span class="tt" data-t="Turing Test: if a human evaluator cannot distinguish a machine from a human in natural-language conversation, the machine exhibits intelligent behaviour">Turing Test</span> as a criterion for machine intelligence</li>
+        <li><strong>1956</strong> — Dartmouth Conference coins "Artificial Intelligence" as a field</li>
+        <li><strong>1974–80</strong> — First <span class="tt" data-t="AI Winter: period of reduced funding and interest in AI research following over-optimistic promises">AI Winter</span>; funding cuts after unmet expectations</li>
+        <li><strong>1987–93</strong> — Second AI Winter; expert-system limitations exposed</li>
+        <li><strong>1997</strong> — Deep Blue defeats Kasparov at chess</li>
+        <li><strong>2012–now</strong> — Deep learning renaissance driven by big data and GPUs</li>
+      </ul>
+
+      <div class="label">Strong vs Weak AI</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Type</th><th>Description</th><th>Status</th></tr>
+        <tr><td style="color:var(--accent);">Strong AI</td><td>General intelligence equal to human cognition</td><td>Theoretical / not achieved</td></tr>
+        <tr><td style="color:var(--accent2);">Weak AI</td><td>Specialised system designed for a narrow task</td><td>Current state of the art</td></tr>
+      </table>
+
+      <div class="label">Major AI Subfields</div>
+      <ul class="items">
+        <li><strong>Machine Learning (ML)</strong> — systems that improve from experience</li>
+        <li><strong>Natural Language Processing (NLP)</strong> — understanding and generating human language</li>
+        <li><strong>Computer Vision</strong> — interpreting visual information from images/video</li>
+        <li><strong>Robotics</strong> — designing agents that act in the physical world</li>
+        <li><strong>Expert Systems</strong> — encoding domain knowledge in rule-based systems</li>
+        <li><strong>Planning &amp; Search</strong> — finding sequences of actions to reach a goal</li>
+      </ul>
+
+      <div class="info">
+        <div class="i-title">Interdisciplinary Roots</div>
+        AI draws from mathematics, cognitive science, linguistics, psychology, neuroscience, and computer engineering — making it one of the broadest fields in CS.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Search Algorithms -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Search Algorithms</h3></div>
+    <div class="card-body">
+      <div class="rule">Search = systematically exploring a state space to find a goal state or optimal sequence of actions</div>
+
+      <div class="label">State Space Representation</div>
+      <ul class="items">
+        <li><strong>State:</strong> a configuration of the problem at a given point</li>
+        <li><strong>Initial state:</strong> where the search begins</li>
+        <li><strong>Goal state(s):</strong> desired configurations</li>
+        <li><strong>Actions / operators:</strong> transitions between states</li>
+        <li><strong>Path cost:</strong> cumulative cost of reaching a state</li>
+      </ul>
+
+      <div class="label">Uninformed (Blind) Search</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Algorithm</th><th>Strategy</th><th>Complete?</th><th>Optimal?</th></tr>
+        <tr><td><span class="tt" data-t="Breadth-First Search — explores all nodes at depth d before depth d+1">BFS</span></td><td>Level-by-level (FIFO queue)</td><td>Yes</td><td>Yes (unit cost)</td></tr>
+        <tr><td><span class="tt" data-t="Depth-First Search — explores as deep as possible before backtracking">DFS</span></td><td>Deepest node first (stack)</td><td>No (loops)</td><td>No</td></tr>
+        <tr><td>Iterative Deepening</td><td>DFS with increasing depth limit</td><td>Yes</td><td>Yes (unit cost)</td></tr>
+        <tr><td>Uniform Cost</td><td>Lowest path cost first</td><td>Yes</td><td>Yes</td></tr>
+      </table>
+
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">Iterative Deepening Key Point</div>
+        Combines BFS's completeness and optimality with DFS's low memory usage — the preferred uninformed strategy for large, unknown search spaces.
+      </div>
+
+      <div class="label">Informed (Heuristic) Search</div>
+      <ul class="items">
+        <li><strong>Greedy Best-First</strong> — expands node with lowest <span class="tt" data-t="h(n): estimated cost from node n to the nearest goal; must be admissible (never overestimates) for A* to be optimal">heuristic h(n)</span>; fast but not optimal</li>
+        <li><strong>A* Search</strong> — uses <code>f(n) = g(n) + h(n)</code>; optimal if h is <em>admissible</em></li>
+      </ul>
+      <div class="formula">f(n) = g(n) + h(n)
+g(n) = cost from start to n
+h(n) = estimated cost from n to goal</div>
+
+      <div class="label">Game Trees &amp; Adversarial Search</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Minimax: MAX player maximises score; MIN player minimises it — used in two-player zero-sum games">Minimax algorithm</span></strong> — alternates MAX/MIN levels; explores full game tree</li>
+        <li><strong><span class="tt" data-t="Alpha-Beta Pruning: prunes branches that cannot affect the final minimax decision, reducing tree size">Alpha-beta pruning</span></strong> — eliminates branches that cannot affect the result; same outcome as minimax with far fewer nodes visited</li>
+      </ul>
+      <div class="tip">
+        <div class="t-title">Alpha-Beta Efficiency</div>
+        With perfect move ordering, alpha-beta reduces the branching factor from <em>b</em> to √b, effectively doubling the search depth for the same cost.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Knowledge Representation -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Knowledge Representation</h3></div>
+    <div class="card-body">
+      <div class="rule">Knowledge representation = encoding real-world knowledge in a form a computer can reason about</div>
+
+      <div class="label">Propositional Logic</div>
+      <p>Uses <strong>propositions</strong> (true/false statements) connected by logical connectives: <code>¬</code> (NOT), <code>∧</code> (AND), <code>∨</code> (OR), <code>→</code> (implies), <code>↔</code> (iff).</p>
+      <ul class="items">
+        <li>Decidable — every statement is either true or false</li>
+        <li>Limited expressiveness — cannot quantify over objects</li>
+      </ul>
+
+      <div class="label">Predicate (First-Order) Logic</div>
+      <p>Extends propositional logic with <strong>objects</strong>, <strong>predicates</strong>, and <strong>quantifiers</strong> (∀, ∃).</p>
+      <div class="formula">∀x Human(x) → Mortal(x)
+Human(Socrates) ⊢ Mortal(Socrates)</div>
+
+      <div class="label">Inference Rules</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Rule</th><th>Form</th><th>Meaning</th></tr>
+        <tr><td><span class="tt" data-t="Modus Ponens: if P is true and P→Q is true then Q is true">Modus Ponens</span></td><td><code>P, P→Q ⊢ Q</code></td><td>From P and P implies Q, conclude Q</td></tr>
+        <tr><td>Modus Tollens</td><td><code>¬Q, P→Q ⊢ ¬P</code></td><td>Contrapositive reasoning</td></tr>
+        <tr><td><span class="tt" data-t="Resolution: from (A∨B) and (¬A∨C) derive (B∨C) — basis for automated theorem proving">Resolution</span></td><td><code>(A∨B), (¬A∨C) ⊢ B∨C</code></td><td>Core of automated provers</td></tr>
+      </table>
+
+      <div class="label">Knowledge Base (KB)</div>
+      <ul class="items">
+        <li>Stores facts and rules about a domain in a structured form</li>
+        <li><strong>Inference engine</strong> applies rules to derive new knowledge</li>
+        <li>Foundation of expert systems and logic programming (<code>Prolog</code>)</li>
+      </ul>
+
+      <div class="label">Semantic Networks &amp; Frames</div>
+      <ul class="items">
+        <li><strong>Semantic network</strong> — graph of nodes (concepts) and labelled edges (relations, e.g., <em>is-a</em>, <em>has-a</em>)</li>
+        <li><strong>Frames</strong> — structured records with slots and values, inspired by Minsky (1975); precursor to object-oriented programming</li>
+      </ul>
+      <div class="info">
+        <div class="i-title">Open World vs Closed World</div>
+        Closed-world assumption (expert systems): anything not known is false. Open-world assumption (the Web/ontologies): unknown facts may be true.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — ML · Neural Networks · Applications ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Machine Learning -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Machine Learning</h3></div>
+    <div class="card-body">
+      <div class="rule">ML = programs that improve their performance on a task through experience (data), without being explicitly programmed for every case</div>
+
+      <div class="label">Supervised Learning</div>
+      <p>Learns from <strong>labelled</strong> training data — input/output pairs — to predict outputs for unseen inputs.</p>
+      <ul class="items">
+        <li><strong>Classification</strong> — output is a discrete category (spam/not-spam, image label)</li>
+        <li><strong>Regression</strong> — output is a continuous value (house price, temperature forecast)</li>
+        <li>Algorithms: decision trees, k-NN, SVM, logistic regression, random forests</li>
+      </ul>
+
+      <div class="label">Unsupervised Learning</div>
+      <p>Finds hidden structure in <strong>unlabelled</strong> data.</p>
+      <ul class="items">
+        <li><strong>Clustering</strong> — groups similar instances (k-means, hierarchical, DBSCAN)</li>
+        <li><strong>Dimensionality reduction</strong> — compresses features while preserving structure (PCA, t-SNE, autoencoders)</li>
+        <li><strong>Density estimation</strong> — models the underlying data distribution</li>
+      </ul>
+
+      <div class="label">Reinforcement Learning</div>
+      <p>An <strong>agent</strong> takes actions in an <strong>environment</strong>, receives rewards/penalties, and learns a <strong>policy</strong> that maximises cumulative reward.</p>
+      <div class="formula">Q(s,a) ← Q(s,a) + α[r + γ·max Q(s',a') − Q(s,a)]
+Q-learning update rule (Bellman equation)</div>
+
+      <hr class="divider">
+
+      <div class="label">Model Fit</div>
+      <table class="tbl">
+        <tr><th>Problem</th><th>Training Error</th><th>Test Error</th><th>Remedy</th></tr>
+        <tr><td><span class="tt" data-t="Overfitting: model memorises training data and fails to generalise to new data">Overfitting</span></td><td>Low</td><td>High</td><td>Regularisation, more data, dropout</td></tr>
+        <tr><td><span class="tt" data-t="Underfitting: model is too simple to capture the underlying pattern in the data">Underfitting</span></td><td>High</td><td>High</td><td>More complex model, better features</td></tr>
+        <tr><td>Good Fit</td><td>Low</td><td>Low</td><td>—</td></tr>
+      </table>
+
+      <div class="label">Evaluation Protocol</div>
+      <ul class="items">
+        <li><strong>Train/Validation/Test split</strong> — training tunes weights, validation tunes hyperparameters, test gives final unbiased estimate</li>
+        <li><strong>k-fold cross-validation</strong> — partitions data into k subsets; each serves as test set once</li>
+      </ul>
+      <div class="warn">
+        <div class="w-title">Data Leakage Warning</div>
+        Never use test-set data during training or hyperparameter tuning — it invalidates the evaluation and leads to over-optimistic performance estimates.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Neural Networks -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Neural Networks</h3></div>
+    <div class="card-body">
+      <div class="rule">Neural network = layered architecture of interconnected computational units (neurons) inspired by the biological brain</div>
+
+      <div class="label">Biological Inspiration</div>
+      <ul class="items">
+        <li>Biological neuron: dendrites receive signals → cell body integrates → axon fires output</li>
+        <li>Artificial neuron: weighted inputs → summation → activation function → output</li>
+        <li>Synaptic strength ↔ learned <strong>weight</strong> parameter</li>
+      </ul>
+
+      <div class="label">Perceptron (Single Neuron)</div>
+      <div class="formula">output = f(w₁x₁ + w₂x₂ + … + wₙxₙ + b)
+w = weights, x = inputs, b = bias</div>
+      <p>A single perceptron can only solve <strong>linearly separable</strong> problems (e.g., AND, OR — but not XOR).</p>
+
+      <div class="label">Multilayer Networks (MLP)</div>
+      <ul class="items">
+        <li><strong>Input layer</strong> — receives raw feature values</li>
+        <li><strong>Hidden layer(s)</strong> — learn intermediate representations</li>
+        <li><strong>Output layer</strong> — produces final prediction</li>
+      </ul>
+
+      <div class="label">Activation Functions</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Function</th><th>Formula</th><th>Range</th><th>Use Case</th></tr>
+        <tr><td><span class="tt" data-t="Sigmoid squashes input to (0,1) — useful for binary output probabilities">Sigmoid</span></td><td><code>1/(1+e⁻ˣ)</code></td><td>(0, 1)</td><td>Binary classification output</td></tr>
+        <tr><td><span class="tt" data-t="Tanh maps input to (−1,1) — zero-centred, often better than sigmoid for hidden layers">tanh</span></td><td><code>(eˣ−e⁻ˣ)/(eˣ+e⁻ˣ)</code></td><td>(−1, 1)</td><td>Hidden layers</td></tr>
+        <tr><td><span class="tt" data-t="ReLU (Rectified Linear Unit): max(0,x) — fast, avoids vanishing gradient in deep networks">ReLU</span></td><td><code>max(0, x)</code></td><td>[0, ∞)</td><td>Default for deep nets</td></tr>
+        <tr><td>Softmax</td><td><code>eˣⁱ / Σeˣʲ</code></td><td>(0,1), Σ=1</td><td>Multi-class output</td></tr>
+      </table>
+
+      <div class="label">Backpropagation</div>
+      <ol class="steps">
+        <li>Forward pass — compute predictions and loss</li>
+        <li>Compute loss gradient w.r.t. output layer weights</li>
+        <li>Propagate gradients backward through layers (chain rule)</li>
+        <li>Update each weight: <code>w ← w − η·∂L/∂w</code></li>
+      </ol>
+      <div class="tip">
+        <div class="t-title">Vanishing Gradient</div>
+        Sigmoid/tanh gradients saturate near 0 or 1, causing early layers to learn very slowly in deep networks. ReLU and batch normalisation mitigate this.
+      </div>
+
+      <div class="label">Deep Learning Overview</div>
+      <ul class="items">
+        <li><strong>CNN</strong> (Convolutional Neural Network) — spatial feature extraction; dominant for images</li>
+        <li><strong>RNN / LSTM</strong> — sequential data; handles temporal dependencies</li>
+        <li><strong>Transformer</strong> — attention mechanism; state-of-the-art for NLP (BERT, GPT)</li>
+        <li>Requires large datasets, GPU compute, and careful regularisation</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 6: AI Applications -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>AI Applications</h3></div>
+    <div class="card-body">
+      <div class="rule">AI transforms raw data into actionable intelligence across language, vision, autonomous systems, and decision support</div>
+
+      <div class="label">Natural Language Processing (NLP)</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Tokenisation: splitting text into words, subwords, or characters as the basic unit of processing">Tokenisation</span></strong> — splitting text into tokens for processing</li>
+        <li><strong>Parsing</strong> — analysing grammatical structure (syntax trees)</li>
+        <li><strong>Sentiment analysis</strong> — classifying text as positive/neutral/negative</li>
+        <li><strong>Machine translation</strong> — seq2seq models (encoder-decoder, Transformer)</li>
+        <li><strong>Question answering</strong> — retrieving or generating answers from context</li>
+      </ul>
+
+      <div class="label">Computer Vision</div>
+      <ul class="items">
+        <li><strong>Image classification</strong> — assigning a category label to an entire image</li>
+        <li><strong>Object detection</strong> — localising and classifying multiple objects (YOLO, Faster R-CNN)</li>
+        <li><strong><span class="tt" data-t="CNN: uses convolutional filters to detect local patterns (edges, textures, shapes) in images">CNNs</span></strong> — hierarchical feature extraction via learned filters</li>
+        <li><strong>Semantic segmentation</strong> — pixel-level classification</li>
+        <li><strong>Facial recognition</strong> — identity verification from face images</li>
+      </ul>
+
+      <div class="label">Expert Systems</div>
+      <ul class="items">
+        <li>Encode domain expertise as IF-THEN rules in a <strong>knowledge base</strong></li>
+        <li>Inference engine applies <strong>forward chaining</strong> (data → conclusion) or <strong>backward chaining</strong> (goal → supporting facts)</li>
+        <li>Examples: MYCIN (medical diagnosis), DENDRAL (chemical analysis)</li>
+      </ul>
+
+      <div class="label">Robotics</div>
+      <ul class="items">
+        <li>Perception (sensors), planning (path/motion), and actuation (effectors)</li>
+        <li><strong>SLAM</strong> — Simultaneous Localisation and Mapping</li>
+        <li>Industrial robots, surgical robots, autonomous vehicles</li>
+      </ul>
+
+      <hr class="divider">
+      <div class="label">Ethical Concerns</div>
+      <div class="warn">
+        <div class="w-title">Bias &amp; Fairness</div>
+        Models trained on biased data amplify existing societal biases in hiring, lending, and criminal justice applications.
+      </div>
+      <div class="warn">
+        <div class="w-title">Privacy &amp; Surveillance</div>
+        Facial recognition and behavioural tracking raise serious privacy concerns — regulation is an active policy debate.
+      </div>
+      <div class="note">
+        <div class="n-title">Explainability (XAI)</div>
+        Deep learning models are largely black boxes; explainable AI research aims to make decisions transparent and auditable.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Key Terms & Quick Review ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Key Terms + Quick Review (spans full width) -->
+  <div class="card blue col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review</h3></div>
+    <div class="card-body">
+
+      <div class="label">Key Terms</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr>
+          <th>Term</th><th>Definition</th>
+          <th>Term</th><th>Definition</th>
+        </tr>
+        <tr>
+          <td style="color:var(--accent);"><span class="tt" data-t="Proposed by Alan Turing in 1950 as an operational definition of machine intelligence">Turing Test</span></td>
+          <td>Criterion for intelligence: human evaluator cannot distinguish machine from human in conversation</td>
+          <td style="color:var(--accent4);"><span class="tt" data-t="Knowledge Base: structured repository of facts and rules used by an inference engine">Knowledge Base</span></td>
+          <td>Repository of domain facts and rules used by an inference engine to derive conclusions</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent);"><span class="tt" data-t="Search: systematic exploration of a state space to find a goal or optimal plan">Search</span></td>
+          <td>Systematic exploration of a state space to find a path or solution to a goal</td>
+          <td style="color:var(--accent4);"><span class="tt" data-t="Inference: deriving new facts from existing knowledge using logical rules">Inference</span></td>
+          <td>Process of deriving new knowledge from existing facts and rules (e.g., modus ponens, resolution)</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent2);"><span class="tt" data-t="Heuristic h(n): problem-specific estimate of the cost to reach the goal from state n">Heuristic</span></td>
+          <td>Problem-specific estimate h(n) guiding informed search; must be admissible for A* optimality</td>
+          <td style="color:var(--accent2);"><span class="tt" data-t="Machine Learning: algorithms that improve performance on a task through exposure to data">Machine Learning</span></td>
+          <td>Class of algorithms that improve on a task through experience (data) rather than explicit programming</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent3);"><span class="tt" data-t="Neural Network: layered architecture of computational units that learns representations from data">Neural Network</span></td>
+          <td>Layered architecture of interconnected artificial neurons that learns feature representations from data</td>
+          <td style="color:var(--accent3);"><span class="tt" data-t="Backpropagation: algorithm for computing gradients in neural networks using the chain rule">Backpropagation</span></td>
+          <td>Algorithm that propagates the loss gradient backward through a network to update weights via gradient descent</td>
+        </tr>
+        <tr>
+          <td style="color:var(--yellow);"><span class="tt" data-t="NLP: branch of AI concerned with enabling computers to understand and generate human language">NLP</span></td>
+          <td>Natural Language Processing — AI subfield enabling computers to understand, interpret, and generate human language</td>
+          <td style="color:var(--yellow);"><span class="tt" data-t="Computer Vision: field of AI that enables machines to interpret and understand visual information">Computer Vision</span></td>
+          <td>AI field enabling machines to interpret images and video; core tasks include classification, detection, and segmentation</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent2);"><span class="tt" data-t="Supervised Learning: training on labelled input-output pairs to predict outputs for unseen inputs">Supervised</span></td>
+          <td>Learning from labelled data; maps inputs to known outputs (classification and regression)</td>
+          <td style="color:var(--accent5);"><span class="tt" data-t="Unsupervised Learning: finds hidden structure in data without labels">Unsupervised</span></td>
+          <td>Learning hidden structure in unlabelled data; includes clustering and dimensionality reduction</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent5);"><span class="tt" data-t="Reinforcement Learning: agent learns a policy by interacting with an environment and receiving rewards">Reinforcement</span></td>
+          <td>Learning a policy by maximising cumulative reward through environment interaction (agent, state, action, reward)</td>
+          <td style="color:var(--accent4);"><span class="tt" data-t="Deep Learning: ML using deep neural networks (many hidden layers) to learn hierarchical representations">Deep Learning</span></td>
+          <td>Subset of ML using networks with many hidden layers to learn hierarchical representations; powers modern AI breakthroughs</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent);"><span class="tt" data-t="Expert System: AI program that emulates a human expert's decision-making using a knowledge base and inference engine">Expert System</span></td>
+          <td>Rule-based system encoding domain expertise; uses forward/backward chaining to reach conclusions</td>
+          <td style="color:var(--accent3);"><span class="tt" data-t="Overfitting: model performs well on training data but poorly on unseen data due to excessive complexity">Overfitting</span></td>
+          <td>Model memorises training noise; high train accuracy, poor generalisation — remedied by regularisation and more data</td>
+        </tr>
+      </table>
+
+      <hr class="divider">
+      <div class="label">Quick Review</div>
+      <div class="grid-2" style="margin-top:6px;">
+        <div>
+          <div class="info">
+            <div class="i-title">Search Strategy Comparison</div>
+            <strong>BFS</strong>: complete, optimal (unit cost), O(b<sup>d</sup>) memory.<br>
+            <strong>DFS</strong>: incomplete (loops), not optimal, O(bm) memory.<br>
+            <strong>A*</strong>: complete, optimal (admissible h), memory-intensive.<br>
+            <strong>Alpha-beta</strong>: same result as minimax, O(b<sup>d/2</sup>) vs O(b<sup>d</sup>).
+          </div>
+          <div class="tip">
+            <div class="t-title">Machine Learning Workflow</div>
+            1. Collect &amp; clean data &nbsp;→&nbsp; 2. Feature engineering &nbsp;→&nbsp; 3. Choose model &nbsp;→&nbsp; 4. Train on training set &nbsp;→&nbsp; 5. Tune on validation set &nbsp;→&nbsp; 6. Evaluate on test set &nbsp;→&nbsp; 7. Deploy &amp; monitor.
+          </div>
+        </div>
+        <div>
+          <div class="note">
+            <div class="n-title">Neural Network Design Checklist</div>
+            ✔ Choose architecture matching data type (CNN for images, Transformer for text).<br>
+            ✔ Normalise inputs.<br>
+            ✔ Use ReLU activations in hidden layers, softmax/sigmoid at output.<br>
+            ✔ Apply dropout and batch normalisation to reduce overfitting.<br>
+            ✔ Monitor training vs. validation loss curves for early stopping.
+          </div>
+          <div class="warn">
+            <div class="w-title">Common AI Pitfalls</div>
+            • Confusing correlation with causation in ML models.<br>
+            • Leaking test-set information into training.<br>
+            • Ignoring class imbalance (use F1, precision, recall — not just accuracy).<br>
+            • Deploying without considering distributional shift.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <a href="CH17-Theory-of-Computation-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">← CH17</a>
+  <a href="../CSI.html" style="color:var(--text-dim);text-decoration:none;">Back to FCS</a>
+  <a href="CH19-Social-Media-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">CH19 →</a>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH16 · Security · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}
+</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 16</h1>
+    <h2>Security &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition &nbsp;·&nbsp; Complete Study Reference</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§16.1 Security Goals</span>
+      <span class="toc-item">§16.2 Symmetric Encryption</span>
+      <span class="toc-item">§16.3 Asymmetric Encryption</span>
+      <span class="toc-item">§16.4 Hash &amp; Digital Signatures</span>
+      <span class="toc-item">§16.5 Network Security</span>
+      <span class="toc-item">§16.6 Malware &amp; Threats</span>
+      <span class="toc-item">§16.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH16</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — Security Goals · Symmetric · Asymmetric ═══ -->
+<div class="grid">
+
+  <!-- Card 1: Security Goals -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Security Goals</h3></div>
+    <div class="card-body">
+      <div class="rule">CIA Triad: Confidentiality + Integrity + Availability — the three pillars of information security</div>
+      <div class="label">CIA Triad</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Ensures information is accessible only to those authorized to have access">Confidentiality</span>:</strong> prevent unauthorized disclosure of data; enforced by encryption, access controls</li>
+        <li><strong><span class="tt" data-t="Ensures data has not been altered in an unauthorized or undetected manner">Integrity</span>:</strong> protect data from unauthorized modification; enforced by hash functions, MACs</li>
+        <li><strong><span class="tt" data-t="Ensures authorized users can access resources whenever needed">Availability</span>:</strong> guarantee timely access to resources; protected against DoS attacks</li>
+      </ul>
+      <div class="label">Additional Security Goals</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Verifying that an entity (user, system) is who it claims to be">Authentication</span>:</strong> verify identity of a user or system before granting access</li>
+        <li><strong><span class="tt" data-t="Prevents sender or receiver from denying a transmitted message">Non-repudiation</span>:</strong> sender cannot later deny sending a message; achieved via digital signatures</li>
+        <li><strong>Access Control:</strong> determine what an authenticated entity is allowed to do (read, write, execute)</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Attack Categories (Forouzan)</div>
+      <table class="tbl">
+        <tr><th>Attack</th><th>Target</th><th>CIA Impact</th></tr>
+        <tr><td><span class="tt" data-t="Attacker gains unauthorized access to data in transit">Interception</span></td><td>Confidentiality</td><td style="color:var(--accent);">C ↓</td></tr>
+        <tr><td><span class="tt" data-t="Attacker alters data in transit or at rest">Modification</span></td><td>Integrity</td><td style="color:var(--accent2);">I ↓</td></tr>
+        <tr><td><span class="tt" data-t="Attacker creates fake data or masquerades as a legitimate entity">Fabrication</span></td><td>Authenticity</td><td style="color:var(--accent4);">A/I ↓</td></tr>
+        <tr><td><span class="tt" data-t="Attacker blocks or degrades access to a resource (DoS)">Interruption</span></td><td>Availability</td><td style="color:var(--accent3);">A ↓</td></tr>
+      </table>
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Passive vs. Active Attacks</div>
+        <strong>Passive</strong> (interception): hard to detect, attacker only observes — focus on <em>prevention</em>.<br>
+        <strong>Active</strong> (modification, fabrication, interruption): detectable in principle — focus on <em>detection &amp; recovery</em>.
+      </div>
+      <div class="divider"></div>
+      <div class="label">Access Control Models</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Discretionary Access Control — resource owner grants permissions at their discretion">DAC</span>:</strong> owner controls access to their own objects; common in desktop OSes (file permissions)</li>
+        <li><strong><span class="tt" data-t="Mandatory Access Control — labels and security clearances enforced by the OS">MAC</span>:</strong> OS enforces labels (Top Secret, Secret); users cannot override; used in military/government</li>
+        <li><strong><span class="tt" data-t="Role-Based Access Control — permissions assigned to roles, users assigned to roles">RBAC</span>:</strong> permissions tied to roles (admin, editor, viewer); user inherits role permissions; most common enterprise model</li>
+        <li><strong><span class="tt" data-t="Attribute-Based Access Control — decisions based on attributes of user, resource, environment">ABAC</span>:</strong> fine-grained; policies use attributes (department=HR, clearance≥3, time&lt;17:00)</li>
+      </ul>
+      <div class="label">Security Policy Principles</div>
+      <ul class="items">
+        <li><strong>Least Privilege:</strong> grant only the minimum permissions needed to perform a task</li>
+        <li><strong>Separation of Duties:</strong> require multiple people to complete sensitive operations</li>
+        <li><strong>Need to Know:</strong> access granted only if the entity has legitimate need for the information</li>
+        <li><strong>Fail-Safe Defaults:</strong> default to denial; access requires explicit grant, not explicit deny</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 2: Symmetric Encryption -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Symmetric Encryption</h3></div>
+    <div class="card-body">
+      <div class="rule">Symmetric: same secret key used for both encryption and decryption — fast but requires secure key distribution</div>
+      <div class="label">Core Concept</div>
+      <p>Both sender and receiver share an identical <span class="tt" data-t="A value used by an algorithm to encrypt or decrypt data">secret key</span>. The key must be exchanged securely before communication. If the key is compromised, all encrypted data is exposed.</p>
+      <div class="formula">C = E(K, P)&nbsp;&nbsp;&nbsp;&nbsp;P = D(K, C)</div>
+      <p class="mono" style="color:var(--text-muted);font-size:10px;">C = ciphertext, P = plaintext, K = key, E = encrypt, D = decrypt</p>
+      <div class="label">DES — Data Encryption Standard</div>
+      <ul class="items">
+        <li>Block cipher; block size = <strong>64 bits</strong>; key = <strong>56 bits</strong> (+ 8 parity bits = 64-bit key input)</li>
+        <li>16 rounds of Feistel network; published as FIPS in 1977</li>
+        <li>Now considered <strong>insecure</strong>: 56-bit key exhaustively searchable; broken in 1999</li>
+        <li><code>3DES</code>: applies DES three times with 2 or 3 distinct keys; effective key 112/168 bits</li>
+      </ul>
+      <div class="label">AES — Advanced Encryption Standard</div>
+      <ul class="items">
+        <li>Block size: <strong>128 bits</strong> (fixed); key sizes: <strong>128 / 192 / 256 bits</strong></li>
+        <li>Substitution-permutation network; 10/12/14 rounds depending on key length</li>
+        <li>Adopted as FIPS 197 in 2001; currently the gold standard for symmetric encryption</li>
+      </ul>
+      <div class="label">Modes of Operation</div>
+      <table class="tbl">
+        <tr><th>Mode</th><th>Stands for</th><th>Notes</th></tr>
+        <tr><td><code>ECB</code></td><td>Electronic Code Book</td><td>Each block encrypted independently — insecure, patterns visible</td></tr>
+        <tr><td><code>CBC</code></td><td>Cipher Block Chaining</td><td>Each block XOR'd with previous ciphertext; needs IV; sequential</td></tr>
+        <tr><td><code>CFB</code></td><td>Cipher FeedBack</td><td>Turns block cipher into stream cipher; error propagates</td></tr>
+        <tr><td><code>CTR</code></td><td>Counter</td><td>Generates keystream from counter; parallelizable; no padding needed</td></tr>
+      </table>
+      <div class="tip" style="margin-top:8px;">
+        <div class="t-title">Stream vs. Block Ciphers</div>
+        <strong>Block cipher</strong>: encrypts fixed-size blocks (DES, AES); padding required for partial blocks.<br>
+        <strong>Stream cipher</strong>: encrypts one bit/byte at a time using a keystream (RC4); faster for continuous data but fragile if key/state repeats.
+      </div>
+      <div class="warn">
+        <div class="w-title">Key Distribution Problem</div>
+        n parties communicating pairwise require <strong>n(n−1)/2</strong> secret keys. For 1000 users: ~500,000 keys. Asymmetric encryption or a key distribution center (KDC) solves this.
+      </div>
+      <div class="divider"></div>
+      <div class="label">Authenticated Encryption (AEAD)</div>
+      <ul class="items">
+        <li><span class="tt" data-t="Authenticated Encryption with Associated Data — provides both confidentiality and integrity in a single operation">AEAD</span> combines encryption and authentication in one pass; prevents padding oracle attacks</li>
+        <li><strong>GCM (Galois/Counter Mode):</strong> AES-GCM is the most widely deployed AEAD mode; produces ciphertext + auth tag</li>
+        <li><strong>CCM:</strong> Counter with CBC-MAC; used in WPA2 / 802.11i wireless security</li>
+        <li><strong>ChaCha20-Poly1305:</strong> stream-cipher-based AEAD; used in TLS 1.3 and mobile/IoT where AES hw acceleration unavailable</li>
+      </ul>
+      <div class="label">Symmetric Key Management</div>
+      <ul class="items">
+        <li><strong>Key Derivation Function (KDF):</strong> derive multiple subkeys from a master secret (HKDF, PBKDF2, bcrypt)</li>
+        <li><strong>Key Wrapping:</strong> encrypt one key with another key for secure storage/transport (AES Key Wrap, RFC 3394)</li>
+        <li><strong>Session Keys:</strong> ephemeral keys used for one session only; limit exposure if one key is compromised</li>
+        <li><strong>HSM (Hardware Security Module):</strong> tamper-resistant hardware that stores and uses keys; keys never leave the HSM in plaintext</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 3: Asymmetric Encryption -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Asymmetric Encryption</h3></div>
+    <div class="card-body">
+      <div class="rule">Asymmetric (public-key): key pair — public key encrypts, private key decrypts; eliminates secret key distribution problem</div>
+      <div class="label">Key Pair Concept</div>
+      <ul class="items">
+        <li><strong>Public key:</strong> freely distributed; anyone may use it to encrypt data for the owner</li>
+        <li><strong>Private key:</strong> kept secret by owner; used to decrypt messages encrypted with public key</li>
+        <li>Computationally infeasible to derive private key from public key</li>
+        <li>Trade-off: <em>much slower</em> than symmetric encryption (100–1000×); used for key exchange or small data</li>
+      </ul>
+      <div class="label">RSA Algorithm</div>
+      <div class="formula">n = p × q&nbsp;&nbsp;&nbsp;ϕ(n) = (p−1)(q−1)&nbsp;&nbsp;&nbsp;e·d ≡ 1 (mod ϕ(n))</div>
+      <ol class="steps">
+        <li><strong>Key generation:</strong> choose large primes p, q; compute n = pq; choose e coprime to ϕ(n); compute d = e⁻¹ mod ϕ(n). Public key = (e, n), private key = (d, n)</li>
+        <li><strong>Encryption:</strong> C = Mᵉ mod n &nbsp;(using recipient's public key)</li>
+        <li><strong>Decryption:</strong> M = Cᵈ mod n &nbsp;(using recipient's private key)</li>
+      </ol>
+      <div class="note">
+        <div class="n-title">RSA Security Basis</div>
+        Security relies on the <strong>integer factorization problem</strong>: it is easy to multiply two large primes but computationally hard to factor their product. Recommended key size ≥ 2048 bits today.
+      </div>
+      <div class="label">Diffie-Hellman Key Exchange</div>
+      <div class="formula">A = gᵃ mod p&nbsp;&nbsp;&nbsp;B = gᵇ mod p&nbsp;&nbsp;&nbsp;Shared = Bᵃ mod p = Aᵇ mod p</div>
+      <ul class="items">
+        <li>Allows two parties to agree on a shared secret over a public channel without transmitting the secret</li>
+        <li>Security based on the <strong>discrete logarithm problem</strong></li>
+        <li>Does <em>not</em> provide authentication — vulnerable to MITM without additional authentication</li>
+      </ul>
+      <div class="label">Use Cases for Asymmetric Cryptography</div>
+      <ul class="items">
+        <li><strong>Key distribution:</strong> securely deliver a symmetric session key (hybrid encryption)</li>
+        <li><strong>Digital signatures:</strong> sign with private key, verify with public key</li>
+        <li><strong>Authentication:</strong> prove identity without revealing the private key</li>
+        <li><strong>Certificates:</strong> bind a public key to an identity via a trusted CA signature</li>
+      </ul>
+      <div class="tip">
+        <div class="t-title">Hybrid Encryption (Best Practice)</div>
+        Use asymmetric encryption <em>only</em> to exchange a session key, then switch to symmetric (AES) for bulk data. This combines the security of asymmetric with the speed of symmetric — used in TLS, PGP, SSH.
+      </div>
+      <div class="divider"></div>
+      <div class="label">Elliptic Curve Cryptography (ECC)</div>
+      <div class="formula">y² = x³ + ax + b (mod p) — points form an abelian group under chord-and-tangent addition</div>
+      <ul class="items">
+        <li>Security based on the <strong>elliptic curve discrete logarithm problem (ECDLP)</strong> — harder than integer DLP</li>
+        <li>Achieves equivalent security to RSA with <em>much shorter keys</em>: ECC 256-bit ≈ RSA 3072-bit</li>
+        <li>Key algorithms: <strong>ECDH</strong> (key exchange), <strong>ECDSA</strong> (digital signatures), <strong>ECIES</strong> (encryption)</li>
+        <li>Used in TLS 1.3, Bitcoin, modern PKI; preferred over RSA for new systems</li>
+      </ul>
+      <div class="label">Key Size Equivalence Guide</div>
+      <table class="tbl">
+        <tr><th>Symmetric</th><th>RSA / DH</th><th>ECC</th><th>Security Level</th></tr>
+        <tr><td>80-bit</td><td>1024-bit</td><td>160-bit</td><td style="color:var(--accent3);">Inadequate (legacy)</td></tr>
+        <tr><td>112-bit</td><td>2048-bit</td><td>224-bit</td><td style="color:var(--accent5);">Transitional</td></tr>
+        <tr><td>128-bit</td><td>3072-bit</td><td>256-bit</td><td style="color:var(--accent2);">Current standard</td></tr>
+        <tr><td>256-bit</td><td>15360-bit</td><td>512-bit</td><td style="color:var(--accent2);">Post-quantum future</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — Hash/Signatures · Network Security · Malware ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Hash Functions & Digital Signatures -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Hash Functions &amp; Digital Signatures</h3></div>
+    <div class="card-body">
+      <div class="rule">Hash: fixed-size digest of arbitrary input — one-way, deterministic, collision-resistant; used to verify integrity</div>
+      <div class="label">Common Hash Algorithms</div>
+      <table class="tbl">
+        <tr><th>Algorithm</th><th>Output</th><th>Status</th></tr>
+        <tr><td><span class="tt" data-t="Message Digest 5 — produces 128-bit hash; broken by collision attacks">MD5</span></td><td>128 bits</td><td style="color:var(--accent3);">Broken (collisions) — legacy only</td></tr>
+        <tr><td><span class="tt" data-t="Secure Hash Algorithm 1 — 160-bit hash; deprecated for security use">SHA-1</span></td><td>160 bits</td><td style="color:var(--accent5);">Deprecated — collisions found 2017</td></tr>
+        <tr><td><span class="tt" data-t="SHA-2 family; 256-bit output; widely used and currently secure">SHA-256</span></td><td>256 bits</td><td style="color:var(--accent2);">Secure — current standard</td></tr>
+        <tr><td><span class="tt" data-t="SHA-3 (Keccak); alternative design to SHA-2; standardized 2015">SHA-3</span></td><td>224–512 bits</td><td style="color:var(--accent2);">Secure — backup to SHA-2</td></tr>
+      </table>
+      <div class="label">Required Properties of a Cryptographic Hash</div>
+      <ul class="items">
+        <li><strong>One-way (preimage resistance):</strong> given H(M), cannot recover M in feasible time</li>
+        <li><strong>Second preimage resistance:</strong> given M, cannot find M′ ≠ M such that H(M) = H(M′)</li>
+        <li><strong>Collision resistance:</strong> computationally infeasible to find any M, M′ where H(M) = H(M′)</li>
+        <li><strong>Deterministic:</strong> same input always produces same digest</li>
+        <li><strong>Avalanche effect:</strong> small change in input produces drastically different digest</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Digital Signature Process</div>
+      <ol class="steps">
+        <li><strong>Hash the message:</strong> sender computes H(M) using agreed hash algorithm</li>
+        <li><strong>Sign the hash:</strong> sender encrypts H(M) with their <em>private key</em> → digital signature S</li>
+        <li><strong>Transmit:</strong> send message M + signature S together</li>
+        <li><strong>Verify:</strong> receiver computes H(M) independently, then decrypts S with sender's <em>public key</em> to get H′(M); if H = H′, signature is valid</li>
+      </ol>
+      <div class="info">
+        <div class="i-title">What Digital Signatures Provide</div>
+        <strong>Authentication</strong> (proves sender identity) · <strong>Integrity</strong> (message not tampered) · <strong>Non-repudiation</strong> (sender cannot deny). They do <em>not</em> provide confidentiality by themselves.
+      </div>
+      <div class="label">Digital Certificates</div>
+      <ul class="items">
+        <li>Bind a public key to a verified identity, signed by a trusted <span class="tt" data-t="Certificate Authority — trusted third party that issues and signs digital certificates">CA</span></li>
+        <li>Format: <strong>X.509</strong>; contains subject name, public key, issuer CA, validity period, serial number</li>
+        <li><strong>Chain of trust:</strong> end-entity cert → intermediate CA → root CA (pre-installed in OS/browser)</li>
+      </ul>
+      <div class="warn">
+        <div class="w-title">Birthday Attack</div>
+        Due to the birthday paradox, collisions can be found in ~2^(n/2) operations for an n-bit hash. SHA-256 has 128-bit collision security. MD5's 128-bit output yields only ~2^64 collision resistance — computationally broken.
+      </div>
+      <div class="divider"></div>
+      <div class="label">HMAC — Keyed Hash for Authentication</div>
+      <div class="formula">HMAC(K, M) = H((K⊕opad) ‖ H((K⊕ipad) ‖ M))</div>
+      <ul class="items">
+        <li><span class="tt" data-t="Hash-based Message Authentication Code — combines a secret key with a hash function to provide authentication and integrity">HMAC</span> uses a <em>secret key</em> combined with a hash function; provides both <strong>integrity</strong> and <strong>authentication</strong></li>
+        <li>Unlike a plain hash, HMAC is unforgeable without the secret key — resistant to length-extension attacks</li>
+        <li>Common instances: <code>HMAC-SHA-256</code>, <code>HMAC-SHA-512</code></li>
+        <li>Used in TLS record layer, JWT tokens, API authentication (AWS Signature v4)</li>
+        <li>Difference from digital signature: HMAC is symmetric (shared key) — both parties can verify <em>and</em> forge, so no non-repudiation</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 5: Network Security -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Network Security</h3></div>
+    <div class="card-body">
+      <div class="rule">Network security: protect data in transit and control access to networked resources using multiple layered controls</div>
+      <div class="label">Firewalls</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>OSI Layer</th><th>Inspects</th></tr>
+        <tr><td><span class="tt" data-t="Inspects individual packets against static rules; no session state">Packet Filter</span></td><td>3 / 4</td><td>IP headers, ports, protocol</td></tr>
+        <tr><td><span class="tt" data-t="Tracks active connections; allows reply packets for established sessions">Stateful Inspection</span></td><td>3 / 4</td><td>Packet + connection state table</td></tr>
+        <tr><td><span class="tt" data-t="Proxy-based; fully interprets application protocol (HTTP, FTP, DNS)">Application-Layer</span></td><td>7</td><td>Full payload; deep packet inspection</td></tr>
+      </table>
+      <div class="label">VPN — Virtual Private Network</div>
+      <ul class="items">
+        <li>Creates an encrypted <span class="tt" data-t="A logical point-to-point connection over a shared public network">tunnel</span> over a public network (Internet)</li>
+        <li>Protocols: <code>IPSec</code>, <code>SSL/TLS</code>, <code>WireGuard</code>, <code>PPTP</code> (obsolete)</li>
+        <li>Provides confidentiality, integrity, and authentication for network traffic</li>
+      </ul>
+      <div class="label">SSL/TLS Handshake (Simplified)</div>
+      <ol class="steps">
+        <li><strong>ClientHello:</strong> client sends supported cipher suites, TLS version, random nonce</li>
+        <li><strong>ServerHello + Certificate:</strong> server chooses cipher, sends X.509 cert with public key</li>
+        <li><strong>Key Exchange:</strong> client verifies cert, generates/exchanges pre-master secret (RSA or DH)</li>
+        <li><strong>Session Keys Derived:</strong> both sides derive symmetric session keys from master secret</li>
+        <li><strong>Finished:</strong> both sides confirm handshake with MAC; encrypted communication begins</li>
+      </ol>
+      <div class="label">IPSec</div>
+      <ul class="items">
+        <li>Network-layer security protocol suite; operates at IP layer (Layer 3)</li>
+        <li><strong>AH (Authentication Header):</strong> integrity + authentication, no encryption</li>
+        <li><strong>ESP (Encapsulating Security Payload):</strong> encryption + integrity + authentication</li>
+        <li><strong>Transport mode:</strong> protects payload only; <strong>Tunnel mode:</strong> protects entire IP packet (used in VPNs)</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="label">Common Network Attacks</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Distributed Denial of Service — flood target with traffic from many sources">DDoS</span>:</strong> overwhelm target with traffic from botnet; mitigated by rate limiting, scrubbing centers</li>
+        <li><strong><span class="tt" data-t="Man-in-the-Middle — attacker intercepts and possibly alters communication between two parties">MITM</span>:</strong> attacker positions between client and server; defeated by mutual authentication + TLS</li>
+        <li><strong>Phishing:</strong> social engineering via deceptive email/site to steal credentials</li>
+        <li><strong>SQL Injection:</strong> malicious SQL in input fields; defeated by parameterized queries</li>
+        <li><strong><span class="tt" data-t="Cross-Site Scripting — inject malicious scripts into web pages viewed by other users">XSS</span>:</strong> inject scripts into web pages; defeated by input sanitization and CSP headers</li>
+        <li><strong>Replay Attack:</strong> re-send captured valid credentials/tokens; defeated by nonces and timestamps</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Defense in Depth</div>
+        No single control is sufficient. Layer firewalls, IDS/IPS, encryption, authentication, patching, and user training. Each layer must assume the previous layer can be breached.
+      </div>
+      <div class="divider"></div>
+      <div class="label">Public Key Infrastructure (PKI)</div>
+      <ul class="items">
+        <li><strong>CA (Certificate Authority):</strong> trusted entity that signs certificates; root CAs pre-installed in browsers/OS</li>
+        <li><strong>RA (Registration Authority):</strong> verifies identity of certificate applicants before CA issues cert</li>
+        <li><strong>CRL (Certificate Revocation List):</strong> list of revoked certificates published by CA; checked before trusting a cert</li>
+        <li><strong>OCSP:</strong> Online Certificate Status Protocol — real-time revocation check; faster than downloading full CRL</li>
+        <li><strong>Certificate Pinning:</strong> application hard-codes expected cert or public key; prevents MITM via rogue CA</li>
+      </ul>
+      <div class="label">TLS Version History</div>
+      <table class="tbl">
+        <tr><th>Version</th><th>Year</th><th>Status</th><th>Key Change</th></tr>
+        <tr><td>SSL 3.0</td><td>1996</td><td style="color:var(--accent3);">Deprecated</td><td>POODLE attack; RC4 issues</td></tr>
+        <tr><td>TLS 1.0/1.1</td><td>1999/2006</td><td style="color:var(--accent3);">Deprecated (2020)</td><td>BEAST, CRIME attacks</td></tr>
+        <tr><td>TLS 1.2</td><td>2008</td><td style="color:var(--accent5);">Acceptable</td><td>GCM modes, SHA-256; still widely used</td></tr>
+        <tr><td>TLS 1.3</td><td>2018</td><td style="color:var(--accent2);">Recommended</td><td>0-RTT, ECDHE only, removed weak ciphers</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 6: Malware & Threats -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Malware &amp; Threats</h3></div>
+    <div class="card-body">
+      <div class="rule">Malware: malicious software designed to disrupt, damage, or gain unauthorized access to systems</div>
+      <div class="label">Malware Types</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Spreads via</th><th>Payload / Goal</th></tr>
+        <tr><td><span class="tt" data-t="Self-replicating code that attaches to legitimate programs or files">Virus</span></td><td>Infected files</td><td>Data corruption, resource consumption; requires user action to spread</td></tr>
+        <tr><td><span class="tt" data-t="Self-replicating malware that spreads autonomously across networks">Worm</span></td><td>Network (auto)</td><td>Network congestion, drops payloads; no host file needed</td></tr>
+        <tr><td><span class="tt" data-t="Appears legitimate but contains hidden malicious code">Trojan</span></td><td>Social engineering</td><td>Backdoor access, data theft; does not self-replicate</td></tr>
+        <tr><td><span class="tt" data-t="Encrypts victim's files and demands payment for decryption key">Ransomware</span></td><td>Email / exploit</td><td>Encrypt files; extort payment (e.g., WannaCry, CryptoLocker)</td></tr>
+        <tr><td><span class="tt" data-t="Monitors user activity and sends data to attacker without consent">Spyware</span></td><td>Bundled software</td><td>Keylogging, screen capture, credential theft</td></tr>
+        <tr><td><span class="tt" data-t="Hides malware presence by subverting OS functions at kernel level">Rootkit</span></td><td>Privilege escalation</td><td>Persistent stealth; hides processes, files, network activity</td></tr>
+        <tr><td><span class="tt" data-t="Collection of compromised machines controlled remotely by an attacker">Botnet</span></td><td>Trojan / worm</td><td>DDoS, spam relay, cryptocurrency mining</td></tr>
+      </table>
+      <div class="label">Intrusion Detection Systems (IDS)</div>
+      <ul class="items">
+        <li><strong>Signature-based:</strong> match traffic/behavior against known attack patterns (fast, but misses zero-days)</li>
+        <li><strong>Anomaly-based:</strong> detect deviations from learned baseline; catches novel attacks but high false-positive rate</li>
+        <li><strong>IDS vs. IPS:</strong> IDS <em>detects</em> and alerts; IPS (Intrusion <em>Prevention</em> System) also <em>blocks</em> in real time</li>
+        <li><strong>Host-based (HIDS):</strong> monitors a single host's logs and system calls</li>
+        <li><strong>Network-based (NIDS):</strong> monitors network traffic at a sensor or tap point</li>
+      </ul>
+      <div class="label">Social Engineering</div>
+      <ul class="items">
+        <li>Manipulating people rather than systems to obtain credentials or access</li>
+        <li><strong>Phishing:</strong> mass deceptive emails; <strong>Spear phishing:</strong> targeted to specific individual</li>
+        <li><strong>Pretexting:</strong> fabricated scenario (fake IT helpdesk) to extract information</li>
+        <li><strong>Baiting:</strong> leave infected USB drives in public locations</li>
+        <li><strong>Tailgating:</strong> physically follow an authorized person into a secured area</li>
+      </ul>
+      <div class="warn">
+        <div class="w-title">Human Factor</div>
+        Over 80% of breaches involve a human element (phishing, misuse, errors). Technical controls must be complemented by user security awareness training and strong organizational policies.
+      </div>
+      <div class="tip">
+        <div class="t-title">Antivirus Limitations</div>
+        Signature-based antivirus cannot detect <strong>zero-day</strong> exploits (no signature yet), <strong>polymorphic</strong> malware (changes its signature each copy), or <strong>fileless</strong> attacks (run entirely in memory). Behavioral analysis and sandboxing are needed.
+      </div>
+      <div class="divider"></div>
+      <div class="label">Vulnerability Classes</div>
+      <table class="tbl">
+        <tr><th>Vulnerability</th><th>Description</th><th>Prevention</th></tr>
+        <tr><td><span class="tt" data-t="Writing beyond allocated buffer boundaries — can overwrite return addresses or adjacent data">Buffer Overflow</span></td><td>Write past array end; overwrite stack/heap</td><td>Bounds checking, ASLR, NX bit, safe languages</td></tr>
+        <tr><td><span class="tt" data-t="Injecting SQL commands through unvalidated user input fields">SQL Injection</span></td><td>Malicious SQL in input alters DB query</td><td>Parameterized queries, prepared statements</td></tr>
+        <tr><td><span class="tt" data-t="Cross-Site Scripting — inject scripts into pages viewed by other users">XSS</span></td><td>Scripts injected into web pages</td><td>Input validation, output encoding, CSP</td></tr>
+        <tr><td><span class="tt" data-t="Cross-Site Request Forgery — tricks authenticated user's browser into making unwanted requests">CSRF</span></td><td>Forged requests using victim's session</td><td>CSRF tokens, SameSite cookies</td></tr>
+        <tr><td><span class="tt" data-t="Zero-day: vulnerability unknown to the vendor or for which no patch exists">Zero-Day</span></td><td>Unknown flaw; no patch available</td><td>Defence in depth, anomaly detection</td></tr>
+      </table>
+      <div class="label">Security Response Lifecycle</div>
+      <ol class="steps">
+        <li><strong>Identify:</strong> discover vulnerability via pen-testing, bug bounty, or CVE disclosure</li>
+        <li><strong>Contain:</strong> isolate affected systems to prevent lateral movement</li>
+        <li><strong>Eradicate:</strong> remove malware, patch vulnerability, revoke compromised credentials</li>
+        <li><strong>Recover:</strong> restore systems from clean backups; verify integrity</li>
+        <li><strong>Lessons Learned:</strong> document incident; update policies and controls</li>
+      </ol>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Key Terms + Quick Review (full width) ═══ -->
+<div class="grid section-gap">
+
+  <div class="card red col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review</h3></div>
+    <div class="card-body">
+      <div class="grid-2">
+
+        <!-- Left: Key Terms Table -->
+        <div>
+          <div class="label">Key Terms — Chapter 16</div>
+          <table class="tbl">
+            <tr><th>Term</th><th>Definition</th></tr>
+            <tr><td><span class="tt" data-t="Confidentiality, Integrity, Availability — three core goals of information security">CIA Triad</span></td><td>Three core security goals: Confidentiality, Integrity, Availability</td></tr>
+            <tr><td><span class="tt" data-t="Process of transforming plaintext into ciphertext using a key and algorithm">Encryption</span></td><td>Transforming plaintext into unreadable ciphertext using a key</td></tr>
+            <tr><td><span class="tt" data-t="Reverse of encryption: recovering plaintext from ciphertext using the key">Decryption</span></td><td>Recovering original plaintext from ciphertext using a key</td></tr>
+            <tr><td><span class="tt" data-t="Single key shared by sender and receiver for both encryption and decryption">Symmetric Key</span></td><td>Single shared key used for both encryption and decryption</td></tr>
+            <tr><td><span class="tt" data-t="Public/private key pair; public key encrypts, private key decrypts">Asymmetric Key</span></td><td>Key pair where public key encrypts and private key decrypts</td></tr>
+            <tr><td><span class="tt" data-t="Rivest-Shamir-Adleman: public-key algorithm based on integer factorization">RSA</span></td><td>Public-key algorithm; security based on integer factorization hardness</td></tr>
+            <tr><td><span class="tt" data-t="Advanced Encryption Standard: symmetric block cipher with 128-bit blocks and 128/192/256-bit keys">AES</span></td><td>Symmetric block cipher; FIPS 197 standard; 128-bit block size</td></tr>
+            <tr><td><span class="tt" data-t="A fixed-size digest computed from variable-length input; one-way and collision-resistant">Hash Function</span></td><td>One-way function producing a fixed-size digest; used for integrity</td></tr>
+            <tr><td><span class="tt" data-t="Cryptographic mechanism providing authentication, integrity, and non-repudiation using asymmetric keys">Digital Signature</span></td><td>Hash signed with private key; provides auth, integrity, non-repudiation</td></tr>
+            <tr><td><span class="tt" data-t="Network security device that filters traffic based on rules">Firewall</span></td><td>Network barrier that filters traffic based on a rule set</td></tr>
+            <tr><td><span class="tt" data-t="Virtual Private Network: encrypted tunnel over a public network">VPN</span></td><td>Encrypted tunnel over a public network for secure remote access</td></tr>
+            <tr><td><span class="tt" data-t="Secure Sockets Layer — predecessor to TLS; now deprecated">SSL</span></td><td>Cryptographic protocol for network security; superseded by TLS</td></tr>
+            <tr><td><span class="tt" data-t="Transport Layer Security — successor to SSL; secures HTTP (HTTPS), email, etc.">TLS</span></td><td>Current standard protocol for encrypting data in transit (replaces SSL)</td></tr>
+            <tr><td><span class="tt" data-t="Malicious software including viruses, worms, trojans, ransomware, spyware, rootkits">Malware</span></td><td>Malicious software designed to damage, disrupt, or gain unauthorized access</td></tr>
+            <tr><td><span class="tt" data-t="Non-repudiation: sender cannot deny having sent a message — achieved by digital signatures">Non-repudiation</span></td><td>Proof that a message was sent by the stated sender; cannot be denied later</td></tr>
+            <tr><td><span class="tt" data-t="Intrusion Detection System — monitors for suspicious activity or policy violations">IDS</span></td><td>System that monitors traffic or behavior and alerts on suspected intrusions</td></tr>
+          </table>
+        </div>
+
+        <!-- Right: Quick Review -->
+        <div>
+          <div class="label">Quick Review — High-Yield Facts</div>
+          <div class="rule">DES: 64-bit block · 56-bit key · 16 Feistel rounds · BROKEN</div>
+          <div class="rule">AES: 128-bit block · 128/192/256-bit key · SPN · SECURE</div>
+          <div class="formula">RSA: C = Mᵉ mod n · M = Cᵈ mod n · ed ≡ 1 (mod ϕ(n))</div>
+          <div class="formula">DH: shared = (gᵃ mod p)ᵇ = (gᵇ mod p)ᵃ = gᵃᵇ mod p</div>
+          <div class="label">Algorithm Comparison</div>
+          <table class="tbl">
+            <tr><th>Algorithm</th><th>Type</th><th>Key/Output</th><th>Security Basis</th></tr>
+            <tr><td>DES</td><td>Symmetric block</td><td>56-bit key</td><td>Feistel network — <span style="color:var(--accent3);">obsolete</span></td></tr>
+            <tr><td>AES</td><td>Symmetric block</td><td>128/192/256-bit</td><td>SPN — <span style="color:var(--accent2);">current standard</span></td></tr>
+            <tr><td>RSA</td><td>Asymmetric</td><td>≥2048-bit</td><td>Integer factorization</td></tr>
+            <tr><td>DH</td><td>Key exchange</td><td>≥2048-bit</td><td>Discrete logarithm</td></tr>
+            <tr><td>MD5</td><td>Hash</td><td>128-bit digest</td><td><span style="color:var(--accent3);">Broken — collisions</span></td></tr>
+            <tr><td>SHA-256</td><td>Hash</td><td>256-bit digest</td><td>Merkle–Damgård — <span style="color:var(--accent2);">secure</span></td></tr>
+          </table>
+          <div class="divider"></div>
+          <div class="label">Exam Checkpoints</div>
+          <div class="info">
+            <div class="i-title">What Asymmetric Encryption Solves</div>
+            Key distribution: n users need only n key pairs (2n keys total) vs. n(n−1)/2 for symmetric. Scales linearly instead of quadratically.
+          </div>
+          <div class="tip">
+            <div class="t-title">Sign vs. Encrypt Direction</div>
+            <strong>Encrypt for confidentiality:</strong> use recipient's <em>public</em> key to encrypt → only recipient's private key can decrypt.<br>
+            <strong>Sign for authenticity:</strong> use sender's <em>private</em> key to sign → anyone with sender's public key can verify.
+          </div>
+          <div class="note">
+            <div class="n-title">ECB Mode Weakness</div>
+            ECB encrypts identical plaintext blocks to identical ciphertext blocks. An attacker can detect patterns (e.g., in images) without decrypting. CBC, CTR, or GCM modes hide block patterns and should always be preferred over ECB.
+          </div>
+          <div class="warn">
+            <div class="w-title">Common Exam Traps</div>
+            <strong>(1)</strong> DES key is <em>56 bits</em> effective — the 64-bit input includes 8 parity bits.<br>
+            <strong>(2)</strong> Digital signatures provide non-repudiation; symmetric MACs do <em>not</em>.<br>
+            <strong>(3)</strong> TLS uses asymmetric crypto only during handshake; bulk data uses symmetric (AES).<br>
+            <strong>(4)</strong> A hash function does not require a key; a <span class="tt" data-t="Message Authentication Code — keyed hash providing both integrity and authentication">MAC</span> does.
+          </div>
+        </div>
+
+      </div><!-- /grid-2 -->
+    </div>
+  </div>
+
+</div><!-- /row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <a href="CH15-Data-Compression-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">← CH15</a>
+  <a href="../CSI.html" style="color:var(--text-dim);text-decoration:none;">Back to FCS</a>
+  <a href="CH17-Theory-of-Computation-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">CH17 →</a>
+</div>
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script>
+</body>
+</html>

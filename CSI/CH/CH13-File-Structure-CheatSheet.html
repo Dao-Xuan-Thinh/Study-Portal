@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH13 · File Structures · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}
+</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 13</h1>
+    <h2>File Structures &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition · Forouzan</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§13.1 File Concepts</span>
+      <span class="toc-item">§13.2 Sequential Files</span>
+      <span class="toc-item">§13.3 Indexed Files</span>
+      <span class="toc-item">§13.4 Hashed Files</span>
+      <span class="toc-item">§13.5 Directory Structures</span>
+      <span class="toc-item">§13.6 Access &amp; Protection</span>
+      <span class="toc-item">§13.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH13</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — File Concepts · Sequential · Indexed ═══ -->
+<div class="grid">
+
+  <!-- Card 1: File Concepts -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>File Concepts</h3></div>
+    <div class="card-body">
+      <div class="rule">File = named, persistent collection of related records stored on secondary storage</div>
+
+      <div class="label">Data Hierarchy</div>
+      <p class="mono" style="color:var(--text-muted);">Bit → Byte → <span class="tt" data-t="Smallest named unit of data; has a type (e.g. integer, string) and a fixed or variable length">Field</span> → <span class="tt" data-t="Collection of related fields that describes one entity instance (e.g. one student)">Record</span> → <span class="tt" data-t="Collection of related records, stored persistently on secondary storage">File</span> → Database</p>
+
+      <div class="label">Key Definitions</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Unit</th><th>Description</th></tr>
+        <tr><td style="color:var(--accent);">Field</td><td>Smallest named unit of data; has a type and length (e.g. <code>age INT</code>)</td></tr>
+        <tr><td style="color:var(--accent);">Record</td><td>Collection of related fields; describes one entity (e.g. one employee)</td></tr>
+        <tr><td style="color:var(--accent);">File</td><td>Collection of related records; named and persisted on disk</td></tr>
+        <tr><td style="color:var(--accent);">Key field</td><td>Field whose value uniquely identifies a record within the file</td></tr>
+      </table>
+
+      <div class="label">File Attributes (Metadata)</div>
+      <p class="mono" style="color:var(--text-muted);font-size:10px;">name · type · size · location · timestamps (created/modified/accessed) · owner · permissions · FCB pointer</p>
+
+      <div class="label">Text vs Binary Files</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Type</th><th>Encoding</th><th>Use</th></tr>
+        <tr><td style="color:var(--accent2);">Text</td><td>Printable ASCII/Unicode; newline-delimited</td><td>Source code, config, CSV</td></tr>
+        <tr><td style="color:var(--accent5);">Binary</td><td>Raw byte patterns; compact, machine-readable</td><td>Images, executables, DBs</td></tr>
+      </table>
+
+      <div class="label">File Operations</div>
+      <ul class="items">
+        <li><strong>Create</strong> — allocate space; add entry to directory</li>
+        <li><strong>Open</strong> — load FCB into memory; return file descriptor</li>
+        <li><strong>Close</strong> — flush buffers; release file descriptor</li>
+        <li><strong>Read</strong> — copy bytes from file into process buffer</li>
+        <li><strong>Write</strong> — copy bytes from process buffer into file</li>
+        <li><strong><span class="tt" data-t="Repositions the file pointer to a specific byte offset without reading or writing">Seek</span></strong> — reposition file pointer (random access)</li>
+        <li><strong>Delete</strong> — release space; remove directory entry</li>
+      </ul>
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Open-File Table</div>
+        The OS maintains a per-process open-file table. Each <code>open()</code> call returns an integer file descriptor (fd) that indexes into this table; the table stores the current file pointer, access mode, and a reference count.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Sequential File Organization -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Sequential File Organization</h3></div>
+    <div class="card-body">
+      <div class="rule">Records stored one after another in physical (insertion) order; access is strictly serial</div>
+
+      <div class="label">Fixed-Length Records</div>
+      <p>Every record occupies exactly <em>R</em> bytes. The byte offset of record <em>i</em> can be computed directly:</p>
+      <div class="formula">offset(i) = i × R        (0-based index)
+Example: R=128 B, record 5 → offset = 640 B</div>
+      <ul class="items">
+        <li>Simple implementation; O(1) random access by record number</li>
+        <li>Wasted space when fields are shorter than their maximum size</li>
+        <li>Deletion leaves "holes" — must compact or mark as deleted</li>
+      </ul>
+
+      <div class="label">Variable-Length Records</div>
+      <ul class="items">
+        <li>Records differ in size; use <strong>length-prefix</strong> or <strong>delimiter</strong> approach</li>
+        <li>Length-prefix: first 2–4 bytes of each record store its byte length</li>
+        <li>Delimiter: special byte sequence (e.g. <code>\n</code>, <code>\0</code>) marks record end</li>
+        <li>Enables efficient storage of VARCHAR fields; no wasted padding</li>
+        <li>Random access requires scanning from beginning — O(n) in worst case</li>
+      </ul>
+
+      <div class="label">Advantages</div>
+      <ul class="items">
+        <li>Simplest organization to implement and understand</li>
+        <li>Excellent cache/disk locality for sequential scans</li>
+        <li>Efficient for full-file batch processing</li>
+      </ul>
+
+      <div class="label">Disadvantages</div>
+      <ul class="items">
+        <li>No efficient random/keyed access — must read from start</li>
+        <li>Insertion in sorted order forces shifting all subsequent records</li>
+        <li>Deletion requires compaction or tombstone marking</li>
+      </ul>
+
+      <div class="tip">
+        <div class="t-title">Ideal Use Cases</div>
+        Payroll processing, monthly billing runs, transaction log replay, data backups — any workload that processes <strong>every</strong> record in order.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Indexed File Organization -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Indexed File Organization</h3></div>
+    <div class="card-body">
+      <div class="rule">A separate index structure maps search-key values to record addresses, enabling O(log n) keyed access</div>
+
+      <div class="label">Index Structure</div>
+      <p>An index is a file of <em>(search-key, pointer)</em> pairs, sorted by key. The pointer gives the disk address (block + offset) of the matching record.</p>
+
+      <div class="label">Dense vs Sparse Index</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Type</th><th>Entries</th><th>Requirement</th></tr>
+        <tr><td style="color:var(--accent4);">Dense</td><td>One entry <em>per record</em></td><td>Works on any file order; larger index</td></tr>
+        <tr><td style="color:var(--accent4);">Sparse</td><td>One entry <em>per block</em></td><td>File must be sorted on search key; smaller index</td></tr>
+      </table>
+
+      <div class="label">Primary vs Secondary Index</div>
+      <ul class="items">
+        <li><strong>Primary index:</strong> built on the ordering key of the data file; one entry per block (sparse is typical)</li>
+        <li><strong>Secondary index:</strong> built on a non-ordering attribute; must be dense; may have duplicate keys → bucket of pointers</li>
+      </ul>
+
+      <div class="label">B-Tree Index</div>
+      <p>A self-balancing tree where all leaves are at the same depth. Used by virtually every DBMS for its index structures.</p>
+      <div class="formula">Tree depth  = ⌈log_m(N)⌉
+  m = order (max pointers per node)
+  N = number of indexed keys</div>
+      <ul class="items">
+        <li>Each internal node holds up to <em>m−1</em> keys and <em>m</em> child pointers</li>
+        <li>Search, insert, delete: O(log<sub>m</sub> N)</li>
+        <li><strong>B+ tree variant:</strong> all data in leaves; inner nodes hold keys only → efficient range scans via leaf linked list</li>
+      </ul>
+
+      <div class="label">Indexed Lookup Process</div>
+      <ol class="steps">
+        <li>Binary-search the index (or traverse B-tree) for target key</li>
+        <li>Retrieve the block pointer from the matching index entry</li>
+        <li>Read that disk block into memory buffer</li>
+        <li>Scan block for exact record match</li>
+      </ol>
+
+      <div class="note">
+        <div class="n-title">B+ Tree Advantage</div>
+        Because all records are in leaves linked in sorted order, a range query (e.g. <code>WHERE age BETWEEN 20 AND 30</code>) traverses only the leaf level — no backtracking through internal nodes.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — Hashed · Directory · Access & Protection ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Hashed File Organization -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Hashed File Organization</h3></div>
+    <div class="card-body">
+      <div class="rule">A hash function maps a record key directly to a bucket address — average O(1) access with no index traversal</div>
+
+      <div class="label">Hash Function</div>
+      <p>A <span class="tt" data-t="Deterministic function that maps a key to a bucket number in range [0, B-1]">hash function</span> <em>h(k)</em> converts a key value to a bucket number in the range <code>[0, B−1]</code>.</p>
+      <div class="formula">Division method:  h(k) = k mod B
+Folding:          split k into parts, add them, mod B
+Mid-square:       square k, take middle digits, mod B</div>
+      <ul class="items">
+        <li>Choose <em>B</em> as a prime number to reduce clustering</li>
+        <li>Bucket = disk block (or page) holding one or more records</li>
+      </ul>
+
+      <div class="label">Collision Handling</div>
+      <p>A <span class="tt" data-t="Collision occurs when two different keys hash to the same bucket address">collision</span> occurs when two keys produce the same bucket address.</p>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Strategy</th><th>Description</th></tr>
+        <tr><td style="color:var(--accent5);">Open Addressing</td><td>Probe next available slot: linear (+1), quadratic (+i²), double hashing</td></tr>
+        <tr><td style="color:var(--accent5);">Chaining</td><td>Each bucket points to an overflow linked list; no clustering</td></tr>
+        <tr><td style="color:var(--accent5);">Overflow Area</td><td>Separate file region reserved for overflow records</td></tr>
+      </table>
+
+      <div class="label">Load Factor</div>
+      <div class="formula">α = n / B     (n = records stored, B = buckets)
+Ideal range: 0.70 – 0.80
+α > 0.9  →  performance degrades rapidly</div>
+
+      <div class="label">Rehashing</div>
+      <ul class="items">
+        <li>When α exceeds threshold, allocate ~2× buckets and redistribute all records</li>
+        <li><strong>Extendible hashing:</strong> splits only the overflowing bucket using a directory; avoids full rehash</li>
+        <li><strong>Linear hashing:</strong> splits buckets in a fixed round-robin order as load grows</li>
+        <li>Cost of rehash: O(n) — all n records must be re-hashed and rewritten</li>
+      </ul>
+
+      <div class="warn">
+        <div class="w-title">Range Queries</div>
+        Hashing destroys key order. <strong>Do not use</strong> hashed organization for range queries (e.g. <code>WHERE salary BETWEEN 50000 AND 80000</code>) — use an indexed file instead.
+      </div>
+
+      <div class="info">
+        <div class="i-title">When to Use Hashing</div>
+        Exact-match lookups on a primary key with uniform key distribution: e.g., employee lookup by ID, DNS record lookup, symbol tables in compilers.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Directory Structures -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Directory Structures</h3></div>
+    <div class="card-body">
+      <div class="rule">A directory is a symbol table mapping file names to their File Control Block (FCB / inode) metadata</div>
+
+      <div class="label">Single-Level Directory</div>
+      <ul class="items">
+        <li>All files in one flat namespace; simplest implementation</li>
+        <li><strong>Problem:</strong> name collisions in multi-user systems; no grouping</li>
+      </ul>
+
+      <div class="label">Two-Level Directory</div>
+      <ul class="items">
+        <li>Master File Directory (MFD) → per-user User File Directory (UFD)</li>
+        <li>Isolates namespaces; users may have identically named files</li>
+        <li><strong>Problem:</strong> users cannot share files; no subdirectory support</li>
+      </ul>
+
+      <div class="label">Tree-Structured Directory</div>
+      <ul class="items">
+        <li>Arbitrary depth; each node is a file or a directory</li>
+        <li>Current Working Directory (<span class="tt" data-t="The directory that the process treats as its working context for relative path resolution">CWD</span>) maintained per process</li>
+        <li>Enables intuitive hierarchical organisation of files</li>
+        <li><strong>Absolute path:</strong> from root → every directory → file</li>
+        <li><strong>Relative path:</strong> from CWD; <code>..</code> = parent directory</li>
+      </ul>
+
+      <div class="label">Acyclic Graph Directory</div>
+      <ul class="items">
+        <li>Shared files/subdirectories via <strong>links</strong> — one physical file, multiple directory entries</li>
+        <li><strong>Hard link:</strong> second directory entry pointing to same inode; reference-counted</li>
+        <li><strong>Symbolic (soft) link:</strong> special file containing target path; can cross file systems</li>
+        <li>No cycles allowed → deletion is safe using reference counts</li>
+      </ul>
+
+      <div class="label">Mounting</div>
+      <p>A file system on a separate device is <span class="tt" data-t="Attaching a file system to a directory (mount point) so its root becomes accessible within the existing tree">mounted</span> at a <em>mount point</em> — a directory in the existing tree. After mounting, the root of the new file system replaces the mount point.</p>
+
+      <div class="note">
+        <div class="n-title">General Graph Directories</div>
+        If cycles are permitted (e.g. via hard links to directories), simple reference counting fails. The OS must run a garbage-collection cycle to reclaim unreachable storage.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: File Access & Protection -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>File Access &amp; Protection</h3></div>
+    <div class="card-body">
+
+      <div class="label">Access Methods</div>
+      <table class="tbl">
+        <tr><th>Method</th><th>Description</th><th>Best For</th></tr>
+        <tr><td style="color:var(--yellow);">Sequential</td><td>Read/write in order; pointer auto-advances; can rewind</td><td>Log files, tape backups</td></tr>
+        <tr><td style="color:var(--yellow);">Direct (Random)</td><td>Seek to any block number; O(1) for fixed-length records</td><td>Databases, OS paging</td></tr>
+        <tr><td style="color:var(--yellow);">Indexed</td><td>Look up key in index, then direct-access the block</td><td>DBMS table access</td></tr>
+      </table>
+
+      <div class="label">Access Rights</div>
+      <ul class="items">
+        <li><strong>Read (r)</strong> — read file contents; list directory entries</li>
+        <li><strong>Write (w)</strong> — modify or truncate file contents</li>
+        <li><strong>Execute (x)</strong> — run file as a program; traverse directory</li>
+        <li><strong>Append (a)</strong> — add data to end of file only; no overwrite</li>
+        <li><strong>Delete (d)</strong> — remove file from directory; free its space</li>
+        <li><strong>List (l)</strong> — view directory entries and file names</li>
+      </ul>
+
+      <div class="label">Unix Permission Model</div>
+      <div class="formula">Permissions: rwx rwx rwx
+             owner group others
+Example: 754 = rwx r-x r--
+  owner: read+write+exec
+  group: read+exec
+  others: read only
+Special bits: setuid(4), setgid(2), sticky(1)</div>
+
+      <div class="label">Access Control List (ACL)</div>
+      <p>An <span class="tt" data-t="Per-file list of (subject, permissions) pairs; finer-grained than the Unix owner/group/others model">ACL</span> stores a list of <em>(user or group, allowed operations)</em> pairs for each file or directory.</p>
+      <ul class="items">
+        <li>More flexible than Unix 3-class model — grant access to arbitrary users</li>
+        <li>Windows NTFS and POSIX.1e both implement ACLs</li>
+        <li>Can combine with Unix bits: check ACL first, then fall back to mode bits</li>
+        <li>ACL entry format: <code>(alice, rw)</code>, <code>(dev-team, r-x)</code>, <code>(*, ---)</code></li>
+      </ul>
+
+      <div class="tip">
+        <div class="t-title">Principle of Least Privilege</div>
+        Grant each user/process only the minimum access rights needed to perform its task. This limits the damage that can result from accidental or malicious misuse.
+      </div>
+
+      <div class="warn">
+        <div class="w-title">Write ≠ Delete</div>
+        In many systems a user can hold <code>write</code> permission on a file without holding <code>delete</code> permission. Deletion requires write permission on the <em>containing directory</em>, not just the file itself.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Key Terms & Quick Review ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Key Terms + Quick Review (full width) -->
+  <div class="card orange col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review — CH13</h3></div>
+    <div class="card-body">
+
+      <div class="grid-2" style="gap:16px;">
+
+        <!-- Left column: Key Terms table -->
+        <div>
+          <div class="label" style="margin-top:0;">Glossary</div>
+          <table class="tbl">
+            <tr><th>Term</th><th>Definition</th></tr>
+            <tr><td><code>field</code></td><td>Smallest named unit of data with a defined type and length</td></tr>
+            <tr><td><code>record</code></td><td>Collection of related fields describing one entity instance</td></tr>
+            <tr><td><code>file</code></td><td>Named, persistent collection of related records on secondary storage</td></tr>
+            <tr><td><code>sequential</code></td><td>File organisation where records are stored and accessed in physical order</td></tr>
+            <tr><td><code>indexed</code></td><td>File organisation using a separate index structure for keyed random access</td></tr>
+            <tr><td><code>hashed</code></td><td>File organisation using a hash function to map keys to bucket addresses</td></tr>
+            <tr><td><code>B-tree</code></td><td>Self-balancing search tree; all leaves at equal depth; O(log n) operations</td></tr>
+            <tr><td><code>hash function</code></td><td>Deterministic function <em>h(k)</em> mapping a key to a bucket in <code>[0, B−1]</code></td></tr>
+            <tr><td><code>collision</code></td><td>Two distinct keys producing the same hash/bucket address</td></tr>
+            <tr><td><code>directory</code></td><td>Symbol table mapping file names to file control block (FCB/inode) metadata</td></tr>
+            <tr><td><code>path</code></td><td>String of directory names identifying a file's location in the tree</td></tr>
+            <tr><td><code>ACL</code></td><td>Access Control List — per-file (subject, permissions) pairs for fine-grained control</td></tr>
+            <tr><td><code>buffer</code></td><td>Memory region used to temporarily hold data being transferred between disk and process</td></tr>
+            <tr><td><code>block</code></td><td>Fixed-size unit of disk I/O (typically 512 B – 4 KB); the atomic read/write unit</td></tr>
+            <tr><td><code>load factor α</code></td><td>Ratio n/B of stored records to buckets; measures hash table fullness</td></tr>
+            <tr><td><code>inode</code></td><td>Unix data structure holding file metadata and block pointers (the FCB)</td></tr>
+            <tr><td><code>mount</code></td><td>Operation that grafts a file system's root onto a mount point in the active tree</td></tr>
+            <tr><td><code>open addressing</code></td><td>Collision strategy that probes successive slots within the hash table itself</td></tr>
+            <tr><td><code>chaining</code></td><td>Collision strategy where each bucket maintains an overflow linked list</td></tr>
+            <tr><td><code>sparse index</code></td><td>Index with one entry per disk block; requires file sorted on indexed key</td></tr>
+            <tr><td><code>dense index</code></td><td>Index with one entry per record; works on any file ordering</td></tr>
+          </table>
+        </div>
+
+        <!-- Right column: Quick Review -->
+        <div>
+          <div class="label" style="margin-top:0;">Quick Review — Organisation Comparison</div>
+          <table class="tbl">
+            <tr><th>Property</th><th>Sequential</th><th>Indexed</th><th>Hashed</th></tr>
+            <tr><td>Sequential scan</td><td style="color:var(--accent2);">Excellent</td><td style="color:var(--accent2);">Good</td><td style="color:var(--accent3);">Poor</td></tr>
+            <tr><td>Exact-match lookup</td><td style="color:var(--accent3);">O(n)</td><td style="color:var(--yellow);">O(log n)</td><td style="color:var(--accent2);">O(1) avg</td></tr>
+            <tr><td>Range query</td><td style="color:var(--accent2);">Good</td><td style="color:var(--accent2);">Good (B+)</td><td style="color:var(--accent3);">Not supported</td></tr>
+            <tr><td>Insert</td><td style="color:var(--yellow);">O(n) sorted</td><td style="color:var(--yellow);">O(log n)</td><td style="color:var(--accent2);">O(1) avg</td></tr>
+            <tr><td>Space overhead</td><td style="color:var(--accent2);">None</td><td style="color:var(--yellow);">Index file</td><td style="color:var(--yellow);">Empty buckets</td></tr>
+            <tr><td>Implementation</td><td style="color:var(--accent2);">Simple</td><td style="color:var(--yellow);">Moderate</td><td style="color:var(--yellow);">Moderate</td></tr>
+          </table>
+
+          <hr class="divider">
+
+          <div class="label">Core Formulas</div>
+          <div class="formula">Fixed-length record offset:
+  offset(i) = i × R    (R = record size in bytes)
+
+Hash bucket:
+  h(k) = k mod B       (B = number of buckets)
+
+Load factor:
+  α = n / B            (target: α ≤ 0.80)
+
+B-tree depth:
+  depth = ⌈log_m(N)⌉  (m = order, N = keys)</div>
+
+          <div class="label">Directory Path Syntax</div>
+          <table class="tbl">
+            <tr><th>Type</th><th>Unix Example</th><th>Windows Example</th></tr>
+            <tr><td style="color:var(--accent5);">Absolute</td><td><code>/home/alice/data.txt</code></td><td><code>C:\Users\Alice\data.txt</code></td></tr>
+            <tr><td style="color:var(--accent5);">Relative</td><td><code>../docs/readme.md</code></td><td><code>..\docs\readme.md</code></td></tr>
+          </table>
+
+          <div class="label" style="margin-top:12px;">Key Distinctions to Remember</div>
+          <ul class="items">
+            <li><strong>Dense vs Sparse:</strong> dense = one entry per record; sparse = one per block (needs sorted file)</li>
+            <li><strong>Primary vs Secondary index:</strong> primary is on ordering key; secondary can be on any field</li>
+            <li><strong>Hard link vs Symbolic link:</strong> hard link shares inode; symlink stores path string</li>
+            <li><strong>Write ≠ Delete:</strong> deleting a file requires write on the <em>directory</em>, not just the file</li>
+            <li><strong>Hashing vs Indexing:</strong> hash for exact match; index (B+ tree) for range or ordered access</li>
+            <li><strong>Open addressing vs Chaining:</strong> addressing keeps data in table; chaining uses overflow lists</li>
+          </ul>
+
+          <div class="tip" style="margin-top:8px;">
+            <div class="t-title">Exam Tip</div>
+            Know the trade-offs: sequential is fastest for batch scans, hashing for point lookups, B+ tree indexes for mixed workloads. Directory questions often ask about absolute vs relative paths and link types.
+          </div>
+        </div>
+
+      </div><!-- /grid-2 -->
+
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <a href="CH12-Abstract-Data-Types-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← CH12</a>
+  <a href="../CSI.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">Back to FCS</a>
+  <a href="CH14-Databases-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">CH14 →</a>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script>
+</body>
+</html>

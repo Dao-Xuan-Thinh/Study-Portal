@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH12 · Abstract Data Types · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}
+</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 12</h1>
+    <h2>Abstract Data Types &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition · Forouzan</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§12.1 ADT Concept</span>
+      <span class="toc-item">§12.2 Stack ADT</span>
+      <span class="toc-item">§12.3 Queue ADT</span>
+      <span class="toc-item">§12.4 List ADT</span>
+      <span class="toc-item">§12.5 Tree ADT</span>
+      <span class="toc-item">§12.6 Implementation</span>
+      <span class="toc-item">§12.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH12</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — ADT Concept · Stack ADT · Queue ADT ═══ -->
+<div class="grid">
+
+  <!-- Card 1: ADT Concept -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>ADT Concept</h3></div>
+    <div class="card-body">
+      <div class="rule">ADT = data + operations defined mathematically, independent of any implementation</div>
+      <p>An <strong><span class="tt" data-t="Abstract Data Type — a mathematical model of a data structure specifying its type, operations, and behavior without implementation details">Abstract Data Type (ADT)</span></strong> separates <em>what</em> a data structure does from <em>how</em> it does it.</p>
+
+      <div class="label">Abstraction vs Implementation</div>
+      <table class="tbl">
+        <tr><th>Abstraction (ADT)</th><th>Implementation</th></tr>
+        <tr><td>Defines <em>behavior</em> via operations</td><td>Specifies <em>structure</em> in memory</td></tr>
+        <tr><td>Language- and machine-independent</td><td>Tied to a language / platform</td></tr>
+        <tr><td>Hides internal details</td><td>Exposes memory layout</td></tr>
+        <tr><td>Stated as a contract / interface</td><td>Array, linked list, tree, etc.</td></tr>
+      </table>
+
+      <div class="label">Interface vs Implementation</div>
+      <ul class="items">
+        <li><strong>Interface</strong> — the set of allowed operations and their signatures</li>
+        <li><strong>Implementation</strong> — the concrete data structure + algorithms that fulfill the interface</li>
+        <li>Users depend only on the interface; internals may change freely</li>
+      </ul>
+
+      <div class="label">Encapsulation</div>
+      <p><span class="tt" data-t="Bundling data and operations that act on the data, hiding internal state from outside users">Encapsulation</span> enforces the ADT contract: data is accessed exclusively through the defined operations. No direct manipulation of internal representation is permitted.</p>
+
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">ADT as a Contract</div>
+        An ADT is a <em>contract</em> between the implementor and the user: the user gets predictable behavior; the implementor retains freedom to optimize internals.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Stack ADT -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Stack ADT</h3></div>
+    <div class="card-body">
+      <div class="rule">Stack: ordered list; insertions and deletions restricted to one end (the top) — LIFO</div>
+      <p>A <strong><span class="tt" data-t="Last-In, First-Out — the newest element added is the first to be removed">Stack</span></strong> enforces <strong>LIFO</strong> (Last-In, First-Out) access. Think of a pile of plates.</p>
+
+      <div class="label">Formal Operations</div>
+      <table class="tbl">
+        <tr><th>Operation</th><th>Pre-condition</th><th>Post-condition</th></tr>
+        <tr><td><code>push(x)</code></td><td>stack is not full</td><td>x on top; size+1</td></tr>
+        <tr><td><code>pop()</code></td><td>stack is not empty</td><td>top element removed; returned</td></tr>
+        <tr><td><code>peek()</code></td><td>stack is not empty</td><td>top element returned; unchanged</td></tr>
+        <tr><td><code>isEmpty()</code></td><td>—</td><td>returns true if size = 0</td></tr>
+        <tr><td><code>isFull()</code></td><td>—</td><td>returns true if size = capacity</td></tr>
+      </table>
+
+      <div class="label">Pre / Post-Condition Pattern</div>
+      <div class="formula">pre:  stack not empty
+post: top ← stack[top-1]; top--; return value</div>
+
+      <div class="label">Applications</div>
+      <ul class="items">
+        <li>Function call / return (<span class="tt" data-t="The runtime call stack keeps track of active subroutine invocations and local variables">call stack</span>)</li>
+        <li>Expression evaluation &amp; conversion (infix → postfix)</li>
+        <li>Undo / redo mechanisms in editors</li>
+        <li>Backtracking algorithms (maze, DFS)</li>
+        <li>Balanced-parentheses / syntax checking</li>
+      </ul>
+
+      <div class="label">Array-Based Stack — Key Formulas</div>
+      <div class="formula">push(x):  stack[++top] = x        // pre: top &lt; capacity-1
+pop():    return stack[top--]     // pre: top &gt;= 0
+peek():   return stack[top]       // pre: top &gt;= 0
+isEmpty: top == -1  |  isFull: top == capacity-1</div>
+
+      <div class="tip">
+        <div class="t-title">Stack Overflow</div>
+        Pushing onto a full array-based stack → <strong>stack overflow</strong>. Popping from empty → <strong>underflow</strong>. Always guard with <code>isFull()</code> / <code>isEmpty()</code>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Queue ADT -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Queue ADT</h3></div>
+    <div class="card-body">
+      <div class="rule">Queue: ordered list; insertions at rear, deletions at front — FIFO</div>
+      <p>A <strong><span class="tt" data-t="First-In, First-Out — the oldest element added is the first to be removed">Queue</span></strong> enforces <strong>FIFO</strong> (First-In, First-Out) access. Think of a waiting line.</p>
+
+      <div class="label">Formal Operations</div>
+      <table class="tbl">
+        <tr><th>Operation</th><th>Pre-condition</th><th>Post-condition</th></tr>
+        <tr><td><code>enqueue(x)</code></td><td>queue not full</td><td>x added at rear; size+1</td></tr>
+        <tr><td><code>dequeue()</code></td><td>queue not empty</td><td>front element removed; returned</td></tr>
+        <tr><td><code>front()</code></td><td>queue not empty</td><td>front element returned; unchanged</td></tr>
+        <tr><td><code>isEmpty()</code></td><td>—</td><td>returns true if size = 0</td></tr>
+        <tr><td><code>isFull()</code></td><td>—</td><td>returns true if size = capacity</td></tr>
+      </table>
+
+      <div class="label">Circular Queue</div>
+      <p>Array-based queues waste space as front advances. A <span class="tt" data-t="Array treated as a ring; rear wraps around to index 0 after reaching the end, reusing freed slots">circular queue</span> treats the array as a ring:</p>
+      <div class="formula">rear  = (rear  + 1) % capacity
+front = (front + 1) % capacity
+full  when (rear+1)%capacity == front</div>
+
+      <div class="label">Priority Queue ADT</div>
+      <ul class="items">
+        <li>Each element has an associated <em>priority</em></li>
+        <li><code>dequeue()</code> removes the <strong>highest-priority</strong> element, not simply the oldest</li>
+        <li>Typical implementation: <span class="tt" data-t="A complete binary tree satisfying the heap property; used as the classic priority queue backing structure">binary heap</span></li>
+        <li>Applications: OS scheduling, Dijkstra's algorithm, Huffman coding</li>
+      </ul>
+
+      <div class="info">
+        <div class="i-title">Queue vs Stack</div>
+        Both restrict access to a single end; the queue differs in having a <em>separate</em> insertion end (rear) and removal end (front), producing FIFO instead of LIFO order.
+      </div>
+
+      <div class="label">Deque (Double-Ended Queue)</div>
+      <ul class="items">
+        <li>Generalizes both stack and queue: insert/delete allowed at <strong>both</strong> ends</li>
+        <li>Operations: <code>addFront</code>, <code>addRear</code>, <code>removeFront</code>, <code>removeRear</code></li>
+        <li>Can emulate a stack (use one end only) or a queue (add rear, remove front)</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — List ADT · Tree ADT · ADT Implementation ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: List ADT -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>List ADT</h3></div>
+    <div class="card-body">
+      <div class="rule">List: finite, ordered sequence of elements of the same type; position is meaningful</div>
+
+      <div class="label">Ordered vs Unordered List</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Ordering Criterion</th><th>Typical Use</th></tr>
+        <tr><td><span class="tt" data-t="Elements sorted by value or key; binary search is efficient">Ordered list</span></td><td>Element value / key</td><td>Search, sorted output</td></tr>
+        <tr><td><span class="tt" data-t="Elements in insertion order; no inherent value-based sorting">Unordered list</span></td><td>Insertion position</td><td>General sequence, history</td></tr>
+      </table>
+
+      <div class="label">Formal Operations</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Operation</th><th>Description</th></tr>
+        <tr><td><code>insert(pos, x)</code></td><td>Add x at given position</td></tr>
+        <tr><td><code>delete(pos)</code></td><td>Remove element at position</td></tr>
+        <tr><td><code>retrieve(pos)</code></td><td>Return element at position (no removal)</td></tr>
+        <tr><td><code>traverse()</code></td><td>Visit every element in order</td></tr>
+        <tr><td><code>search(x)</code></td><td>Return position of x (or not-found)</td></tr>
+        <tr><td><code>length()</code></td><td>Return number of elements</td></tr>
+      </table>
+
+      <div class="label">Array-Based vs Linked Implementation</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Aspect</th><th>Array</th><th>Linked List</th></tr>
+        <tr><td>Access by index</td><td style="color:var(--accent2);">O(1)</td><td style="color:var(--accent3);">O(n)</td></tr>
+        <tr><td>Insert / delete middle</td><td style="color:var(--accent3);">O(n) shift</td><td style="color:var(--accent2);">O(1) with ptr</td></tr>
+        <tr><td>Memory overhead</td><td>Low</td><td>Pointer per node</td></tr>
+        <tr><td>Dynamic sizing</td><td>Fixed / realloc</td><td>Naturally dynamic</td></tr>
+      </table>
+
+      <div class="warn" style="margin-top:8px;">
+        <div class="w-title">Position vs Index</div>
+        List ADT positions are often 1-based in textbook definitions. Always check whether an implementation uses 0-based or 1-based indexing to avoid off-by-one errors.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Tree ADT -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Tree ADT</h3></div>
+    <div class="card-body">
+      <div class="rule">Tree ADT: hierarchical structure; one root, each node has ≥ 0 children, no cycles</div>
+
+      <div class="label">Binary Tree ADT</div>
+      <ul class="items">
+        <li>Each node has at most <strong>two</strong> children: <em>left</em> and <em>right</em></li>
+        <li>Operations: <code>insert</code>, <code>delete</code>, <code>search</code>, <code>traverse</code> (pre/in/post-order)</li>
+        <li><span class="tt" data-t="Full: every node has 0 or 2 children. Complete: all levels full except last, filled left to right">Full vs Complete</span> binary tree distinctions matter for implementation</li>
+      </ul>
+
+      <div class="label">BST (Binary Search Tree) ADT</div>
+      <p>Invariant: <span class="tt" data-t="For every node N: all keys in left subtree < N.key < all keys in right subtree">left subtree keys &lt; node key &lt; right subtree keys</span>.</p>
+      <div class="formula">search: O(log n) avg, O(n) worst (degenerate)
+insert: O(log n) avg  |  delete: O(log n) avg</div>
+
+      <div class="label">Heap ADT</div>
+      <table class="tbl">
+        <tr><th>Property</th><th>Min-Heap</th><th>Max-Heap</th></tr>
+        <tr><td>Root contains</td><td>Smallest key</td><td>Largest key</td></tr>
+        <tr><td>Parent vs child</td><td>parent ≤ child</td><td>parent ≥ child</td></tr>
+        <tr><td>Common use</td><td>Priority queue (min)</td><td>Heap sort</td></tr>
+      </table>
+
+      <div class="label">Heap Operations</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Operation</th><th>Complexity</th><th>Method</th></tr>
+        <tr><td><code>insert(x)</code></td><td>O(log n)</td><td>Add at end; <span class="tt" data-t="Bubble the new node up by swapping with parent while heap property is violated">sift-up</span></td></tr>
+        <tr><td><code>delete-min/max</code></td><td>O(log n)</td><td>Remove root; replace with last; <span class="tt" data-t="Push the root replacement down by swapping with the smaller/larger child until heap property holds">sift-down</span></td></tr>
+        <tr><td><code>heapify</code></td><td>O(n)</td><td>Build heap from unsorted array bottom-up</td></tr>
+        <tr><td><code>peek</code></td><td>O(1)</td><td>Read root without removal</td></tr>
+      </table>
+
+      <div class="label">Tree Traversals</div>
+      <table class="tbl">
+        <tr><th>Order</th><th>Visit Sequence</th><th>Use Case</th></tr>
+        <tr><td><span class="tt" data-t="Root → Left → Right; root visited before children">Pre-order</span></td><td>Root, Left, Right</td><td>Copy / serialize tree</td></tr>
+        <tr><td><span class="tt" data-t="Left → Root → Right; visits BST nodes in sorted order">In-order</span></td><td>Left, Root, Right</td><td>BST sorted output</td></tr>
+        <tr><td><span class="tt" data-t="Left → Right → Root; children visited before parent">Post-order</span></td><td>Left, Right, Root</td><td>Delete tree, evaluate expression tree</td></tr>
+        <tr><td><span class="tt" data-t="Level by level, left to right; uses a queue internally">Level-order</span></td><td>BFS by level</td><td>Level-wise processing</td></tr>
+      </table>
+
+      <div class="tip" style="margin-top:8px;">
+        <div class="t-title">Heap Sort</div>
+        <strong>Phase 1:</strong> <code>heapify</code> the array — O(n). &nbsp;<strong>Phase 2:</strong> repeatedly extract-max into sorted position — O(n log n). Total: <strong>O(n log n)</strong>, in-place, <strong>not stable</strong>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: ADT Implementation -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>ADT Implementation Strategies</h3></div>
+    <div class="card-body">
+      <div class="rule">Choose implementation by access patterns, memory constraints, and language support</div>
+
+      <div class="label">Array-Based vs Pointer-Based</div>
+      <table class="tbl">
+        <tr><th>Factor</th><th>Array-Based</th><th>Pointer-Based</th></tr>
+        <tr><td>Cache locality</td><td style="color:var(--accent2);">Excellent</td><td style="color:var(--accent3);">Poor (scattered)</td></tr>
+        <tr><td>Random access</td><td style="color:var(--accent2);">O(1)</td><td style="color:var(--accent3);">O(n)</td></tr>
+        <tr><td>Mid-list insert/delete</td><td style="color:var(--accent3);">O(n)</td><td style="color:var(--accent2);">O(1) with ptr</td></tr>
+        <tr><td>Max size known?</td><td>Required (static)</td><td>Not required</td></tr>
+        <tr><td>Memory per element</td><td>Data only</td><td>Data + pointer(s)</td></tr>
+      </table>
+
+      <div class="label">Time / Space Trade-offs</div>
+      <ul class="items">
+        <li>Hash table: O(1) avg search but O(n) worst; uses extra load-factor space</li>
+        <li>Balanced BST (AVL/Red-Black): O(log n) guaranteed; rotation overhead</li>
+        <li>Sorted array: O(log n) binary search; O(n) insert/delete</li>
+        <li>Skip list: O(log n) expected; probabilistic; pointer overhead</li>
+      </ul>
+
+      <div class="label">Generic / Template Types</div>
+      <p>A well-designed ADT is <span class="tt" data-t="Generic programming allows a single ADT definition to work with any element type, enforcing type safety at compile time">generic</span>: parameterized over the element type so that one Stack definition works for <code>int</code>, <code>float</code>, or any user type.</p>
+      <div class="formula">Stack&lt;T&gt;  // C++ template
+Stack&lt;T&gt;  // Java generic
+// Single implementation; compiler generates type-safe code</div>
+
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Design Principle</div>
+        Define the ADT interface first. Select the implementation only after analyzing the expected operations and their required complexities — not the other way around.
+      </div>
+
+      <div class="note">
+        <div class="n-title">Information Hiding</div>
+        Changing an array-based stack to a linked-list stack should require <em>zero</em> changes to any code that uses the Stack ADT interface. This is the payoff of encapsulation.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Key Terms + Quick Review ═══ -->
+<!-- Full-width spanning card with two-column inner layout -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Key Terms + Quick Review (full-width) -->
+  <div class="card green col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review — Chapter 12</h3></div>
+    <div class="card-body">
+
+      <div class="grid-2" style="gap:16px;">
+
+        <!-- Key Terms Table -->
+        <div>
+          <div class="label" style="margin-top:0;">Key Terms</div>
+          <table class="tbl">
+            <tr>
+              <th>Term</th>
+              <th>Definition</th>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Abstract Data Type — type defined by its behavior (operations) not its representation">ADT</span></td>
+              <td>A data type defined solely by its operations and their semantics; hides implementation</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Focusing on essential properties while ignoring irrelevant details">Abstraction</span></td>
+              <td>The process of removing implementation details and exposing only the interface</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Bundling data with the operations that operate on that data; restricting direct access to internals">Encapsulation</span></td>
+              <td>Hiding internal state; data accessible only through defined operations</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="LIFO linear data structure; insert/remove at one end only">Stack</span></td>
+              <td>LIFO structure; supports <code>push</code>, <code>pop</code>, <code>peek</code></td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="FIFO linear data structure; insert at rear, remove at front">Queue</span></td>
+              <td>FIFO structure; supports <code>enqueue</code>, <code>dequeue</code>, <code>front</code></td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Finite ordered sequence of elements; positional access">List</span></td>
+              <td>Ordered sequence; supports insert, delete, retrieve, traverse</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Hierarchical non-linear structure with a root node and subtrees of children">Tree</span></td>
+              <td>Hierarchical structure; root + recursively defined subtrees</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Complete binary tree where each node's key satisfies the heap property relative to its children">Heap</span></td>
+              <td>Complete binary tree satisfying heap property; backing for priority queues</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Binary Search Tree — binary tree where left child < parent < right child for all nodes">BST</span></td>
+              <td>Binary tree with key ordering: left &lt; node &lt; right; O(log n) average search</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="The public contract of an ADT — operation names, parameters, and return types">Interface</span></td>
+              <td>The public-facing contract listing all supported operations and their signatures</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="The concrete realization of an ADT using arrays, linked nodes, or other structures">Implementation</span></td>
+              <td>Concrete realization using arrays, linked nodes, or other physical structures</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Condition that must be true before an operation is called; caller's responsibility">Pre-condition</span></td>
+              <td>Condition that must hold before calling an operation (caller's obligation)</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Condition guaranteed to be true after an operation completes successfully">Post-condition</span></td>
+              <td>Condition guaranteed after successful operation (implementor's obligation)</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Programming mechanism allowing a single ADT or algorithm to operate on many element types">Generic</span></td>
+              <td>Type-parameterized ADT (templates in C++, generics in Java) enabling code reuse</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Quick Review -->
+        <div>
+          <div class="label" style="margin-top:0;">Quick Review — Core Complexity Summary</div>
+          <table class="tbl">
+            <tr><th>ADT</th><th>Operation</th><th>Array</th><th>Linked / Tree</th></tr>
+            <tr><td>Stack</td><td>push / pop / peek</td><td>O(1)</td><td>O(1)</td></tr>
+            <tr><td>Queue</td><td>enqueue / dequeue</td><td>O(1)*</td><td>O(1)</td></tr>
+            <tr><td>List</td><td>access by index</td><td>O(1)</td><td>O(n)</td></tr>
+            <tr><td>List</td><td>insert / delete middle</td><td>O(n)</td><td>O(1)**</td></tr>
+            <tr><td>BST</td><td>search / insert / delete</td><td>—</td><td>O(log n) avg</td></tr>
+            <tr><td>Heap</td><td>insert / delete-min</td><td>O(log n)</td><td>O(log n)</td></tr>
+            <tr><td>Heap</td><td>heapify (build)</td><td>O(n)</td><td>O(n)</td></tr>
+            <tr><td>Heap</td><td>peek (min/max)</td><td>O(1)</td><td>O(1)</td></tr>
+          </table>
+          <p style="font-size:10px;color:var(--text-dim);margin-top:4px;">* Circular array; ** Pointer already held to node</p>
+
+          <hr class="divider">
+
+          <div class="label">Key Principles to Remember</div>
+          <ol class="steps">
+            <li><strong>Separation of concerns:</strong> define the ADT interface before choosing an implementation.</li>
+            <li><strong>Encapsulation:</strong> users interact through operations only — never touch internal representation.</li>
+            <li><strong>Pre/post-conditions</strong> form a formal contract; violating pre-conditions is the caller's bug.</li>
+            <li><strong>LIFO vs FIFO:</strong> Stack removes newest; Queue removes oldest.</li>
+            <li><strong>Heap property</strong> gives O(1) access to min/max and O(log n) removal.</li>
+            <li><strong>Generic types</strong> let one ADT definition serve any element type safely.</li>
+          </ol>
+
+          <hr class="divider">
+
+          <div class="info">
+            <div class="i-title">Forouzan's ADT Framework</div>
+            Forouzan defines ADTs with three components: (1) the <em>type definition</em> (domain of values), (2) the <em>operations</em> with pre/post-conditions, and (3) <em>exceptions</em> for pre-condition violations. This three-part structure applies uniformly to Stack, Queue, List, Tree, and all other ADTs in the chapter.
+          </div>
+
+          <div class="warn">
+            <div class="w-title">Common Exam Pitfalls</div>
+            Confusing ADT with data structure — an ADT is a <em>specification</em>, not a memory layout. A stack can be implemented as an array <em>or</em> a linked list; both are valid realizations of the same ADT.
+          </div>
+        </div>
+
+      </div><!-- /grid-2 -->
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <span>
+    <a href="CH11-Data-Structures-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← CH11</a>
+    &nbsp;|&nbsp;
+    <a href="../CSI.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">Back to FCS</a>
+    &nbsp;|&nbsp;
+    <a href="CH13-File-Structure-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">CH13 →</a>
+  </span>
+  <span>Foundations of Computer Science, 4th Ed. — Forouzan | Chapter 12: Abstract Data Types</span>
+  <span>FCS4e · CH12 · §12.1–§12.7</span>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script>
+</body>
+</html>

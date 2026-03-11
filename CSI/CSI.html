@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FCS — Foundations of Computer Science | CSI Study Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.5;padding:0;min-height:100vh;}
+
+  /* ── Hero ── */
+  .hero{
+    background:linear-gradient(160deg,#0d1117 0%,#161b22 60%,#1a1f2e 100%);
+    border-bottom:1px solid var(--border);
+    padding:60px 40px 48px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:'';
+    position:absolute;inset:0;
+    background:radial-gradient(ellipse 700px 400px at 70% 50%, rgba(210,168,255,0.06) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .hero-inner{max-width:1200px;margin:0 auto;position:relative;}
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;
+    color:var(--accent4);letter-spacing:1px;text-transform:uppercase;
+    background:rgba(210,168,255,0.1);border:1px solid rgba(210,168,255,0.25);
+    border-radius:4px;padding:4px 10px;margin-bottom:20px;
+  }
+  .hero-eyebrow::before{content:'◈';font-size:10px;}
+  .hero h1{
+    font-family:'IBM Plex Sans Condensed',sans-serif;
+    font-size:clamp(32px,5vw,56px);
+    font-weight:700;
+    color:var(--text);
+    letter-spacing:-1.5px;
+    line-height:1.05;
+    margin-bottom:12px;
+  }
+  .hero h1 span{color:var(--accent4);}
+  .hero-subtitle{
+    font-size:16px;color:var(--text-muted);font-weight:300;
+    margin-bottom:24px;letter-spacing:0.2px;
+  }
+  .hero-subtitle strong{color:var(--text);font-weight:600;}
+  .hero-stats{display:flex;gap:24px;flex-wrap:wrap;}
+  .hero-stat{
+    display:flex;align-items:center;gap:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--text-muted);
+  }
+  .hero-stat .dot{width:6px;height:6px;border-radius:50%;background:var(--accent4);flex-shrink:0;}
+  .hero-stat.r .dot{background:var(--accent3);}
+  .hero-stat.p .dot{background:var(--accent5);}
+
+  /* ── Main content ── */
+  .main{max-width:1200px;margin:0 auto;padding:40px 40px 60px;}
+
+  /* ── Part sections ── */
+  .part{margin-bottom:48px;}
+  .part-header{
+    display:flex;align-items:center;gap:14px;
+    margin-bottom:20px;padding-bottom:14px;
+    border-bottom:1px solid var(--border);
+  }
+  .part-bar{width:4px;height:36px;border-radius:2px;flex-shrink:0;}
+  .part-header-text{}
+  .part-label{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;
+    text-transform:uppercase;letter-spacing:1px;
+    margin-bottom:3px;
+  }
+  .part-title{
+    font-family:'IBM Plex Sans Condensed',sans-serif;
+    font-size:20px;font-weight:700;letter-spacing:-0.3px;
+    color:var(--text);
+  }
+  .part-count{
+    margin-left:auto;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;
+    color:var(--text-dim);background:var(--surface2);
+    border:1px solid var(--border);border-radius:3px;
+    padding:3px 8px;white-space:nowrap;
+  }
+
+  /* Part color themes */
+  .part-blue .part-bar{background:var(--accent);}
+  .part-blue .part-label{color:var(--accent);}
+  .part-green .part-bar{background:var(--accent2);}
+  .part-green .part-label{color:var(--accent2);}
+  .part-red .part-bar{background:var(--accent3);}
+  .part-red .part-label{color:var(--accent3);}
+  .part-purple .part-bar{background:var(--accent4);}
+  .part-purple .part-label{color:var(--accent4);}
+  .part-orange .part-bar{background:var(--accent5);}
+  .part-orange .part-label{color:var(--accent5);}
+  .part-yellow .part-bar{background:var(--yellow);}
+  .part-yellow .part-label{color:var(--yellow);}
+
+  /* ── Chapter cards grid ── */
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+  }
+  @media(max-width:900px){.cards{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:560px){.cards{grid-template-columns:1fr;}.hero{padding:40px 20px 36px;}.main{padding:28px 20px 48px;}}
+
+  /* ── Chapter card ── */
+  .chapter-card{
+    display:block;text-decoration:none;color:inherit;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:8px;overflow:hidden;
+    transition:transform 0.18s ease,border-color 0.18s ease,box-shadow 0.18s ease;
+    position:relative;
+  }
+  .chapter-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  }
+
+  /* Blue */
+  .part-blue .chapter-card:hover{border-color:rgba(88,166,255,0.6);}
+  .part-blue .card-accent{background:var(--accent);}
+  .part-blue .ch-num{color:var(--accent);border-color:rgba(88,166,255,0.3);background:rgba(88,166,255,0.08);}
+  .part-blue .card-desc{color:var(--text-muted);}
+  /* Green */
+  .part-green .chapter-card:hover{border-color:rgba(63,185,80,0.6);}
+  .part-green .card-accent{background:var(--accent2);}
+  .part-green .ch-num{color:var(--accent2);border-color:rgba(63,185,80,0.3);background:rgba(63,185,80,0.08);}
+  /* Purple */
+  .part-purple .chapter-card:hover{border-color:rgba(210,168,255,0.6);}
+  .part-purple .card-accent{background:var(--accent4);}
+  .part-purple .ch-num{color:var(--accent4);border-color:rgba(210,168,255,0.3);background:rgba(210,168,255,0.08);}
+  /* Orange */
+  .part-orange .chapter-card:hover{border-color:rgba(255,166,87,0.6);}
+  .part-orange .card-accent{background:var(--accent5);}
+  .part-orange .ch-num{color:var(--accent5);border-color:rgba(255,166,87,0.3);background:rgba(255,166,87,0.08);}
+  /* Red */
+  .part-red .chapter-card:hover{border-color:rgba(247,129,102,0.6);}
+  .part-red .card-accent{background:var(--accent3);}
+  .part-red .ch-num{color:var(--accent3);border-color:rgba(247,129,102,0.3);background:rgba(247,129,102,0.08);}
+  /* Yellow */
+  .part-yellow .chapter-card:hover{border-color:rgba(227,179,65,0.6);}
+  .part-yellow .card-accent{background:var(--yellow);}
+  .part-yellow .ch-num{color:var(--yellow);border-color:rgba(227,179,65,0.3);background:rgba(227,179,65,0.08);}
+
+  .card-accent{height:3px;width:100%;}
+
+  .card-inner{padding:14px 16px 16px;}
+  .card-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;}
+  .ch-num{
+    font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;
+    border:1px solid;border-radius:4px;padding:3px 7px;
+    white-space:nowrap;flex-shrink:0;margin-top:1px;letter-spacing:0.5px;
+  }
+  .card-title{
+    font-family:'IBM Plex Sans Condensed',sans-serif;
+    font-size:15px;font-weight:700;
+    color:var(--text);line-height:1.25;letter-spacing:-0.2px;
+  }
+  .card-desc{
+    font-size:12px;color:var(--text-muted);
+    line-height:1.5;
+  }
+  .card-arrow{
+    position:absolute;bottom:14px;right:14px;
+    font-size:13px;color:var(--text-dim);
+    transition:color 0.18s ease,transform 0.18s ease;
+  }
+  .chapter-card:hover .card-arrow{color:var(--text-muted);transform:translate(2px,-1px);}
+
+  /* ── Footer ── */
+  .footer{
+    border-top:1px solid var(--border);
+    background:var(--surface);
+    padding:20px 40px;
+  }
+  .footer-inner{
+    max-width:1200px;margin:0 auto;
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);
+  }
+  .footer-inner span:first-child{color:var(--text-muted);}
+</style>
+</head>
+<body>
+
+<!-- ═══ HERO ═══ -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">FCS 4th Edition · Study Reference</div>
+    <h1>Foundations of<br>Computer <span>Science</span></h1>
+    <p class="hero-subtitle"><strong>4th Edition — Behrouz Forouzan</strong> &nbsp;·&nbsp; Complete Cheatsheet Collection</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="dot"></div>20 Chapters Covered</div>
+      <div class="hero-stat r"><div class="dot"></div>6 Parts</div>
+      <div class="hero-stat p"><div class="dot"></div>Quick-Reference Format</div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+
+  <!-- ━━━ PART 1 ━━━ -->
+  <section class="part part-blue">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 1</div>
+        <div class="part-title">Hardware Foundations</div>
+      </div>
+      <div class="part-count">5 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH/CH01-Introduction-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH01</span>
+            <span class="card-title">Introduction</span>
+          </div>
+          <div class="card-desc">Turing model, Von Neumann architecture, computer components, history of computing generations, and CS as a discipline.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH02-Number-Systems-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH02</span>
+            <span class="card-title">Number Systems</span>
+          </div>
+          <div class="card-desc">Binary, octal, decimal, hexadecimal — positional systems, base conversions, arithmetic in different bases, and non-positional systems.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH03-Data-Storage-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH03</span>
+            <span class="card-title">Data Storage</span>
+          </div>
+          <div class="card-desc">Storing integers (sign-magnitude, 2's complement), floats (IEEE 754), text (ASCII/Unicode), audio sampling, image pixels, and video encoding.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH04-Operations-on-Data-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH04</span>
+            <span class="card-title">Operations on Data</span>
+          </div>
+          <div class="card-desc">Logic operations (AND/OR/NOT/XOR), shift operations (logical vs. arithmetic), and binary arithmetic with overflow detection.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH05-Computer-Organization-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH05</span>
+            <span class="card-title">Computer Organization</span>
+          </div>
+          <div class="card-desc">CPU (ALU, CU, registers), main memory, I/O subsystems, bus interconnection, program execution cycle, and different CPU architectures.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ━━━ PART 2 ━━━ -->
+  <section class="part part-green">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 2</div>
+        <div class="part-title">Networking &amp; Systems</div>
+      </div>
+      <div class="part-count">2 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH/CH06-Computer-Networks-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH06</span>
+            <span class="card-title">Computer Networks &amp; Internet</span>
+          </div>
+          <div class="card-desc">OSI vs. TCP/IP models, application layer protocols (HTTP, FTP, DNS), transport (TCP/UDP), network (IP), data-link, physical layer, and transmission media.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH07-Operating-Systems-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH07</span>
+            <span class="card-title">Operating Systems</span>
+          </div>
+          <div class="card-desc">OS evolution, components (memory management, process management, device &amp; file management), scheduling algorithms, and OS survey.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ━━━ PART 3 ━━━ -->
+  <section class="part part-purple">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 3</div>
+        <div class="part-title">Algorithms &amp; Programming</div>
+      </div>
+      <div class="part-count">3 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH/CH08-Algorithms-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH08</span>
+            <span class="card-title">Algorithms</span>
+          </div>
+          <div class="card-desc">Three constructs (sequence/decision/repetition), pseudocode, sorting &amp; searching algorithms, subalgorithms, recursion, and algorithmic complexity.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH09-Programming-Languages-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH09</span>
+            <span class="card-title">Programming Languages</span>
+          </div>
+          <div class="card-desc">Language generations, compilers vs. interpreters vs. JIT, programming paradigms (procedural, OOP, functional, logic), and common language concepts.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH10-Software-Engineering-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH10</span>
+            <span class="card-title">Software Engineering</span>
+          </div>
+          <div class="card-desc">Software lifecycle, analysis, design (UML, modular), implementation, testing (unit/integration/system), and documentation standards.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ━━━ PART 4 ━━━ -->
+  <section class="part part-orange">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 4</div>
+        <div class="part-title">Data Management</div>
+      </div>
+      <div class="part-count">4 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH/CH11-Data-Structures-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH11</span>
+            <span class="card-title">Data Structures</span>
+          </div>
+          <div class="card-desc">Arrays (1D/2D, index formula), records, singly/doubly/circular linked lists — insert, delete, search operations with complexity analysis.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH12-Abstract-Data-Types-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH12</span>
+            <span class="card-title">Abstract Data Types</span>
+          </div>
+          <div class="card-desc">Stacks (LIFO), queues (FIFO), general linear lists, binary search trees, tree traversals, graphs (adjacency list/matrix), BFS &amp; DFS.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH13-File-Structure-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH13</span>
+            <span class="card-title">File Structure</span>
+          </div>
+          <div class="card-desc">Sequential, indexed, and hashed file organizations; collision resolution (chaining, open addressing); directory structures; text vs. binary files.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH14-Databases-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH14</span>
+            <span class="card-title">Databases</span>
+          </div>
+          <div class="card-desc">3-tier architecture, database models, relational model (ER diagrams, normalization 1NF–3NF), SQL CRUD, and NoSQL overview.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ━━━ PART 5 ━━━ -->
+  <section class="part part-red">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 5</div>
+        <div class="part-title">Advanced &amp; Theory</div>
+      </div>
+      <div class="part-count">4 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH/CH15-Data-Compression-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH15</span>
+            <span class="card-title">Data Compression</span>
+          </div>
+          <div class="card-desc">Lossless methods (run-length encoding, Huffman coding, LZW), lossy methods (JPEG, MP3, MPEG), and compression ratio formulas.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH16-Security-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH16</span>
+            <span class="card-title">Security</span>
+          </div>
+          <div class="card-desc">Symmetric (AES/DES) vs. asymmetric (RSA) encryption, digital signatures, hash functions (MD5/SHA), PKI, and firewall types.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH17-Theory-of-Computation-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH17</span>
+            <span class="card-title">Theory of Computation</span>
+          </div>
+          <div class="card-desc">Simple language, Turing machine (tape, states, transitions), Gödel numbers, the Halting Problem, and P vs. NP complexity classes.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH18-Artificial-Intelligence-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH18</span>
+            <span class="card-title">Artificial Intelligence</span>
+          </div>
+          <div class="card-desc">Knowledge representation (semantic nets, frames, logic), expert systems, perception, search strategies (BFS/DFS/A*), and neural networks.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ━━━ PART 6 ━━━ -->
+  <section class="part part-yellow">
+    <div class="part-header">
+      <div class="part-bar"></div>
+      <div class="part-header-text">
+        <div class="part-label">Part 6</div>
+        <div class="part-title">Society &amp; Ethics</div>
+      </div>
+      <div class="part-count">2 chapters</div>
+    </div>
+    <div class="cards">
+
+      <a class="chapter-card" href="CH/CH19-Social-Media-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH19</span>
+            <span class="card-title">Introduction to Social Media</span>
+          </div>
+          <div class="card-desc">Social graph model, Facebook architecture (timeline, groups, ad targeting), Twitter (tweets, trending, algorithmic feed), and platform data models.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+      <a class="chapter-card" href="CH/CH20-Social-Ethical-Issues-CheatSheet.html">
+        <div class="card-accent"></div>
+        <div class="card-inner">
+          <div class="card-top">
+            <span class="ch-num">CH20</span>
+            <span class="card-title">Social &amp; Ethical Issues</span>
+          </div>
+          <div class="card-desc">ACM code of ethics, intellectual property (copyright/patent/trademark), privacy laws, types of computer crimes, and hacker classifications.</div>
+        </div>
+        <span class="card-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <a href="../index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← All Subjects</a>
+    <span>Foundations of Computer Science, 4th Edition — Behrouz Forouzan</span>
+    <span>Study cheatsheets generated for personal academic use</span>
+  </div>
+</footer>
+
+</body>
+</html>

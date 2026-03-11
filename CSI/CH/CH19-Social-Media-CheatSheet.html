@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH19 · Social Media · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}
+</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 19</h1>
+    <h2>Social Media &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition &nbsp;·&nbsp; Complete Study Reference</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§19.1 Social Networks</span>
+      <span class="toc-item">§19.2 Web Technologies</span>
+      <span class="toc-item">§19.3 Search Engines</span>
+      <span class="toc-item">§19.4 Cloud Computing</span>
+      <span class="toc-item">§19.5 Privacy &amp; Data</span>
+      <span class="toc-item">§19.6 E-Commerce</span>
+      <span class="toc-item">§19.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH19</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — Social Networks · Web Technologies · Search Engines ═══ -->
+<div class="grid">
+
+  <!-- Card 1: Social Networks (blue) -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Social Networks</h3></div>
+    <div class="card-body">
+      <div class="rule">Social network = graph G(V, E) where V = users (nodes) and E = relationships (edges)</div>
+      <div class="label">Graph Model</div>
+      <table class="tbl">
+        <tr><th>Element</th><th>Meaning</th><th>Example</th></tr>
+        <tr><td>Node (vertex)</td><td>User / entity</td><td>Person, page, group</td></tr>
+        <tr><td>Edge (link)</td><td>Relationship</td><td>Friendship, follow, like</td></tr>
+        <tr><td>Weight</td><td>Interaction strength</td><td>Message frequency</td></tr>
+        <tr><td>Directed edge</td><td>Asymmetric tie</td><td>Twitter follow</td></tr>
+        <tr><td>Undirected edge</td><td>Mutual tie</td><td>Facebook friend</td></tr>
+      </table>
+      <div class="label">Directed vs Undirected</div>
+      <ul class="items">
+        <li><strong>Undirected:</strong> edge (u, v) = edge (v, u) — friendship is mutual (Facebook, LinkedIn)</li>
+        <li><strong>Directed:</strong> edge (u → v) ≠ edge (v → u) — follower/followee (Twitter/X, Instagram)</li>
+        <li><strong>In-degree:</strong> number of incoming edges to a node (followers)</li>
+        <li><strong>Out-degree:</strong> number of outgoing edges from a node (following)</li>
+      </ul>
+      <div class="label">Network Properties</div>
+      <div class="formula">Density    = 2|E| / (|V| × (|V|−1))   [undirected]
+Avg. Path  = average shortest path between all pairs
+Clustering = fraction of node's neighbours that are connected</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Most nodes can be reached from any other node in a surprisingly small number of hops">Small-world phenomenon</span>:</strong> average path length ≈ 6 ("six degrees of separation")</li>
+        <li><strong>Clustering coefficient:</strong> high in social networks — friends of friends tend to be friends</li>
+        <li><strong>Scale-free networks:</strong> degree distribution follows power law; few nodes (hubs) have very high degree</li>
+      </ul>
+      <div class="label">Centrality Measures</div>
+      <table class="tbl">
+        <tr><th>Measure</th><th>Meaning</th><th>Use case</th></tr>
+        <tr><td>Degree centrality</td><td>Number of direct connections</td><td>Most-connected user (influencer)</td></tr>
+        <tr><td>Betweenness centrality</td><td>How often node lies on shortest path</td><td>Information brokers, bridges</td></tr>
+        <tr><td>Closeness centrality</td><td>Average distance to all others</td><td>Fastest spreader of information</td></tr>
+        <tr><td>Eigenvector centrality</td><td>Connected to well-connected nodes</td><td>Basis of PageRank</td></tr>
+      </table>
+      <div class="info">
+        <div class="i-title">Milgram's Experiment (1967)</div>
+        Stanley Milgram showed letters could reach a target stranger in the US via ~6 intermediaries — experimental basis of the small-world hypothesis.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Web Technologies (green) -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Web Technologies</h3></div>
+    <div class="card-body">
+      <div class="rule">Web stack: HTML (structure) + CSS (presentation) + JavaScript (behaviour)</div>
+      <div class="label">HTTP Request / Response Cycle</div>
+      <ol class="steps">
+        <li>Client (browser) resolves domain via <span class="tt" data-t="Domain Name System — translates hostnames like example.com into IP addresses">DNS</span></li>
+        <li>TCP connection established (3-way handshake)</li>
+        <li>Client sends HTTP <code>GET /path HTTP/1.1</code> request with headers</li>
+        <li>Server processes request, returns status code + body</li>
+        <li>Browser parses HTML, requests linked CSS/JS/images</li>
+        <li>JavaScript executes; DOM rendered to screen</li>
+      </ol>
+      <div class="label">Static vs Dynamic Pages</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Content</th><th>Generation</th></tr>
+        <tr><td>Static</td><td>Fixed HTML files</td><td>Pre-built; same for every user</td></tr>
+        <tr><td>Dynamic</td><td>Generated per-request</td><td>Server-side script (PHP, Python, Node)</td></tr>
+        <tr><td>SPA</td><td>Single HTML + JS</td><td>Client-side rendering via AJAX</td></tr>
+      </table>
+      <div class="label">REST APIs &amp; Data Formats</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Representational State Transfer — stateless HTTP-based architecture for web services">REST API</span>:</strong> stateless; uses HTTP verbs <code>GET</code> <code>POST</code> <code>PUT</code> <code>DELETE</code></li>
+        <li><strong>JSON</strong> (JavaScript Object Notation): lightweight key-value text; default for modern APIs</li>
+        <li><strong>XML</strong> (eXtensible Markup Language): tag-based, verbose; used in legacy/enterprise systems</li>
+        <li><strong>Endpoint</strong>: a URL that exposes a resource, e.g. <code>/api/users/42</code></li>
+      </ul>
+      <div class="label">HTTP Status Codes</div>
+      <table class="tbl">
+        <tr><th>Code</th><th>Meaning</th><th>Common trigger</th></tr>
+        <tr><td><code>200 OK</code></td><td>Success</td><td>Normal GET/POST</td></tr>
+        <tr><td><code>301 Moved</code></td><td>Permanent redirect</td><td>URL changed</td></tr>
+        <tr><td><code>304 Not Modified</code></td><td>Use cached copy</td><td>ETag / Last-Modified match</td></tr>
+        <tr><td><code>404 Not Found</code></td><td>Resource missing</td><td>Bad URL</td></tr>
+        <tr><td><code>429 Too Many</code></td><td>Rate limited</td><td>API quota exceeded</td></tr>
+        <tr><td><code>500 Server Error</code></td><td>Backend crash</td><td>Unhandled exception</td></tr>
+      </table>
+      <div class="tip">
+        <div class="t-title">Client-Server Model</div>
+        Clients initiate requests; servers respond. Social media platforms are servers holding user data; browsers/apps are clients that request and display it. The separation allows independent scaling of each side.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Search Engines (purple) -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Search Engines</h3></div>
+    <div class="card-body">
+      <div class="rule">Search engine pipeline: Crawl → Index → Rank → Return results</div>
+      <div class="label">Crawling</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="An automated bot that systematically browses the web following hyperlinks to discover pages">Web crawler</span> (spider/bot):</strong> follows hyperlinks starting from seed URLs</li>
+        <li>Respects <code>robots.txt</code> — file that tells crawlers which pages to skip</li>
+        <li>Politeness delay: pauses between requests to avoid overloading servers</li>
+        <li>Discovers new pages and re-visits existing ones to detect changes</li>
+      </ul>
+      <div class="label">Indexing</div>
+      <ul class="items">
+        <li><strong>Inverted index:</strong> maps each word → list of documents containing it (+ position, frequency)</li>
+        <li>Tokenisation, stemming, stop-word removal applied before storing</li>
+        <li>Enables O(1) look-up of all pages containing a query term</li>
+      </ul>
+      <div class="label">PageRank Algorithm</div>
+      <div class="formula">PR(A) = (1−d) + d × Σ [ PR(T_i) / C(T_i) ]
+d = damping factor (~0.85)
+C(T_i) = out-degree of page T_i</div>
+      <ul class="items">
+        <li>Developed by Brin &amp; Page (Google, 1998); models a random surfer clicking links</li>
+        <li>Pages linked to by many high-PR pages receive higher rank</li>
+        <li>Damping factor models probability surfer continues vs. jumps to random page</li>
+      </ul>
+      <div class="label">Relevance Ranking &amp; SEO</div>
+      <ul class="items">
+        <li><strong>TF-IDF:</strong> term frequency × inverse document frequency — weights rare but present terms higher</li>
+        <li><strong>SEO</strong> (Search Engine Optimisation): keywords in titles/meta tags, backlinks, site speed, mobile-friendliness</li>
+      </ul>
+      <div class="label">Search Result Types</div>
+      <ul class="items">
+        <li><strong>Organic results:</strong> ranked by algorithm; cannot be purchased</li>
+        <li><strong>Paid results (ads):</strong> auction-based; appear above/beside organic results</li>
+        <li><strong>Featured snippet:</strong> direct answer box extracted from top-ranked page</li>
+        <li><strong>Knowledge graph:</strong> structured entity data (people, places) shown in sidebar</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Modern Search</div>
+        Modern engines add machine-learning ranking (RankBrain, BERT), personalisation by history/location, and featured snippets — far beyond basic PageRank alone.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — Cloud Computing · Privacy & Data · E-Commerce ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Cloud Computing (orange) -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Cloud Computing</h3></div>
+    <div class="card-body">
+      <div class="rule">Cloud = on-demand delivery of computing resources over the internet, billed on a pay-as-you-go basis</div>
+      <div class="label">Service Models</div>
+      <table class="tbl">
+        <tr><th>Model</th><th>Provider manages</th><th>User manages</th><th>Example</th></tr>
+        <tr><td><strong><span class="tt" data-t="Infrastructure as a Service — virtualised hardware: VMs, storage, networking">IaaS</span></strong></td><td>Servers, storage, network</td><td>OS, runtime, apps</td><td>AWS EC2, Azure VMs</td></tr>
+        <tr><td><strong><span class="tt" data-t="Platform as a Service — development platform: runtime, middleware, databases">PaaS</span></strong></td><td>IaaS + OS + runtime</td><td>Application code only</td><td>Heroku, Google App Engine</td></tr>
+        <tr><td><strong><span class="tt" data-t="Software as a Service — fully hosted application delivered via browser">SaaS</span></strong></td><td>Everything</td><td>Only data/config</td><td>Gmail, Office 365, Salesforce</td></tr>
+      </table>
+      <div class="label">Deployment Models</div>
+      <ul class="items">
+        <li><strong>Public cloud:</strong> resources shared across many tenants; owned by provider (AWS, Azure, GCP)</li>
+        <li><strong>Private cloud:</strong> dedicated infrastructure for one organisation; on-premises or hosted</li>
+        <li><strong>Hybrid cloud:</strong> combination of public + private; workloads move between them</li>
+        <li><strong>Community cloud:</strong> shared by organisations with common concerns (e.g., healthcare, government)</li>
+      </ul>
+      <div class="label">Virtualisation</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Software layer (hypervisor) that creates and manages virtual machines on physical hardware">Virtualisation</span>:</strong> hypervisor partitions one physical server into many isolated VMs</li>
+        <li><strong>Type 1 hypervisor</strong> (bare-metal): runs directly on hardware — VMware ESXi, Hyper-V</li>
+        <li><strong>Type 2 hypervisor</strong> (hosted): runs on top of OS — VirtualBox, VMware Workstation</li>
+        <li><strong>Containers</strong> (e.g., Docker): lighter than VMs; share OS kernel; faster start-up</li>
+      </ul>
+      <div class="label">Major Cloud Providers</div>
+      <table class="tbl">
+        <tr><th>Provider</th><th>Key services</th><th>Market share (~2024)</th></tr>
+        <tr><td>AWS (Amazon)</td><td>EC2, S3, Lambda, RDS</td><td style="color:var(--accent2);">~31%</td></tr>
+        <tr><td>Azure (Microsoft)</td><td>VMs, Blob, Functions, SQL</td><td style="color:var(--accent);">~24%</td></tr>
+        <tr><td>GCP (Google)</td><td>Compute Engine, BigQuery, GKE</td><td style="color:var(--accent4);">~11%</td></tr>
+      </table>
+      <div class="tip">
+        <div class="t-title">Scalability &amp; Elasticity</div>
+        <strong>Scalability:</strong> ability to handle growing workload. <strong>Vertical scaling</strong> = bigger machine; <strong>Horizontal scaling</strong> = more machines. Cloud elasticity allows automatic scale-out/in based on demand.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Privacy & Data (red) -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Privacy &amp; Data</h3></div>
+    <div class="card-body">
+      <div class="warn">
+        <div class="w-title">Core Tension</div>
+        Social media platforms profit from <strong>data collection</strong>; users gain free services but surrender personal information. Balancing utility vs. privacy is a fundamental challenge.
+      </div>
+      <div class="label">Data Collection Methods</div>
+      <ul class="items">
+        <li><strong>Cookies:</strong> small text files stored by browser; track sessions and user behaviour across sites</li>
+        <li><strong>Third-party cookies:</strong> set by advertisers; enable cross-site tracking — increasingly blocked by browsers</li>
+        <li><strong>Fingerprinting:</strong> identifies users via browser/device characteristics without cookies</li>
+        <li><strong>Beacons / pixels:</strong> 1×1 transparent images that fire HTTP requests to log page views</li>
+        <li><strong>Location data:</strong> GPS, IP geolocation, Wi-Fi triangulation</li>
+      </ul>
+      <div class="label">Data Mining Basics</div>
+      <ul class="items">
+        <li>Process of extracting patterns from large datasets using statistics and ML</li>
+        <li><strong>Classification:</strong> assign users to categories (e.g., ad targeting segments)</li>
+        <li><strong>Clustering:</strong> group similar users without predefined labels</li>
+        <li><strong>Association rules:</strong> "users who liked X also liked Y" (collaborative filtering)</li>
+        <li><strong>User profiling:</strong> building a persistent model of individual interests, habits, demographics</li>
+      </ul>
+      <div class="label">GDPR Overview (EU, 2018)</div>
+      <ul class="items">
+        <li>Lawful basis required for processing personal data (consent, contract, legitimate interest)</li>
+        <li><strong>Right to access</strong>, right to erasure ("right to be forgotten"), data portability</li>
+        <li>Data minimisation: collect only what is strictly necessary</li>
+        <li>Breach notification within 72 hours; fines up to €20 M or 4% global revenue</li>
+      </ul>
+      <div class="label">Anonymisation vs Pseudonymisation</div>
+      <table class="tbl">
+        <tr><th>Technique</th><th>Re-identification risk</th><th>GDPR status</th></tr>
+        <tr><td>Anonymisation</td><td style="color:var(--accent2);">None (if true)</td><td>Outside GDPR scope</td></tr>
+        <tr><td>Pseudonymisation</td><td style="color:var(--yellow);">Possible with key</td><td>Still personal data; reduced risk</td></tr>
+      </table>
+      <div class="label">Privacy Regulations Comparison</div>
+      <table class="tbl">
+        <tr><th>Regulation</th><th>Jurisdiction</th><th>Key requirement</th></tr>
+        <tr><td>GDPR</td><td>European Union</td><td>Explicit consent; right to erasure; 72h breach notice</td></tr>
+        <tr><td>CCPA</td><td>California, USA</td><td>Right to know, opt-out of sale; no sale of minors' data</td></tr>
+        <tr><td>PIPEDA</td><td>Canada</td><td>Consent; purpose limitation; safeguards</td></tr>
+        <tr><td>LGPD</td><td>Brazil</td><td>Similar to GDPR; National Data Protection Authority</td></tr>
+      </table>
+      <div class="warn" style="margin-top:8px;">
+        <div class="w-title">Re-identification Risk</div>
+        Datasets labelled "anonymous" have been de-anonymised by combining multiple sources (e.g., Netflix ratings + IMDb). True anonymisation is harder than it appears — must consider auxiliary information.
+      </div>
+    </div>
+  </div>
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>E-Commerce &amp; Digital Economy</h3></div>
+    <div class="card-body">
+      <div class="rule">E-commerce = buying and selling of goods/services over electronic networks (primarily the internet)</div>
+      <div class="label">Business Models</div>
+      <table class="tbl">
+        <tr><th>Model</th><th>Description</th><th>Examples</th></tr>
+        <tr><td><strong>B2B</strong></td><td>Business-to-Business</td><td>Alibaba, AWS marketplace</td></tr>
+        <tr><td><strong>B2C</strong></td><td>Business-to-Consumer</td><td>Amazon, Netflix, Spotify</td></tr>
+        <tr><td><strong>C2C</strong></td><td>Consumer-to-Consumer</td><td>eBay, Etsy, Craigslist</td></tr>
+        <tr><td><strong>C2B</strong></td><td>Consumer-to-Business</td><td>Freelancer, stock photo sites</td></tr>
+      </table>
+      <div class="label">Digital Payments</div>
+      <ul class="items">
+        <li><strong>Credit/debit cards:</strong> most common; PCI-DSS standard governs security</li>
+        <li><strong>Digital wallets:</strong> PayPal, Apple Pay, Google Pay — tokenise card details</li>
+        <li><strong>Bank transfers / ACH:</strong> direct account-to-account (slower, lower cost)</li>
+        <li><strong>Cryptocurrency:</strong> peer-to-peer digital currency; no central authority</li>
+      </ul>
+      <div class="label">Blockchain Basics</div>
+      <div class="formula">Block = { Index | Timestamp | Data | PrevHash | Hash }
+Hash(n) = SHA256( Index + Timestamp + Data + Hash(n-1) )
+Tamper-proof: changing block n invalidates all blocks n+1 … end</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Distributed ledger shared across a peer-to-peer network; each block cryptographically linked to the previous">Blockchain</span>:</strong> append-only distributed ledger; each node holds a full copy</li>
+        <li><strong>Consensus mechanisms:</strong> Proof-of-Work (Bitcoin — energy-intensive), Proof-of-Stake (Ethereum 2.0 — energy-efficient)</li>
+        <li><strong>Immutability:</strong> altering any past block requires re-mining all subsequent blocks — computationally infeasible</li>
+        <li><strong>Smart contracts:</strong> self-executing code stored on blockchain (Ethereum <code>Solidity</code>)</li>
+      </ul>
+      <div class="label">Payment Security</div>
+      <ul class="items">
+        <li><strong>PCI-DSS:</strong> Payment Card Industry Data Security Standard — 12 requirements for storing/transmitting card data</li>
+        <li><strong>TLS/HTTPS:</strong> all payment pages must use Transport Layer Security (TLS 1.2+)</li>
+        <li><strong>Tokenisation:</strong> replace card number with a one-time token; actual PAN never stored by merchant</li>
+        <li><strong>3D Secure (3DS):</strong> additional authentication step (OTP, biometric) for card-not-present transactions</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Cryptocurrency Overview</div>
+        Bitcoin (2009, Satoshi Nakamoto) — first decentralised cryptocurrency. Transactions broadcast to P2P network → validated by miners → added to blockchain. Supply capped at 21 million BTC.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Key Terms + Quick Review ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Key Terms + Quick Review (yellow, col-span-3) -->
+  <div class="card yellow col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review</h3></div>
+    <div class="card-body">
+
+      <div class="grid-2">
+
+        <!-- Key Terms Table -->
+        <div>
+          <div class="label">Key Terms</div>
+          <table class="tbl">
+            <tr><th>Term</th><th>Definition</th></tr>
+            <tr><td><span class="tt" data-t="A network of people/entities represented as nodes connected by edges representing relationships">Social network</span></td><td>Graph model of users (nodes) and their relationships (edges); analysed for density, clustering, and path length</td></tr>
+            <tr><td><span class="tt" data-t="Algorithm by Brin & Page that ranks web pages by counting and weighting inbound links">PageRank</span></td><td>Iterative algorithm ranking pages by the quality and quantity of inbound links; foundation of Google Search</td></tr>
+            <tr><td><span class="tt" data-t="On-demand delivery of computing resources (compute, storage, network) over the internet">Cloud computing</span></td><td>Delivery of IT resources on-demand over the internet; eliminates need for on-premises hardware investment</td></tr>
+            <tr><td><span class="tt" data-t="Infrastructure as a Service — virtualised compute, storage, networking">IaaS</span></td><td>Cloud model where provider manages physical infrastructure; customer manages OS, runtime, applications</td></tr>
+            <tr><td><span class="tt" data-t="Platform as a Service — managed runtime and middleware for deploying applications">PaaS</span></td><td>Cloud model providing a managed platform; customer deploys application code only</td></tr>
+            <tr><td><span class="tt" data-t="Software as a Service — complete hosted application accessible via browser">SaaS</span></td><td>Cloud model delivering fully managed software over the internet; customer owns only data and configuration</td></tr>
+            <tr><td><span class="tt" data-t="Representational State Transfer — stateless HTTP-based API design style">REST API</span></td><td>Web service architecture using HTTP verbs (GET, POST, PUT, DELETE) on resource-identified endpoints</td></tr>
+            <tr><td><span class="tt" data-t="Extracting patterns, correlations, and insights from large datasets using statistical and ML techniques">Data mining</span></td><td>Discovering hidden patterns in large datasets; techniques include classification, clustering, and association rules</td></tr>
+            <tr><td><span class="tt" data-t="General Data Protection Regulation — EU law governing personal data collection and processing since 2018">GDPR</span></td><td>EU regulation requiring lawful basis for data processing, user rights (access, erasure, portability), and breach notification</td></tr>
+            <tr><td><span class="tt" data-t="Distributed append-only ledger where records are cryptographically linked in blocks">Blockchain</span></td><td>Decentralised, tamper-resistant chain of blocks; each block contains data, timestamp, and hash of previous block</td></tr>
+            <tr><td><span class="tt" data-t="Digital currency secured by cryptography, operating on a decentralised peer-to-peer network">Cryptocurrency</span></td><td>Peer-to-peer digital currency (e.g., Bitcoin, Ethereum) without central bank; transactions validated via consensus</td></tr>
+            <tr><td><span class="tt" data-t="Creating multiple isolated virtual machines on a single physical server using a hypervisor">Virtualisation</span></td><td>Software abstraction allowing multiple VMs to share one physical host; core enabler of cloud computing</td></tr>
+            <tr><td><span class="tt" data-t="Automated bot that follows hyperlinks across the web to discover and retrieve web pages for indexing">Crawling</span></td><td>Process by which a search engine spider visits web pages, extracts text and links, and queues new URLs</td></tr>
+            <tr><td><span class="tt" data-t="Building an inverted index that maps words to the documents containing them for fast retrieval">Indexing</span></td><td>Constructing an inverted index from crawled pages so any query term maps instantly to relevant documents</td></tr>
+            <tr><td><span class="tt" data-t="Replacing identifying information with a pseudonym; re-identification possible if the key is known">Pseudonymisation</span></td><td>Substituting personal identifiers with pseudonyms; reduces privacy risk but data remains personal under GDPR</td></tr>
+            <tr><td><span class="tt" data-t="Agreement between nodes in a distributed system on the valid state of the ledger">Consensus mechanism</span></td><td>Algorithm (Proof-of-Work, Proof-of-Stake) by which blockchain nodes agree on which transactions are valid</td></tr>
+          </table>
+        </div>
+
+        <!-- Quick Review -->
+        <div>
+          <div class="label">Quick Review — Common Exam Points</div>
+          <div class="info">
+            <div class="i-title">Social Networks</div>
+            Directed graph → follower networks (Twitter). Undirected graph → friend networks (Facebook). Six degrees of separation = average path length ≈ 6 in human social graphs.
+          </div>
+          <div class="tip">
+            <div class="t-title">Web Stack Order</div>
+            Client DNS lookup → TCP handshake → HTTP request → server response → HTML parse → CSS/JS fetch → DOM render. Know each step and where TLS/HTTPS fits (between TCP and HTTP).
+          </div>
+          <div class="note">
+            <div class="n-title">PageRank Key Facts</div>
+            Damping factor d ≈ 0.85. Iterates until values converge. A page with many high-rank inbound links scores higher than one with many low-rank links. Not the only Google ranking signal today.
+          </div>
+          <div class="warn">
+            <div class="w-title">Cloud Service Model Boundaries</div>
+            IaaS: you manage from OS up. PaaS: you manage only application code. SaaS: you manage nothing (just data). Mixing them up is the most common exam error.
+          </div>
+          <div class="info">
+            <div class="i-title">Blockchain Immutability</div>
+            Each block stores <code>SHA-256(prevHash + data)</code>. Changing block <em>k</em> changes its hash, breaking block <em>k+1</em>'s stored prevHash — cascading invalidation to the chain tip. Re-mining requires majority hash power.
+          </div>
+          <div class="tip">
+            <div class="t-title">GDPR Distinguisher</div>
+            Anonymised data = outside GDPR (no re-identification possible). Pseudonymised data = still personal data under GDPR (key exists). Encryption alone does NOT anonymise data.
+          </div>
+          <hr class="divider">
+          <div class="label">Chapter Concept Map</div>
+          <ul class="items">
+            <li><strong>Social Networks</strong> → graph theory, small-world, clustering, PageRank inputs</li>
+            <li><strong>Web Technologies</strong> → HTTP/REST, JSON/XML, static/dynamic, client-server</li>
+            <li><strong>Search Engines</strong> → crawl → index → PageRank → rank → serve</li>
+            <li><strong>Cloud Computing</strong> → virtualisation → IaaS/PaaS/SaaS → elasticity</li>
+            <li><strong>Privacy &amp; Data</strong> → cookies → data mining → user profiling → GDPR</li>
+            <li><strong>E-Commerce</strong> → B2B/B2C/C2C → digital payments → blockchain → crypto</li>
+          </ul>
+          <hr class="divider">
+          <div class="label">Forouzan FCS4e — Chapter 19 Summary</div>
+          <p>This chapter bridges computer science fundamentals with the modern internet. The Web's client–server model and HTTP protocol underpin all social media platforms. Search engines apply graph algorithms (PageRank) to rank billions of pages. Cloud computing delivers the elastic infrastructure that hosts these services. Privacy law (GDPR) responds to the data collection and mining that monetises these platforms. Blockchain provides the cryptographic trust layer enabling decentralised digital economies.</p>
+          <div class="info" style="margin-top:8px;">
+            <div class="i-title">Connections to Earlier Chapters</div>
+            CH6 (Networks): TCP/IP stack used by HTTP. CH8 (Algorithms): graph traversal used in crawling. CH14 (Databases): back-end storage for social platforms. CH17 (Theory of Computation): limits of search and indexing efficiency.
+          </div>
+        </div>
+
+      </div><!-- /grid-2 -->
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <a href="CH18-Artificial-Intelligence-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">← CH18</a>
+  <a href="../CSI.html" style="color:var(--text-dim);text-decoration:none;">Back to FCS</a>
+  <a href="CH20-Social-Ethical-Issues-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">CH20 →</a>
+</div>
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script>
+</body>
+</html>

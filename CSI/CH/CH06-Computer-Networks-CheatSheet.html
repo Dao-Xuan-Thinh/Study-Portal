@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH06 · Computer Networks · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 6</h1>
+    <h2>Computer Networks and the Internet &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition — Forouzan</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§6.1 Network Categories</span>
+      <span class="toc-item">§6.2 OSI Model</span>
+      <span class="toc-item">§6.3 TCP/IP Suite</span>
+      <span class="toc-item">§6.4 Internet Addressing</span>
+      <span class="toc-item">§6.5 Network Devices</span>
+      <span class="toc-item">§6.6 App-Layer Protocols</span>
+      <span class="toc-item">§6.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH06</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — Network Categories · OSI Model · TCP/IP ═══ -->
+<div class="grid">
+
+  <!-- Card 1: Network Categories -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Network Categories</h3></div>
+    <div class="card-body">
+      <div class="rule">A network is a set of devices connected by communication links; categorised by geographic coverage</div>
+
+      <div class="label">Coverage Areas</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Coverage</th><th>Example</th></tr>
+        <tr>
+          <td><strong><span class="tt" data-t="Local Area Network — high-speed, privately owned, covers a building or campus">LAN</span></strong></td>
+          <td>Room → campus (~1 km)</td>
+          <td>Office Ethernet, Wi-Fi</td>
+        </tr>
+        <tr>
+          <td><strong><span class="tt" data-t="Metropolitan Area Network — spans a city; often owned by a telco or municipality">MAN</span></strong></td>
+          <td>City (~100 km)</td>
+          <td>Cable TV network, WiMAX</td>
+        </tr>
+        <tr>
+          <td><strong><span class="tt" data-t="Wide Area Network — spans countries/continents; uses public or leased lines">WAN</span></strong></td>
+          <td>Country / globe</td>
+          <td>Internet backbone, MPLS</td>
+        </tr>
+      </table>
+
+      <div class="label">Physical Topology Types</div>
+      <ul class="items">
+        <li><strong>Bus</strong> — all nodes share one backbone cable; simple, single point of failure on cable</li>
+        <li><strong>Star</strong> — all nodes connect to central hub/switch; easy to manage, hub is single point of failure</li>
+        <li><strong>Ring</strong> — each node connects to two neighbours forming a loop; token-passing; failure breaks ring</li>
+        <li><strong>Mesh</strong> — every node connects to every other; highest redundancy, expensive; used in WANs</li>
+        <li><strong>Hybrid</strong> — combination (e.g. star-bus, star-ring) used in most real deployments</li>
+      </ul>
+
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Topology vs. Connection Type</div>
+        Topology describes physical layout. Connection can be <strong>point-to-point</strong> (dedicated link) or <strong>multipoint</strong> (shared link). Most modern LANs use star topology with switched point-to-point links.
+      </div>
+
+      <div class="label">LAN Technologies</div>
+      <ul class="items">
+        <li><code>Ethernet (IEEE 802.3)</code> — dominant wired LAN standard; 10 Mbps → 100 Gbps</li>
+        <li><code>Wi-Fi (IEEE 802.11)</code> — dominant wireless LAN; 802.11n/ac/ax</li>
+        <li><code>Token Ring (IEEE 802.5)</code> — legacy; deterministic access via token</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 2: OSI Model -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>OSI Reference Model — 7 Layers</h3></div>
+    <div class="card-body">
+      <div class="rule">OSI = Open Systems Interconnection; ISO standard for how network layers communicate via defined interfaces</div>
+
+      <table class="tbl">
+        <tr><th>#</th><th>Layer</th><th>Data Unit</th><th>Key Functions / Protocols</th></tr>
+        <tr>
+          <td style="color:var(--accent);">7</td>
+          <td><span class="tt" data-t="Closest to user; provides network services to applications (HTTP, FTP, DNS)">Application</span></td>
+          <td><code>Message</code></td>
+          <td>HTTP, FTP, SMTP, DNS, DHCP</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent);">6</td>
+          <td><span class="tt" data-t="Translation, encryption/decryption, compression — data syntax">Presentation</span></td>
+          <td><code>Message</code></td>
+          <td>SSL/TLS, JPEG, ASCII, MIME</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent);">5</td>
+          <td><span class="tt" data-t="Establishes, maintains, and terminates communication sessions">Session</span></td>
+          <td><code>Message</code></td>
+          <td>NetBIOS, RPC, SQL</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent2);">4</td>
+          <td><span class="tt" data-t="End-to-end delivery, segmentation, flow control, error control">Transport</span></td>
+          <td><code>Segment</code></td>
+          <td>TCP, UDP, SCTP</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent5);">3</td>
+          <td><span class="tt" data-t="Logical addressing and routing of packets across networks">Network</span></td>
+          <td><code>Packet</code></td>
+          <td>IP, ICMP, OSPF, BGP</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent5);">2</td>
+          <td><span class="tt" data-t="Node-to-node delivery on same network; MAC addresses; framing">Data Link</span></td>
+          <td><code>Frame</code></td>
+          <td>Ethernet, Wi-Fi, PPP, ARP</td>
+        </tr>
+        <tr>
+          <td style="color:var(--accent3);">1</td>
+          <td><span class="tt" data-t="Physical transmission of raw bits over a medium (cables, radio)">Physical</span></td>
+          <td><code>Bit</code></td>
+          <td>RS-232, DSL, IEEE 802.3</td>
+        </tr>
+      </table>
+
+      <div class="tip" style="margin-top:8px;">
+        <div class="t-title">Mnemonic</div>
+        <strong>All People Seem To Need Data Processing</strong> (layers 7→1) or <em>Please Do Not Throw Sausage Pizza Away</em> (1→7).
+      </div>
+
+      <div class="label">Layer Interaction Rules</div>
+      <ul class="items">
+        <li>Each layer provides services to the layer <strong>above</strong> and uses services of the layer <strong>below</strong></li>
+        <li>Peer layers communicate via <strong>protocols</strong>; adjacent layers communicate via <strong>interfaces</strong></li>
+        <li><strong>Encapsulation:</strong> each layer adds its own header (and sometimes trailer) as data travels down</li>
+        <li><strong>Decapsulation:</strong> headers stripped as data travels up on the receiving side</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 3: TCP/IP Protocol Suite -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>TCP/IP Protocol Suite — 5 Layers</h3></div>
+    <div class="card-body">
+      <div class="rule">TCP/IP is the practical protocol suite of the Internet; predates OSI and uses 5 (sometimes 4) layers</div>
+
+      <table class="tbl">
+        <tr><th>Layer</th><th>Responsibility</th><th>OSI Equiv.</th><th>Key Protocols</th></tr>
+        <tr>
+          <td><span class="tt" data-t="User-facing services; combines OSI Application + Presentation + Session">Application</span></td>
+          <td>User services, data representation, session management</td>
+          <td>5, 6, 7</td>
+          <td>HTTP, DNS, SMTP, FTP, DHCP, Telnet</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Reliable (TCP) or unreliable (UDP) end-to-end delivery between processes">Transport</span></td>
+          <td>Process-to-process delivery, ports, flow &amp; error control</td>
+          <td>4</td>
+          <td>TCP, UDP, SCTP</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Best-effort delivery of datagrams across interconnected networks">Internet</span></td>
+          <td>Logical addressing, routing, fragmentation</td>
+          <td>3</td>
+          <td>IPv4, IPv6, ICMP, IGMP</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Data Link + Physical combined in TCP/IP; handles same-network delivery">Data Link</span></td>
+          <td>Framing, MAC addressing, media access</td>
+          <td>2</td>
+          <td>Ethernet, Wi-Fi, PPP</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Physical transmission of bits over the medium">Physical</span></td>
+          <td>Bit encoding, transmission over physical medium</td>
+          <td>1</td>
+          <td>Cables, fiber, radio waves</td>
+        </tr>
+      </table>
+
+      <div class="label">TCP vs UDP</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Feature</th><th>TCP</th><th>UDP</th></tr>
+        <tr><td>Connection</td><td>Connection-oriented (3-way handshake)</td><td>Connectionless</td></tr>
+        <tr><td>Reliability</td><td>Guaranteed delivery, ACKs, retransmit</td><td>Best-effort, no ACKs</td></tr>
+        <tr><td>Order</td><td>In-order delivery</td><td>No ordering guarantee</td></tr>
+        <tr><td>Overhead</td><td>High (20-byte header min)</td><td>Low (8-byte header)</td></tr>
+        <tr><td>Use Cases</td><td>HTTP, FTP, Email, SSH</td><td>DNS, VoIP, video stream, gaming</td></tr>
+      </table>
+
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">OSI vs TCP/IP</div>
+        OSI is a <strong>reference model</strong> (theoretical); TCP/IP is the <strong>implementation model</strong> (practical). The Internet runs on TCP/IP, not OSI.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — Addressing · Devices · App Protocols ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Internet Addressing -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Internet Addressing — IPv4 &amp; IPv6</h3></div>
+    <div class="card-body">
+      <div class="rule">An IP address uniquely identifies a device's interface on a network at the Internet (Network) layer</div>
+
+      <div class="label">IPv4 — 32-bit Dotted-Decimal</div>
+      <div class="formula">Format: W.X.Y.Z  (each octet 0–255)  e.g. 192.168.1.10</div>
+      <p>Total address space: 2<sup>32</sup> ≈ 4.3 billion addresses. Exhausted — drives IPv6 adoption.</p>
+
+      <div class="label">IPv4 Classful Addressing</div>
+      <table class="tbl">
+        <tr><th>Class</th><th>Range (1st Octet)</th><th>Default Mask</th><th>Purpose</th></tr>
+        <tr><td style="color:var(--accent);">A</td><td>1 – 126</td><td><code>255.0.0.0 /8</code></td><td>Large networks (16M hosts)</td></tr>
+        <tr><td style="color:var(--accent2);">B</td><td>128 – 191</td><td><code>255.255.0.0 /16</code></td><td>Medium networks (65K hosts)</td></tr>
+        <tr><td style="color:var(--accent4);">C</td><td>192 – 223</td><td><code>255.255.255.0 /24</code></td><td>Small networks (254 hosts)</td></tr>
+        <tr><td style="color:var(--accent5);">D</td><td>224 – 239</td><td>—</td><td>Multicast</td></tr>
+        <tr><td style="color:var(--accent3);">E</td><td>240 – 255</td><td>—</td><td>Reserved / Experimental</td></tr>
+      </table>
+
+      <div class="label">Subnet Masks &amp; CIDR</div>
+      <ul class="items">
+        <li><strong>Subnet mask</strong> — 32-bit value; 1s mark the network portion, 0s mark the host portion</li>
+        <li><strong>CIDR notation</strong> — <code>192.168.10.0/24</code> means 24 network bits, 8 host bits</li>
+        <li><strong>Network address</strong> — all host bits = 0 (e.g. <code>192.168.1.0</code>)</li>
+        <li><strong>Broadcast address</strong> — all host bits = 1 (e.g. <code>192.168.1.255</code>)</li>
+        <li><strong>Usable hosts</strong> per subnet = 2<sup>h</sup> − 2 (h = host bits)</li>
+      </ul>
+
+      <div class="label">Private Address Ranges (RFC 1918)</div>
+      <div class="formula">10.0.0.0/8 · 172.16.0.0/12 · 192.168.0.0/16</div>
+
+      <hr class="divider">
+
+      <div class="label">IPv6 — 128-bit Hexadecimal</div>
+      <div class="formula">Format: 8 groups of 4 hex digits separated by colons
+e.g. 2001:0db8:85a3:0000:0000:8a2e:0370:7334</div>
+      <ul class="items">
+        <li>Total space: 2<sup>128</sup> ≈ 3.4 × 10<sup>38</sup> addresses — virtually inexhaustible</li>
+        <li><strong>Abbreviation rules:</strong> omit leading zeros; replace one consecutive all-zero group with <code>::</code></li>
+        <li><code>2001:db8::1</code> is shorthand for <code>2001:0db8:0000:0000:0000:0000:0000:0001</code></li>
+        <li>No broadcast; uses <strong>anycast</strong> and <strong>multicast</strong> instead</li>
+        <li>Built-in <strong>IPsec</strong> support; simplified header improves routing efficiency</li>
+      </ul>
+
+      <div class="warn" style="margin-top:8px;">
+        <div class="w-title">NAT &amp; IPv4 Exhaustion</div>
+        <span class="tt" data-t="Network Address Translation — maps multiple private IPs to one public IP; extends IPv4 lifespan">NAT</span> is used to share a single public IPv4 address across many private hosts. IPv6 eliminates the need for NAT.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Network Devices -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Network Devices — Layer by Layer</h3></div>
+    <div class="card-body">
+      <div class="rule">Network devices connect nodes and forward data; they operate at specific OSI layers, which determines their intelligence</div>
+
+      <table class="tbl">
+        <tr><th>Device</th><th>OSI Layer</th><th>Addresses Used</th><th>Key Behaviour</th></tr>
+        <tr>
+          <td><span class="tt" data-t="Amplifies and retransmits signals to extend cable distance; no intelligence">Repeater</span></td>
+          <td>Layer 1 — Physical</td>
+          <td>None</td>
+          <td>Regenerates signal; no filtering; extends cable segment length</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Multi-port repeater; broadcasts all frames to all ports; creates one collision domain">Hub</span></td>
+          <td>Layer 1 — Physical</td>
+          <td>None</td>
+          <td>Broadcasts to all ports; shared bandwidth; largely obsolete</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Connects two LAN segments; filters traffic based on MAC addresses; reduces collision domains">Bridge</span></td>
+          <td>Layer 2 — Data Link</td>
+          <td>MAC Address</td>
+          <td>Learns MAC table; forwards or filters frames; separates collision domains</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Multi-port bridge; forwards frames only to the destination port based on MAC table">Switch</span></td>
+          <td>Layer 2 — Data Link</td>
+          <td>MAC Address</td>
+          <td>Full-duplex per port; dedicated bandwidth; replaces hub in modern LANs</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Connects different networks; routes packets based on logical (IP) addresses">Router</span></td>
+          <td>Layer 3 — Network</td>
+          <td>IP Address</td>
+          <td>Maintains routing tables; separates broadcast domains; connects LANs to WAN/Internet</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Protocol translator connecting networks that use different communication protocols">Gateway</span></td>
+          <td>Layer 4–7 — Transport to App</td>
+          <td>IP + Port</td>
+          <td>Protocol conversion; e.g. email gateway, VoIP gateway, API gateway</td>
+        </tr>
+      </table>
+
+      <div class="label">Collision vs Broadcast Domains</div>
+      <ul class="items">
+        <li><strong>Collision domain</strong> — segment where only one device can transmit at a time; broken by bridges/switches</li>
+        <li><strong>Broadcast domain</strong> — area flooded by a broadcast frame; broken only by <strong>routers</strong></li>
+        <li>Each switch port = its own collision domain; entire switch = one broadcast domain (unless VLANs used)</li>
+      </ul>
+
+      <div class="tip" style="margin-top:8px;">
+        <div class="t-title">Layer-3 Switch</div>
+        A Layer-3 switch combines switching speed with routing capability — it can route between VLANs at wire speed, acting as both a switch and a router in enterprise networks.
+      </div>
+
+      <div class="label">Firewall</div>
+      <p>A <span class="tt" data-t="Security device that monitors and controls incoming/outgoing network traffic based on rules">firewall</span> operates at Layers 3–7; enforces security policies by filtering packets, tracking connections (stateful inspection), or inspecting application data (deep packet inspection).</p>
+    </div>
+  </div>
+
+  <!-- Card 6: Application Layer Protocols -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Application Layer Protocols</h3></div>
+    <div class="card-body">
+      <div class="rule">Application-layer protocols define the rules for specific user-level services; identified by well-known port numbers</div>
+
+      <div class="label">Web &amp; File Transfer</div>
+      <table class="tbl">
+        <tr><th>Protocol</th><th>Port(s)</th><th>Transport</th><th>Purpose</th></tr>
+        <tr>
+          <td><span class="tt" data-t="HyperText Transfer Protocol — stateless request/response protocol for web pages">HTTP</span></td>
+          <td><code>80</code></td>
+          <td>TCP</td>
+          <td>Web page retrieval; stateless GET/POST/PUT/DELETE</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="HTTP Secure — HTTP over TLS/SSL; encrypts web traffic">HTTPS</span></td>
+          <td><code>443</code></td>
+          <td>TCP</td>
+          <td>Encrypted web communication via TLS</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="File Transfer Protocol — transfers files between client and server; uses two connections">FTP</span></td>
+          <td><code>20, 21</code></td>
+          <td>TCP</td>
+          <td>Port 21 = control; Port 20 = data transfer</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Secure Shell — encrypted remote login and command execution">SSH</span></td>
+          <td><code>22</code></td>
+          <td>TCP</td>
+          <td>Secure remote terminal access; replaces Telnet</td>
+        </tr>
+      </table>
+
+      <div class="label">Email Protocols</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Protocol</th><th>Port</th><th>Role</th></tr>
+        <tr>
+          <td><span class="tt" data-t="Simple Mail Transfer Protocol — sends email from client to server and between servers">SMTP</span></td>
+          <td><code>25 / 587</code></td>
+          <td>Sending / relaying email</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Post Office Protocol v3 — downloads email to local client; deletes from server">POP3</span></td>
+          <td><code>110</code></td>
+          <td>Retrieve email (downloads &amp; deletes)</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Internet Message Access Protocol — syncs email between client and server; keeps mail on server">IMAP</span></td>
+          <td><code>143</code></td>
+          <td>Retrieve email (syncs; mail stays on server)</td>
+        </tr>
+      </table>
+
+      <div class="label">Directory &amp; Configuration Services</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Protocol</th><th>Port</th><th>Transport</th><th>Purpose</th></tr>
+        <tr>
+          <td><span class="tt" data-t="Domain Name System — translates human-readable hostnames to IP addresses">DNS</span></td>
+          <td><code>53</code></td>
+          <td>UDP/TCP</td>
+          <td>Hostname ↔ IP resolution; hierarchical distributed database</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Dynamic Host Configuration Protocol — automatically assigns IP addresses and network config to hosts">DHCP</span></td>
+          <td><code>67/68</code></td>
+          <td>UDP</td>
+          <td>Auto-assigns IP, mask, gateway, DNS to clients</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Simple Network Management Protocol — monitors and manages network devices">SNMP</span></td>
+          <td><code>161/162</code></td>
+          <td>UDP</td>
+          <td>Collects stats and manages network equipment</td>
+        </tr>
+      </table>
+
+      <div class="label">DNS Resolution Process</div>
+      <ol class="steps">
+        <li>Client queries local <strong>DNS resolver</strong> (usually ISP or company DNS)</li>
+        <li>Resolver checks its cache; if miss, queries a <strong>Root Name Server</strong> (13 root clusters)</li>
+        <li>Root directs to the <strong>TLD server</strong> (e.g. <code>.com</code>, <code>.org</code>)</li>
+        <li>TLD server directs to the <strong>authoritative name server</strong> for the domain</li>
+        <li>Authoritative server returns the IP; resolver caches it and returns to client</li>
+      </ol>
+
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">DHCP DORA</div>
+        DHCP uses a 4-message exchange: <strong>D</strong>iscover → <strong>O</strong>ffer → <strong>R</strong>equest → <strong>A</strong>cknowledge. Client broadcasts Discover; server offers an IP; client requests it; server confirms the lease.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Key Terms + Quick Review (full width) ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Key Terms + Quick Review (spans all 3 columns) -->
+  <div class="card blue col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review</h3></div>
+    <div class="card-body">
+
+      <div class="label">Key Terms Glossary</div>
+      <table class="tbl">
+        <tr>
+          <th style="width:14%;">Term</th>
+          <th style="width:40%;">Definition</th>
+          <th style="width:14%;">Term</th>
+          <th style="width:32%;">Definition</th>
+        </tr>
+        <tr>
+          <td><strong><span class="tt" data-t="The capacity of a communication channel; measured in bits per second (bps)">Bandwidth</span></strong></td>
+          <td>Maximum data-transfer rate of a channel; measured in bps, Kbps, Mbps, Gbps</td>
+          <td><strong><span class="tt" data-t="Transmission Control Protocol — reliable, connection-oriented transport protocol">TCP</span></strong></td>
+          <td>Reliable, ordered, error-checked delivery; connection-oriented; uses 3-way handshake</td>
+        </tr>
+        <tr>
+          <td><strong><span class="tt" data-t="A set of rules governing communication between network entities">Protocol</span></strong></td>
+          <td>Agreed-upon set of rules and formats that govern the exchange of messages between two network entities</td>
+          <td><strong><span class="tt" data-t="User Datagram Protocol — connectionless, unreliable, fast transport protocol">UDP</span></strong></td>
+          <td>Connectionless; no guarantee of delivery or order; low overhead; used for real-time apps</td>
+        </tr>
+        <tr>
+          <td><strong><span class="tt" data-t="The physical or logical arrangement of network nodes and connections">Topology</span></strong></td>
+          <td>Physical or logical arrangement of nodes and links in a network (bus, star, ring, mesh)</td>
+          <td><strong><span class="tt" data-t="HyperText Transfer Protocol — application-layer protocol for web communication">HTTP</span></strong></td>
+          <td>Stateless request/response protocol used by web browsers and servers; port 80</td>
+        </tr>
+        <tr>
+          <td><strong><span class="tt" data-t="Internet Protocol address — numerical label assigned to each device on a network">IP Address</span></strong></td>
+          <td>Unique 32-bit (IPv4) or 128-bit (IPv6) number identifying a device interface on an IP network</td>
+          <td><strong><span class="tt" data-t="File Transfer Protocol — standard protocol for transferring files between hosts">FTP</span></strong></td>
+          <td>Transfers files between client and server; uses port 21 (control) and port 20 (data)</td>
+        </tr>
+        <tr>
+          <td><strong><span class="tt" data-t="Domain Name System — maps hostnames to IP addresses in a distributed hierarchy">DNS</span></strong></td>
+          <td>Hierarchical, distributed database that translates human-readable domain names to IP addresses</td>
+          <td><strong><span class="tt" data-t="A device that routes packets between different IP networks using routing tables">Router</span></strong></td>
+          <td>Layer-3 device that forwards packets between networks using IP routing tables; separates broadcast domains</td>
+        </tr>
+        <tr>
+          <td><strong><span class="tt" data-t="A unit of data transmitted over a network; includes header, data, and sometimes trailer">Packet</span></strong></td>
+          <td>A formatted unit of data at Layer 3; contains source/destination IP, header info, and payload</td>
+          <td><strong><span class="tt" data-t="A security system that monitors and controls network traffic based on defined rules">Firewall</span></strong></td>
+          <td>Hardware/software that filters traffic between trusted and untrusted networks using security policy rules</td>
+        </tr>
+        <tr>
+          <td><strong><span class="tt" data-t="Local Area Network — private, high-speed network covering a limited area">LAN</span></strong></td>
+          <td>Network covering a small area (room, building, campus); high speed; privately owned; e.g. Ethernet</td>
+          <td><strong><span class="tt" data-t="A multi-port bridge that forwards frames only to the destination port">Switch</span></strong></td>
+          <td>Layer-2 device; learns MAC addresses; provides dedicated bandwidth per port; full-duplex operation</td>
+        </tr>
+        <tr>
+          <td><strong><span class="tt" data-t="Wide Area Network — network spanning large geographic distances, often using public infrastructure">WAN</span></strong></td>
+          <td>Network spanning large geographic areas (countries, continents); uses leased lines or public Internet</td>
+          <td><strong><span class="tt" data-t="Dynamic Host Configuration Protocol — automatically configures IP settings for network hosts">DHCP</span></strong></td>
+          <td>Automatically assigns IP address, subnet mask, default gateway, and DNS server to network clients</td>
+        </tr>
+      </table>
+
+      <hr class="divider">
+
+      <div class="label">Quick Review — Essential Facts</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:4px;">
+
+        <div>
+          <div class="note">
+            <div class="n-title">OSI vs TCP/IP Layer Count</div>
+            OSI has <strong>7 layers</strong>; TCP/IP has <strong>5 layers</strong> (or 4 in some models, merging Physical &amp; Data Link). TCP/IP Application layer = OSI layers 5 + 6 + 7 combined.
+          </div>
+          <div class="info">
+            <div class="i-title">IP Address Classes — Quick ID</div>
+            Class A starts with bit <code>0</code>; Class B with <code>10</code>; Class C with <code>110</code>; Class D (multicast) with <code>1110</code>; Class E with <code>1111</code>. CIDR replaces classful addressing in modern networks.
+          </div>
+        </div>
+
+        <div>
+          <div class="tip">
+            <div class="t-title">Port Number Ranges</div>
+            <strong>Well-known ports:</strong> 0–1023 (assigned by IANA; require admin privileges)<br>
+            <strong>Registered ports:</strong> 1024–49151 (vendor/application use)<br>
+            <strong>Dynamic/ephemeral:</strong> 49152–65535 (OS-assigned for client connections)
+          </div>
+          <div class="warn">
+            <div class="w-title">Common Exam Traps</div>
+            Hub = Layer 1 (not Layer 2). Bridge = Layer 2. Switch = Layer 2 (Layer-3 switch is special). Router = Layer 3. A gateway operates at higher layers and performs <em>protocol conversion</em>, not just forwarding.
+          </div>
+        </div>
+
+        <div>
+          <div class="info">
+            <div class="i-title">Encapsulation Summary</div>
+            Application data → Transport adds <strong>segment</strong> header (port numbers) → Network adds <strong>packet</strong> header (IP addresses) → Data Link adds <strong>frame</strong> header+trailer (MAC addresses) → Physical transmits <strong>bits</strong>. Each layer unwraps on receipt.
+          </div>
+          <div class="note">
+            <div class="n-title">Loopback &amp; Special Addresses</div>
+            <code>127.0.0.1</code> — loopback (localhost); never leaves the host.<br>
+            <code>0.0.0.0</code> — unspecified / all interfaces.<br>
+            <code>255.255.255.255</code> — limited broadcast (current network).<br>
+            <code>::1</code> — IPv6 loopback equivalent.
+          </div>
+        </div>
+
+      </div><!-- /inner grid -->
+
+      <hr class="divider">
+
+      <div class="label">Network Performance Metrics</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;">
+        <div>
+          <div class="formula">Bandwidth = max data rate of a link (bps)</div>
+          <div class="formula">Throughput = actual achieved data rate ≤ Bandwidth</div>
+        </div>
+        <div>
+          <div class="formula">Latency = Propagation delay + Transmission delay
+                    + Queuing delay + Processing delay</div>
+        </div>
+        <div>
+          <div class="formula">Propagation delay = Distance / Propagation speed
+Transmission delay = Packet size (bits) / Bandwidth</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <a href="CH05-Computer-Organization-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← CH05</a>
+  <a href="../CSI.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">Back to FCS</a>
+  <a href="CH07-Operating-Systems-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">CH07 →</a>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script></body>
+</html>

@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH20 · Social &amp; Ethical Issues · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}
+</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 20</h1>
+    <h2>Social and Ethical Issues in Computing &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§20.1 Intellectual Property</span>
+      <span class="toc-item">§20.2 Privacy</span>
+      <span class="toc-item">§20.3 Computer Crime</span>
+      <span class="toc-item">§20.4 Professional Ethics</span>
+      <span class="toc-item">§20.5 Digital Divide</span>
+      <span class="toc-item">§20.6 AI &amp; Future Issues</span>
+      <span class="toc-item">§20.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH20</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — Cards 1–6 ═══ -->
+<div class="grid">
+
+  <!-- ── Card 1: Intellectual Property ── -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Intellectual Property</h3></div>
+    <div class="card-body">
+      <div class="rule">IP = legal rights protecting creations of the mind; includes copyright, patents, trademarks, trade secrets</div>
+      <div class="label">Four Pillars of IP</div>
+      <table class="tbl">
+        <tr><th>Type</th><th>Protects</th><th>Duration</th></tr>
+        <tr><td><span class="tt" data-t="Automatic right granted to creators of original works upon creation">Copyright</span></td><td>Original expression (code, docs, art)</td><td>Life + 70 yrs</td></tr>
+        <tr><td><span class="tt" data-t="Exclusive right to make, use, or sell an invention granted by a government">Patent</span></td><td>Novel inventions &amp; processes</td><td>20 yrs</td></tr>
+        <tr><td><span class="tt" data-t="Word, symbol, or design identifying the source of goods or services">Trademark</span></td><td>Brand identity / logos</td><td>Renewable ∞</td></tr>
+        <tr><td><span class="tt" data-t="Confidential business information that provides a competitive edge">Trade Secret</span></td><td>Confidential algorithms / formulas</td><td>While secret</td></tr>
+      </table>
+      <div class="label">Software Licensing Models</div>
+      <ul class="items">
+        <li><strong>Proprietary</strong> — source closed; users purchase a licence (e.g., Windows, Adobe)</li>
+        <li><strong><span class="tt" data-t="Software whose source code is publicly available; may or may not be free">Open-Source</span></strong> — source available; governed by licence terms</li>
+        <li><strong>GPL</strong> — <em>copyleft</em>; derived works must remain GPL-licensed</li>
+        <li><strong>MIT / BSD</strong> — permissive; minimal restrictions on reuse</li>
+        <li><strong>Apache 2.0</strong> — permissive; includes explicit patent grant</li>
+        <li><strong>Freeware / Shareware</strong> — gratis but usually closed-source</li>
+      </ul>
+      <div class="label">Fair Use Doctrine</div>
+      <div class="info">
+        <div class="i-title">Four-Factor Test (US)</div>
+        (1) Purpose &amp; character of use (commercial vs. educational) · (2) Nature of the copyrighted work · (3) Amount used relative to the whole · (4) Effect on the market for the original work.
+      </div>
+      <div class="label">Plagiarism</div>
+      <p>Presenting another's work as one's own — a distinct ethical (not always legal) violation. Academic and professional codes of conduct treat it as serious misconduct regardless of copyright status.</p>
+      <div class="label">Software Piracy</div>
+      <div class="warn">
+        <div class="w-title">Types of Piracy</div>
+        <strong>End-user</strong> — copying software beyond licence scope.<br>
+        <strong>Counterfeiting</strong> — duplicating and selling commercial software illegally.<br>
+        <strong>Internet</strong> — illegal downloading via peer-to-peer networks or warez sites.<br>
+        BSA estimates piracy costs the industry ~$46 billion annually worldwide.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Card 2: Privacy ── -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Privacy</h3></div>
+    <div class="card-body">
+      <div class="rule">Privacy = the right of individuals to control information about themselves and limit others' access to it</div>
+      <div class="label">Threats to Privacy</div>
+      <ul class="items">
+        <li><strong>Data collection</strong> — websites, apps, and sensors harvest personal data continuously</li>
+        <li><strong>Surveillance</strong> — CCTV, facial recognition, location tracking</li>
+        <li><strong>Government access</strong> — subpoenas, warrants, national-security orders (e.g., FISA, NSLs)</li>
+        <li><strong>Corporate tracking</strong> — third-party cookies, device fingerprinting, ad networks</li>
+        <li><strong>Data brokers</strong> — aggregate and sell profiles without direct consumer consent</li>
+      </ul>
+      <div class="label">Major Privacy Regulations</div>
+      <table class="tbl">
+        <tr><th>Law</th><th>Jurisdiction</th><th>Scope</th></tr>
+        <tr><td><span class="tt" data-t="General Data Protection Regulation — EU law on data protection and privacy">GDPR</span></td><td>European Union</td><td>Any org processing EU residents' data</td></tr>
+        <tr><td><span class="tt" data-t="California Consumer Privacy Act — gives CA residents data rights">CCPA</span></td><td>California, USA</td><td>For-profit businesses above threshold</td></tr>
+        <tr><td><span class="tt" data-t="Health Insurance Portability and Accountability Act — protects health information">HIPAA</span></td><td>USA</td><td>Health-care providers and insurers</td></tr>
+      </table>
+      <div class="label">Anonymization Techniques</div>
+      <div class="tip">
+        <div class="t-title">De-identification Methods</div>
+        <strong>Data masking</strong> — replace real values with fictitious ones.<br>
+        <strong>k-Anonymity</strong> — ensure each record is indistinguishable from ≥ k–1 others.<br>
+        <strong>Differential privacy</strong> — inject calibrated noise so individual records cannot be inferred from aggregate queries.
+      </div>
+      <div class="label">Principles (GDPR Basis)</div>
+      <ul class="items">
+        <li>Lawfulness, fairness, and transparency</li>
+        <li>Purpose limitation — data used only for stated purpose</li>
+        <li>Data minimisation — collect only what is necessary</li>
+        <li>Storage limitation — retain no longer than needed</li>
+        <li>Right to erasure (<em>"right to be forgotten"</em>)</li>
+      </ul>
+      <div class="label">Data Lifecycle &amp; Risk Points</div>
+      <div class="formula">Collection → Storage → Processing → Sharing → Archival → Deletion</div>
+      <p>Privacy risk exists at every stage. <strong>Data breaches</strong> at storage, <strong>mission creep</strong> at processing, and <strong>re-identification</strong> at sharing are the most common failure points.</p>
+    </div>
+  </div>
+
+  <!-- ── Card 3: Computer Crime ── -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Computer Crime</h3></div>
+    <div class="card-body">
+      <div class="rule">Cybercrime = illegal acts in which a computer is the tool, target, or both</div>
+      <div class="label">Crime Categories</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Unauthorized access to computer systems — may be white-hat (ethical) or black-hat (malicious)">Hacking</span></strong> — unauthorised access to systems or data</li>
+        <li><strong>Identity theft</strong> — stealing credentials to impersonate a victim</li>
+        <li><strong><span class="tt" data-t="Deceptive emails or sites designed to trick users into revealing credentials">Phishing</span></strong> — social-engineering attacks via fake messages or sites</li>
+        <li><strong>Online fraud</strong> — auction fraud, advance-fee scams, investment schemes</li>
+        <li><strong>Cyberbullying</strong> — using digital channels to harass or intimidate</li>
+        <li><strong>Ransomware</strong> — encrypts victim data; demands payment for key</li>
+        <li><strong>DDoS</strong> — flooding a server to deny legitimate service</li>
+      </ul>
+      <div class="label">Computer Forensics</div>
+      <div class="formula">Evidence = Identification → Preservation → Analysis → Presentation</div>
+      <ul class="items">
+        <li>Chain of custody must be maintained to preserve admissibility</li>
+        <li>Tools: disk imaging, hash verification (<code>SHA-256</code>), log analysis</li>
+        <li>Volatile evidence (RAM, network state) collected before power-off</li>
+      </ul>
+      <div class="label">Legal Frameworks</div>
+      <div class="info">
+        <div class="i-title">CFAA (Computer Fraud and Abuse Act, USA)</div>
+        Primary US federal anti-hacking statute; prohibits unauthorised access to "protected computers." Critics note its broad language can criminalise legitimate security research.
+      </div>
+      <div class="warn">
+        <div class="w-title">International Jurisdiction</div>
+        Cybercrime crosses borders instantly. Differing national laws, extradition treaties, and attribution challenges make prosecution complex. The <strong>Budapest Convention on Cybercrime</strong> is the main multilateral treaty (60+ signatories).
+      </div>
+      <div class="label">Common Attack Vectors</div>
+      <table class="tbl">
+        <tr><th>Vector</th><th>Technique</th><th>Defence</th></tr>
+        <tr><td>Email</td><td>Spear-phishing, BEC</td><td>DMARC/SPF, user training</td></tr>
+        <tr><td>Web</td><td>SQL injection, XSS</td><td>Input validation, CSP headers</td></tr>
+        <tr><td>Network</td><td>MITM, packet sniffing</td><td>TLS/HTTPS, VPNs</td></tr>
+        <tr><td>Endpoint</td><td>Malware, ransomware</td><td>EDR, patching, backups</td></tr>
+        <tr><td>Human</td><td>Social engineering</td><td>Security awareness training</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Card 4: Professional Ethics ── -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Professional Ethics</h3></div>
+    <div class="card-body">
+      <div class="rule">Professional ethics = obligations beyond legal compliance; includes honesty, competence, and public safety</div>
+      <div class="label">ACM Code of Ethics (2018)</div>
+      <ul class="items">
+        <li>Contribute to society and human well-being</li>
+        <li>Avoid harm; be honest and trustworthy</li>
+        <li>Be fair and take action not to discriminate</li>
+        <li>Honour confidentiality; respect privacy</li>
+        <li>Access systems only when authorised</li>
+        <li>Design and implement systems that are robustly secure</li>
+      </ul>
+      <div class="label">IEEE Code of Ethics (Key Pledge)</div>
+      <div class="note">
+        <div class="n-title">First Commitment</div>
+        "…to hold paramount the safety, health, and welfare of the public…" — safety overrides commercial or organisational pressures.
+      </div>
+      <div class="label">Professional Responsibility Issues</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Reporting illegal or unethical practices by an employer to authorities or the public">Whistleblowing</span></strong> — duty vs. loyalty tension; legal protections vary by jurisdiction</li>
+        <li><strong>Conflict of interest</strong> — undisclosed personal gain from a professional decision</li>
+        <li><strong>Software liability</strong> — who is accountable when software causes harm?</li>
+      </ul>
+      <div class="label">Safety-Critical Systems</div>
+      <div class="warn">
+        <div class="w-title">Higher Duty of Care</div>
+        Systems controlling aircraft, medical devices, nuclear facilities, and vehicles require formal verification, extensive testing, and <em>fail-safe</em> design. Negligence in safety-critical software can constitute criminal liability.
+      </div>
+      <div class="label">Ethical Decision-Making Steps</div>
+      <ol class="steps">
+        <li>Identify the ethical issue and stakeholders affected</li>
+        <li>Gather relevant facts and applicable laws or codes</li>
+        <li>Enumerate possible courses of action</li>
+        <li>Evaluate each option against ethical principles</li>
+        <li>Choose the option that best upholds public safety and professional standards</li>
+        <li>Act and document the reasoning for accountability</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- ── Card 5: Digital Divide & Accessibility ── -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Digital Divide &amp; Accessibility</h3></div>
+    <div class="card-body">
+      <div class="rule">Digital divide = inequality in access to, use of, or impact from digital technology across populations</div>
+      <div class="label">Dimensions of the Divide</div>
+      <ul class="items">
+        <li><strong>Global</strong> — developed vs. developing nations; ~2.9 billion offline (ITU 2023)</li>
+        <li><strong>Socioeconomic</strong> — income, education, and geography as barriers to access</li>
+        <li><strong>Generational</strong> — older adults underserved by rapidly changing interfaces</li>
+        <li><strong>Gender gap</strong> — women under-represented in STEM and internet access in many regions</li>
+        <li><strong>Urban–rural</strong> — broadband infrastructure concentrated in cities</li>
+      </ul>
+      <div class="label">WCAG Accessibility Standards</div>
+      <table class="tbl">
+        <tr><th>Level</th><th>Meaning</th><th>Example Requirement</th></tr>
+        <tr><td><code>A</code></td><td>Minimum</td><td>All images have alt text</td></tr>
+        <tr><td><code>AA</code></td><td>Standard</td><td>4.5:1 colour contrast ratio</td></tr>
+        <tr><td><code>AAA</code></td><td>Enhanced</td><td>Sign-language video for all audio</td></tr>
+      </table>
+      <div class="label">Assistive Technologies</div>
+      <ul class="items">
+        <li>Screen readers (<span class="tt" data-t="Non-visual Desktop Access — free, open-source screen reader for Windows">NVDA</span>, JAWS, VoiceOver)</li>
+        <li>Braille displays and refreshable braille devices</li>
+        <li>Speech recognition (voice-to-text input)</li>
+        <li>Switch access and eye-tracking interfaces</li>
+      </ul>
+      <div class="label">Universal Design Principle</div>
+      <div class="tip">
+        <div class="t-title">Design for All</div>
+        Build products usable by the widest range of people without adaptation. Seven UD principles: equitable use, flexibility, simple &amp; intuitive use, perceptible information, tolerance for error, low physical effort, size &amp; space for approach and use.
+      </div>
+      <div class="label">Digital Inclusion Initiatives</div>
+      <ul class="items">
+        <li><strong>One Laptop per Child (OLPC)</strong> — low-cost hardware for developing nations</li>
+        <li><strong>UN Broadband Commission</strong> — targets universal affordable connectivity by 2030</li>
+        <li><strong>Net Neutrality</strong> — preventing ISPs from tiering internet access by content or ability to pay</li>
+        <li><strong>Community Wi-Fi meshes</strong> — municipal broadband as public utility model</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── Card 6: AI Ethics & Future Issues ── -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>AI Ethics &amp; Future Issues</h3></div>
+    <div class="card-body">
+      <div class="rule">Algorithmic systems can amplify societal bias and create harms at scale if designed or deployed without ethical oversight</div>
+      <div class="label">Algorithmic Bias</div>
+      <ul class="items">
+        <li><strong>Training data bias</strong> — historical inequities embedded in datasets</li>
+        <li><strong>Feedback loops</strong> — biased outputs influence future training data</li>
+        <li><strong>Proxy discrimination</strong> — facially neutral features correlate with protected classes</li>
+        <li>Documented in facial recognition, hiring algorithms, and recidivism tools</li>
+      </ul>
+      <div class="label">Emerging Ethical Challenges</div>
+      <table class="tbl">
+        <tr><th>Issue</th><th>Core Concern</th></tr>
+        <tr><td><span class="tt" data-t="Lethal autonomous weapons systems — machines that select and engage targets without human control">Autonomous weapons</span></td><td>Accountability gap; IHL compliance</td></tr>
+        <tr><td>Job displacement</td><td>Automation of routine cognitive tasks; economic disruption</td></tr>
+        <tr><td>Deepfakes</td><td>Synthetic media enabling misinformation and fraud</td></tr>
+        <tr><td>Surveillance capitalism</td><td>Monetising personal data without meaningful consent</td></tr>
+      </table>
+      <div class="label">AI Governance Frameworks</div>
+      <ul class="items">
+        <li>EU <strong>AI Act</strong> (2024) — risk-tiered regulation; bans social scoring</li>
+        <li>NIST <strong>AI RMF</strong> — voluntary risk-management framework (USA)</li>
+        <li>IEEE <strong>Ethically Aligned Design</strong> — principles for autonomous systems</li>
+      </ul>
+      <div class="label">Sustainability</div>
+      <div class="info">
+        <div class="i-title">Environmental Footprint</div>
+        <strong>E-waste</strong>: ~62 Mt generated globally in 2022 (UN); toxic heavy metals leach into groundwater.<br>
+        <strong>Energy</strong>: Training large AI models can emit CO₂ equivalent to dozens of transatlantic flights. Data-centre PUE and renewable sourcing are key metrics.
+      </div>
+      <div class="note">
+        <div class="n-title">Future Challenges</div>
+        Quantum computing threats to current cryptography, brain–computer interfaces, and AGI alignment represent challenges where ethical frameworks must be developed <em>before</em> widespread deployment.
+      </div>
+      <div class="label">Responsible AI Principles (EU/OECD)</div>
+      <ul class="items">
+        <li><strong>Transparency</strong> — decisions explainable to those affected</li>
+        <li><strong>Fairness</strong> — equitable treatment across demographic groups</li>
+        <li><strong>Privacy &amp; Security</strong> — data protection by design</li>
+        <li><strong>Human oversight</strong> — humans remain accountable for AI decisions</li>
+        <li><strong>Robustness</strong> — resilient to adversarial inputs and distributional shift</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — Key Terms + Quick Review ═══ -->
+<div class="section-gap"></div>
+<div class="grid">
+
+  <!-- ── Card 7: Key Terms & Quick Review (full width) ── -->
+  <div class="card yellow col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review</h3></div>
+    <div class="card-body">
+
+      <div class="grid-2">
+        <!-- Key Terms Table -->
+        <div>
+          <div class="label">Key Terms</div>
+          <table class="tbl">
+            <tr>
+              <th>Term</th>
+              <th>Definition</th>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Exclusive right granted to creators of original works to control reproduction and distribution">Copyright</span></td>
+              <td>Automatic legal protection for original creative expression</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Exclusive right to an invention granted by a government for a limited period">Patent</span></td>
+              <td>Government-granted monopoly on a novel invention or process</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Software whose source code is made publicly available under a licence">Open-source</span></td>
+              <td>Software distributed with source code under an OSI-approved licence</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Individual's right to control personal information and limit others' access">Privacy</span></td>
+              <td>Right to control who accesses personal information</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Criminal activity involving a computer as tool, target, or both">Cybercrime</span></td>
+              <td>Illegal acts committed using or targeting computer systems</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="EU General Data Protection Regulation — comprehensive data-privacy law">GDPR</span></td>
+              <td>EU regulation giving individuals control over personal data</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="ACM Code of Ethics — professional standards for computing practitioners">ACM Code</span></td>
+              <td>ACM's set of professional obligations for computer scientists</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Gap between those with and without meaningful access to digital technology">Digital divide</span></td>
+              <td>Inequality in access to and use of information and communication technologies</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Designing products and environments usable by all people without adaptation">Accessibility</span></td>
+              <td>Design principle ensuring usability for people with disabilities</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Systematic and unfair discrimination introduced or amplified by algorithmic systems">Algorithmic bias</span></td>
+              <td>Unfair outcomes produced by biased models or training data</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Discarded electronics; a rapidly growing waste stream containing toxic materials">E-waste</span></td>
+              <td>Discarded electrical and electronic equipment; often contains hazardous materials</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Legal responsibility for harm caused by a product or service, including software">Liability</span></td>
+              <td>Legal obligation to compensate for harm caused by one's product or actions</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Reporting employer wrongdoing to authorities or the public despite personal risk">Whistleblowing</span></td>
+              <td>Disclosing illegal or unethical conduct within an organisation</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Systematic monitoring of individuals or groups, often by governments or corporations">Surveillance</span></td>
+              <td>Ongoing monitoring of individuals' activities, locations, or communications</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="A type of social-engineering attack using deceptive messages to steal credentials">Phishing</span></td>
+              <td>Fraudulent attempt to obtain sensitive information by impersonating a trusted entity</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="GNU General Public License — copyleft licence requiring derivative works to remain GPL">GPL</span></td>
+              <td>Copyleft licence; derivative software must be released under GPL</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Deceptive technique manipulating people into divulging information or granting access">Social engineering</span></td>
+              <td>Psychological manipulation to trick users into security mistakes</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Fair use — US doctrine permitting limited use of copyrighted material without permission">Fair use</span></td>
+              <td>Legal doctrine allowing limited use of copyrighted work without permission</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Copyleft — licence requiring all derivatives to carry the same open-source terms">Copyleft</span></td>
+              <td>Licence condition requiring derivative works to remain under the same licence</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Trade secret — confidential business information providing competitive advantage">Trade secret</span></td>
+              <td>Confidential information giving competitive advantage; protected without registration</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Quick Review -->
+        <div>
+          <div class="label">Quick Review Questions</div>
+          <ol class="steps">
+            <li>What are the four main categories of intellectual property, and how do they differ in duration and scope?</li>
+            <li>Explain the <em>fair use</em> four-factor test. Give an example of use that would likely qualify as fair use.</li>
+            <li>Distinguish between a <strong>proprietary licence</strong> and the <strong>GPL</strong>. Why does copyleft matter to software developers?</li>
+            <li>List three technical threats to personal privacy and one legal mechanism that addresses each.</li>
+            <li>What is the difference between <em>de-identification</em> and <em>anonymisation</em>? Why might de-identified data still pose privacy risks?</li>
+            <li>Name four categories of cybercrime and describe one criminal statute or international convention that addresses cybercrime.</li>
+            <li>How does <em>computer forensics</em> preserve evidence integrity? What is the <strong>chain of custody</strong>?</li>
+            <li>Summarise the first general principle of the ACM Code of Ethics. How might it conflict with an employer's instructions?</li>
+            <li>What is the digital divide? Identify two socioeconomic factors that contribute to it.</li>
+            <li>Describe the three <strong>WCAG conformance levels</strong> and give one requirement for each.</li>
+            <li>What is <em>algorithmic bias</em>? Give a real-world domain where it has been documented.</li>
+            <li>Explain what the EU <strong>AI Act</strong> means by "high-risk AI systems" and how it proposes to regulate them.</li>
+          </ol>
+          <hr class="divider">
+          <div class="note" style="margin-top:6px;">
+            <div class="n-title">Exam Focus Areas</div>
+            Expect definition questions on <strong>copyright vs. patent</strong>, scenario-based questions applying the <strong>fair use</strong> test, and short-answer questions comparing <strong>GDPR vs. HIPAA</strong>. The ACM Code hierarchy (public safety first) is frequently tested. Be ready to discuss a real-world case illustrating <strong>algorithmic bias</strong> or <strong>liability</strong> in software.
+          </div>
+          <div class="formula">Ethics Hierarchy: Public Safety → Law → Professional Standards → Employer Instructions</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <div>
+    <a href="CH19-Social-Media-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">← CH19</a>
+    &nbsp;|&nbsp;
+    <a href="../CSI.html" style="color:var(--text-dim);text-decoration:none;">Back to FCS</a>
+  </div>
+  <div>Foundations of Computer Science, 4th Ed. · Forouzan · Chapter 20 · Social and Ethical Issues in Computing</div>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script>
+</body>
+</html>

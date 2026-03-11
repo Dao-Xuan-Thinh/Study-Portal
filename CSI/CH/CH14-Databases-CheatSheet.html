@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH14 · Databases · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}
+</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 14</h1>
+    <h2>Databases &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition &nbsp;·&nbsp; Forouzan</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§14.1 Database Concepts</span>
+      <span class="toc-item">§14.2 Relational Model</span>
+      <span class="toc-item">§14.3 SQL</span>
+      <span class="toc-item">§14.4 Database Design</span>
+      <span class="toc-item">§14.5 Transaction Mgmt</span>
+      <span class="toc-item">§14.6 Database Models</span>
+      <span class="toc-item">§14.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH14</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — Concepts · Relational Model · SQL ═══ -->
+<div class="grid">
+
+  <!-- Card 1: Database Concepts -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Database Concepts</h3></div>
+    <div class="card-body">
+      <div class="rule">Database = organized collection of logically related data managed by a DBMS</div>
+      <p>A <span class="tt" data-t="Database Management System — software layer that manages storage, retrieval, security, and integrity of data">DBMS</span> provides a systematic interface between programs/users and stored data, eliminating many limitations of traditional file systems.</p>
+
+      <div class="label">DBMS vs. File System</div>
+      <table class="tbl">
+        <tr><th>File System</th><th>DBMS</th></tr>
+        <tr><td>Data redundancy &amp; inconsistency</td><td>Centralized control; reduced redundancy</td></tr>
+        <tr><td>Difficult concurrent access</td><td>Built-in concurrency control</td></tr>
+        <tr><td>No standard query language</td><td>Declarative query language (SQL)</td></tr>
+        <tr><td>Limited security &amp; integrity</td><td>Authorization, constraints enforced</td></tr>
+        <tr><td>Program–data dependency</td><td>Data independence from programs</td></tr>
+      </table>
+
+      <div class="label">Data Independence</div>
+      <ul class="items">
+        <li><strong>Physical independence:</strong> change storage structures without rewriting programs</li>
+        <li><strong>Logical independence:</strong> change logical schema without rewriting programs</li>
+      </ul>
+
+      <div class="label">ANSI/SPARC 3-Level Architecture</div>
+      <div class="formula">External → Conceptual → Internal</div>
+      <ul class="items">
+        <li><strong>External level:</strong> user/application views — what each user sees</li>
+        <li><strong>Conceptual level:</strong> community view — entire logical structure of the database</li>
+        <li><strong>Internal level:</strong> physical storage — how data is stored on disk</li>
+      </ul>
+
+      <div class="label">Database Users</div>
+      <ul class="items">
+        <li><span class="tt" data-t="Database Administrator — controls schema, security, backup, and performance tuning">DBA</span> — manages schema, access rights, backups, tuning</li>
+        <li><strong>Application developers</strong> — design and code DB-backed programs</li>
+        <li><strong>End users</strong> — naive (forms/menus) or sophisticated (ad-hoc queries)</li>
+      </ul>
+
+      <div class="info">
+        <div class="i-title">Key Benefit</div>
+        Data independence separates <em>what</em> data exists (logical) from <em>how</em> it is stored (physical), enabling schema evolution without cascading rewrites.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Relational Model -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Relational Model</h3></div>
+    <div class="card-body">
+      <div class="rule">Codd (1970): represent data as a set of relations (tables) with no ordering assumed</div>
+
+      <div class="label">Core Terminology</div>
+      <table class="tbl">
+        <tr><th>Formal Term</th><th>Common Term</th><th>Meaning</th></tr>
+        <tr><td><span class="tt" data-t="A two-dimensional table of rows and columns satisfying the relational properties">Relation</span></td><td>Table</td><td>Set of tuples with same attributes</td></tr>
+        <tr><td><span class="tt" data-t="A single row in a relation — one record of data">Tuple</span></td><td>Row / Record</td><td>One data instance</td></tr>
+        <tr><td><span class="tt" data-t="A named column in a relation with a defined domain of allowed values">Attribute</span></td><td>Column / Field</td><td>Named property with a domain</td></tr>
+        <tr><td>Domain</td><td>Data type</td><td>Set of allowed values</td></tr>
+        <tr><td>Degree</td><td>Arity</td><td>Number of attributes</td></tr>
+        <tr><td>Cardinality</td><td>Row count</td><td>Number of tuples</td></tr>
+      </table>
+
+      <div class="label">Keys</div>
+      <ul class="items">
+        <li><strong>Super key:</strong> any attribute set that uniquely identifies a tuple</li>
+        <li><strong>Candidate key:</strong> minimal super key — no attribute can be removed</li>
+        <li><span class="tt" data-t="The chosen candidate key used to uniquely identify tuples; must be NOT NULL">Primary key</span> — one chosen candidate key; must be unique &amp; non-null</li>
+        <li><span class="tt" data-t="An attribute in one relation that references the primary key of another relation">Foreign key</span> — attribute referencing a primary key in another relation</li>
+      </ul>
+
+      <div class="label">Referential Integrity</div>
+      <div class="warn">
+        <div class="w-title">Constraint</div>
+        A foreign key value must either match an existing primary key value in the referenced relation, or be NULL. Violations are rejected by the DBMS.
+      </div>
+
+      <div class="label">Relational Algebra Operations</div>
+      <table class="tbl">
+        <tr><th>Operation</th><th>Symbol</th><th>Description</th></tr>
+        <tr><td>Selection</td><td><code>σ</code></td><td>Filter rows by condition</td></tr>
+        <tr><td>Projection</td><td><code>π</code></td><td>Keep specific columns</td></tr>
+        <tr><td>Union</td><td><code>∪</code></td><td>Combine two compatible relations</td></tr>
+        <tr><td>Intersection</td><td><code>∩</code></td><td>Rows common to both</td></tr>
+        <tr><td>Difference</td><td><code>−</code></td><td>Rows in R1 but not R2</td></tr>
+        <tr><td>Cartesian Product</td><td><code>×</code></td><td>All row combinations</td></tr>
+        <tr><td>Join</td><td><code>⋈</code></td><td>Combine on matching attribute</td></tr>
+      </table>
+
+      <div class="tip">
+        <div class="t-title">Closed System</div>
+        Every relational algebra operation takes one or more relations as input and returns a relation — enabling composition of complex queries.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: SQL -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>SQL — Structured Query Language</h3></div>
+    <div class="card-body">
+      <div class="rule">SQL = standard language for defining, manipulating, and querying relational databases</div>
+
+      <div class="label">DDL — Data Definition Language</div>
+      <ul class="items">
+        <li><code>CREATE TABLE t (col type [constraint], …)</code> — define new table</li>
+        <li><code>ALTER TABLE t ADD|DROP|MODIFY col …</code> — modify schema</li>
+        <li><code>DROP TABLE t</code> — permanently remove table &amp; data</li>
+        <li><code>CREATE INDEX idx ON t(col)</code> — speed up lookups</li>
+      </ul>
+
+      <div class="label">DML — Data Manipulation Language</div>
+      <div class="formula">SELECT cols FROM table WHERE cond GROUP BY … HAVING … ORDER BY … LIMIT n</div>
+      <ul class="items">
+        <li><code>INSERT INTO t (c1,c2) VALUES (v1,v2)</code></li>
+        <li><code>UPDATE t SET c1=v1 WHERE cond</code></li>
+        <li><code>DELETE FROM t WHERE cond</code></li>
+      </ul>
+
+      <div class="label">WHERE Clause Operators</div>
+      <ul class="items">
+        <li><code>=  &lt;&gt;  &lt;  &gt;  &lt;=  &gt;=</code> — comparison</li>
+        <li><code>AND  OR  NOT</code> — logical operators</li>
+        <li><code>BETWEEN v1 AND v2</code> — range test</li>
+        <li><code>LIKE 'pattern%'</code> — wildcard string match</li>
+        <li><code>IN (v1, v2, …)</code> — membership test</li>
+        <li><code>IS NULL / IS NOT NULL</code> — null check</li>
+      </ul>
+
+      <div class="label">JOIN Types</div>
+      <table class="tbl">
+        <tr><th>Join</th><th>Returns</th></tr>
+        <tr><td><code>INNER JOIN</code></td><td>Matching rows in both tables</td></tr>
+        <tr><td><code>LEFT OUTER JOIN</code></td><td>All left rows + matched right (NULLs for no match)</td></tr>
+        <tr><td><code>RIGHT OUTER JOIN</code></td><td>All right rows + matched left</td></tr>
+        <tr><td><code>FULL OUTER JOIN</code></td><td>All rows from both; NULLs where unmatched</td></tr>
+        <tr><td><code>CROSS JOIN</code></td><td>Cartesian product of both tables</td></tr>
+      </table>
+
+      <div class="label">Aggregate Functions</div>
+      <ul class="items">
+        <li><code>COUNT(*)</code> — number of rows</li>
+        <li><code>SUM(col)</code> — total of numeric column</li>
+        <li><code>AVG(col)</code> — arithmetic mean</li>
+        <li><code>MAX(col)</code> / <code>MIN(col)</code> — extreme values</li>
+      </ul>
+
+      <div class="note">
+        <div class="n-title">GROUP BY vs HAVING</div>
+        <code>WHERE</code> filters rows <em>before</em> grouping; <code>HAVING</code> filters groups <em>after</em> aggregation. Never use an aggregate function in a <code>WHERE</code> clause.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — Database Design · Transaction Management · Database Models ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Database Design -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Database Design — ER &amp; Normalization</h3></div>
+    <div class="card-body">
+      <div class="rule">Design goal: faithful, non-redundant representation of the real-world domain</div>
+
+      <div class="label">ER Model Components</div>
+      <table class="tbl">
+        <tr><th>Component</th><th>Notation</th><th>Meaning</th></tr>
+        <tr><td><span class="tt" data-t="A real-world object or concept distinguishable from others, represented as a rectangle in ER diagrams">Entity</span></td><td>Rectangle</td><td>Distinguishable real-world object</td></tr>
+        <tr><td>Weak Entity</td><td>Double rectangle</td><td>Depends on owner entity for identity</td></tr>
+        <tr><td><span class="tt" data-t="A named property of an entity or relationship, represented as an ellipse">Attribute</span></td><td>Ellipse</td><td>Property of an entity</td></tr>
+        <tr><td>Key attribute</td><td>Underlined ellipse</td><td>Uniquely identifies entity instance</td></tr>
+        <tr><td><span class="tt" data-t="An association between two or more entity sets, represented as a diamond in ER diagrams">Relationship</span></td><td>Diamond</td><td>Association among entity sets</td></tr>
+      </table>
+
+      <div class="label">Cardinality Constraints</div>
+      <ul class="items">
+        <li><strong>1:1</strong> — one entity relates to exactly one other</li>
+        <li><strong>1:N</strong> — one entity relates to many others (most common)</li>
+        <li><strong>M:N</strong> — many entities relate to many; requires junction table</li>
+      </ul>
+
+      <div class="label">ER-to-Relational Mapping Rules</div>
+      <ol class="steps">
+        <li>Strong entity → relation; key attribute → primary key</li>
+        <li>Weak entity → relation; include owner PK as partial key</li>
+        <li>1:1 relationship → add FK to either side (choose less-null side)</li>
+        <li>1:N relationship → add FK on the N-side relation</li>
+        <li>M:N relationship → create new junction relation with both PKs as composite PK</li>
+        <li>Multi-valued attribute → new relation with entity PK + attribute value</li>
+      </ol>
+
+      <hr class="divider">
+      <div class="label">Normalization</div>
+      <p>Remove update anomalies (insert, delete, modify) by decomposing relations into well-structured forms.</p>
+      <table class="tbl" style="margin-top:6px;">
+        <tr><th>Normal Form</th><th>Requirement</th></tr>
+        <tr><td><span class="tt" data-t="First Normal Form: all attribute values are atomic (no repeating groups or multi-valued attributes)">1NF</span></td><td>Atomic values; no repeating groups</td></tr>
+        <tr><td><span class="tt" data-t="Second Normal Form: 1NF + every non-key attribute is fully functionally dependent on the entire primary key">2NF</span></td><td>1NF + no partial dependency on PK</td></tr>
+        <tr><td><span class="tt" data-t="Third Normal Form: 2NF + no transitive dependency — non-key attributes depend only on the PK">3NF</span></td><td>2NF + no transitive dependency</td></tr>
+        <tr><td><span class="tt" data-t="Boyce-Codd Normal Form: stronger 3NF — every determinant must be a candidate key">BCNF</span></td><td>Every determinant is a candidate key</td></tr>
+      </table>
+
+      <div class="tip">
+        <div class="t-title">Functional Dependency</div>
+        X → Y means knowing X uniquely determines Y. Normalization eliminates problematic FDs by decomposing relations, always preserving lossless join &amp; dependency preservation.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Transaction Management -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Transaction Management</h3></div>
+    <div class="card-body">
+      <div class="rule">Transaction = logical unit of work; either commits fully or rolls back completely</div>
+
+      <div class="label">ACID Properties</div>
+      <table class="tbl">
+        <tr><th>Property</th><th>Guarantee</th></tr>
+        <tr>
+          <td><span class="tt" data-t="All operations in a transaction succeed together, or all are rolled back — no partial updates">Atomicity</span></td>
+          <td>All-or-nothing execution</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="A transaction takes the database from one valid state to another, preserving all integrity constraints">Consistency</span></td>
+          <td>DB moves between valid states only</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Concurrent transactions execute as if serialized — intermediate states are not visible to others">Isolation</span></td>
+          <td>Concurrent Txns appear serial</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Once committed, changes survive system failures — guaranteed by write-ahead logging (WAL)">Durability</span></td>
+          <td>Committed changes survive crashes</td>
+        </tr>
+      </table>
+
+      <div class="label">Transaction States</div>
+      <div class="formula">Active → Partially Committed → Committed<br>Active → Failed → Aborted (Rolled Back)</div>
+
+      <div class="label">Concurrency Problems</div>
+      <ul class="items">
+        <li><strong>Lost update:</strong> two txns read &amp; overwrite the same item; one update is lost</li>
+        <li><strong>Dirty read:</strong> txn reads uncommitted data from another txn that later aborts</li>
+        <li><strong>Non-repeatable read:</strong> same query returns different rows within one txn</li>
+        <li><strong>Phantom read:</strong> new rows appear between two reads in same txn</li>
+      </ul>
+
+      <div class="label">Locking Protocol</div>
+      <ul class="items">
+        <li><span class="tt" data-t="Shared lock (S-lock): multiple transactions may hold it simultaneously; only for reading">Shared lock (S)</span> — read-only; multiple holders allowed</li>
+        <li><span class="tt" data-t="Exclusive lock (X-lock): only one transaction may hold it; required for writes">Exclusive lock (X)</span> — read/write; single holder only</li>
+        <li><strong>Two-Phase Locking (2PL):</strong> growing phase (acquire), shrinking phase (release)</li>
+      </ul>
+
+      <div class="label">Deadlock</div>
+      <div class="warn">
+        <div class="w-title">Deadlock Condition</div>
+        Two or more transactions each hold a lock and wait for a lock held by the other. No progress is possible. Resolution: detect via wait-for graph and <strong>abort</strong> one victim transaction; or use timeouts.
+      </div>
+
+      <div class="info">
+        <div class="i-title">Recovery — Write-Ahead Logging</div>
+        Before any data page is written to disk, its log record must be flushed first (WAL rule). On crash, redo committed txns and undo uncommitted ones using the log.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: Database Models -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Database Models — Overview &amp; NoSQL</h3></div>
+    <div class="card-body">
+      <div class="rule">A data model defines how data is logically structured, stored, and manipulated</div>
+
+      <div class="label">Classical Models</div>
+      <table class="tbl">
+        <tr><th>Model</th><th>Structure</th><th>Strength</th><th>Weakness</th></tr>
+        <tr>
+          <td><span class="tt" data-t="1960s IBM IMS model: tree structure, fast navigation, but rigid parent-child hierarchy">Hierarchical</span></td>
+          <td>Tree (parent/child)</td>
+          <td>Fast access via path</td>
+          <td>Rigid; no M:N naturally</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="CODASYL network model: graph structure, explicit pointers between record types">Network</span></td>
+          <td>Graph (sets)</td>
+          <td>M:N directly supported</td>
+          <td>Complex pointer navigation</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Codd 1970: tables with rows and columns; SQL; most widely used model today">Relational</span></td>
+          <td>Tables (relations)</td>
+          <td>Simple, flexible, SQL</td>
+          <td>Joins can be expensive</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Stores objects with behavior (methods); good for complex types but limited adoption">Object-Oriented</span></td>
+          <td>Objects &amp; classes</td>
+          <td>Rich types, no impedance</td>
+          <td>Limited standardization</td>
+        </tr>
+      </table>
+
+      <div class="label">NoSQL Models</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Type</th><th>Example</th><th>Best For</th></tr>
+        <tr>
+          <td><span class="tt" data-t="Simplest NoSQL: maps unique keys to arbitrary values (strings, blobs, JSON)">Key-Value</span></td>
+          <td>Redis, DynamoDB</td>
+          <td>Session cache, lookups</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Stores JSON/BSON documents; flexible schema per document">Document</span></td>
+          <td>MongoDB, CouchDB</td>
+          <td>Content, catalogs, events</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Wide-column store: rows identified by key, columns grouped into families">Column-Family</span></td>
+          <td>Cassandra, HBase</td>
+          <td>Time-series, analytics</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Stores nodes and edges; optimized for traversing complex relationships">Graph</span></td>
+          <td>Neo4j, Amazon Neptune</td>
+          <td>Social nets, fraud detection</td>
+        </tr>
+      </table>
+
+      <div class="label">RDBMS vs NoSQL Trade-offs</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th></th><th>RDBMS</th><th>NoSQL</th></tr>
+        <tr><td>Schema</td><td>Rigid, predefined</td><td>Flexible / schema-less</td></tr>
+        <tr><td>Consistency</td><td>Strong (ACID)</td><td>Eventual (BASE)</td></tr>
+        <tr><td>Scalability</td><td>Vertical (scale-up)</td><td>Horizontal (scale-out)</td></tr>
+        <tr><td>Query</td><td>Rich SQL joins</td><td>Limited; model-specific</td></tr>
+      </table>
+
+      <div class="note">
+        <div class="n-title">BASE Principle (NoSQL)</div>
+        <strong>B</strong>asically Available — <strong>A</strong>soft state — <strong>E</strong>ventually consistent. Trades strong consistency for availability and partition tolerance (CAP theorem).
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Key Terms + Quick Review ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Key Terms + Quick Review (spans all 3 columns) -->
+  <div class="card red col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review — Chapter 14</h3></div>
+    <div class="card-body">
+
+      <div class="grid-2">
+        <!-- Left: Key Terms Table -->
+        <div>
+          <div class="label">Key Terms</div>
+          <table class="tbl">
+            <tr><th>Term</th><th>Definition</th></tr>
+            <tr>
+              <td><code>DBMS</code></td>
+              <td>Software system that stores, retrieves, and manages data in a database while enforcing integrity, security, and concurrency rules</td>
+            </tr>
+            <tr>
+              <td><code>relation</code></td>
+              <td>A two-dimensional table of rows and columns satisfying the relational model properties (no duplicate rows, atomic values)</td>
+            </tr>
+            <tr>
+              <td><code>tuple</code></td>
+              <td>A single row in a relation; represents one instance of the entity described by that relation</td>
+            </tr>
+            <tr>
+              <td><code>attribute</code></td>
+              <td>A named column in a relation with a defined domain of allowed values (e.g., Age INTEGER, Name VARCHAR(50))</td>
+            </tr>
+            <tr>
+              <td><code>primary key</code></td>
+              <td>The chosen candidate key that uniquely identifies each tuple; must be unique and NOT NULL</td>
+            </tr>
+            <tr>
+              <td><code>foreign key</code></td>
+              <td>An attribute (or set) in one relation that references the primary key of another relation; enforces referential integrity</td>
+            </tr>
+            <tr>
+              <td><code>SQL</code></td>
+              <td>Structured Query Language — the standard declarative language for defining (DDL) and manipulating (DML) relational databases</td>
+            </tr>
+            <tr>
+              <td><code>normalization</code></td>
+              <td>Process of decomposing relations to remove redundancy and update anomalies; progresses through 1NF → 2NF → 3NF → BCNF</td>
+            </tr>
+            <tr>
+              <td><code>transaction</code></td>
+              <td>A logical unit of database work that must execute completely (commit) or not at all (rollback); defined by BEGIN … COMMIT/ROLLBACK</td>
+            </tr>
+            <tr>
+              <td><code>ACID</code></td>
+              <td>Four transaction properties: Atomicity, Consistency, Isolation, Durability — guarantee correctness even under failures and concurrency</td>
+            </tr>
+            <tr>
+              <td><code>concurrency</code></td>
+              <td>Simultaneous execution of multiple transactions; managed via locking or optimistic schemes to prevent dirty reads, lost updates, etc.</td>
+            </tr>
+            <tr>
+              <td><code>deadlock</code></td>
+              <td>Circular wait condition where each of two or more transactions holds a lock needed by another; resolved by aborting a victim transaction</td>
+            </tr>
+            <tr>
+              <td><code>ER model</code></td>
+              <td>Entity-Relationship model — a high-level conceptual design tool using entities, attributes, and relationships to model a domain before physical implementation</td>
+            </tr>
+            <tr>
+              <td><code>NoSQL</code></td>
+              <td>"Not Only SQL" — non-relational databases (key-value, document, column-family, graph) optimized for horizontal scalability and flexible schemas</td>
+            </tr>
+            <tr>
+              <td><code>data independence</code></td>
+              <td>Ability to change a schema level (physical or logical) without requiring changes to higher-level programs or user views</td>
+            </tr>
+            <tr>
+              <td><code>referential integrity</code></td>
+              <td>Constraint ensuring every foreign key value either matches an existing primary key in the referenced table or is NULL</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Right: Quick Review -->
+        <div>
+          <div class="label">Quick Review — Chapter 14</div>
+
+          <div class="info">
+            <div class="i-title">§14.1 Database Concepts</div>
+            A DBMS centralizes data management, eliminating redundancy, enforcing integrity, and providing concurrency control. The ANSI/SPARC 3-level architecture (external → conceptual → internal) decouples user views from physical storage through data independence.
+          </div>
+
+          <div class="tip">
+            <div class="t-title">§14.2 Relational Model</div>
+            Data is stored in relations (tables). Tuples are rows; attributes are columns. Keys uniquely identify tuples. Foreign keys enforce referential integrity. Relational algebra provides the formal query foundation; SQL is its practical syntax.
+          </div>
+
+          <div class="note">
+            <div class="n-title">§14.3 SQL</div>
+            DDL (<code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>) defines schema; DML (<code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>) manipulates data. <code>JOIN</code> combines tables; aggregate functions summarize groups. <code>WHERE</code> filters rows; <code>HAVING</code> filters groups after aggregation.
+          </div>
+
+          <div class="info">
+            <div class="i-title">§14.4 Database Design</div>
+            ER modeling captures the conceptual structure using entities, attributes, and relationships with cardinality constraints. ER-to-relational mapping translates each construct to tables. Normalization (1NF→BCNF) removes redundancy and update anomalies by eliminating partial and transitive dependencies.
+          </div>
+
+          <div class="warn">
+            <div class="w-title">§14.5 Transaction Management</div>
+            Transactions must satisfy ACID. Concurrency is managed by two-phase locking (shared/exclusive locks). Deadlocks arise from circular waits and are resolved by aborting a victim. Recovery uses write-ahead logging to redo committed and undo incomplete transactions after a crash.
+          </div>
+
+          <div class="tip">
+            <div class="t-title">§14.6 Database Models</div>
+            Hierarchical and network models pre-date the relational model. Object-oriented databases handle complex types. NoSQL models (key-value, document, column-family, graph) sacrifice ACID for horizontal scalability and schema flexibility, following the BASE principle and CAP trade-offs.
+          </div>
+
+          <hr class="divider">
+          <div class="label">Exam-Focus Points</div>
+          <ul class="items">
+            <li>Distinguish physical vs. logical data independence and which ANSI/SPARC level each applies to</li>
+            <li>Know all four ACID properties and give a concrete example of each</li>
+            <li>Be able to write a <code>SELECT … JOIN … WHERE … GROUP BY … HAVING</code> query from scratch</li>
+            <li>Explain the difference between 2NF and 3NF with a functional dependency example</li>
+            <li>Describe how 2PL prevents lost updates; explain deadlock detection via wait-for graph</li>
+            <li>Compare RDBMS (ACID/SQL) vs. NoSQL (BASE/scale-out) and know which NoSQL type suits a given use-case</li>
+          </ul>
+        </div>
+      </div><!-- /grid-2 -->
+
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <a href="CH13-File-Structure-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← CH13</a>
+  <a href="../CSI.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">Back to FCS</a>
+  <a href="CH15-Data-Compression-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">CH15 →</a>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script>
+</body>
+</html>

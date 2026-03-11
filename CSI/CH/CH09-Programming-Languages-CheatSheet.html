@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH09 · Programming Languages · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 9</h1>
+    <h2>Programming Languages &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§9.1 Language Evolution</span>
+      <span class="toc-item">§9.2 Translation</span>
+      <span class="toc-item">§9.3 Paradigms</span>
+      <span class="toc-item">§9.4 OOP Concepts</span>
+      <span class="toc-item">§9.5 Language Components</span>
+      <span class="toc-item">§9.6 Common Features</span>
+      <span class="toc-item">§9.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH09</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 ═══ -->
+<div class="grid">
+
+  <!-- Card 1: Language Evolution (blue) -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Language Evolution</h3></div>
+    <div class="card-body">
+      <div class="rule">Evolution: machine → assembly → high-level → 4GL → 5GL</div>
+      <div class="label">Machine Language (1GL)</div>
+      <p><span class="tt" data-t="Binary instructions directly understood by the CPU — the only language a processor can execute natively">Machine language</span> is the native binary instruction set of the CPU. All programs ultimately execute as machine language.</p>
+      <ul class="items">
+        <li>Instructions encoded as 0s and 1s</li>
+        <li>Completely hardware-dependent and non-portable</li>
+        <li>Example: <code>1011 0000 0110 0001</code> (MOV AL, 61h on x86)</li>
+      </ul>
+      <div class="label">Assembly Language (2GL)</div>
+      <p><span class="tt" data-t="Low-level language using mnemonics (ADD, MOV, JMP) that map one-to-one to machine instructions">Assembly language</span> replaces binary opcodes with human-readable mnemonics.</p>
+      <ul class="items">
+        <li>1:1 correspondence with machine instructions</li>
+        <li>Requires an <strong>assembler</strong> to translate to machine code</li>
+        <li>Still processor-specific; used for drivers and embedded systems</li>
+        <li>Example: <code>MOV AX, BX</code> / <code>ADD CX, 5</code></li>
+      </ul>
+      <div class="label">High-Level Languages (3GL)</div>
+      <p>Abstract the hardware; one statement may generate many machine instructions.</p>
+      <ul class="items">
+        <li>Portable across hardware platforms</li>
+        <li>Examples: C, C++, Java, Python, Pascal, FORTRAN, COBOL</li>
+        <li>Require a <strong>compiler</strong> or <strong>interpreter</strong></li>
+      </ul>
+      <div class="label">Generational Table</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Gen</th><th>Name</th><th>Examples</th></tr>
+        <tr><td style="color:var(--accent);">1GL</td><td>Machine Language</td><td>Binary opcodes</td></tr>
+        <tr><td style="color:var(--accent);">2GL</td><td>Assembly Language</td><td>x86 ASM, ARM ASM</td></tr>
+        <tr><td style="color:var(--accent);">3GL</td><td>High-Level</td><td>C, Java, Python, C++</td></tr>
+        <tr><td style="color:var(--accent);">4GL</td><td>Very High-Level / Domain</td><td>SQL, MATLAB, R</td></tr>
+        <tr><td style="color:var(--accent);">5GL</td><td>AI / Logic-Based</td><td>Prolog, LISP (AI)</td></tr>
+      </table>
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Portability Trend</div>
+        As generation increases, programmer productivity rises and hardware dependence decreases. 3GL+ languages are largely portable; 1GL/2GL are architecture-specific.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Translation (green) -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Translation</h3></div>
+    <div class="card-body">
+      <div class="rule">Source code → (assembler/compiler/interpreter) → executable</div>
+      <div class="label">Assembler</div>
+      <p>Translates <span class="tt" data-t="A program that converts assembly language mnemonics into machine code binary">assembly language</span> into machine code. Produces an <em>object file</em>. Near 1:1 translation; extremely fast.</p>
+      <div class="label">Compiler vs Interpreter</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Aspect</th><th>Compiler</th><th>Interpreter</th></tr>
+        <tr><td>Translation</td><td>Whole program at once</td><td>Line by line at runtime</td></tr>
+        <tr><td>Output</td><td>Standalone executable</td><td>No separate executable</td></tr>
+        <tr><td>Speed</td><td>Faster execution</td><td>Slower (overhead per line)</td></tr>
+        <tr><td>Error detect</td><td>Before execution</td><td>At runtime (per line)</td></tr>
+        <tr><td>Portability</td><td>Platform-specific binary</td><td>Source runs anywhere</td></tr>
+        <tr><td>Examples</td><td>C, C++, Rust, Go</td><td>Python, Ruby, PHP</td></tr>
+      </table>
+      <div class="label">Linker</div>
+      <p>Combines multiple <span class="tt" data-t="Machine code file produced by a compiler or assembler, not yet a complete executable">object files</span> and library references into a single executable. Resolves external symbol references between modules.</p>
+      <ul class="items">
+        <li><strong>Static linking:</strong> libraries embedded in the executable</li>
+        <li><strong>Dynamic linking:</strong> shared libraries (.dll / .so) loaded at runtime</li>
+      </ul>
+      <div class="label">Loader</div>
+      <p>Part of the OS that copies the executable from disk into memory and sets up the runtime environment before transferring control to the program's entry point.</p>
+      <div class="label">JIT Compilation</div>
+      <div class="tip">
+        <div class="t-title">Just-In-Time (JIT)</div>
+        Hybrid approach: bytecode is compiled to native machine code at runtime, <em>just before</em> first execution. Used by Java (JVM) and .NET (CLR). Combines portability of interpreters with speed approaching native compilers.
+      </div>
+      <div class="note">
+        <div class="n-title">Java Pipeline</div>
+        Java source → <strong>javac</strong> (compiler) → <code>.class</code> bytecode → JVM (interpreter + JIT) → native execution
+      </div>
+      <div class="label">Full Build Pipeline Summary</div>
+      <ol class="steps">
+        <li>Write source code in high-level language (<code>.c</code>, <code>.java</code>, <code>.cpp</code>)</li>
+        <li><strong>Preprocessor</strong> — expands macros and <code>#include</code> directives (C/C++)</li>
+        <li><strong>Compiler</strong> — translates source to assembly or object code; reports syntax/type errors</li>
+        <li><strong>Assembler</strong> — converts assembly to machine code object file (<code>.o</code> / <code>.obj</code>)</li>
+        <li><strong>Linker</strong> — merges object files + libraries → executable (<code>.exe</code> / <code>a.out</code>)</li>
+        <li><strong>Loader</strong> — OS maps executable into memory; sets up stack, heap, registers</li>
+        <li>CPU begins executing at program entry point (<code>main()</code>)</li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- Card 3: Programming Paradigms (purple) -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Programming Paradigms</h3></div>
+    <div class="card-body">
+      <div class="rule">A paradigm is a fundamental style or approach to programming</div>
+      <div class="label">Imperative vs Declarative</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Style</th><th>Focus</th><th>Examples</th></tr>
+        <tr><td style="color:var(--accent4);">Imperative</td><td><em>How</em> to do it — explicit steps</td><td>C, Pascal, Assembly</td></tr>
+        <tr><td style="color:var(--accent4);">Declarative</td><td><em>What</em> to do — describe the result</td><td>SQL, HTML, Prolog</td></tr>
+      </table>
+      <div class="label">Procedural (Structured)</div>
+      <p>Programs are sequences of statements organized into <span class="tt" data-t="Named, reusable block of code that performs a specific task and can be called from other parts of the program">procedures/functions</span>. Control flows top-down.</p>
+      <ul class="items">
+        <li>Languages: <strong>C</strong>, Pascal, FORTRAN, COBOL</li>
+        <li>Emphasizes: subroutines, sequence, selection, iteration</li>
+        <li>State changed via variable assignment</li>
+      </ul>
+      <div class="label">Object-Oriented (OOP)</div>
+      <p>Organizes code around <span class="tt" data-t="Template defining data (fields) and behavior (methods) for a category of objects">classes</span> and <span class="tt" data-t="An instance of a class — a concrete entity in memory with its own state">objects</span> that model real-world entities.</p>
+      <ul class="items">
+        <li>Languages: <strong>Java</strong>, <strong>C++</strong>, Python, C#, Ruby</li>
+        <li>Core pillars: encapsulation, inheritance, polymorphism, abstraction</li>
+      </ul>
+      <div class="label">Functional</div>
+      <p>Treats computation as evaluation of mathematical functions. Avoids mutable state and side effects.</p>
+      <ul class="items">
+        <li>Languages: <strong>Haskell</strong>, <strong>Lisp</strong>, Erlang, Scala, F#</li>
+        <li>Features: first-class functions, immutability, recursion, higher-order functions</li>
+        <li>No loops — iteration via recursion or <code>map</code>/<code>fold</code></li>
+      </ul>
+      <div class="label">Logic (Declarative)</div>
+      <p>Programs are sets of logical facts and rules; the engine infers solutions.</p>
+      <ul class="items">
+        <li>Language: <strong>Prolog</strong></li>
+        <li>Programmer states <em>what</em> is true; runtime finds <em>how</em></li>
+        <li>Used in AI, natural language processing, expert systems</li>
+      </ul>
+      <div class="warn">
+        <div class="w-title">Note</div>
+        Most modern languages are <em>multi-paradigm</em>: Python, C++, and Scala support procedural, OOP, and functional styles simultaneously.
+      </div>
+      <div class="label">Paradigm Feature Comparison</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Feature</th><th>Procedural</th><th>OOP</th><th>Functional</th></tr>
+        <tr><td>State</td><td>Mutable variables</td><td>Object fields</td><td>Immutable values</td></tr>
+        <tr><td>Code unit</td><td>Function/procedure</td><td>Class/object</td><td>Function (first-class)</td></tr>
+        <tr><td>Reuse</td><td>Function calls</td><td>Inheritance/composition</td><td>Higher-order functions</td></tr>
+        <tr><td>Iteration</td><td><code>for</code>/<code>while</code> loops</td><td><code>for</code>/<code>while</code> loops</td><td>Recursion / <code>map</code></td></tr>
+        <tr><td>Side effects</td><td>Common</td><td>Managed via encapsulation</td><td>Minimized / avoided</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: OOP Concepts (orange) -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>OOP Concepts</h3></div>
+    <div class="card-body">
+      <div class="rule">OOP models software as interacting objects encapsulating state and behavior</div>
+      <div class="label">Class vs Object</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td style="color:var(--accent5);">Class</td><td>Blueprint/template defining fields (data) and methods (behavior)</td></tr>
+        <tr><td style="color:var(--accent5);">Object</td><td>Runtime instance of a class; has its own state in memory</td></tr>
+      </table>
+      <div class="formula">Dog fido = new Dog("Fido", 3);  // Java: class Dog, object fido</div>
+      <div class="label">Encapsulation</div>
+      <p><span class="tt" data-t="Bundling data and methods together, hiding internal state from outside; only expose a public interface">Encapsulation</span> bundles data and the methods that operate on it into a single unit, hiding internal implementation.</p>
+      <ul class="items">
+        <li>Access modifiers: <code>private</code>, <code>protected</code>, <code>public</code></li>
+        <li>Getter/setter methods expose state safely</li>
+        <li>Prevents unintended external modification</li>
+      </ul>
+      <div class="label">Inheritance</div>
+      <p><span class="tt" data-t="Mechanism where a child class acquires properties and methods of a parent class, enabling code reuse">Inheritance</span> allows a subclass to extend a superclass, reusing and specializing its behavior.</p>
+      <ul class="items">
+        <li>Java: <code>class Cat extends Animal { ... }</code></li>
+        <li>C++: <code>class Cat : public Animal { ... };</code></li>
+        <li><strong>Single</strong> (Java) vs <strong>multiple</strong> inheritance (C++)</li>
+        <li>Promotes code reuse; establishes IS-A relationships</li>
+      </ul>
+      <div class="label">Polymorphism</div>
+      <p><span class="tt" data-t="Ability of different objects to respond differently to the same method call — one interface, many implementations">Polymorphism</span> — "many forms" — same method call behaves differently based on the actual object type.</p>
+      <ul class="items">
+        <li><strong>Compile-time (static):</strong> method overloading — same name, different parameters</li>
+        <li><strong>Runtime (dynamic):</strong> method overriding via virtual dispatch</li>
+      </ul>
+      <div class="formula">// Java: runtime polymorphism
+Animal a = new Dog();
+a.speak();  // calls Dog.speak(), not Animal.speak()</div>
+      <div class="label">Abstraction</div>
+      <p><span class="tt" data-t="Hiding complex implementation details and showing only the essential interface to the user">Abstraction</span> exposes only essential features, hiding complexity.</p>
+      <ul class="items">
+        <li>Achieved via <strong>abstract classes</strong> and <strong>interfaces</strong></li>
+        <li>Java: <code>interface Shape { double area(); }</code></li>
+        <li>Enables programming to an interface, not an implementation</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 5: Language Components (red) -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Language Components</h3></div>
+    <div class="card-body">
+      <div class="rule">Every high-level language shares core structural components</div>
+      <div class="label">Primitive Data Types</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Type</th><th>Description</th><th>Example</th></tr>
+        <tr><td style="color:var(--accent3);"><code>int</code></td><td>Whole numbers</td><td><code>int x = 42;</code></td></tr>
+        <tr><td style="color:var(--accent3);"><code>float</code></td><td>Single-precision decimal</td><td><code>float pi = 3.14f;</code></td></tr>
+        <tr><td style="color:var(--accent3);"><code>double</code></td><td>Double-precision decimal</td><td><code>double e = 2.718;</code></td></tr>
+        <tr><td style="color:var(--accent3);"><code>char</code></td><td>Single character (ASCII/Unicode)</td><td><code>char c = 'A';</code></td></tr>
+        <tr><td style="color:var(--accent3);"><code>bool</code></td><td>True or false</td><td><code>bool flag = true;</code></td></tr>
+      </table>
+      <div class="label">Composite / Derived Types</div>
+      <ul class="items">
+        <li><strong>Array:</strong> contiguous block of same-type elements; indexed from 0 — <code>int arr[5];</code></li>
+        <li><strong>String:</strong> sequence of characters (array of <code>char</code> or object)</li>
+        <li><strong>Pointer (C/C++):</strong> variable that stores a memory address — <code>int *p = &amp;x;</code></li>
+        <li><strong>Struct/Record:</strong> group of related fields under one name</li>
+      </ul>
+      <div class="label">Variables &amp; Constants</div>
+      <ul class="items">
+        <li><strong>Variable:</strong> named memory location whose value can change — <code>int count = 0;</code></li>
+        <li><strong>Constant:</strong> fixed value that cannot be reassigned — <code>const int MAX = 100;</code></li>
+        <li>Variables have: name, type, value, scope, lifetime</li>
+      </ul>
+      <div class="label">Expressions &amp; Statements</div>
+      <ul class="items">
+        <li><strong>Expression:</strong> combination of values and operators that evaluates to a value — <code>x + y * 2</code></li>
+        <li><strong>Statement:</strong> complete instruction that performs an action — <code>x = x + 1;</code></li>
+        <li><strong>Assignment:</strong> stores a value in a variable — <code>a = b + c;</code></li>
+      </ul>
+      <div class="note">
+        <div class="n-title">Type Safety</div>
+        Strongly typed languages (Java, Haskell) enforce type rules at compile time. Weakly typed languages (JavaScript, C) allow implicit type coercion, which can cause subtle bugs.
+      </div>
+      <div class="info">
+        <div class="i-title">Pointer Caution</div>
+        Pointers give direct memory access (power &amp; performance) but are a major source of bugs: null dereferences, dangling pointers, buffer overflows. Java and Python avoid raw pointers.
+      </div>
+      <div class="label">Operators</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Category</th><th>Operators</th><th>Example</th></tr>
+        <tr><td style="color:var(--accent3);">Arithmetic</td><td><code>+ - * / %</code></td><td><code>x = 10 % 3;</code> → 1</td></tr>
+        <tr><td style="color:var(--accent3);">Relational</td><td><code>== != &lt; &gt; &lt;= &gt;=</code></td><td><code>x &gt;= 0</code></td></tr>
+        <tr><td style="color:var(--accent3);">Logical</td><td><code>&amp;&amp; || !</code></td><td><code>a &amp;&amp; !b</code></td></tr>
+        <tr><td style="color:var(--accent3);">Bitwise</td><td><code>&amp; | ^ ~ &lt;&lt; &gt;&gt;</code></td><td><code>x &lt;&lt; 2</code> (×4)</td></tr>
+        <tr><td style="color:var(--accent3);">Assignment</td><td><code>= += -= *= /=</code></td><td><code>x += 5;</code></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 6: Common Language Features (yellow) -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Common Language Features</h3></div>
+    <div class="card-body">
+      <div class="rule">Control flow, functions, scope, and recursion apply across all paradigms</div>
+      <div class="label">Control Flow Structures</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Type</th><th>Construct</th><th>Use</th></tr>
+        <tr><td style="color:var(--yellow);">Selection</td><td><code>if / else if / else</code>, <code>switch</code></td><td>Conditional branching</td></tr>
+        <tr><td style="color:var(--yellow);">Pre-test loop</td><td><code>while (cond)</code></td><td>Check before each iteration</td></tr>
+        <tr><td style="color:var(--yellow);">Post-test loop</td><td><code>do…while</code></td><td>Execute at least once</td></tr>
+        <tr><td style="color:var(--yellow);">Count loop</td><td><code>for (init;cond;step)</code></td><td>Fixed number of iterations</td></tr>
+        <tr><td style="color:var(--yellow);">Jump</td><td><code>break</code>, <code>continue</code>, <code>return</code></td><td>Alter flow mid-loop/function</td></tr>
+      </table>
+      <div class="label">Functions / Methods</div>
+      <p>A <span class="tt" data-t="Named, reusable block of code that accepts inputs (parameters) and may return a value">function</span> encapsulates a reusable computation. In OOP, functions inside a class are called <em>methods</em>.</p>
+      <ul class="items">
+        <li>Signature: <code>returnType name(paramType param, ...)</code></li>
+        <li>Promotes DRY principle (Don't Repeat Yourself)</li>
+        <li>May return a value, or <code>void</code> if none</li>
+      </ul>
+      <div class="label">Parameter Passing</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Method</th><th>Behavior</th><th>Languages</th></tr>
+        <tr><td style="color:var(--yellow);">Pass by Value</td><td>Copy of argument; original unchanged</td><td>C (default), Java (primitives)</td></tr>
+        <tr><td style="color:var(--yellow);">Pass by Reference</td><td>Alias to original; changes affect caller</td><td>C++ (<code>&amp;</code>), C# (<code>ref</code>)</td></tr>
+        <tr><td style="color:var(--yellow);">Pass by Object Ref</td><td>Reference copy; object state can change</td><td>Java (objects), Python</td></tr>
+      </table>
+      <div class="label">Scope</div>
+      <ul class="items">
+        <li><strong>Local scope:</strong> variable visible only within its block <code>{ }</code></li>
+        <li><strong>Global scope:</strong> variable accessible throughout the program</li>
+        <li><strong>Block scope:</strong> limited to the enclosing braces (C, Java)</li>
+        <li><strong>Lexical (static) scope:</strong> determined at compile time (most languages)</li>
+      </ul>
+      <div class="label">Recursion</div>
+      <p>A function that calls <em>itself</em> to solve a smaller sub-problem. Requires a <span class="tt" data-t="Condition that stops a recursive function from calling itself indefinitely; every recursion must have one">base case</span> to terminate.</p>
+      <div class="formula">int factorial(int n) {
+  if (n == 0) return 1;         // base case
+  return n * factorial(n - 1);  // recursive case
+}</div>
+      <div class="tip">
+        <div class="t-title">Recursion vs Iteration</div>
+        Recursion is elegant for tree/graph traversal and divide-and-conquer algorithms. Iteration is generally more memory-efficient (avoids stack frames). Tail recursion can be optimized to iteration by some compilers.
+      </div>
+      <div class="label">Exception Handling</div>
+      <p>Most high-level languages provide structured error handling to separate normal logic from error logic.</p>
+      <ul class="items">
+        <li><code>try</code> block — code that might throw an error</li>
+        <li><code>catch</code> block — handles a specific exception type</li>
+        <li><code>finally</code> block — always executes (cleanup); Java, C#, Python</li>
+        <li>C++ uses <code>throw</code> / <code>catch</code>; Python uses <code>raise</code> / <code>except</code></li>
+      </ul>
+      <div class="label">Standard Library &amp; Modules</div>
+      <ul class="items">
+        <li>Every language ships a <span class="tt" data-t="Pre-written collection of functions, classes, and utilities bundled with the language">standard library</span> (I/O, math, strings, collections)</li>
+        <li>Code is organized into <strong>modules</strong> / <strong>packages</strong> / <strong>namespaces</strong></li>
+        <li>Imported on demand: <code>import java.util.ArrayList;</code> / <code>import math</code></li>
+        <li>Promotes separation of concerns and code reuse across projects</li>
+        <li>Third-party libraries extend functionality (npm, pip, Maven, NuGet)</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Key Terms + Quick Review ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Key Terms + Quick Review (orange, col-span-3) -->
+  <div class="card orange col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review</h3></div>
+    <div class="card-body">
+      <div class="grid-2">
+        <div>
+          <div class="label">Key Terms</div>
+          <table class="tbl" style="margin-top:4px;">
+            <tr><th>Term</th><th>Definition</th></tr>
+            <tr><td><code>Compiler</code></td><td>Translates entire high-level source program into machine code before execution; produces standalone executable</td></tr>
+            <tr><td><code>Interpreter</code></td><td>Translates and executes source code line-by-line at runtime; no separate executable produced</td></tr>
+            <tr><td><code>Assembler</code></td><td>Translates assembly language mnemonics into machine code; one-to-one correspondence between statements and instructions</td></tr>
+            <tr><td><code>OOP</code></td><td>Object-Oriented Programming — paradigm organizing code into classes and objects that bundle data with behavior</td></tr>
+            <tr><td><code>Encapsulation</code></td><td>Hiding internal object state; exposing only a public interface via methods; prevents unauthorized direct access</td></tr>
+            <tr><td><code>Inheritance</code></td><td>Mechanism by which a subclass acquires fields and methods of its superclass, enabling code reuse and IS-A relationships</td></tr>
+            <tr><td><code>Polymorphism</code></td><td>Ability of the same method call to behave differently depending on the actual runtime type of the object</td></tr>
+            <tr><td><code>Abstraction</code></td><td>Exposing only essential features of an object while hiding implementation details; achieved via abstract classes and interfaces</td></tr>
+            <tr><td><code>Paradigm</code></td><td>A fundamental style or approach to programming; e.g., procedural, OOP, functional, logic</td></tr>
+            <tr><td><code>High-Level Language</code></td><td>Programming language that abstracts hardware details; portable across platforms; requires compiler or interpreter (3GL+)</td></tr>
+            <tr><td><code>Machine Language</code></td><td>Binary instructions natively executed by the CPU; entirely hardware-specific; first generation (1GL)</td></tr>
+            <tr><td><code>Linker</code></td><td>Combines object files and resolves external symbol references to produce a complete executable program</td></tr>
+            <tr><td><code>Loader</code></td><td>OS component that copies an executable into memory and initiates its execution by passing control to the entry point</td></tr>
+            <tr><td><code>Data Type</code></td><td>Classification defining the set of values a variable can hold and the operations that can be performed on it (int, float, char, bool)</td></tr>
+            <tr><td><code>Recursion</code></td><td>Programming technique where a function calls itself with a smaller input; requires a base case to prevent infinite calls</td></tr>
+            <tr><td><code>JIT Compilation</code></td><td>Just-In-Time — bytecode compiled to native machine code at runtime, just before execution; used by JVM and .NET CLR</td></tr>
+          </table>
+        </div>
+        <div>
+          <div class="label">Quick Review — Chapter 9 Essentials</div>
+          <div class="info">
+            <div class="i-title">Language Generations</div>
+            1GL = machine binary → 2GL = assembly mnemonics → 3GL = high-level (C, Java) → 4GL = domain-specific (SQL) → 5GL = AI/logic (Prolog). Each generation increases programmer productivity and abstraction.
+          </div>
+          <div class="tip">
+            <div class="t-title">Compiler vs Interpreter Trade-off</div>
+            Compilers produce fast executables but require a separate build step and are platform-specific. Interpreters offer immediate execution and easier debugging but run slower. JIT tries to capture both benefits.
+          </div>
+          <div class="note">
+            <div class="n-title">Translation Pipeline</div>
+            Source code → <strong>Compiler/Assembler</strong> → Object files → <strong>Linker</strong> → Executable → <strong>Loader</strong> → Process in memory → CPU execution
+          </div>
+          <div class="warn">
+            <div class="w-title">Common Pitfalls</div>
+            <ul class="items" style="margin-top:4px;">
+              <li>Missing base case in recursion → infinite loop / stack overflow</li>
+              <li>Confusing pass-by-value and pass-by-reference → unexpected side effects</li>
+              <li>Variable shadowing (inner scope hides outer) → logic bugs</li>
+              <li>Treating inheritance as the only reuse mechanism — prefer composition over inheritance when IS-A relationship is unclear</li>
+            </ul>
+          </div>
+          <div class="label" style="margin-top:10px;">Paradigm Decision Guide</div>
+          <table class="tbl" style="margin-top:4px;">
+            <tr><th>Problem Type</th><th>Best Paradigm</th><th>Language Choice</th></tr>
+            <tr><td>Systems / embedded</td><td>Procedural</td><td>C, Rust</td></tr>
+            <tr><td>Business / enterprise apps</td><td>OOP</td><td>Java, C#</td></tr>
+            <tr><td>Data transformation / pipelines</td><td>Functional</td><td>Haskell, Scala</td></tr>
+            <tr><td>AI / constraint solving</td><td>Logic</td><td>Prolog</td></tr>
+            <tr><td>Data queries / reporting</td><td>Declarative</td><td>SQL, R</td></tr>
+            <tr><td>Scripting / rapid prototyping</td><td>Multi-paradigm</td><td>Python, JavaScript</td></tr>
+          </table>
+          <div class="label" style="margin-top:10px;">OOP Four Pillars Summary</div>
+          <table class="tbl" style="margin-top:4px;">
+            <tr><th>Pillar</th><th>One-Line Summary</th></tr>
+            <tr><td style="color:var(--accent5);">Encapsulation</td><td>Bundle data + methods; hide internal state</td></tr>
+            <tr><td style="color:var(--accent5);">Inheritance</td><td>Subclass extends superclass; IS-A relationship</td></tr>
+            <tr><td style="color:var(--accent5);">Polymorphism</td><td>Same interface, multiple implementations</td></tr>
+            <tr><td style="color:var(--accent5);">Abstraction</td><td>Expose essential interface; hide complexity</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <a href="CH08-Algorithms-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← CH08</a>
+  <a href="../CSI.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">Back to FCS</a>
+  <a href="CH10-Software-Engineering-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">CH10 →</a>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script></body>
+</html>

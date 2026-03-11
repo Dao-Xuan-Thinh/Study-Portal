@@ -13,12 +13,8 @@
 
     /* SHARED TOOLTIP */
     .tt{position:relative;border-bottom:1px dotted var(--accent,#8957e5);cursor:help;display:inline;}
-    .tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+    .tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
     .tt:hover::after{opacity:1;}
-
-    /* TOGGLE BUTTON */
-    #design-toggle-btn{position:fixed;top:16px;right:16px;background:#21262d;border:1px solid #30363d;color:#8957e5;padding:8px 14px;border-radius:8px;cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;z-index:999;user-select:none;transition:background .15s,border-color .15s;}
-    #design-toggle-btn:hover{background:#2d333b;border-color:#8957e5;}
 
     /* ============================================================
        NEW DESIGN — all rules scoped to #new-design
@@ -40,8 +36,8 @@
     #new-design .col-span-2{grid-column:span 2;}
     #new-design .col-span-3{grid-column:span 3;}
     #new-design .section-gap{margin-top:20px;}
-    #new-design .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
-    #new-design .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+    #new-design .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+    #new-design .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
     #new-design .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
     #new-design .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
     #new-design .card-body{padding:12px;}
@@ -101,102 +97,27 @@
       #new-design .col-span-2,#new-design .col-span-3{grid-column:span 1;}
       #new-design .two-col{grid-template-columns:1fr;}
     }
-
-    /* ============================================================
-       LEGACY DESIGN — all rules scoped to #legacy-design
-       ============================================================ */
-    #legacy-design{
-      --bg:#0d1117;--surface:#161b22;--surface2:#21262d;--border:#30363d;
-      --accent:#2f81f7;--accent-dim:#1f6feb;--accent-glow:rgba(47,129,247,.18);
-      --green:#3fb950;--yellow:#d29922;--orange:#f0883e;--red:#f85149;
-      --purple:#bc8cff;--cyan:#39c5cf;
-      --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;
-      --mono:'IBM Plex Mono',monospace;--sans:'Inter',sans-serif;
-      --radius:10px;--radius-sm:6px;
-      font-family:var(--sans);font-size:14px;line-height:1.65;padding-bottom:60px;
-    }
-    #legacy-design .page-header{background:linear-gradient(135deg,#0d1117 0%,#161b22 60%,#1c2333 100%);border-bottom:1px solid var(--border);padding:36px 40px 28px;position:relative;overflow:hidden;}
-    #legacy-design .page-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 70% 50%,var(--accent-glow),transparent 70%);pointer-events:none;}
-    #legacy-design .header-badge{display:inline-block;background:var(--accent);color:#fff;font-family:var(--mono);font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;letter-spacing:.04em;margin-bottom:10px;}
-    #legacy-design .page-header h1{font-size:clamp(1.5rem,3vw,2.1rem);font-weight:700;color:var(--text);line-height:1.2;max-width:820px;}
-    #legacy-design .page-header h1 span{color:var(--accent);}
-    #legacy-design .page-header p{color:var(--text-muted);margin-top:8px;max-width:720px;font-size:13.5px;}
-    #legacy-design .section-label{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.12em;padding:28px 40px 10px;border-bottom:1px solid var(--border);margin-bottom:0;}
-    #legacy-design .grid{display:grid;gap:18px;padding:20px 40px;}
-    #legacy-design .grid-2{grid-template-columns:repeat(2,1fr);}
-    #legacy-design .grid-3{grid-template-columns:repeat(3,1fr);}
-    #legacy-design .grid-4{grid-template-columns:repeat(4,1fr);}
-    #legacy-design .grid-auto{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));}
-    @media(max-width:900px){
-      #legacy-design .grid-2,#legacy-design .grid-3,#legacy-design .grid-4{grid-template-columns:1fr;}
-      #legacy-design .grid{padding:16px 18px;}
-      #legacy-design .section-label{padding:22px 18px 8px;}
-      #legacy-design .page-header{padding:24px 18px 20px;}
-    }
-    #legacy-design .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;display:flex;flex-direction:column;gap:10px;transition:border-color .2s,box-shadow .2s;}
-    #legacy-design .card:hover{border-color:var(--accent-dim);box-shadow:0 0 0 1px var(--accent-glow);}
-    #legacy-design .card.span-2{grid-column:span 2;}
-    #legacy-design .card.span-3{grid-column:span 3;}
-    #legacy-design .card.span-full{grid-column:1/-1;}
-    #legacy-design .card-title{font-size:13px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:7px;}
-    #legacy-design .card-title .icon{width:22px;height:22px;background:var(--accent-glow);border:1px solid var(--accent-dim);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
-    #legacy-design .card-title .lbl{font-family:var(--mono);font-size:9.5px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.08em;margin-left:auto;}
-    #legacy-design .label{display:inline-block;font-family:var(--mono);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:.03em;}
-    #legacy-design .label-blue{background:rgba(47,129,247,.18);color:var(--accent);border:1px solid rgba(47,129,247,.35);}
-    #legacy-design .label-green{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.3);}
-    #legacy-design .label-yellow{background:rgba(210,153,34,.15);color:var(--yellow);border:1px solid rgba(210,153,34,.3);}
-    #legacy-design .label-red{background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.3);}
-    #legacy-design .label-purple{background:rgba(188,140,255,.15);color:var(--purple);border:1px solid rgba(188,140,255,.3);}
-    #legacy-design .label-orange{background:rgba(240,136,62,.15);color:var(--orange);border:1px solid rgba(240,136,62,.3);}
-    #legacy-design .label-cyan{background:rgba(57,197,207,.15);color:var(--cyan);border:1px solid rgba(57,197,207,.3);}
-    #legacy-design .rule{border:none;border-top:1px solid var(--border);margin:4px 0;}
-    #legacy-design .formula{background:var(--surface2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius-sm);font-family:var(--mono);font-size:12.5px;padding:10px 14px;color:var(--cyan);white-space:pre-wrap;word-break:break-all;}
-    #legacy-design .formula .comment{color:var(--text-muted);font-style:italic;}
-    #legacy-design ul.items{list-style:none;display:flex;flex-direction:column;gap:5px;padding:0;}
-    #legacy-design ul.items li{padding-left:16px;position:relative;color:var(--text-muted);font-size:13px;}
-    #legacy-design ul.items li::before{content:'▸';position:absolute;left:0;color:var(--accent);font-size:10px;top:3px;}
-    #legacy-design ul.items li strong{color:var(--text);font-weight:600;}
-    #legacy-design ol.steps{list-style:none;counter-reset:step;display:flex;flex-direction:column;gap:6px;padding:0;}
-    #legacy-design ol.steps li{counter-increment:step;padding-left:28px;position:relative;font-size:13px;color:var(--text-muted);}
-    #legacy-design ol.steps li::before{content:counter(step);position:absolute;left:0;top:1px;width:18px;height:18px;background:var(--accent-glow);border:1px solid var(--accent-dim);border-radius:50%;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent);display:flex;align-items:center;justify-content:center;}
-    #legacy-design ol.steps li strong{color:var(--text);}
-    #legacy-design .tbl-wrap{overflow-x:auto;border-radius:var(--radius-sm);}
-    #legacy-design table.tbl{width:100%;border-collapse:collapse;font-size:12.5px;}
-    #legacy-design table.tbl th{background:var(--surface2);color:var(--text);font-weight:700;padding:7px 12px;text-align:left;border-bottom:2px solid var(--accent);white-space:nowrap;font-size:12px;}
-    #legacy-design table.tbl td{padding:6px 12px;border-bottom:1px solid var(--border);color:var(--text-muted);vertical-align:top;}
-    #legacy-design table.tbl tr:last-child td{border-bottom:none;}
-    #legacy-design table.tbl tr:hover td{background:var(--surface2);color:var(--text);}
-    #legacy-design table.tbl td strong{color:var(--text);font-weight:600;}
-    #legacy-design table.tbl .mono{font-family:var(--mono);font-size:11.5px;}
-    #legacy-design .warn,#legacy-design .info,#legacy-design .tip,#legacy-design .note{border-radius:var(--radius-sm);padding:9px 13px;font-size:12.5px;display:flex;gap:8px;align-items:flex-start;}
-    #legacy-design .warn{background:rgba(248,81,73,.1);border:1px solid rgba(248,81,73,.35);color:#f85149;}
-    #legacy-design .info{background:rgba(47,129,247,.1);border:1px solid rgba(47,129,247,.35);color:var(--accent);}
-    #legacy-design .tip{background:rgba(63,185,80,.1);border:1px solid rgba(63,185,80,.35);color:var(--green);}
-    #legacy-design .note{background:rgba(210,153,34,.1);border:1px solid rgba(210,153,34,.35);color:var(--yellow);}
-    #legacy-design .warn .ico,#legacy-design .info .ico,#legacy-design .tip .ico,#legacy-design .note .ico{font-size:14px;flex-shrink:0;margin-top:1px;}
-    #legacy-design .warn p,#legacy-design .info p,#legacy-design .tip p,#legacy-design .note p{margin:0;line-height:1.55;}
-    #legacy-design code{font-family:var(--mono);font-size:11.5px;background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;color:var(--cyan);}
-    #legacy-design dl.def{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;}
-    #legacy-design dl.def dt{font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--accent);white-space:nowrap;padding-top:2px;}
-    #legacy-design dl.def dd{color:var(--text-muted);font-size:13px;}
-    #legacy-design dl.def dd strong{color:var(--text);}
-    #legacy-design .state-badge{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:11.5px;font-weight:700;padding:3px 10px 3px 7px;border-radius:20px;}
-    #legacy-design .state-M{background:rgba(248,81,73,.15);color:var(--red);border:1px solid rgba(248,81,73,.4);}
-    #legacy-design .state-E{background:rgba(63,185,80,.15);color:var(--green);border:1px solid rgba(63,185,80,.4);}
-    #legacy-design .state-S{background:rgba(47,129,247,.15);color:var(--accent);border:1px solid rgba(47,129,247,.4);}
-    #legacy-design .state-I{background:rgba(139,148,158,.12);color:var(--text-muted);border:1px solid var(--border);}
-    #legacy-design .state-dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
-    #legacy-design .two-col{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-    #legacy-design .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
-    #legacy-design .mini-block{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 12px;}
-    #legacy-design .mini-block .title{font-size:11.5px;font-weight:700;color:var(--text);margin-bottom:5px;display:flex;align-items:center;gap:5px;}
-    #legacy-design .mini-block p,#legacy-design .mini-block ul{font-size:12px;color:var(--text-muted);}
-    #legacy-design footer{text-align:center;padding:32px 40px 16px;border-top:1px solid var(--border);margin-top:20px;color:var(--text-dim);font-size:11px;font-family:var(--mono);}
-  </style>
+  /* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}
+</style>
 </head>
 <body>
-<!-- TOGGLE -->
-<div id="design-toggle-btn" onclick="toggleDesign()"><span id="toggle-label">Switch to Legacy Design</span></div>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
 
 <!-- NEW DESIGN -->
 <div id="new-design">
@@ -1064,970 +985,78 @@
 
 </div><!-- /#new-design -->
 
-<!-- LEGACY DESIGN -->
-<div id="legacy-design" style="display:none">
-
-
-<!-- ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
-     PAGE HEADER
-ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ -->
-<header class="page-header">
-  <div class="header-badge">COA10e ┬╖ CH17</div>
-  <h1><span>Parallel Processing</span> ΓÇö Chapter 17</h1>
-  <p><span class="tt" data-t="Classification of parallel architectures by instruction and data streams: SISD, SIMD, MISD, MIMD">Flynn's taxonomy</span> ┬╖ <span class="tt" data-t="Symmetric Multiprocessing — multiple identical CPUs sharing one main memory via a common bus">SMP</span> architecture ┬╖ Cache coherence &amp; <span class="tt" data-t="Cache coherence protocol with four line states: Modified, Exclusive, Shared, Invalid">MESI</span> protocol ┬╖ Multithreading ┬╖ Clusters ┬╖ <span class="tt" data-t="Non-Uniform Memory Access — memory latency varies depending on which CPU makes the request">NUMA</span> ┬╖ Cloud computing</p>
-</header>
-
-<!-- ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
-     ┬º17.1  MULTIPLE PROCESSOR ORGANIZATIONS
-ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ -->
-<div class="section-label">┬º17.1 ΓÇö Multiple Processor Organizations</div>
-<div class="grid grid-2">
-
-  <!-- Flynn's taxonomy table -->
-  <div class="card span-2">
-    <div class="card-title"><span class="icon">≡ƒöÇ</span> Flynn's Taxonomy (1972) <span class="lbl">SISD / <span class="tt" data-t="Single Instruction Multiple Data — one instruction operates on many data elements in parallel">SIMD</span> / MISD / <span class="tt" data-t="Multiple Instruction Multiple Data — multiple processors execute independent instruction streams">MIMD</span></span></div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead>
-          <tr>
-            <th>Class</th>
-            <th>Full Name</th>
-            <th>Description</th>
-            <th>Examples</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong class="label label-blue">SISD</strong></td>
-            <td><strong>Single Instruction, Single Data</strong></td>
-            <td>One processor executes one instruction stream on a single data stream ΓÇö classic sequential computer</td>
-            <td>Traditional uniprocessors</td>
-          </tr>
-          <tr>
-            <td><strong class="label label-green">SIMD</strong></td>
-            <td><strong>Single Instruction, Multiple Data</strong></td>
-            <td>A single instruction controls simultaneous execution across multiple processing elements, each with its own data memory (lock-step)</td>
-            <td>Vector processors, GPU cores, array processors</td>
-          </tr>
-          <tr>
-            <td><strong class="label label-yellow">MISD</strong></td>
-            <td><strong>Multiple Instruction, Single Data</strong></td>
-            <td>Multiple processors execute different instructions on the same data stream ΓÇö largely theoretical</td>
-            <td>Not commercially implemented</td>
-          </tr>
-          <tr>
-            <td><strong class="label label-red">MIMD</strong></td>
-            <td><strong>Multiple Instruction, Multiple Data</strong></td>
-            <td>Each processor executes its own instruction stream on its own data; most powerful and general-purpose category</td>
-            <td>SMP, clusters, NUMA, multicore</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="info"><span class="ico">Γä╣∩╕Å</span><p><strong>MIMD</strong> is the dominant modern paradigm ΓÇö it subdivides into <strong>shared-memory</strong> (SMP, NUMA) and <strong>distributed-memory</strong> (clusters, MPP) systems based on how processors communicate.</p></div>
-  </div>
-
-  <!-- MIMD subcategories -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒöù</span> MIMD: Shared-Memory Systems <span class="lbl">Tightly Coupled</span></div>
-    <ul class="items">
-      <li>Processors share a <strong>single physical memory</strong> (or pool)</li>
-      <li>Communication via <strong>reads/writes to <span class="tt" data-t="Parallel architecture where all processors access a single global address space">shared memory</span></strong></li>
-      <li>Requires <strong><span class="tt" data-t="Protocol ensuring all CPUs observe a consistent view of shared-memory locations">cache coherence</span></strong> protocols</li>
-      <li><strong>SMP (Symmetric Multiprocessor)</strong> ΓÇö <span class="tt" data-t="Uniform Memory Access — all processors experience equal latency to all memory locations">UMA</span>, equal access time for all CPUs</li>
-      <li><strong>NUMA</strong> ΓÇö memory access time varies by region</li>
-    </ul>
-    <div class="tip"><span class="ico">Γ£ö</span><p>Easiest to program; OS presents single system image. Scales to ~64 processors.</p></div>
-  </div>
-
-  <!-- MIMD distributed -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒîÉ</span> MIMD: Distributed-Memory Systems <span class="lbl">Loosely Coupled</span></div>
-    <ul class="items">
-      <li>Each node has its <strong>own local memory</strong></li>
-      <li>Communication via <strong><span class="tt" data-t="Parallel programming model where processes communicate by explicit send/receive operations">message passing</span></strong> over a network (LAN/WAN)</li>
-      <li>No global address space; no cache coherence needed</li>
-      <li><strong>Clusters</strong> ΓÇö commodity servers + high-speed interconnect</li>
-      <li><strong>MPP (Massively Parallel Processor)</strong> ΓÇö custom interconnect, 1000s of nodes</li>
-    </ul>
-    <div class="tip"><span class="ico">Γ£ö</span><p>Scales to thousands of nodes; higher latency communication than shared-memory.</p></div>
-  </div>
-
-  <!-- Memory org table -->
-  <div class="card span-2">
-    <div class="card-title"><span class="icon">≡ƒºá</span> Memory Organization Models <span class="lbl">UMA / NUMA / COMA</span></div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead>
-          <tr><th>Model</th><th>Full Name</th><th>Access Time</th><th>Description</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>UMA</strong></td>
-            <td>Uniform Memory Access</td>
-            <td><span class="label label-green">Equal for all CPUs</span></td>
-            <td>All processors have identical access latency to any memory location. Standard SMP is UMA.</td>
-          </tr>
-          <tr>
-            <td><strong>NUMA</strong></td>
-            <td>Non-Uniform Memory Access</td>
-            <td><span class="label label-yellow">Varies by region</span></td>
-            <td>Local memory is faster; remote memory (via interconnect) is slower. CC-NUMA adds cache coherence.</td>
-          </tr>
-          <tr>
-            <td><strong>COMA</strong></td>
-            <td>Cache-Only Memory Access</td>
-            <td><span class="label label-orange">Migration-based</span></td>
-            <td>All main memory acts as cache; data migrates to the node that uses it. Complex coherence.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-</div><!-- /grid ┬º17.1 -->
-
-<!-- ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
-     ┬º17.2  SYMMETRIC MULTIPROCESSORS (SMP)
-ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ -->
-<div class="section-label">┬º17.2 ΓÇö Symmetric Multiprocessors (SMP)</div>
-<div class="grid grid-3">
-
-  <!-- SMP definition card -->
-  <div class="card">
-    <div class="card-title"><span class="icon">ΓÜû∩╕Å</span> SMP Defining Characteristics</div>
-    <ol class="steps">
-      <li><strong>ΓëÑ 2 similar processors</strong> of comparable capability</li>
-      <li>Processors <strong>share main memory &amp; I/O</strong> via bus/interconnect with equal access times</li>
-      <li>All processors have <strong>equal access to I/O devices</strong> (same or different channels)</li>
-      <li>All processors can <strong>perform the same functions</strong> (hence <em>symmetric</em>)</li>
-      <li>A single integrated <strong>OS manages all processors</strong> and provides interaction at job/task/file/data levels</li>
-    </ol>
-  </div>
-
-  <!-- SMP advantages -->
-  <div class="card">
-    <div class="card-title"><span class="icon">Γ¼å∩╕Å</span> SMP Advantages over Uniprocessor</div>
-    <ul class="items">
-      <li><strong>Performance:</strong> parallel workloads execute across multiple CPUs simultaneously</li>
-      <li><strong>Availability:</strong> single CPU failure ΓåÆ reduced performance, not system halt</li>
-      <li><strong>Incremental growth:</strong> add processors to boost performance</li>
-      <li><strong>Scaling:</strong> vendors can offer product range by varying # of CPUs</li>
-      <li><strong>Transparent to user</strong> ΓÇö OS hides parallelism, schedules threads/processes</li>
-    </ul>
-    <div class="note"><span class="ico">ΓÜá∩╕Å</span><p>These are <em>potential</em> benefits; OS tools must be designed to exploit SMP parallelism.</p></div>
-  </div>
-
-  <!-- SMP organization -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒûº</span> SMP Bus/Interconnect Organization</div>
-    <ul class="items">
-      <li><strong>Time-shared bus (common):</strong> Simplest; all processors share single bus. Low cost, easy to expand, but performance bottleneck at high CPU counts</li>
-      <li><strong>Multiple buses:</strong> Redundant buses improve reliability and bandwidth</li>
-      <li><strong>Crossbar switch:</strong> N├ùM switch matrix; any CPU can connect to any memory module simultaneously. Best bandwidth but highest cost/complexity</li>
-      <li>Each CPU has own <strong>L1 + L2 (┬▒L3) cache</strong> to reduce bus accesses</li>
-    </ul>
-    <div class="warn"><span class="ico">ΓÜá∩╕Å</span><p>Local caches introduce the <strong>cache coherence problem</strong> ΓÇö addressed by hardware (MESI protocol).</p></div>
-  </div>
-
-  <!-- OS design considerations -->
-  <div class="card span-2">
-    <div class="card-title"><span class="icon">≡ƒûÑ∩╕Å</span> SMP Operating System Design Considerations</div>
-    <div class="two-col">
-      <ul class="items">
-        <li><strong>Simultaneous concurrent processes:</strong> OS routines must be <em>reentrant</em> ΓÇö multiple CPUs may execute the same OS code at once</li>
-        <li><strong>Scheduling:</strong> Any CPU may perform scheduling; conflicts must be avoided; scheduler assigns ready processes to available CPUs</li>
-        <li><strong>Synchronization:</strong> Mutual exclusion &amp; event ordering for shared address spaces and I/O</li>
-      </ul>
-      <ul class="items">
-        <li><strong>Memory management:</strong> Paging and page protection mechanisms must function on all CPUs</li>
-        <li><strong>Reliability &amp; fault tolerance:</strong> OS must degrade gracefully when a CPU fails</li>
-        <li><strong>Process migration:</strong> OS may move processes between CPUs to balance load</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Amdahl's Law -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒôÉ</span> Amdahl's Law for SMP <span class="lbl">Speedup Limit</span></div>
-    <div class="formula"><span class="comment">// Speedup with N processors</span>
-Speedup(N) =        1
-             ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-             (1 - f) + (f / N)
-
-f = fraction of code parallelizable
-N = number of processors
-(1-f) = sequential fraction (bottleneck)</div>
-    <ul class="items">
-      <li>As N ΓåÆ Γê₧: <strong>max speedup = 1/(1ΓêÆf)</strong></li>
-      <li>If f = 0.95 (95% parallel): max speedup Γëê <strong>20├ù</strong></li>
-      <li>Even small sequential portions <strong>dominate at large N</strong></li>
-      <li>Real applications limited by synchronization overhead, memory bandwidth, and OS overhead</li>
-    </ul>
-    <div class="info"><span class="ico">≡ƒÆí</span><p>Amdahl's Law sets the theoretical ceiling ΓÇö practical SMP performance is always lower due to synchronization overhead and memory contention.</p></div>
-  </div>
-
-</div><!-- /grid ┬º17.2 -->
-
-<!-- ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
-     ┬º17.3  CACHE COHERENCE AND THE MESI PROTOCOL
-ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ -->
-<div class="section-label">┬º17.3 ΓÇö Cache Coherence &amp; the MESI Protocol</div>
-<div class="grid grid-2">
-
-  <!-- Cache coherence problem -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒöä</span> The Cache Coherence Problem</div>
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">
-      In an SMP, multiple processors each have a private cache. If two caches hold copies of the same memory line and one processor modifies its copy, the other cache holds <em>stale data</em> ΓÇö an inconsistent view of memory.
-    </p>
-    <hr class="rule"/>
-    <ul class="items">
-      <li><strong>Write-back policy:</strong> Only writes to cache; memory updated only on eviction ΓåÆ stale copies possible in other caches</li>
-      <li><strong>Write-through policy:</strong> Writes go to memory AND cache ΓÇö inconsistency still occurs if other caches don't observe bus traffic</li>
-    </ul>
-    <div class="warn"><span class="ico">ΓÜá∩╕Å</span><p>Cache coherence is addressed at <strong>hardware level</strong> (transparent to programmer). Software-only solutions incur high overhead.</p></div>
-  </div>
-
-  <!-- Software vs hardware solutions -->
-  <div class="card">
-    <div class="card-title"><span class="icon">ΓÜÖ∩╕Å</span> Cache Coherence Approaches</div>
-    <div class="mini-block" style="margin-bottom:8px;">
-      <div class="title" style="color:var(--yellow);">≡ƒ¢á Software Solutions</div>
-      <ul class="items" style="font-size:12px;">
-        <li>Compiler or OS marks shared memory pages <strong>non-cacheable</strong></li>
-        <li>Compiler inserts cache <strong>flush/invalidate</strong> instructions at critical points</li>
-        <li>Simpler hardware but <strong>conservative</strong> ΓÇö reduces cache effectiveness</li>
-        <li>Transparent to programmer but limits performance</li>
-      </ul>
-    </div>
-    <div class="mini-block">
-      <div class="title" style="color:var(--green);">ΓÜí Hardware Solutions ΓÇö Protocols</div>
-      <ul class="items" style="font-size:12px;">
-        <li><strong>Directory protocols:</strong> Central directory in main memory tracks which caches hold each line; centralized controller issues commands</li>
-        <li><strong>Snoopy protocols:</strong> Each cache controller <em>snoops</em> the shared bus for transactions; decentralized, suited to bus-based SMPs</li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- Snoopy: write-invalidate vs write-update -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒôí</span> Snoopy Protocol Strategies</div>
-    <div class="two-col">
-      <div class="mini-block">
-        <div class="title" style="color:var(--red);">Γ£ù Write-Invalidate</div>
-        <ul class="items" style="font-size:12px;">
-          <li>Multiple readers, only <strong>one writer</strong></li>
-          <li>Writer broadcasts <strong>invalidate</strong> signal; other caches mark line invalid</li>
-          <li>Writer gains exclusive ownership</li>
-          <li><strong>Used by MESI</strong></li>
-          <li>Fewer bus transactions for repeated writes</li>
-        </ul>
-      </div>
-      <div class="mini-block">
-        <div class="title" style="color:var(--blue, var(--accent));">Γå║ Write-Update (Broadcast)</div>
-        <ul class="items" style="font-size:12px;">
-          <li>Writer broadcasts <strong>updated data</strong> to all caches</li>
-          <li>All cached copies updated simultaneously</li>
-          <li>More bus traffic per write</li>
-          <li>Better if multiple CPUs read same data frequently</li>
-          <li>Less commonly used</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- MESI States -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒùé∩╕Å</span> MESI Protocol ΓÇö Four States <span class="lbl">Table 17.1</span></div>
-    <div style="display:flex;flex-direction:column;gap:10px;">
-      <div style="display:flex;align-items:flex-start;gap:10px;">
-        <span class="state-badge state-M"><span class="state-dot"></span>M</span>
-        <div>
-          <strong style="color:var(--text);font-size:13px;">Modified</strong>
-          <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">Line present only in THIS cache and is <em>dirty</em> (differs from main memory). Cache responsible for writing back before any other CPU reads it.</p>
-        </div>
-      </div>
-      <hr class="rule"/>
-      <div style="display:flex;align-items:flex-start;gap:10px;">
-        <span class="state-badge state-E"><span class="state-dot"></span>E</span>
-        <div>
-          <strong style="color:var(--text);font-size:13px;">Exclusive</strong>
-          <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">Line present only in THIS cache, <em>clean</em> (matches main memory). Can be written without bus transaction (becomes Modified).</p>
-        </div>
-      </div>
-      <hr class="rule"/>
-      <div style="display:flex;align-items:flex-start;gap:10px;">
-        <span class="state-badge state-S"><span class="state-dot"></span>S</span>
-        <div>
-          <strong style="color:var(--text);font-size:13px;">Shared</strong>
-          <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">Line may be present in <em>multiple caches</em>, clean. Any write must first invalidate all other copies (via bus).</p>
-        </div>
-      </div>
-      <hr class="rule"/>
-      <div style="display:flex;align-items:flex-start;gap:10px;">
-        <span class="state-badge state-I"><span class="state-dot"></span>I</span>
-        <div>
-          <strong style="color:var(--text);font-size:13px;">Invalid</strong>
-          <p style="font-size:12px;color:var(--text-muted);margin-top:2px;">Line is <em>not valid</em> in this cache (either absent or has been invalidated). Any access causes a cache miss.</p>
-        </div>
-      </div>
-    </div>
-    <div class="info"><span class="ico">Γä╣∩╕Å</span><p>Each cache line has its own 2-bit state field encoding its current MESI state. The protocol is used on x86 architecture.</p></div>
-  </div>
-
-  <!-- MESI state transitions table -->
-  <div class="card span-2">
-    <div class="card-title"><span class="icon">Γåö∩╕Å</span> MESI State Transition Table <span class="lbl">Processor-Initiated + Bus-Initiated Events</span></div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead>
-          <tr>
-            <th>Event / Action</th>
-            <th>Current State</th>
-            <th>Next State</th>
-            <th>Bus Transaction</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Read Hit (RH)</strong></td>
-            <td>M, E, or S</td>
-            <td>No change</td>
-            <td>None</td>
-            <td>Data served directly from local cache; no bus activity needed</td>
-          </tr>
-          <tr>
-            <td><strong>Read Miss (RMS)</strong> ΓÇö others share</td>
-            <td>I</td>
-            <td>ΓåÆ <span class="state-badge state-S" style="font-size:10px"><span class="state-dot"></span>S</span></td>
-            <td><code>BusRd</code></td>
-            <td>Other caches signal they share; initiator reads from memory, enters Shared state</td>
-          </tr>
-          <tr>
-            <td><strong>Read Miss (RME)</strong> ΓÇö none share</td>
-            <td>I</td>
-            <td>ΓåÆ <span class="state-badge state-E" style="font-size:10px"><span class="state-dot"></span>E</span></td>
-            <td><code>BusRd</code></td>
-            <td>No other cache holds line; initiator reads from memory, gets exclusive ownership</td>
-          </tr>
-          <tr>
-            <td><strong>Read Miss</strong> ΓÇö other has Modified</td>
-            <td>I</td>
-            <td>ΓåÆ S (both caches)</td>
-            <td><code>BusRd</code> + writeback</td>
-            <td>Modified cache writes back to memory (dirty line copyback), then transitions MΓåÆS; initiator gets line in S state</td>
-          </tr>
-          <tr>
-            <td><strong>Write Hit (WH)</strong></td>
-            <td>M or E</td>
-            <td>ΓåÆ <span class="state-badge state-M" style="font-size:10px"><span class="state-dot"></span>M</span></td>
-            <td>None</td>
-            <td>Already have exclusive ownership; just modify locally (EΓåÆM or stays M)</td>
-          </tr>
-          <tr>
-            <td><strong>Write Hit (WH)</strong></td>
-            <td>S</td>
-            <td>ΓåÆ <span class="state-badge state-M" style="font-size:10px"><span class="state-dot"></span>M</span></td>
-            <td><code>BusUpgr</code> (Invalidate)</td>
-            <td>Broadcast invalidate to all other caches sharing this line; gain exclusive ownership, then write</td>
-          </tr>
-          <tr>
-            <td><strong>Write Miss (WM)</strong></td>
-            <td>I</td>
-            <td>ΓåÆ <span class="state-badge state-M" style="font-size:10px"><span class="state-dot"></span>M</span></td>
-            <td><code>BusRdX</code> (RWITM)</td>
-            <td>Read-With-Intent-To-Modify: fetch line AND invalidate all other copies; modify locally, enter Modified</td>
-          </tr>
-          <tr>
-            <td><strong>Snoop Hit on Read (SHR)</strong></td>
-            <td>E</td>
-            <td>ΓåÆ <span class="state-badge state-S" style="font-size:10px"><span class="state-dot"></span>S</span></td>
-            <td>Signal shared</td>
-            <td>Another CPU is reading this line; transition from Exclusive to Shared</td>
-          </tr>
-          <tr>
-            <td><strong>Snoop Hit on Write (SHW)</strong></td>
-            <td>S or E</td>
-            <td>ΓåÆ <span class="state-badge state-I" style="font-size:10px"><span class="state-dot"></span>I</span></td>
-            <td>ΓÇö</td>
-            <td>Another CPU is writing; invalidate this copy</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="two-col" style="margin-top:4px;">
-      <div class="info"><span class="ico">≡ƒôí</span><p><strong>BusRd</strong> ΓÇö bus read request (data needed, no modify intent)<br><strong>BusRdX</strong> ΓÇö bus read exclusive / RWITM (read + invalidate all copies)<br><strong>BusUpgr</strong> ΓÇö upgrade (invalidate without re-fetch, already have data in S state)</p></div>
-      <div class="tip"><span class="ico">Γ£ö</span><p>At any moment a cache line exists in exactly <strong>one state</strong>. The MESI protocol guarantees global consistency by ensuring only one Modified copy can exist at any time.</p></div>
-    </div>
-  </div>
-
-</div><!-- /grid ┬º17.3 -->
-
-<!-- ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
-     ┬º17.4  MULTITHREADING AND CHIP MULTIPROCESSORS
-ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ -->
-<div class="section-label">┬º17.4 ΓÇö Multithreading &amp; Chip Multiprocessors</div>
-<div class="grid grid-3">
-
-  <!-- Thread definitions -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒº╡</span> Thread &amp; Process Concepts</div>
-    <dl class="def">
-      <dt>Process</dt><dd>Program in execution; owns resources (memory, files, I/O). Switching processes is <strong>expensive</strong> (saves full context)</dd>
-      <dt>Thread</dt><dd>Dispatchable unit <em>within</em> a process; has PC, stack, registers. Multiple threads share process resources</dd>
-      <dt>Thread switch</dt><dd>Switch within same process ΓÇö <strong>much cheaper</strong> than process switch (no resource reallocation)</dd>
-      <dt>IPC</dt><dd>Instructions Per Cycle ΓÇö key performance metric</dd>
-    </dl>
-    <div class="formula">MIPS Rate = f ├ù IPC
-f = clock frequency (MHz)
-IPC = avg instructions completed/cycle</div>
-    <p style="font-size:12px;color:var(--text-muted);margin-top:4px;">Goal: maximize IPC by keeping pipeline stages busy using multithreading to hide latencies.</p>
-  </div>
-
-  <!-- Explicit multithreading approaches -->
-  <div class="card span-2">
-    <div class="card-title"><span class="icon">ΓÜí</span> Approaches to Explicit Multithreading <span class="lbl">Four Methods</span></div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead>
-          <tr><th>Approach</th><th>Also Known As</th><th>Mechanism</th><th>Best For</th><th>Trade-off</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Interleaved (Fine-grain)</strong></td>
-            <td>Fine-grain MT / Barrel processing</td>
-            <td>Switch thread every cycle (round-robin). Zero-cycle thread switch. Hides ALL latency events</td>
-            <td>Hiding all pipeline latencies, high-latency memory systems</td>
-            <td>Hurts single-thread performance; threads compete for cache</td>
-          </tr>
-          <tr>
-            <td><strong>Blocked (Coarse-grain)</strong></td>
-            <td>Coarse-grain MT</td>
-            <td>Execute thread until a <em>stall event</em> (cache miss); then switch to ready thread. 1-cycle switch cost possible</td>
-            <td>In-order pipelines; hiding long-latency events (L2/L3 miss)</td>
-            <td>Cannot hide short latencies; wasted cycle on switch</td>
-          </tr>
-          <tr>
-            <td><strong>Simultaneous MT (SMT)</strong></td>
-            <td>Intel Hyper-Threading</td>
-            <td>Issue instructions from <em>multiple threads simultaneously</em> to a superscalar's execution units each cycle</td>
-            <td>Superscalar CPUs with underutilized execution units</td>
-            <td>Threads compete for L1/L2 cache; complex scheduling logic</td>
-          </tr>
-          <tr>
-            <td><strong>Chip Multiprocessing (CMP)</strong></td>
-            <td>Multicore</td>
-            <td>Multiple independent cores on single chip, each handling separate threads. Cores may each use SMT or MT internally</td>
-            <td>Throughput workloads, server environments</td>
-            <td>Cannot hide per-core latencies across cores; each core limited to own threads</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- SMT detail -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒöÇ</span> SMT (Hyper-Threading) Detail</div>
-    <ul class="items">
-      <li>Combines <strong>wide superscalar issue</strong> with <strong>multiple thread contexts</strong></li>
-      <li>Single physical CPU appears as <strong>multiple logical CPUs</strong> to OS</li>
-      <li>On each cycle, selects instructions from any ready thread to fill issue slots</li>
-      <li>When threads are blocked (cache miss), other threads' instructions fill the pipeline</li>
-      <li>Physical resources shared: execution units, caches, TLB</li>
-    </ul>
-    <div class="tip"><span class="ico">Γ£ö</span><p>SMT improves throughput by ~20ΓÇô30% with minimal die area increase compared to adding a full core.</p></div>
-  </div>
-
-  <!-- SMT vs CMP comparison -->
-  <div class="card span-2">
-    <div class="card-title"><span class="icon">ΓÜû∩╕Å</span> SMT vs CMP Comparison <span class="lbl">Figures 17.7j &amp; 17.7k</span></div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead>
-          <tr><th>Feature</th><th>SMT (Simultaneous MT)</th><th>CMP (Chip Multiprocessor / Multicore)</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Physical structure</strong></td>
-            <td>One core with multiple thread contexts and shared execution units</td>
-            <td>Multiple independent cores on single chip</td>
-          </tr>
-          <tr>
-            <td><strong>Thread isolation</strong></td>
-            <td>Low ΓÇö threads share all execution resources</td>
-            <td>High ΓÇö each core has own pipeline, registers, L1/L2 cache</td>
-          </tr>
-          <tr>
-            <td><strong>Instruction-level parallelism</strong></td>
-            <td><span class="label label-green">Higher</span> ΓÇö can mix instructions from multiple threads</td>
-            <td><span class="label label-yellow">Lower</span> ΓÇö cannot hide latency across cores</td>
-          </tr>
-          <tr>
-            <td><strong>Latency hiding</strong></td>
-            <td>Excellent ΓÇö issues from other threads during stall</td>
-            <td>Limited ΓÇö only within-core multithreading</td>
-          </tr>
-          <tr>
-            <td><strong>Single-thread performance</strong></td>
-            <td>Moderate ΓÇö shared resources cause contention</td>
-            <td>Better ΓÇö dedicated per-core resources</td>
-          </tr>
-          <tr>
-            <td><strong>vs Superscalar</strong></td>
-            <td>Better ΓÇö fills issue slots from multiple threads</td>
-            <td>Better ΓÇö avoids horizontal losses of single-thread superscalar</td>
-          </tr>
-          <tr>
-            <td><strong>Scalability</strong></td>
-            <td>Limited by single-core resources</td>
-            <td>Scales by adding cores</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="note"><span class="ico">≡ƒôî</span><p>CMP with per-core multithreading (e.g., each core does SMT) combines the benefits of both approaches ΓÇö this is standard in modern processors.</p></div>
-  </div>
-
-</div><!-- /grid ┬º17.4 -->
-
-<!-- ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
-     ┬º17.5  CLUSTERS
-ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ -->
-<div class="section-label">┬º17.5 ΓÇö Clusters</div>
-<div class="grid grid-3">
-
-  <!-- Cluster definition -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒûº</span> Cluster Definition &amp; Motivations</div>
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">
-      A <strong><span class="tt" data-t="Group of independent networked computers cooperating as a single high-availability or HPC system">cluster</span></strong> is a group of interconnected complete computers (nodes) working together as a unified computing resource. Each node is an independent system with its own CPU(s), memory, and OS.
-    </p>
-    <ul class="items">
-      <li><strong>Availability:</strong> node failure ΓåÆ cluster continues (failover). Passive standby ΓåÆ active standby ΓåÆ mutual takeover</li>
-      <li><strong>Performance:</strong> distribute workload across nodes; parallel execution</li>
-      <li><strong>Scalability:</strong> add nodes incrementally without redesigning system</li>
-      <li><strong>Cost:</strong> commodity hardware (vs custom SMP) ΓÇö better price/performance</li>
-    </ul>
-    <div class="info"><span class="ico">Γä╣∩╕Å</span><p><strong>Failover:</strong> when a node fails, another takes over its workload. <strong>Failback:</strong> when repaired node resumes its original role.</p></div>
-  </div>
-
-  <!-- Cluster configurations -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒùä∩╕Å</span> Cluster Configurations</div>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <div class="mini-block">
-        <div class="title" style="color:var(--text-muted);">≡ƒÿ┤ Passive Standby</div>
-        <p style="font-size:12px;color:var(--text-muted);">One primary server handles all load; standby is idle. Heartbeat monitor detects failure. Simple but wastes resources. <em>Not really a cluster.</em></p>
-      </div>
-      <div class="mini-block">
-        <div class="title" style="color:var(--yellow);">≡ƒôñ Shared Nothing</div>
-        <p style="font-size:12px;color:var(--text-muted);">Nodes share no disks; each owns partitioned volumes. On failure, other node takes ownership of failed node's volumes. Simple and scalable.</p>
-      </div>
-      <div class="mini-block">
-        <div class="title" style="color:var(--green);">≡ƒÆ╛ Shared Disk</div>
-        <p style="font-size:12px;color:var(--text-muted);">All nodes access a common disk subsystem. Any node can serve any data. Requires distributed lock management. High availability.</p>
-      </div>
-      <div class="mini-block">
-        <div class="title" style="color:var(--accent);">≡ƒöù Active Cluster (Mutual Takeover)</div>
-        <p style="font-size:12px;color:var(--text-muted);">All nodes are active; they share workloads and cover for each other on failure. Data must be continuously replicated. Best availability + performance.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Blade servers -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒùé∩╕Å</span> Blade Servers</div>
-    <ul class="items">
-      <li>Self-contained server modules (<em>blades</em>) inserted into a <strong>blade enclosure/chassis</strong></li>
-      <li>Each blade has CPU(s), memory, local storage, NIC ΓÇö a complete server</li>
-      <li>Chassis provides <strong>shared power, cooling, networking backplane</strong></li>
-      <li>Very high density ΓÇö hundreds of servers in a rack</li>
-      <li>Interconnected via <strong>100GbE / 40GbE Ethernet switches</strong></li>
-      <li>Common in modern cloud data centers</li>
-    </ul>
-    <div class="tip"><span class="ico">Γ£ö</span><p>Blade servers reduce cabling, power, cooling overhead vs. rack-mounted 1U servers while providing similar or higher compute density.</p></div>
-  </div>
-
-  <!-- Cluster OS design -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒûÑ∩╕Å</span> Cluster OS / Middleware Design Issues</div>
-    <ul class="items">
-      <li><strong>Single system image:</strong> user sees one system ΓÇö single login, single file tree, single job manager</li>
-      <li><strong>Single entry point</strong> ΓÇö user logs onto cluster, not individual nodes</li>
-      <li><strong>Single file hierarchy</strong> ΓÇö shared root directory across nodes</li>
-      <li><strong>Single control point</strong> ΓÇö management console for entire cluster</li>
-      <li><strong>Single virtual network</strong> ΓÇö any node reaches any other via virtual network</li>
-      <li><strong>Single memory space</strong> ΓÇö distributed shared memory for variable sharing</li>
-      <li><strong>Single job management</strong> ΓÇö scheduler submits jobs cluster-wide</li>
-    </ul>
-  </div>
-
-  <!-- Cluster parallel programming -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒÆ╗</span> Cluster Parallel Programming Models</div>
-    <ul class="items">
-      <li><strong>Parallelizing compiler:</strong> auto-detects parallel sections; splits to nodes at compile time. Difficult to implement; performance varies</li>
-      <li><strong>Parallelized application:</strong> programmer explicitly uses message passing (MPI/PVM) between cluster nodes. High burden on programmer but best control</li>
-      <li><strong>Parametric computing:</strong> run same algorithm many times with different inputs; trivially parallelized across nodes</li>
-      <li><strong>Message passing (MPI):</strong> standard communication API between nodes</li>
-    </ul>
-  </div>
-
-  <!-- SMP vs Clusters comparison -->
-  <div class="card span-3">
-    <div class="card-title"><span class="icon">ΓÜû∩╕Å</span> Clusters vs. SMP ΓÇö Comparison <span class="lbl">Table</span></div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead>
-          <tr><th>Feature</th><th>SMP</th><th>Cluster</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Architecture</strong></td>
-            <td>Multiple CPUs sharing one physical memory on one board/bus</td>
-            <td>Multiple complete independent computers connected by high-speed network</td>
-          </tr>
-          <tr>
-            <td><strong>Communication</strong></td>
-            <td>Shared memory reads/writes ΓÇö very fast (&lt;ns)</td>
-            <td>Message passing over network ΓÇö higher latency (┬╡sΓÇôms)</td>
-          </tr>
-          <tr>
-            <td><strong>OS management</strong></td>
-            <td><span class="label label-green">Simple</span> ΓÇö single OS controls all CPUs transparently</td>
-            <td><span class="label label-yellow">Complex</span> ΓÇö each node runs own OS; middleware needed for single-system image</td>
-          </tr>
-          <tr>
-            <td><strong>Programming model</strong></td>
-            <td>Standard shared-memory programming (pthreads, OpenMP)</td>
-            <td>Message-passing model (MPI); requires significant code changes</td>
-          </tr>
-          <tr>
-            <td><strong>Scalability</strong></td>
-            <td><span class="label label-yellow">Limited</span> ΓÇö memory bus/interconnect becomes bottleneck; typically Γëñ 64 CPUs</td>
-            <td><span class="label label-green">High</span> ΓÇö can scale to thousands of nodes by adding hardware</td>
-          </tr>
-          <tr>
-            <td><strong>Availability</strong></td>
-            <td>Moderate ΓÇö single system failure brings down SMP; CPUs fail gracefully</td>
-            <td><span class="label label-green">High</span> ΓÇö node failure ΓåÆ failover; rest of cluster continues</td>
-          </tr>
-          <tr>
-            <td><strong>Cost</strong></td>
-            <td>High for large configurations (custom bus/switches)</td>
-            <td>Lower ΓÇö uses commodity off-the-shelf (COTS) hardware and networking</td>
-          </tr>
-          <tr>
-            <td><strong>Best for</strong></td>
-            <td>Tightly coupled workloads with fine-grained sharing; low latency</td>
-            <td>Loosely coupled, embarrassingly parallel workloads; high-availability services</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-</div><!-- /grid ┬º17.5 -->
-
-<!-- ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
-     ┬º17.6  NUMA
-ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ -->
-<div class="section-label">┬º17.6 ΓÇö Nonuniform Memory Access (NUMA)</div>
-<div class="grid grid-2">
-
-  <!-- NUMA motivation and organization -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒôè</span> NUMA Motivation &amp; Organization</div>
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:8px;">
-      NUMA bridges the gap between SMPs (limited <span class="tt" data-t="Ability of a parallel system to maintain efficiency as processor count increases">scalability</span>) and clusters (high communication overhead). Each node is effectively a mini-SMP with local memory, connected via high-speed interconnect to other nodes.
-    </p>
-    <hr class="rule"/>
-    <div class="mini-block" style="margin-bottom:8px;">
-      <div class="title">CC-NUMA (Cache-Coherent NUMA)</div>
-      <ul class="items" style="font-size:12px;">
-        <li>Most practical NUMA variant ΓÇö adds hardware cache coherence across nodes</li>
-        <li>Each node: multiple processors + L1/L2 caches + local main memory + <strong>directory</strong></li>
-        <li>Nodes interconnected by switching fabric (ring, crossbar, mesh)</li>
-        <li>Single <strong>system-wide address space</strong> ΓÇö transparent to software</li>
-        <li>Local memory access: fast; remote memory access: slower (via interconnect)</li>
-        <li><strong>Directory</strong> in each node tracks which caches hold each memory line</li>
-      </ul>
-    </div>
-    <div class="formula"><span class="comment">// CC-NUMA node structure</span>
-Node 1:  [CPU 1-1] [CPU 1-m]  ΓåÉ L1/L2 caches
-         [Main Memory 1]       ΓåÉ Local memory
-         [Directory]           ΓåÉ Coherence info
-         [I/O subsystem]
-         Γåò Interconnect network
-Node 2:  [CPU 2-1] ... [Main Memory 2]
-...
-Node N:  [CPU N-1] ... [Main Memory N]</div>
-  </div>
-
-  <!-- NUMA pros and cons -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒôï</span> NUMA Pros, Cons &amp; Comparison</div>
-    <div class="mini-block" style="margin-bottom:8px;">
-      <div class="title" style="color:var(--green);">Γ£à NUMA Advantages</div>
-      <ul class="items" style="font-size:12px;">
-        <li>Scalable beyond SMP limits ΓÇö more nodes = more total memory bandwidth</li>
-        <li>Effective performance at <strong>higher parallelism</strong> than SMP</li>
-        <li>Transparent to software ΓÇö no major code changes vs SMP</li>
-        <li>Bus traffic per node remains manageable (local accesses are local)</li>
-        <li>L1/L2 caches minimize remote accesses; OS can allocate local memory for locality</li>
-      </ul>
-    </div>
-    <div class="mini-block" style="margin-bottom:8px;">
-      <div class="title" style="color:var(--red);">Γ¥î NUMA Disadvantages</div>
-      <ul class="items" style="font-size:12px;">
-        <li>Performance degrades if many accesses go to <strong>remote nodes</strong></li>
-        <li>Directory overhead adds complexity and memory cost</li>
-        <li>Inter-node latency is non-deterministic</li>
-        <li>OS must be NUMA-aware to allocate memory locally (first-touch policy)</li>
-      </ul>
-    </div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead><tr><th>Property</th><th>UMA (SMP)</th><th>CC-NUMA</th><th>Cluster</th></tr></thead>
-        <tbody>
-          <tr><td>Memory model</td><td>Shared, uniform</td><td>Shared, non-uniform</td><td>Distributed</td></tr>
-          <tr><td>Max nodes</td><td>~64 CPUs</td><td>Hundreds</td><td>Thousands</td></tr>
-          <tr><td>Communication</td><td>Shared mem</td><td>Shared mem (NUMA)</td><td>Message passing</td></tr>
-          <tr><td>Coherence</td><td>Snoopy (MESI)</td><td>Directory + snoopy</td><td>N/A</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-</div><!-- /grid ┬º17.6 -->
-
-<!-- ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
-     ┬º17.7  CLOUD COMPUTING
-ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ -->
-<div class="section-label">┬º17.7 ΓÇö Cloud Computing</div>
-<div class="grid grid-3">
-
-  <!-- Cloud essential characteristics -->
-  <div class="card">
-    <div class="card-title"><span class="icon">Γÿü∩╕Å</span> Cloud ΓÇö Essential Characteristics (NIST)</div>
-    <ul class="items">
-      <li><strong>Broad network access:</strong> Capabilities available over the network; accessible by heterogeneous thin/thick clients (phones, laptops, tablets)</li>
-      <li><strong>Rapid elasticity:</strong> Resources expand/contract on demand; appear unlimited to user</li>
-      <li><strong>Measured service:</strong> Automatic resource control/optimization via metering; pay-per-use</li>
-      <li><strong>On-demand self-service:</strong> Consumer provisions compute/storage automatically without human interaction with provider</li>
-      <li><strong>Resource pooling:</strong> Multi-tenant model; resources dynamically assigned; location independence</li>
-    </ul>
-    <div class="info"><span class="ico">Γä╣∩╕Å</span><p>Definition per NIST SP 800-145. Cloud is NOT just outsourcing ΓÇö it requires all five characteristics.</p></div>
-  </div>
-
-  <!-- Service models -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒÅù∩╕Å</span> Cloud Service Models (IaaS / PaaS / SaaS) <span class="lbl">NIST</span></div>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <div class="mini-block">
-        <div class="title" style="color:var(--red);">≡ƒöº IaaS ΓÇö Infrastructure as a Service</div>
-        <ul class="items" style="font-size:12px;">
-          <li>Consumer accesses raw compute, storage, networking infrastructure</li>
-          <li>Consumer controls OS, middleware, applications</li>
-          <li>Provider manages physical hardware, virtualization layer</li>
-          <li>Examples: AWS EC2, Azure VMs, Google Compute Engine</li>
-        </ul>
-      </div>
-      <div class="mini-block">
-        <div class="title" style="color:var(--yellow);">ΓÜÖ∩╕Å PaaS ΓÇö Platform as a Service</div>
-        <ul class="items" style="font-size:12px;">
-          <li>Consumer deploys applications on provider-managed platform</li>
-          <li>Consumer controls apps and data, not OS or infrastructure</li>
-          <li>Provider manages runtime, middleware, OS, hardware</li>
-          <li>Examples: Google App Engine, Heroku, Azure App Service</li>
-        </ul>
-      </div>
-      <div class="mini-block">
-        <div class="title" style="color:var(--green);">≡ƒô▒ SaaS ΓÇö Software as a Service</div>
-        <ul class="items" style="font-size:12px;">
-          <li>Consumer uses applications running on cloud infrastructure</li>
-          <li>Consumer has minimal control ΓÇö only user-specific config</li>
-          <li>Provider manages everything including application</li>
-          <li>Examples: Gmail, Salesforce, Office 365, Dropbox</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- Deployment models -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒîÉ</span> Cloud Deployment Models</div>
-    <div style="display:flex;flex-direction:column;gap:8px;">
-      <div class="mini-block">
-        <div class="title" style="color:var(--accent);">≡ƒîì Public Cloud</div>
-        <p style="font-size:12px;color:var(--text-muted);">Infrastructure available to the general public; owned by cloud provider. <strong>Advantage:</strong> low cost, no management overhead. <strong>Concern:</strong> security, limited control over data location.</p>
-      </div>
-      <div class="mini-block">
-        <div class="title" style="color:var(--purple);">≡ƒöÆ Private Cloud</div>
-        <p style="font-size:12px;color:var(--text-muted);">Infrastructure operated exclusively for a single organization. Can be on-premise or hosted. Better security and control; higher cost than public cloud.</p>
-      </div>
-      <div class="mini-block">
-        <div class="title" style="color:var(--cyan);">≡ƒÅó Community Cloud</div>
-        <p style="font-size:12px;color:var(--text-muted);">Shared by several organizations with common concerns (mission, security, compliance). Shared cost with higher control than public cloud.</p>
-      </div>
-      <div class="mini-block">
-        <div class="title" style="color:var(--orange);">≡ƒöÇ Hybrid Cloud</div>
-        <p style="font-size:12px;color:var(--text-muted);">Combination of ΓëÑ2 deployment models (public + private). Allows "cloud bursting" ΓÇö run routine workloads on private, peak loads on public. Most flexible but complex.</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Virtualization in cloud -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒûÑ∩╕Å</span> Virtualization's Role in Cloud</div>
-    <ul class="items">
-      <li><strong>Resource pooling:</strong> Hypervisor creates multiple VMs on single physical server; each VM is isolated and independently managed</li>
-      <li><strong>Rapid elasticity:</strong> VMs can be created, cloned, migrated, or deleted in seconds</li>
-      <li><strong>Multi-tenancy:</strong> Multiple customers' VMs co-exist on shared hardware with isolation</li>
-      <li><strong>Live migration:</strong> Running VM moved to different physical host without downtime</li>
-      <li><strong>Blade servers</strong> are common physical substrate ΓÇö high density + shared infrastructure (power, cooling, networking)</li>
-    </ul>
-    <div class="tip"><span class="ico">Γ£ö</span><p>Without virtualization, cloud computing's on-demand provisioning and resource pooling would not be practical at scale.</p></div>
-  </div>
-
-  <!-- Cloud reference architecture -->
-  <div class="card span-2">
-    <div class="card-title"><span class="icon">≡ƒÅ¢∩╕Å</span> NIST Cloud Reference Architecture ΓÇö Five Actors</div>
-    <div class="tbl-wrap">
-      <table class="tbl">
-        <thead>
-          <tr><th>Actor</th><th>Role</th><th>Key Responsibilities</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Cloud Consumer</strong></td>
-            <td>Uses cloud services</td>
-            <td>Maintains business relationship with CP; uses SaaS/PaaS/IaaS for business needs</td>
-          </tr>
-          <tr>
-            <td><strong>Cloud Provider (CP)</strong></td>
-            <td>Delivers cloud services</td>
-            <td>Manages infrastructure, platforms, or applications; deploys &amp; configures service for consumers. Provides SaaS, PaaS, or IaaS with appropriate storage/processing</td>
-          </tr>
-          <tr>
-            <td><strong>Cloud Auditor</strong></td>
-            <td>Independent assessment</td>
-            <td>Conducts independent assessments of cloud services ΓÇö security, privacy, performance audits</td>
-          </tr>
-          <tr>
-            <td><strong>Cloud Broker</strong></td>
-            <td>Intermediary</td>
-            <td>Manages relationships between consumers and providers; may aggregate/enhance services from multiple CPs</td>
-          </tr>
-          <tr>
-            <td><strong>Cloud Carrier</strong></td>
-            <td>Network intermediary</td>
-            <td>Provides network/telecom connectivity between consumers and providers (ISPs, network providers)</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="note"><span class="ico">≡ƒôî</span><p>NIST SP 500-292 reference architecture focuses on "what" cloud services provide ΓÇö not a design blueprint but a framework for understanding and comparing services.</p></div>
-  </div>
-
-</div><!-- /grid ┬º17.7 -->
-
-<!-- ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
-     QUICK REFERENCE SUMMARY
-ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ -->
-<div class="section-label">Quick Reference ΓÇö Key Formulas &amp; Summaries</div>
-<div class="grid grid-3">
-
-  <!-- Amdahl quick ref -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒôÉ</span> Amdahl's Law ΓÇö Quick Reference</div>
-    <div class="formula"><span class="comment">// Maximum speedup with N processors</span>
-Speedup(N) =        1
-             ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ
-             (1-f) + (f/N)
-
-<span class="comment">// As N ΓåÆ Γê₧ (infinite processors):</span>
-Max Speedup = 1 / (1 - f)
-
-<span class="comment">// Example: f=0.90 (90% parallel)</span>
-N=4:  S Γëê 3.08├ù
-N=8:  S Γëê 4.71├ù
-N=Γê₧:  S Γëê 10.0├ù</div>
-    <div class="warn"><span class="ico">ΓÜá∩╕Å</span><p>The sequential fraction <code>(1ΓêÆf)</code> is the fundamental bottleneck. Even 1% sequential code limits max speedup to 100├ù.</p></div>
-  </div>
-
-  <!-- MESI quick ref -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒùé∩╕Å</span> MESI Quick-Reference Card</div>
-    <div style="display:flex;flex-direction:column;gap:7px;">
-      <div style="display:flex;gap:6px;align-items:center;">
-        <span class="state-badge state-M"><span class="state-dot"></span>Modified</span>
-        <span style="font-size:12px;color:var(--text-muted);">Dirty ┬╖ Only this cache ┬╖ Write-back needed on evict/snoop</span>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <span class="state-badge state-E"><span class="state-dot"></span>Exclusive</span>
-        <span style="font-size:12px;color:var(--text-muted);">Clean ┬╖ Only this cache ┬╖ Can write locally ΓåÆ M (no bus)</span>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <span class="state-badge state-S"><span class="state-dot"></span>Shared</span>
-        <span style="font-size:12px;color:var(--text-muted);">Clean ┬╖ Multiple caches ┬╖ Write requires BusUpgr/BusRdX</span>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center;">
-        <span class="state-badge state-I"><span class="state-dot"></span>Invalid</span>
-        <span style="font-size:12px;color:var(--text-muted);">Not valid ┬╖ Any access ΓåÆ cache miss ΓåÆ bus transaction</span>
-      </div>
-    </div>
-    <hr class="rule"/>
-    <dl class="def">
-      <dt>BusRd</dt><dd>Read request (no modify intent)</dd>
-      <dt>BusRdX</dt><dd>Read exclusive / RWITM (read + invalidate all)</dd>
-      <dt>BusUpgr</dt><dd>Upgrade from S to E (invalidate without re-fetch)</dd>
-    </dl>
-  </div>
-
-  <!-- Key terms glossary -->
-  <div class="card">
-    <div class="card-title"><span class="icon">≡ƒôû</span> Key Terms Glossary</div>
-    <dl class="def">
-      <dt>SMP</dt><dd>Symmetric Multiprocessor ΓÇö shared-memory, equal-access MIMD</dd>
-      <dt>UMA</dt><dd>Uniform Memory Access ΓÇö equal latency for all CPUs</dd>
-      <dt>NUMA</dt><dd>Non-Uniform Memory Access ΓÇö local &lt; remote latency</dd>
-      <dt>CC-NUMA</dt><dd>Cache-Coherent NUMA ΓÇö directory-based coherence</dd>
-      <dt>SMT</dt><dd>Simultaneous Multithreading ΓÇö issue from multiple threads/cycle</dd>
-      <dt>CMP</dt><dd>Chip Multiprocessing ΓÇö multiple cores on one die</dd>
-      <dt>MESI</dt><dd>Modified/Exclusive/Shared/Invalid cache coherence protocol</dd>
-      <dt>IaaS</dt><dd>Infrastructure as a Service (raw compute/storage)</dd>
-      <dt>PaaS</dt><dd>Platform as a Service (runtime + middleware)</dd>
-      <dt>SaaS</dt><dd>Software as a Service (full application)</dd>
-      <dt>RWITM</dt><dd>Read-With-Intent-To-Modify (= BusRdX)</dd>
-      <dt>MPP</dt><dd>Massively Parallel Processor ΓÇö large-scale distributed</dd>
-    </dl>
-  </div>
-
-</div><!-- /grid quick-ref -->
-
-<!-- ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ
-     FOOTER
-ΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉΓòÉ -->
-<footer>
-  <a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">ΓåÉ Back to Menu</a>
-  <p style="margin-top:8px;">Computer Organization &amp; Architecture 10e ┬╖ Stallings ┬╖ Chapter 17 ΓÇö Parallel Processing</p>
-  <p style="margin-top:4px;color:var(--text-dim);">┬º17.1 Flynn Taxonomy ┬╖ ┬º17.2 SMP ┬╖ ┬º17.3 MESI Protocol ┬╖ ┬º17.4 Multithreading/CMP ┬╖ ┬º17.5 Clusters ┬╖ ┬º17.6 NUMA ┬╖ ┬º17.7 Cloud Computing</p>
-</footer>
-
-
-</div><!-- /#legacy-design -->
 <script>
-function toggleDesign(){
-  var nd=document.getElementById('new-design');
-  var ld=document.getElementById('legacy-design');
-  var lbl=document.getElementById('toggle-label');
-  if(nd.style.display==='none'){nd.style.display='';ld.style.display='none';lbl.textContent='Switch to Legacy Design';}
-  else{nd.style.display='none';ld.style.display='';lbl.textContent='Switch to New Design';}
-}
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
 </script>
 </body>
 </html>

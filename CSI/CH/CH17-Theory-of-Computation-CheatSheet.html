@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH17 &ndash; Theory of Computation</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'&rsaquo;';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* -- Keyword Tooltips -- */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}
+</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- === HEADER === -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 17</h1>
+    <h2>Theory of Computation &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition &nbsp;|&nbsp; Forouzan</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">&sect;17.1 Languages &amp; Grammars</span>
+      <span class="toc-item">&sect;17.2 Finite Automata</span>
+      <span class="toc-item">&sect;17.3 Pushdown Automata</span>
+      <span class="toc-item">&sect;17.4 Turing Machines</span>
+      <span class="toc-item">&sect;17.5 Decidability</span>
+      <span class="toc-item">&sect;17.6 Complexity Classes</span>
+      <span class="toc-item">&sect;17.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e &middot; CH17</div>
+  </div>
+</div>
+
+<!-- === ROW 1 === -->
+<div class="grid">
+
+  <!-- Card 1: Languages & Grammars -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Languages &amp; Grammars</h3></div>
+    <div class="card-body">
+      <div class="rule">A language is a set of strings over an alphabet; a grammar defines which strings belong to the language.</div>
+
+      <div class="label">Core Definitions</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="A finite non-empty set of symbols, e.g., {0,1} or {a,b,c}">Alphabet</span> (&Sigma;):</strong> finite set of symbols</li>
+        <li><strong>String:</strong> finite sequence of symbols from &Sigma;; empty string = <code>&epsilon;</code></li>
+        <li><strong>Language (L):</strong> any subset of &Sigma;* (all possible strings over &Sigma;)</li>
+        <li><strong>&Sigma;*:</strong> Kleene closure &mdash; all strings including <code>&epsilon;</code></li>
+        <li><strong>Concatenation:</strong> <code>xy</code> joins string <code>x</code> and string <code>y</code></li>
+      </ul>
+
+      <div class="label">Chomsky Hierarchy</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Type</th><th>Grammar</th><th>Automaton</th></tr>
+        <tr><td style="color:var(--accent3);">Type 0</td><td>Unrestricted</td><td>Turing Machine</td></tr>
+        <tr><td style="color:var(--accent5);">Type 1</td><td>Context-Sensitive</td><td>Linear-Bounded</td></tr>
+        <tr><td style="color:var(--accent4);">Type 2</td><td>Context-Free</td><td>Pushdown Automaton</td></tr>
+        <tr><td style="color:var(--accent2);">Type 3</td><td>Regular</td><td>Finite Automaton</td></tr>
+      </table>
+
+      <div class="info">
+        <div class="i-title">Hierarchy Inclusion</div>
+        Regular &sub; Context-Free &sub; Context-Sensitive &sub; Recursively Enumerable. Each class is a strict subset of the one above it.
+      </div>
+
+      <div class="label">Production Rules</div>
+      <p>A grammar <strong>G = (V, T, S, P)</strong> where V = variables, T = terminals, S = start symbol, P = productions.</p>
+      <div class="formula">Type 3 (Regular): A &rarr; aB  or  A &rarr; a  (right-linear)
+Type 2 (CFG):    A &rarr; &alpha;  (A single variable; &alpha; any string)
+Type 1 (CSG):    &alpha;A&beta; &rarr; &alpha;&gamma;&beta;  (|&gamma;| &ge; 1)
+Type 0:          &alpha; &rarr; &beta;  (no restriction)</div>
+
+      <div class="label">String Operations</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Operation</th><th>Notation</th><th>Example (&Sigma;={a,b})</th></tr>
+        <tr><td>Length</td><td>|w|</td><td>|abb| = 3</td></tr>
+        <tr><td>Concatenation</td><td>xy</td><td>ab &middot; ba = abba</td></tr>
+        <tr><td>Reversal</td><td>w<sup>R</sup></td><td>(abc)<sup>R</sup> = cba</td></tr>
+        <tr><td>Power</td><td>w<sup>k</sup></td><td>a<sup>3</sup> = aaa</td></tr>
+        <tr><td>Prefix / Suffix</td><td>x is prefix if y, xy=w</td><td>ab is prefix of abba</td></tr>
+      </table>
+
+      <div class="tip">
+        <div class="t-title">Derivation</div>
+        A string <em>w</em> is in L(G) if S =&gt;* w via a sequence of production applications. <code>=&gt;*</code> denotes zero-or-more steps. Leftmost derivation always expands the leftmost variable first.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Finite Automata -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Finite Automata &amp; Regular Languages</h3></div>
+    <div class="card-body">
+      <div class="rule">A DFA accepts exactly the class of regular languages; every NFA has an equivalent DFA.</div>
+
+      <div class="label">DFA Formal Definition</div>
+      <p>A <span class="tt" data-t="Deterministic Finite Automaton: for each state and input symbol there is exactly one next state">DFA</span> is a 5-tuple <strong>M = (Q, &Sigma;, &delta;, q<sub>0</sub>, F)</strong>:</p>
+      <ul class="items">
+        <li><strong>Q:</strong> finite set of states</li>
+        <li><strong>&Sigma;:</strong> input alphabet</li>
+        <li><strong>&delta;: Q &times; &Sigma; &rarr; Q:</strong> transition function</li>
+        <li><strong>q<sub>0</sub> &isin; Q:</strong> start (initial) state</li>
+        <li><strong>F &sube; Q:</strong> set of accept (final) states</li>
+      </ul>
+
+      <div class="label">Acceptance Criterion</div>
+      <div class="formula">M accepts w = a1 a2 ... an  iff
+  r0=q0, ri+1 = &delta;(ri, ai+1),  rn &isin; F</div>
+
+      <div class="label">NFA vs DFA</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Property</th><th>DFA</th><th>NFA</th></tr>
+        <tr><td>Transitions per input</td><td>Exactly 1</td><td>0, 1, or many</td></tr>
+        <tr><td>&epsilon;-transitions</td><td>No</td><td>Yes</td></tr>
+        <tr><td>Expressive power</td><td>Regular</td><td>Regular</td></tr>
+        <tr><td>State count (worst)</td><td>2<sup>n</sup></td><td>n</td></tr>
+      </table>
+
+      <div class="tip">
+        <div class="t-title">NFA to DFA (Subset Construction)</div>
+        Each DFA state = a <em>set</em> of NFA states. Worst case: exponential blowup, but both recognise the same class.
+      </div>
+
+      <div class="label">Regular Expressions</div>
+      <ul class="items">
+        <li><code>&empty;</code> = empty language; <code>&epsilon;</code> = empty string</li>
+        <li><code>a</code> = language {a} for each <em>a</em> &isin; &Sigma;</li>
+        <li><code>R<sub>1</sub> | R<sub>2</sub></code> = union; <code>R<sub>1</sub>R<sub>2</sub></code> = concatenation</li>
+        <li><code>R*</code> = Kleene star (zero or more repetitions)</li>
+      </ul>
+
+      <div class="note">
+        <div class="n-title">Pumping Lemma</div>
+        For any regular language L, there exists p (pumping length) such that any string w &isin; L with |w| &ge; p can be split w = xyz with |xy| &le; p, |y| &ge; 1, and xy<sup>i</sup>z &isin; L for all i &ge; 0. Used to prove non-regularity.
+      </div>
+
+      <div class="label">DFA Minimisation (Myhill-Nerode)</div>
+      <p>Two strings x, y are <em>distinguishable</em> w.r.t. L if &exist;z s.t. exactly one of xz, yz is in L. The minimum DFA for L has one state per equivalence class of indistinguishable strings.</p>
+      <ul class="items">
+        <li>Table-filling algorithm marks distinguishable pairs bottom-up</li>
+        <li>Merge all pairs of unmarked (equivalent) states</li>
+        <li>Result: unique (up to isomorphism) minimal DFA</li>
+      </ul>
+
+      <div class="info">
+        <div class="i-title">Example: DFA for strings ending in "ab"</div>
+        States: q0 (start), q1 (seen 'a'), q2 (seen 'ab', accept).
+        &delta;(q0,a)=q1, &delta;(q0,b)=q0, &delta;(q1,a)=q1, &delta;(q1,b)=q2, &delta;(q2,a)=q1, &delta;(q2,b)=q0.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Pushdown Automata -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Pushdown Automata &amp; CFGs</h3></div>
+    <div class="card-body">
+      <div class="rule">A PDA is a finite automaton augmented with an unbounded stack; it recognises exactly the context-free languages.</div>
+
+      <div class="label">PDA Formal Definition</div>
+      <p>A <span class="tt" data-t="Pushdown Automaton: FA + stack; uses top-of-stack symbol in transition decisions">PDA</span> is a 6-tuple <strong>M = (Q, &Sigma;, &Gamma;, &delta;, q<sub>0</sub>, F)</strong>:</p>
+      <ul class="items">
+        <li><strong>&Gamma;:</strong> stack alphabet</li>
+        <li><strong>&delta;: Q &times; &Sigma;<sub>&epsilon;</sub> &times; &Gamma;<sub>&epsilon;</sub> &rarr; P(Q &times; &Gamma;<sub>&epsilon;</sub>):</strong> transition relation</li>
+        <li>Reads input symbol, pops stack symbol, pushes new string, transitions state</li>
+      </ul>
+
+      <div class="label">Context-Free Grammar (CFG)</div>
+      <p>G = (V, T, S, P) where every production has form <strong>A &rarr; &alpha;</strong> with A &isin; V and &alpha; &isin; (V &cup; T)*.</p>
+      <div class="formula">Classic CFG: balanced parentheses
+  S &rarr; SS | (S) | &epsilon;
+
+Palindromes over {a,b}:
+  S &rarr; aSa | bSb | a | b | &epsilon;</div>
+
+      <div class="label">Parse Trees</div>
+      <ul class="items">
+        <li>Root = start symbol; leaves = terminals; interior = variables</li>
+        <li>Yield of tree = concatenation of leaves (left to right)</li>
+        <li><strong>Ambiguity:</strong> a grammar is ambiguous if some string has two or more distinct parse trees</li>
+      </ul>
+
+      <div class="warn">
+        <div class="w-title">Ambiguity</div>
+        Some CFLs are <em>inherently ambiguous</em> &mdash; no unambiguous CFG exists for them. Ambiguity causes problems in compilers (expression evaluation order).
+      </div>
+
+      <div class="label">Closure Properties of CFLs</div>
+      <ul class="items">
+        <li>Closed under: union, concatenation, Kleene star, reversal</li>
+        <li>NOT closed under: intersection, complement</li>
+      </ul>
+
+      <div class="tip">
+        <div class="t-title">CYK Algorithm</div>
+        Cocke-Younger-Kasami: O(n<sup>3</sup>) dynamic programming algorithm to decide if w &isin; L(G) for any CFG G in Chomsky Normal Form.
+      </div>
+
+      <div class="label">Normal Forms for CFGs</div>
+      <ul class="items">
+        <li><strong>Chomsky Normal Form (CNF):</strong> every production is A &rarr; BC or A &rarr; a. Any CFG can be converted to CNF; required for CYK.</li>
+        <li><strong>Greibach Normal Form (GNF):</strong> every production is A &rarr; a&alpha; where a is a terminal. Useful for constructing PDAs; guarantees each step consumes one input symbol.</li>
+      </ul>
+
+      <div class="note">
+        <div class="n-title">CFL Pumping Lemma</div>
+        For any CFL L, &exist;p s.t. any w &isin; L with |w| &ge; p can be split w = uvxyz with |vxy| &le; p, |vy| &ge; 1, and uv<sup>i</sup>xy<sup>i</sup>z &isin; L for all i &ge; 0. Proves languages like {a<sup>n</sup>b<sup>n</sup>c<sup>n</sup>} are not context-free.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- === ROW 2 === -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Turing Machines -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Turing Machines</h3></div>
+    <div class="card-body">
+      <div class="rule">A Turing Machine is the most powerful computational model; defines the boundary of what is algorithmically solvable.</div>
+
+      <div class="label">Formal Definition</div>
+      <p>A <span class="tt" data-t="Turing Machine: infinite tape + read/write head + finite control; models arbitrary computation">TM</span> is a 7-tuple <strong>M = (Q, &Sigma;, &Gamma;, &delta;, q<sub>0</sub>, q<sub>acc</sub>, q<sub>rej</sub>)</strong>:</p>
+      <ul class="items">
+        <li><strong>Q:</strong> finite set of states</li>
+        <li><strong>&Sigma;:</strong> input alphabet (blank symbol <code>_</code> &notin; &Sigma;)</li>
+        <li><strong>&Gamma; &supe; &Sigma;:</strong> tape alphabet (includes blank)</li>
+        <li><strong>&delta;: Q &times; &Gamma; &rarr; Q &times; &Gamma; &times; {L, R}:</strong> transition function</li>
+        <li><strong>q<sub>0</sub>:</strong> start state; <strong>q<sub>acc</sub>:</strong> accept; <strong>q<sub>rej</sub>:</strong> reject</li>
+      </ul>
+
+      <div class="label">Configuration &amp; Computation</div>
+      <div class="formula">Configuration: (q, tape_contents, head_position)
+  Written as: uqv  where u = left of head,
+              q = current state, v = right of head
+
+Yields: C1 |- C2  (single step)
+Accept: C0 |-* Cacc  (any number of steps)</div>
+
+      <div class="label">Halting &amp; Behaviour</div>
+      <ul class="items">
+        <li><strong>Accept:</strong> enters q<sub>acc</sub> &mdash; computation terminates, input accepted</li>
+        <li><strong>Reject:</strong> enters q<sub>rej</sub> &mdash; computation terminates, input rejected</li>
+        <li><strong>Loop:</strong> computation never terminates (infinite loop)</li>
+      </ul>
+
+      <div class="info">
+        <div class="i-title">Church-Turing Thesis</div>
+        Every effectively computable function is computable by a Turing Machine. This is a thesis, not a theorem &mdash; it cannot be formally proved, but no counterexample has ever been found.
+      </div>
+
+      <div class="label">TM Variants (all equivalent)</div>
+      <table class="tbl">
+        <tr><th>Variant</th><th>Description</th></tr>
+        <tr><td>Multi-tape TM</td><td>k independent tapes; simulated by 1-tape TM with O(t<sup>2</sup>) overhead</td></tr>
+        <tr><td>Non-deterministic TM</td><td>Multiple transitions allowed; accepts if any branch accepts</td></tr>
+        <tr><td>Enumerator</td><td>Prints (enumerates) all strings in a language</td></tr>
+        <tr><td>Oracle TM</td><td>Has access to a black-box oracle for some language</td></tr>
+      </table>
+
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">Recognisers vs Deciders</div>
+        A TM <em>recognises</em> L if it accepts all w &isin; L (may loop on w &notin; L). A TM <em>decides</em> L if it always halts and accepts iff w &isin; L.
+      </div>
+
+      <div class="label">Universal Turing Machine (UTM)</div>
+      <p>A single TM U that, given encoding <code>&lt;M, w&gt;</code>, simulates M on w. The UTM proves that a stored-program computer is theoretically realisable; U is the conceptual ancestor of modern CPUs.</p>
+      <div class="formula">U(&lt;M, w&gt;) = M(w)
+  Accepts  iff M accepts w
+  Rejects  iff M rejects w
+  Loops    iff M loops on w</div>
+
+      <div class="tip">
+        <div class="t-title">Encoding TMs</div>
+        TMs can be encoded as binary strings (&lt;M&gt;). There are countably many TMs but uncountably many languages, so most languages have no TM &mdash; most languages are undecidable.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Decidability -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Decidability</h3></div>
+    <div class="card-body">
+      <div class="rule">The Halting Problem is undecidable: no TM can determine for all (M, w) pairs whether M halts on w.</div>
+
+      <div class="label">Language Classes</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Class</th><th>Also Called</th><th>Description</th></tr>
+        <tr><td style="color:var(--accent2);">Decidable</td><td>Recursive</td><td>TM always halts with accept or reject</td></tr>
+        <tr><td style="color:var(--accent);">Recognisable</td><td>R.E. / &Sigma;<sub>1</sub></td><td>TM accepts members; may loop on non-members</td></tr>
+        <tr><td style="color:var(--accent3);">Co-R.E.</td><td>&Pi;<sub>1</sub></td><td>Complement is recognisable</td></tr>
+        <tr><td style="color:var(--text-muted);">Undecidable</td><td>&mdash;</td><td>No TM decides the language</td></tr>
+      </table>
+
+      <div class="label">The Halting Problem (HP)</div>
+      <p><strong>A<sub>TM</sub> = { &lt;M, w&gt; | M is a TM and M accepts w }</strong></p>
+      <div class="formula">Proof by diagonalisation (Turing, 1936):
+  Assume decider H exists for A_TM.
+  Build D: on input &lt;M&gt;:
+    run H on &lt;M, &lt;M&gt;&gt;
+    if H accepts   -&gt; D REJECTS
+    if H rejects   -&gt; D ACCEPTS
+  Run D on &lt;D&gt;:
+    D accepts &lt;D&gt; iff D rejects &lt;D&gt;  -- contradiction!</div>
+
+      <div class="warn">
+        <div class="w-title">Undecidable Problems</div>
+        Halting Problem, emptiness of TM language, equivalence of two TMs, Post Correspondence Problem (PCP), 10th Hilbert Problem. None can be decided by any algorithm.
+      </div>
+
+      <div class="label">Reductions</div>
+      <p>Language A <span class="tt" data-t="Mapping reduction: if A reduces to B, then a decider/recogniser for B can solve A">reduces</span> to B (A &le;<sub>m</sub> B) if there is a computable function f such that w &isin; A &hArr; f(w) &isin; B.</p>
+      <ul class="items">
+        <li>If B is decidable and A &le;<sub>m</sub> B, then A is decidable</li>
+        <li>If A is undecidable and A &le;<sub>m</sub> B, then B is undecidable</li>
+      </ul>
+
+      <div class="label">Rice's Theorem</div>
+      <div class="info">
+        <div class="i-title">Rice's Theorem</div>
+        Every non-trivial semantic property of TM-recognisable languages is undecidable. ("Non-trivial" = not true for all TMs, not false for all TMs.)
+      </div>
+
+      <div class="label">Semi-Decidable Languages</div>
+      <ul class="items">
+        <li>L is semi-decidable (r.e.) iff a TM enumerates L or recognises L</li>
+        <li>L is decidable iff both L and its complement are recognisable</li>
+      </ul>
+
+      <div class="label">Decidable Problems (examples)</div>
+      <ul class="items">
+        <li>A<sub>DFA</sub>: does DFA M accept string w? &mdash; simulate M on w</li>
+        <li>E<sub>DFA</sub>: is the language of DFA M empty? &mdash; reachability from start state</li>
+        <li>EQ<sub>DFA</sub>: do two DFAs recognise the same language?</li>
+        <li>A<sub>CFG</sub>: does CFG G generate string w? &mdash; use CYK</li>
+        <li>E<sub>CFG</sub>: is the language of CFG G empty? &mdash; variable reachability</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 6: Complexity Classes -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Complexity Classes &mdash; P vs NP</h3></div>
+    <div class="card-body">
+      <div class="rule">P = problems solvable in polynomial time; NP = problems verifiable in polynomial time. P vs NP is the greatest open problem in CS.</div>
+
+      <div class="label">Class P</div>
+      <p>P = { L | L decided by a <span class="tt" data-t="Deterministic Turing Machine running in polynomial time O(n^k) for fixed k">DTM</span> in time O(n<sup>k</sup>) for some k }.</p>
+      <ul class="items">
+        <li>Reachability in graphs, sorting, shortest paths, primality testing</li>
+        <li>Closed under complement, union, intersection, concatenation</li>
+      </ul>
+
+      <div class="label">Class NP</div>
+      <p>NP = { L | L decided by a <span class="tt" data-t="Non-deterministic Turing Machine: branches on all possible transitions simultaneously">NTM</span> in polynomial time } = { L | L has polynomial-time verifier }.</p>
+      <div class="formula">Verifier definition: L &isin; NP iff
+  exists poly-time V such that
+  w &isin; L  &hArr;  exists certificate c, |c|=O(|w|^k),
+               V(&lt;w,c&gt;) accepts</div>
+
+      <div class="label">NP-Complete</div>
+      <p>L is NP-complete if: (1) L &isin; NP, and (2) every A &isin; NP reduces to L in polynomial time (L is NP-hard).</p>
+      <div class="info">
+        <div class="i-title">Cook's Theorem (1971)</div>
+        SAT (Boolean satisfiability) is NP-complete. SAT was the first problem proven NP-complete; all subsequent NP-completeness proofs reduce from SAT or its variants.
+      </div>
+
+      <div class="label">Key NP-Complete Problems</div>
+      <ul class="items">
+        <li><strong>SAT / 3-SAT:</strong> satisfiability of propositional formulas / 3-CNF</li>
+        <li><strong>CLIQUE:</strong> does G have a k-clique?</li>
+        <li><strong>VERTEX-COVER:</strong> cover all edges with k vertices?</li>
+        <li><strong>HAMILTONIAN-PATH:</strong> path visiting every vertex once</li>
+        <li><strong>TSP:</strong> Traveling Salesman Problem (decision version)</li>
+        <li><strong>SUBSET-SUM:</strong> subset summing to target t</li>
+      </ul>
+
+      <div class="label">Polynomial Reduction</div>
+      <div class="formula">A &le;_p B  (poly-time mapping reduction):
+  Computable f in poly time s.t. w &isin; A &hArr; f(w) &isin; B
+  If B &isin; P and A &le;_p B then A &isin; P
+  If A is NP-hard and A &le;_p B then B is NP-hard</div>
+
+      <div class="warn">
+        <div class="w-title">Practical Implication</div>
+        If P = NP, every NP problem has efficient (polynomial) solution. Most cryptography would break. Widely believed P &ne; NP, but unproved. Millennium Prize Problem ($1M prize).
+      </div>
+
+      <div class="label">Complexity Hierarchy (extended)</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Class</th><th>Description</th><th>Example</th></tr>
+        <tr><td style="color:var(--accent2);">P</td><td>Poly-time deterministic</td><td>Sorting, BFS, primality</td></tr>
+        <tr><td style="color:var(--accent);">NP</td><td>Poly-time non-deterministic</td><td>SAT, Clique, TSP-decision</td></tr>
+        <tr><td style="color:var(--accent4);">PSPACE</td><td>Poly-space deterministic</td><td>TQBF (QBF satisfiability)</td></tr>
+        <tr><td style="color:var(--accent5);">EXPTIME</td><td>Exponential time</td><td>Generalised chess</td></tr>
+      </table>
+
+      <div class="note">
+        <div class="n-title">NP-Hard vs NP-Complete</div>
+        NP-hard = at least as hard as every NP problem (need not be in NP itself). NP-complete = NP-hard AND in NP. Halting Problem is NP-hard but not in NP.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- === ROW 3: Key Terms + Quick Review === -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Key Terms + Quick Review (full width) -->
+  <div class="card purple col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review</h3></div>
+    <div class="card-body">
+
+      <div class="grid-2">
+        <!-- Key Terms Table -->
+        <div>
+          <div class="label">Key Terms Glossary</div>
+          <table class="tbl">
+            <tr>
+              <th>Term</th>
+              <th>Definition</th>
+              <th>Context</th>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Abstract machine that reads input and transitions between states">Automaton</span></td>
+              <td>Abstract computational device (state machine)</td>
+              <td>All types</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Deterministic Finite Automaton: exactly one transition per (state, symbol) pair">DFA</span></td>
+              <td>Deterministic FA; &delta;: Q &times; &Sigma; &rarr; Q total function</td>
+              <td>Regular langs</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Non-deterministic Finite Automaton: can have 0 or many transitions; epsilon moves allowed">NFA</span></td>
+              <td>Non-deterministic FA; accepts if any path accepts</td>
+              <td>Regular langs</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Pushdown Automaton: FA augmented with a stack; recognises CFLs">Pushdown Automaton</span></td>
+              <td>FA + stack; recognises context-free languages</td>
+              <td>CFLs</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Theoretical model with infinite tape, read/write head, finite states; most powerful computational model">Turing Machine</span></td>
+              <td>Infinite tape + R/W head + finite control</td>
+              <td>All computable</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Language recognised by a DFA/NFA or described by a regular expression">Regular Language</span></td>
+              <td>Type 3; described by regex or DFA/NFA</td>
+              <td>Chomsky Type 3</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Language generated by a context-free grammar; recognised by a PDA">Context-Free Language</span></td>
+              <td>Type 2; generated by CFG; CFL &supset; Regular</td>
+              <td>Chomsky Type 2</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="A language for which a Turing Machine always halts and gives accept/reject">Decidable</span></td>
+              <td>TM always halts; also called recursive language</td>
+              <td>Computability</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Problem: given TM M and input w, does M halt on w? Proved undecidable by Turing in 1936">Halting Problem</span></td>
+              <td>A<sub>TM</sub>; undecidable via diagonalisation</td>
+              <td>Undecidability</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Complexity class of problems decidable by a deterministic TM in polynomial time">P</span></td>
+              <td>Poly-time deterministic decidable languages</td>
+              <td>Complexity</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Complexity class of problems verifiable in polynomial time; includes all of P">NP</span></td>
+              <td>Poly-time non-deterministic decidable; poly verifier</td>
+              <td>Complexity</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Problem in NP such that every NP problem reduces to it in polynomial time">NP-Complete</span></td>
+              <td>Hardest problems in NP; SAT is the canonical example</td>
+              <td>Complexity</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Polynomial-time many-one reduction; if A reduces to B, a poly-time solver for B solves A">Reduction</span></td>
+              <td>Mapping A to B to transfer decidability/complexity</td>
+              <td>Both fields</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="A formal system of rewrite rules (productions) generating strings of a language">Grammar</span></td>
+              <td>G = (V, T, S, P); productions generate the language</td>
+              <td>Formal langs</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Quick Review -->
+        <div>
+          <div class="label">Quick Review &mdash; Hierarchy Summary</div>
+          <table class="tbl" style="margin-bottom:12px;">
+            <tr><th>Level</th><th>Language</th><th>Machine</th><th>Grammar</th></tr>
+            <tr><td>1 (most powerful)</td><td>Recursively Enumerable</td><td>Turing Machine</td><td>Type 0</td></tr>
+            <tr><td>2</td><td>Context-Sensitive</td><td>LBA</td><td>Type 1</td></tr>
+            <tr><td>3</td><td>Context-Free</td><td>PDA</td><td>Type 2</td></tr>
+            <tr><td>4 (most restricted)</td><td>Regular</td><td>DFA / NFA</td><td>Type 3</td></tr>
+          </table>
+
+          <div class="label">Complexity Hierarchy</div>
+          <div class="formula">P  &sube;  NP  &sube;  PSPACE  &sube;  EXPTIME
+  P = NP ?  (Millennium Prize &mdash; unsolved)
+  NP-complete: hardest problems in NP
+  NP-hard: at least as hard as NP-complete</div>
+
+          <div class="label">Key Proof Techniques</div>
+          <ul class="items">
+            <li><strong>Pumping Lemma:</strong> prove a language is not regular</li>
+            <li><strong>Pumping Lemma (CFL):</strong> prove not context-free</li>
+            <li><strong>Diagonalisation:</strong> prove undecidability (halting problem)</li>
+            <li><strong>Reduction:</strong> transfer decidability or NP-hardness</li>
+            <li><strong>Rice's Theorem:</strong> all semantic TM properties undecidable</li>
+            <li><strong>Closure properties:</strong> regular, CFL, decidable closed under union</li>
+          </ul>
+
+          <div class="label">Closure Property Comparison</div>
+          <table class="tbl" style="margin-bottom:12px;">
+            <tr><th>Operation</th><th>Regular</th><th>CFL</th><th>Decidable</th><th>R.E.</th></tr>
+            <tr><td>Union</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent2);">Yes</td></tr>
+            <tr><td>Intersection</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent3);">No</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent2);">Yes</td></tr>
+            <tr><td>Complement</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent3);">No</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent3);">No</td></tr>
+            <tr><td>Concatenation</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent2);">Yes</td></tr>
+            <tr><td>Kleene Star</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent2);">Yes</td></tr>
+          </table>
+
+          <div class="warn">
+            <div class="w-title">Common Exam Pitfall</div>
+            NFA and DFA recognise the same class (regular languages) &mdash; but NFA can be exponentially more concise. Similarly, non-deterministic TMs and deterministic TMs recognise the same class, but time complexity may differ (NTM poly-time &hArr; DTM exp-time, unless P = NP).
+          </div>
+
+          <div class="tip">
+            <div class="t-title">Recognisability Test</div>
+            L is decidable iff L is recognisable AND complement of L is recognisable. If only L is recognisable, L may be undecidable (e.g., A<sub>TM</sub>).
+          </div>
+        </div>
+      </div><!-- /grid-2 -->
+
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- === FOOTER === -->
+<div class="footer">
+  <span><a href="CH16-Security-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">&larr; CH16</a></span>
+  <span><a href="../CSI.html" style="color:var(--text-dim);text-decoration:none;">Back to FCS</a></span>
+  <span><a href="CH18-Artificial-Intelligence-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">CH18 &rarr;</a></span>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script>
+</body>
+</html>

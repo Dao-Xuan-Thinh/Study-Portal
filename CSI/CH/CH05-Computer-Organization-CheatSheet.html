@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH05 – Computer Organization | FCS</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+
+/* ── Code block ── */
+pre.code-block{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent2);line-height:1.6;overflow-x:auto;margin-top:6px;margin-bottom:6px;}
+pre.code-block .comment{color:var(--text-muted);}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ══════════════════════════════════════════════════════ HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>Computer Organization — Chapter 5</h1>
+    <h2>Foundations of Computer Science, 4th Edition | Complete Study Reference</h2>
+    <div style="margin-top:10px;" class="toc">
+      <span class="toc-item">§5.1 CPU</span>
+      <span class="toc-item">§5.2 Main Memory</span>
+      <span class="toc-item">§5.3 I/O Subsystem</span>
+      <span class="toc-item">§5.4 Interconnection</span>
+      <span class="toc-item">§5.5 Program Execution</span>
+      <span class="toc-item">§5.6 Architectures</span>
+      <span class="toc-item">§5.7 Simple Computer</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;">
+    <span class="badge">FCS4e · CH05</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ ROW 1 -->
+<div class="grid">
+
+  <!-- ── Card 1: CPU -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§5.1 CPU: Central Processing Unit</h3></div>
+    <div class="card-body">
+      <div class="rule">The CPU fetches instructions from memory, decodes them, and executes them — the computer's brain</div>
+
+      <div class="label">Three Core CPU Components</div>
+      <ul class="items">
+        <li><strong>ALU</strong> (Arithmetic Logic Unit): integer arithmetic, bitwise logic, comparisons</li>
+        <li><strong>Control Unit (CU)</strong>: decodes opcodes, controls all component coordination</li>
+        <li><strong>Registers</strong>: ultra-fast internal storage (no latency vs RAM's ~100 ns)</li>
+      </ul>
+
+      <div class="label">Key CPU Registers</div>
+      <table class="tbl">
+        <thead>
+          <tr><th>Register</th><th>Full Name</th><th>Role</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>PC</code></td><td>Program Counter</td><td>Address of NEXT instruction</td></tr>
+          <tr><td><code>IR</code></td><td>Instruction Register</td><td>Currently executing instruction</td></tr>
+          <tr><td><code>MAR</code></td><td>Memory Address Register</td><td>Address for memory read/write</td></tr>
+          <tr><td><code>MDR</code></td><td>Memory Data Register</td><td>Data buffer for memory operations</td></tr>
+          <tr><td><code>SP</code></td><td>Stack Pointer</td><td>Top of call stack in memory</td></tr>
+          <tr><td><code>FLAGS</code></td><td>Status/Flag Register</td><td>Condition codes: Zero, Carry, Negative, Overflow</td></tr>
+        </tbody>
+      </table>
+
+      <div class="label">General-Purpose Registers</div>
+      <ul class="items">
+        <li>Hold operands and intermediate results during computation</li>
+        <li>x86/x86-64: EAX–EDX, ESI, EDI (extended to RAX–RDX, RSI, RDI in 64-bit)</li>
+        <li>ARM: R0–R15 (32-bit) / X0–X30 (AArch64)</li>
+      </ul>
+
+      <p style="margin-top:8px;font-size:12px;">
+        <span class="tt" data-t="Arithmetic Logic Unit — the digital circuit performing integer arithmetic (+,-,×,÷), bitwise operations (AND,OR,XOR,NOT), and comparisons inside the CPU">ALU</span>
+        — performs all computation;
+        <span class="tt" data-t="Ultra-fast storage inside the CPU — typically 32 or 64 bits; no separate address bus needed; access time ~0.3ns vs RAM ~100ns">register</span>
+        — holds operands with near-zero latency.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Card 2: Main Memory -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§5.2 Main Memory</h3></div>
+    <div class="card-body">
+      <div class="rule">Main memory (RAM) stores both programs and data currently being used — volatile, directly addressable by CPU</div>
+
+      <div class="label">Memory as an Array</div>
+      <ul class="items">
+        <li>Each cell = 1 byte, with a unique numeric address</li>
+        <li><em>n</em> address bits → 2<sup>n</sup> addressable locations</li>
+      </ul>
+      <div class="formula">Address space = 2^(address_bus_width) bytes<br>32-bit → 4 GB &nbsp;|&nbsp; 64-bit → 16 exabytes (theoretical)</div>
+
+      <div class="label">Memory Access Sequence</div>
+      <ul class="items">
+        <li><strong>READ:</strong> CPU → address in MAR → memory puts data in MDR → CPU reads MDR</li>
+        <li><strong>WRITE:</strong> CPU → address in MAR, data in MDR → memory stores it</li>
+      </ul>
+
+      <div class="label">Memory Hierarchy — Speed &amp; Cost</div>
+      <table class="tbl">
+        <thead>
+          <tr><th>Level</th><th>Type</th><th>Speed</th><th>Volatile</th><th>Size</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Registers</td><td>SRAM</td><td>~0.3 ns</td><td>Yes</td><td>Bytes</td></tr>
+          <tr><td>L1 Cache</td><td>SRAM</td><td>~1 ns</td><td>Yes</td><td>32–128 KB</td></tr>
+          <tr><td>L2 Cache</td><td>SRAM</td><td>~4 ns</td><td>Yes</td><td>256 KB–2 MB</td></tr>
+          <tr><td>L3 Cache</td><td>SRAM</td><td>~10 ns</td><td>Yes</td><td>4–64 MB</td></tr>
+          <tr><td>Main RAM</td><td>DRAM</td><td>~100 ns</td><td>Yes</td><td>GBs</td></tr>
+          <tr><td>SSD</td><td>Flash</td><td>~100 µs</td><td>No</td><td>TBs</td></tr>
+          <tr><td>HDD</td><td>Magnetic</td><td>~10 ms</td><td>No</td><td>TBs</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">Locality Principle</div>
+        Cache works because of locality: programs tend to access the same data/instructions repeatedly (temporal locality) and access nearby addresses (spatial locality)
+      </div>
+
+      <p style="font-size:12px;">
+        <span class="tt" data-t="Memory that loses all contents when power is removed — RAM is volatile; ROM, flash, and hard disks are non-volatile (persistent)">volatile</span>
+        &nbsp;·&nbsp;
+        <span class="tt" data-t="Small, fast SRAM between CPU and main DRAM — holds recently accessed data; reduces average memory access time by exploiting locality of reference">cache</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Card 3: I/O Subsystem -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§5.3 I/O Subsystem</h3></div>
+    <div class="card-body">
+      <div class="rule">I/O devices connect the computer to the external world — all managed by specialized controllers</div>
+
+      <div class="label">I/O Device Types</div>
+      <ul class="items">
+        <li><strong>Input only:</strong> keyboard, mouse, scanner, microphone, camera</li>
+        <li><strong>Output only:</strong> display/monitor, printer, speakers</li>
+        <li><strong>Both:</strong> touchscreen, network card, USB drive, hard disk</li>
+      </ul>
+
+      <div class="label">I/O Controllers</div>
+      <ul class="items">
+        <li>Dedicated chips managing device communication; CPU never talks directly to device hardware</li>
+        <li>Controller handles: timing, buffering, protocol, error detection</li>
+      </ul>
+
+      <div class="label">Three I/O Methods</div>
+      <ul class="items">
+        <li><strong>Programmed I/O (polling):</strong> CPU loops checking device status register — simple but CPU wastes 100% time waiting</li>
+        <li><strong>Interrupt-driven I/O:</strong> device interrupts CPU when ready — CPU does other work; only interrupted when I/O needs attention</li>
+        <li><strong>DMA (Direct Memory Access):</strong> dedicated controller transfers data directly RAM↔device — CPU only sets up transfer; DMA fires interrupt ONLY when complete; fastest; used for disks, network, GPU</li>
+      </ul>
+      <div class="formula">Device ready → raise interrupt line → CPU saves state → jumps to ISR → returns</div>
+
+      <table class="tbl">
+        <thead>
+          <tr><th>Method</th><th>CPU Involvement</th><th>Suitable For</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Polling</td><td>100% busy-wait</td><td>Tiny/fast devices</td></tr>
+          <tr><td>Interrupt</td><td>Minimal</td><td>Most devices</td></tr>
+          <tr><td>DMA</td><td>Setup + completion only</td><td>Bulk data (disk, NIC)</td></tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top:8px;font-size:12px;">
+        <span class="tt" data-t="Direct Memory Access — controller that transfers data between I/O device and RAM without CPU involvement for each byte; CPU only handles setup and completion">DMA</span>
+        &nbsp;·&nbsp;
+        <span class="tt" data-t="Hardware signal that suspends the CPU's current task, saves its state, runs an interrupt service routine (ISR), then resumes the original task">interrupt</span>
+      </p>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ══════════════════════════════════════════════════════ ROW 2 -->
+<div class="grid section-gap">
+
+  <!-- ── Card 4: Buses / Interconnection -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§5.4 Subsystem Interconnection: Buses</h3></div>
+    <div class="card-body">
+      <div class="rule">A bus is a shared communication pathway — all attached components take turns using it</div>
+
+      <div class="label">Three Bus Types</div>
+      <ul class="items">
+        <li><strong>Data bus:</strong> carries actual data values; bidirectional; width = word size (8/16/32/64-bit)</li>
+        <li><strong>Address bus:</strong> carries memory/device addresses; CPU→memory (unidirectional); width = address space</li>
+        <li><strong>Control bus:</strong> read/write signal, clock, interrupt, reset, bus request/grant</li>
+      </ul>
+
+      <div class="formula">Bus bandwidth = bus_width_bytes × bus_clock_frequency<br>64-bit bus @ 100 MHz = 8B × 100M = 800 MB/s</div>
+
+      <div class="label">Bus Arbitration (multiple masters)</div>
+      <ul class="items">
+        <li><strong>Daisy chain:</strong> priority by physical position along the bus</li>
+        <li><strong>Centralized:</strong> arbiter chip grants access to one requester at a time</li>
+        <li><strong>Distributed:</strong> each device checks if bus is free (like CSMA/CD)</li>
+      </ul>
+
+      <div class="label">Modern High-Speed Alternatives</div>
+      <ul class="items">
+        <li><strong>PCIe (PCI Express):</strong> point-to-point serial; lanes multiply bandwidth — PCIe 4.0 ×16 = 32 GB/s (GPUs, NVMe SSDs)</li>
+        <li><strong>HyperTransport, Intel QPI/UPI:</strong> CPU-to-CPU and CPU-to-memory interconnects</li>
+      </ul>
+
+      <div class="warn">
+        <div class="w-title">Von Neumann Bottleneck</div>
+        A single shared bus between CPU and memory limits overall throughput. Modern computers use multiple separate buses and cache hierarchies to overcome this.
+      </div>
+
+      <p style="font-size:12px;">
+        <span class="tt" data-t="Shared set of parallel conductors connecting CPU, memory, and I/O devices — components take turns using it; wider bus = higher bandwidth per cycle">bus</span>
+        — the backbone of traditional computer architecture.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Card 5: Program Execution -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§5.5 Program Execution: Fetch-Decode-Execute</h3></div>
+    <div class="card-body">
+      <div class="rule">The CPU endlessly repeats the fetch-decode-execute cycle until a HALT instruction</div>
+
+      <div class="label">Detailed Cycle Steps</div>
+      <ol class="steps">
+        <li><strong>FETCH:</strong> PC→MAR | memory[MAR]→MDR→IR | PC++ (points to next instruction)</li>
+        <li><strong>DECODE:</strong> Control unit reads opcode in IR; identifies operation and operand addresses</li>
+        <li><strong>EXECUTE:</strong> ALU performs operation OR memory read/write OR jump; flags updated</li>
+        <li><strong>Handle interrupts</strong> (if pending) → GOTO step 1</li>
+      </ol>
+
+      <div class="label">Clock Cycles &amp; CPI</div>
+      <ul class="items">
+        <li>Each step takes 1+ clock cycles</li>
+        <li><strong>CPI</strong> (Cycles Per Instruction): RISC target = 1 CPI; complex CISC may take 10+</li>
+      </ul>
+
+      <div class="label">Pipelining</div>
+      <ul class="items">
+        <li>Execute multiple instructions simultaneously across different stages</li>
+        <li><strong>5-stage pipeline:</strong> IF → ID → EX → MEM → WB (Write Back)</li>
+        <li><strong>Throughput:</strong> 1 instruction completed per cycle (ideally)</li>
+        <li><strong>Hazards:</strong> data (dependency), control (branches), structural (resource conflict)</li>
+      </ul>
+
+      <div class="formula">CPU Time = Instruction_Count × CPI × Clock_Period</div>
+
+      <p style="font-size:12px;">
+        <span class="tt" data-t="Register holding the memory address of the next instruction to fetch — automatically incremented after each fetch; branch instructions change it explicitly">program counter</span>
+        &nbsp;·&nbsp;
+        <span class="tt" data-t="Technique overlapping multiple instruction stages like an assembly line — while one instruction executes, the next is being decoded, and another is being fetched">pipeline</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Card 6: RISC vs CISC -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>§5.6 CPU Architectures: RISC vs CISC</h3></div>
+    <div class="card-body">
+      <div class="rule">RISC and CISC represent two philosophies for ISA design — both dominate in different markets</div>
+
+      <table class="tbl">
+        <thead>
+          <tr><th>Feature</th><th>CISC (x86/x86-64)</th><th>RISC (ARM, MIPS, RISC-V)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Instructions</td><td>Many complex</td><td>Few simple</td></tr>
+          <tr><td>Instr. length</td><td>Variable (1–15 bytes)</td><td>Fixed (32-bit)</td></tr>
+          <tr><td>Memory access</td><td>Memory-to-memory ops OK</td><td>Load/Store only</td></tr>
+          <tr><td>Register count</td><td>8–16 (x86-32)</td><td>16–32+</td></tr>
+          <tr><td>Pipeline friendly</td><td>Less (variable length)</td><td>Very (fixed length)</td></tr>
+          <tr><td>CPI</td><td>Often &gt; 1</td><td>Target = 1</td></tr>
+          <tr><td>Code density</td><td>Higher</td><td>Lower (more instructions)</td></tr>
+          <tr><td>Examples</td><td>Intel x86, AMD64</td><td>ARM, MIPS, RISC-V, PowerPC</td></tr>
+          <tr><td>Used in</td><td>Desktop, servers, laptops</td><td>Mobile, embedded, Apple Silicon</td></tr>
+        </tbody>
+      </table>
+
+      <div class="label">Harvard vs Von Neumann</div>
+      <ul class="items">
+        <li><strong>Von Neumann:</strong> same memory for code + data — general-purpose CPUs</li>
+        <li><strong>Harvard:</strong> separate instruction and data memory — microcontrollers, DSPs; faster but less flexible</li>
+      </ul>
+
+      <div class="info">
+        <div class="i-title">Apple Silicon</div>
+        Apple Silicon (M1/M2/M3) is ARM-based RISC — Apple proved RISC can outperform CISC in both performance and power efficiency in 2020.
+      </div>
+
+      <p style="font-size:12px;">
+        <span class="tt" data-t="Reduced Instruction Set Computer — simple fixed-length instructions, load/store memory model, many registers; enables efficient pipelining; examples: ARM, RISC-V">RISC</span>
+        &nbsp;·&nbsp;
+        <span class="tt" data-t="Complex Instruction Set Computer — many powerful variable-length instructions; x86 is the dominant CISC; complex decoder needed; backward compatibility drives its survival">CISC</span>
+      </p>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ══════════════════════════════════════════════════════ ROW 3 -->
+<div class="grid-2 section-gap">
+
+  <!-- ── Card 7: Simple Computer (col-span-2) -->
+  <div class="card blue col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>§5.7 Forouzan's Simple Computer (Conceptual Model)</h3></div>
+    <div class="card-body">
+      <div class="rule">A simple 16-instruction CPU illustrates how all real processors work at their core</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+        <div>
+          <div class="label">Specifications</div>
+          <ul class="items">
+            <li><strong>16 general-purpose registers:</strong> R0–RF (4-bit register ID)</li>
+            <li><strong>256 bytes of RAM</strong> (8-bit addresses: 0x00–0xFF)</li>
+            <li><strong>16 instruction types</strong> (4-bit opcode: 0–F)</li>
+            <li><strong>16-bit instruction format:</strong> [opcode 4 bits][operand 12 bits]</li>
+          </ul>
+
+          <div class="label" style="margin-top:12px;">Example Program — Compute A + B → C</div>
+          <pre class="code-block">LOAD  R1, addr_A   <span class="comment">; R1 = A</span>
+LOAD  R2, addr_B   <span class="comment">; R2 = B</span>
+ADD   R3, R1, R2   <span class="comment">; R3 = A + B</span>
+STORE R3, addr_C   <span class="comment">; memory[addr_C] = result</span>
+HALT               <span class="comment">; stop execution</span></pre>
+
+          <div class="info">
+            <div class="i-title">Key Insight</div>
+            This simple model has all the essentials: registers, memory, arithmetic, logic, branching, halt. Modern x86-64 adds ~2000 instructions and 64-bit registers but the core principle is identical.
+          </div>
+        </div>
+
+        <div>
+          <div class="label">Instruction Set</div>
+          <table class="tbl">
+            <thead>
+              <tr><th>Opcode</th><th>Mnemonic</th><th>Operation</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>0001</code></td><td>LOAD</td><td>Rx ← memory[addr]</td></tr>
+              <tr><td><code>0010</code></td><td>STORE</td><td>memory[addr] ← Rx</td></tr>
+              <tr><td><code>0011</code></td><td>MOVE</td><td>Rx ← Ry</td></tr>
+              <tr><td><code>0100</code></td><td>ADD</td><td>Rz ← Rx + Ry (two's complement)</td></tr>
+              <tr><td><code>0101</code></td><td>ADD</td><td>Rz ← Rx + Ry (floating-point)</td></tr>
+              <tr><td><code>0110</code></td><td>OR</td><td>Rz ← Rx OR Ry</td></tr>
+              <tr><td><code>0111</code></td><td>AND</td><td>Rz ← Rx AND Ry</td></tr>
+              <tr><td><code>1000</code></td><td>XOR</td><td>Rz ← Rx XOR Ry</td></tr>
+              <tr><td><code>1010</code></td><td>ROTATE</td><td>Rx right-rotated 1 bit</td></tr>
+              <tr><td><code>1011</code></td><td>JUMP</td><td>If Rx=R0 then PC ← addr (conditional jump)</td></tr>
+              <tr><td><code>1100</code></td><td>HALT</td><td>Stop execution</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid-2 row 3 -->
+
+<!-- ══════════════════════════════════════════════════════ ROW 4 (single card) -->
+<div class="grid section-gap">
+
+  <!-- ── Card 8: Key Terms (green) — 3-col to fill width -->
+  <div class="card green col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms Quick Reference</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <thead>
+          <tr><th>Term</th><th>Definition</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>CPU</code></td><td>Central Processing Unit — fetches, decodes, executes instructions</td></tr>
+          <tr><td><code>ALU</code></td><td>Arithmetic Logic Unit — performs all arithmetic and logical computation</td></tr>
+          <tr><td><code>CU</code></td><td>Control Unit — decodes instructions and orchestrates execution of every component</td></tr>
+          <tr><td><code>PC</code></td><td>Program Counter — holds address of the next instruction to fetch</td></tr>
+          <tr><td><code>IR</code></td><td>Instruction Register — holds the current instruction being decoded and executed</td></tr>
+          <tr><td><code>MAR</code></td><td>Memory Address Register — address supplied to memory for current read/write</td></tr>
+          <tr><td><code>MDR</code></td><td>Memory Data Register — data buffer exchanged between CPU and memory</td></tr>
+          <tr><td><code>Bus</code></td><td>Shared wires connecting CPU, memory, and I/O components; data/address/control buses</td></tr>
+          <tr><td><code>ISA</code></td><td>Instruction Set Architecture — the programmer-visible interface to the processor</td></tr>
+          <tr><td><code>Opcode</code></td><td>Operation code — binary encoding of the instruction type (e.g., ADD, LOAD, HALT)</td></tr>
+          <tr><td><code>Operand</code></td><td>Data value or address that an instruction operates on</td></tr>
+          <tr><td><code>CPI</code></td><td>Cycles Per Instruction — average clock cycles needed to complete one instruction</td></tr>
+          <tr><td><code>DMA</code></td><td>Direct Memory Access — bulk I/O controller without CPU per-byte involvement</td></tr>
+          <tr><td><code>Cache</code></td><td>Fast SRAM buffer between CPU and main DRAM — reduces average memory access time</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /grid row 4 -->
+
+<!-- ══════════════════════════════════════════════════════ ROW 5 (supplemental) -->
+<div class="grid section-gap">
+
+  <!-- ── Addressing Modes -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Addressing Modes</h3></div>
+    <div class="card-body">
+      <div class="rule">An addressing mode specifies how the operand of an instruction is located</div>
+
+      <table class="tbl">
+        <thead>
+          <tr><th>Mode</th><th>Syntax Example</th><th>Effective Address / Value</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Immediate</td><td><code>ADD R1, #5</code></td><td>Operand = constant in instruction itself</td></tr>
+          <tr><td>Register</td><td><code>ADD R1, R2</code></td><td>Operand = value in named register</td></tr>
+          <tr><td>Direct (Absolute)</td><td><code>LOAD R1, 200</code></td><td>EA = address 200 in memory</td></tr>
+          <tr><td>Indirect</td><td><code>LOAD R1, (200)</code></td><td>EA = memory[200] (pointer dereference)</td></tr>
+          <tr><td>Register Indirect</td><td><code>LOAD R1, (R2)</code></td><td>EA = value in register R2</td></tr>
+          <tr><td>Indexed</td><td><code>LOAD R1, 100(R2)</code></td><td>EA = 100 + R2 (array access)</td></tr>
+          <tr><td>PC-Relative</td><td><code>BRANCH +12</code></td><td>EA = PC + offset (position-independent code)</td></tr>
+          <tr><td>Stack</td><td><code>PUSH / POP</code></td><td>EA = SP; SP auto-increments/decrements</td></tr>
+        </tbody>
+      </table>
+
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">Design Trade-off</div>
+        More addressing modes → more expressive instructions (CISC) but a more complex decoder.
+        RISC keeps only register + immediate + register-indirect for simplicity and speed.
+      </div>
+
+      <div class="label">Instruction Format (Forouzan Simple Computer)</div>
+      <div class="formula">| 4-bit opcode | 4-bit Rx | 4-bit Ry | 4-bit Rz |  (register format)<br>| 4-bit opcode | 4-bit Rx | 8-bit address |    (memory format)</div>
+    </div>
+  </div>
+
+  <!-- ── Performance & Benchmarking -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>CPU Performance &amp; Benchmarking</h3></div>
+    <div class="card-body">
+      <div class="rule">CPU performance depends on clock speed, CPI, instruction count, and memory latency</div>
+
+      <div class="label">Core Performance Equations</div>
+      <div class="formula">CPU Time = IC × CPI × (1 / Clock_Frequency)<br>MIPS = Clock_Frequency / (CPI × 10⁶)</div>
+
+      <div class="label">Factors Affecting Performance</div>
+      <ul class="items">
+        <li><strong>Clock frequency (GHz):</strong> cycles per second — higher = faster per cycle</li>
+        <li><strong>CPI:</strong> lower is better; pipeline stalls raise effective CPI</li>
+        <li><strong>Instruction count:</strong> compiler optimisations reduce IC</li>
+        <li><strong>Memory wall:</strong> CPU much faster than DRAM — cache misses dominate latency</li>
+        <li><strong>ILP (Instruction-Level Parallelism):</strong> out-of-order execution, superscalar</li>
+      </ul>
+
+      <div class="label">Amdahl's Law — Parallelism Limit</div>
+      <div class="formula">Speedup = 1 / ((1 − P) + P/N)<br>P = parallel fraction, N = processors</div>
+      <ul class="items">
+        <li>If 90% of code is parallelizable with 10 cores → max speedup = 1/(0.1 + 0.09) ≈ 5.3×</li>
+        <li>Serial portions ultimately limit scalability</li>
+      </ul>
+
+      <div class="label">Common Benchmarks</div>
+      <ul class="items">
+        <li><strong>SPEC CPU:</strong> industry-standard integer and floating-point workloads</li>
+        <li><strong>LINPACK:</strong> dense matrix solve — used for TOP500 supercomputer rankings</li>
+        <li><strong>Geekbench:</strong> consumer multi-core/single-core performance</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── Interrupts & Exception Handling -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Interrupts &amp; Exception Handling</h3></div>
+    <div class="card-body">
+      <div class="rule">Interrupts allow the CPU to respond to asynchronous events without constant polling</div>
+
+      <div class="label">Interrupt Categories</div>
+      <ul class="items">
+        <li><strong>Hardware interrupt (IRQ):</strong> raised by external device (keyboard, NIC, timer)</li>
+        <li><strong>Software interrupt / trap:</strong> deliberate <code>INT n</code> instruction — used for system calls</li>
+        <li><strong>Exception / fault:</strong> triggered by CPU on illegal operation (divide-by-zero, page fault, illegal opcode)</li>
+        <li><strong>Non-maskable interrupt (NMI):</strong> cannot be disabled — used for hardware failures / watchdogs</li>
+      </ul>
+
+      <div class="label">Interrupt Service Routine (ISR) Sequence</div>
+      <ol class="steps">
+        <li>Device asserts interrupt line; CPU finishes current instruction</li>
+        <li>CPU pushes PC, FLAGS, and registers onto stack (context save)</li>
+        <li>CPU fetches ISR address from Interrupt Vector Table (IVT)</li>
+        <li>ISR runs: services the device, clears interrupt flag</li>
+        <li>CPU pops saved context (IRET); resumes interrupted program</li>
+      </ol>
+
+      <div class="label">Interrupt Priority &amp; Nesting</div>
+      <ul class="items">
+        <li>Higher-priority interrupts can preempt lower-priority ISRs</li>
+        <li>Interrupt mask register lets OS selectively disable interrupt classes</li>
+        <li>Timer interrupt drives OS preemptive scheduling (typically every 1–10 ms)</li>
+      </ul>
+
+      <div class="note">
+        <div class="n-title">System Calls via Software Interrupt</div>
+        On x86 Linux, <code>int 0x80</code> (legacy) or <code>syscall</code> (x86-64) transfers control to the kernel — the OS services the request, then returns to user space.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 5 -->
+
+<!-- ══════════════════════════════════════════════════════ ROW 6 (virtual memory & summary) -->
+<div class="grid-2 section-gap">
+
+  <!-- ── Virtual Memory -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Virtual Memory &amp; Memory Management</h3></div>
+    <div class="card-body">
+      <div class="rule">Virtual memory gives each process its own address space, larger than physical RAM</div>
+
+      <div class="label">Key Concepts</div>
+      <ul class="items">
+        <li><strong>Virtual address:</strong> address used by programs — translated by the MMU</li>
+        <li><strong>Physical address:</strong> actual location in DRAM chips</li>
+        <li><strong>MMU (Memory Management Unit):</strong> hardware that translates VA → PA using page tables</li>
+        <li><strong>Page:</strong> fixed-size block (typically 4 KB) — unit of virtual memory mapping</li>
+        <li><strong>Page fault:</strong> accessed page not in RAM → OS loads it from disk (swap)</li>
+        <li><strong>TLB (Translation Lookaside Buffer):</strong> fast cache of recent VA→PA translations</li>
+      </ul>
+
+      <div class="label">Benefits of Virtual Memory</div>
+      <ul class="items">
+        <li>Process isolation — each process sees only its own address space</li>
+        <li>Memory overcommit — run programs larger than physical RAM</li>
+        <li>Simplified linking — every program starts at virtual address 0</li>
+        <li>Memory-mapped files — treat files as memory regions (mmap)</li>
+      </ul>
+
+      <div class="formula">Effective Access Time = (TLB_hit_rate × TLB_time) + (TLB_miss_rate × (TLB_time + page_table_time))</div>
+    </div>
+  </div>
+
+  <!-- ── Chapter Summary -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Chapter 5 — Concept Map Summary</h3></div>
+    <div class="card-body">
+      <div class="rule">All components work together: CPU ↔ Memory ↔ I/O, connected by buses</div>
+
+      <div class="label">Component Relationships</div>
+      <ul class="items">
+        <li><strong>CPU ↔ Memory:</strong> via MAR/MDR registers over address + data buses</li>
+        <li><strong>CPU ↔ I/O:</strong> via programmed I/O, interrupts, or DMA controller</li>
+        <li><strong>Memory ↔ I/O:</strong> DMA bypasses CPU — transfers block data directly</li>
+        <li><strong>Cache sits between CPU and RAM:</strong> transparent to programmer</li>
+      </ul>
+
+      <div class="label">Execution Flow of a Program</div>
+      <ol class="steps">
+        <li>OS loads program from disk into RAM; sets PC to entry point</li>
+        <li>CPU begins fetch-decode-execute; cache fills from RAM on misses</li>
+        <li>I/O syscalls trigger interrupts; DMA handles bulk transfers</li>
+        <li>OS preempts via timer interrupt; saves context; schedules next process</li>
+        <li>HALT or exit syscall terminates; OS reclaims memory</li>
+      </ol>
+
+      <div class="info">
+        <div class="i-title">Big Picture</div>
+        Computer organization bridges the gap between digital logic (gates, flip-flops) and systems software (OS, compilers). Understanding it is fundamental to writing efficient, correct software.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid-2 row 6 -->
+
+<!-- ══════════════════════════════════════════════════════ FOOTER -->
+<div class="footer">
+  <span>FCS4e · CH05 · Computer Organization</span>
+  <span><a href="CH04-Operations-on-Data-CheatSheet.html" style="color:var(--text-muted);text-decoration:none;">← CH04</a> &nbsp;|&nbsp; <a href="../CSI.html" style="color:var(--text-muted);text-decoration:none;">Back to FCS</a> &nbsp;|&nbsp; <a href="CH06-Computer-Networks-CheatSheet.html" style="color:var(--text-muted);text-decoration:none;">CH06 →</a></span>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script></body>
+</html>

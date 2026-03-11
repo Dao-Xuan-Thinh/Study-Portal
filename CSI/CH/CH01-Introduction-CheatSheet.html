@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH01 – Introduction | FCS</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════════════════ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Introduction — Chapter 1</h1>
+    <h2>Foundations of Computer Science, 4th Edition &nbsp;|&nbsp; Complete Study Reference</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§1.1 Turing Model</span>
+      <span class="toc-item">§1.2 Von Neumann Model</span>
+      <span class="toc-item">§1.3 Computer Components</span>
+      <span class="toc-item">§1.4 History</span>
+      <span class="toc-item">§1.5 CS Discipline</span>
+    </div>
+  </div>
+  <div class="badge">FCS4e · CH01</div>
+</div>
+
+<!-- ══ ROW 1 ═══════════════════════════════════════════════════════════════ -->
+<div class="grid">
+
+  <!-- Card 1 — Turing Model -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>§1.1 Turing Model</h3></div>
+    <div class="card-body">
+      <div class="rule">All computation can be performed by a universal machine that reads/writes symbols on an infinite tape</div>
+      <p><span class="tt" data-t="British mathematician (1912–1954); father of computer science; proposed the universal computing machine in 1936; cracked Enigma in WWII">Alan Turing</span>, 1936 — mathematical/philosophical definition of computation</p>
+      <p>Key insight: separate <strong>DATA</strong> from <strong>PROGRAM</strong> — program is itself data</p>
+
+      <div class="label">Turing Machine Components</div>
+      <ul class="items">
+        <li>Infinite tape — serves as unbounded memory (read/write cells)</li>
+        <li>Read/write head — positioned over one cell at a time</li>
+        <li>State table — finite list of instructions (the program)</li>
+        <li>Current state register — tracks which rule to apply next</li>
+      </ul>
+
+      <div class="label">Three Program/Data Scenarios</div>
+      <ul class="items">
+        <li>Same program + <em>different data</em> → different output</li>
+        <li>Different program + <em>same data</em> → different output</li>
+        <li>Same program + <em>same data</em> → always same output (deterministic)</li>
+      </ul>
+
+      <div class="label">Universal Turing Machine (UTM)</div>
+      <p>A special Turing machine that can <em>simulate any other Turing machine</em> — it takes both a description of another machine and an input tape. This is the theoretical foundation of the general-purpose computer: one machine that can run any program.</p>
+      <ul class="items">
+        <li>Church-Turing Thesis: anything computable can be computed by a Turing machine</li>
+        <li>Halting Problem: Turing proved some problems are <em>undecidable</em> — no algorithm can solve them</li>
+        <li>Computability theory grew from this single model</li>
+      </ul>
+
+      <div class="info">
+        <div class="i-title">Note</div>
+        The <span class="tt" data-t="Abstract mathematical device with infinite tape, read/write head, and finite state table — proves which problems are computationally solvable">Turing machine</span> is not a physical device — it's a mathematical model proving what IS and ISN'T computable. Every modern computer is a practical implementation of this concept.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2 — Von Neumann Model -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>§1.2 Von Neumann Model</h3></div>
+    <div class="card-body">
+      <div class="rule">Store both program and data in the same memory — the stored-program concept</div>
+      <p>Proposed ~1945 by John von Neumann; basis for virtually all modern computers</p>
+
+      <div class="label">Four Core Components</div>
+      <ul class="items">
+        <li><strong>Memory</strong> — stores both program instructions AND data</li>
+        <li><strong>ALU</strong> (Arithmetic Logic Unit) — performs calculations and logical comparisons</li>
+        <li><strong>Control Unit</strong> — fetches instruction → decodes → executes (sequential)</li>
+        <li><strong>Input/Output</strong> — communicates with outside world</li>
+      </ul>
+
+      <div class="formula">Fetch → Decode → Execute → (repeat)</div>
+
+      <p>Sequential execution: control unit fetches one instruction at a time, decodes, then executes before moving to the next.</p>
+      <div class="label">Fetch-Decode-Execute Cycle — Detail</div>
+      <ul class="items">
+        <li><strong>Fetch</strong> — Control unit reads instruction from memory address in Program Counter (PC); PC increments</li>
+        <li><strong>Decode</strong> — Instruction Register (IR) holds instruction; control unit interprets opcode and operands</li>
+        <li><strong>Execute</strong> — ALU or I/O unit performs the required operation; results written to register or memory</li>
+        <li><strong>Writeback</strong> — (modern CPUs) result written back to register file; pipeline advances</li>
+      </ul>
+
+      <p>The <span class="tt" data-t="Both instructions and data reside in the same main memory — programs can be treated as data, enabling compilers, interpreters, and self-modifying code">stored-program concept</span> enables compilers, interpreters, and operating systems to exist.</p>
+
+      <div class="info">
+        <div class="i-title">Von Neumann vs Harvard Architecture</div>
+        Harvard uses SEPARATE memory buses for instructions and data (used in DSPs and microcontrollers for higher throughput). The <span class="tt" data-t="The single shared bus between CPU and memory limits throughput — CPU must wait for memory; a fundamental performance constraint in all von Neumann computers">Von Neumann bottleneck</span> is a key reason why Harvard variants are preferred in embedded systems.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3 — Computer Components -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>§1.3 Computer Components</h3></div>
+    <div class="card-body">
+      <div class="rule">A computer system = hardware + software + data working together</div>
+
+      <div class="label">Hardware Categories</div>
+      <ul class="items">
+        <li><strong>CPU</strong> — control unit + ALU + registers</li>
+        <li><strong>Memory</strong> — RAM (volatile) + ROM (non-volatile) + Cache</li>
+        <li><strong>Input devices</strong> — keyboard, mouse, scanner, microphone, camera</li>
+        <li><strong>Output devices</strong> — monitor, printer, speakers</li>
+        <li><strong>Storage</strong> — HDD, SSD, optical</li>
+      </ul>
+
+      <div class="label">Software Categories</div>
+      <ul class="items">
+        <li><strong>System software</strong> — OS, device drivers, utilities</li>
+        <li><strong>Application software</strong> — word processors, browsers, games</li>
+        <li><strong>Programming tools</strong> — compilers, assemblers, debuggers</li>
+      </ul>
+
+      <div class="label">Memory Hierarchy (fastest → slowest)</div>
+      <ul class="items">
+        <li><strong>Registers</strong> — inside CPU; sub-nanosecond; bytes capacity</li>
+        <li><strong>Cache (L1/L2/L3)</strong> — on-chip SRAM; nanoseconds; KB–MB range</li>
+        <li><strong>RAM (main memory)</strong> — DRAM; tens of nanoseconds; GB range</li>
+        <li><strong>SSD/NVMe</strong> — flash; microseconds; TB range</li>
+        <li><strong>HDD</strong> — magnetic spinning disk; milliseconds; multiple TB</li>
+        <li><strong>Optical/Tape</strong> — archival; seconds; near-unlimited</li>
+      </ul>
+
+      <div class="label">Component Reference</div>
+      <table class="tbl">
+        <tr><th>Component</th><th>Example</th><th>Role</th></tr>
+        <tr><td>CPU</td><td>Intel Core i9</td><td>Executes instructions</td></tr>
+        <tr><td>RAM</td><td>16 GB DDR5</td><td>Active program storage</td></tr>
+        <tr><td>ROM/BIOS</td><td>UEFI chip</td><td>Boot <span class="tt" data-t="Software permanently stored in ROM chips — lies between hardware and software; examples: BIOS/UEFI, printer firmware, router firmware">firmware</span></td></tr>
+        <tr><td>HDD/SSD</td><td>1 TB NVMe</td><td>Permanent storage</td></tr>
+        <tr><td>GPU</td><td>NVIDIA RTX</td><td>Graphics processing</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ══ ROW 2 ═══════════════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 4 — History: Four Generations -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>§1.4 History: Four Generations</h3></div>
+    <div class="card-body">
+      <div class="rule">Computer hardware evolved through four distinct generations defined by the dominant technology</div>
+
+      <div class="label">Generation 1 — Vacuum Tubes (1940s–1950s)</div>
+      <ul class="items">
+        <li><span class="tt" data-t="Electronic Numerical Integrator and Computer (1945) — first general-purpose electronic digital computer; used 18,000 vacuum tubes; weighed 30 tons">ENIAC</span> (1945): 18,000 vacuum tubes, 30 tons, 1,800 sq ft, 5,000 additions/sec</li>
+        <li>UNIVAC I (1951): first commercial computer</li>
+        <li>Programs stored on punched cards/tape</li>
+        <li>Unreliable: tubes burned out frequently; needed air conditioning</li>
+      </ul>
+
+      <div class="label">Generation 2 — Transistors (1950s–1960s)</div>
+      <ul class="items">
+        <li>Transistor invented 1947 (Bell Labs); replaced vacuum tubes</li>
+        <li>Smaller, faster, cheaper, more reliable, less power</li>
+        <li>Magnetic core memory; high-level languages (FORTRAN, COBOL)</li>
+      </ul>
+
+      <div class="label">Generation 3 — Integrated Circuits (1960s–1970s)</div>
+      <ul class="items">
+        <li>Multiple transistors on one silicon chip</li>
+        <li>IBM System/360 (1964): family of compatible computers</li>
+        <li>Time-sharing operating systems; minicomputers emerge</li>
+      </ul>
+
+      <div class="label">Generation 4 — Microprocessors (1970s–present)</div>
+      <ul class="items">
+        <li>Entire CPU on a single chip</li>
+        <li>Intel 4004 (1971): first commercial microprocessor</li>
+        <li>Personal computers (Apple II 1977, IBM PC 1981)</li>
+        <li><span class="tt" data-t="Very Large Scale Integration — placing millions to billions of transistors on a single chip; modern CPUs contain 10–50 billion transistors">VLSI</span> → billions of transistors on one chip today</li>
+        <li>Multi-core CPUs, GPUs, mobile SoCs — all descendants of Gen 4</li>
+        <li>Internet era (1990s), smartphones (2007+), cloud computing (2010s)</li>
+      </ul>
+
+      <div class="label">Timeline at a Glance</div>
+      <table class="tbl">
+        <tr><th>Era</th><th>Technology</th><th>Key Machine</th><th>Speed</th></tr>
+        <tr><td>1940s–50s</td><td>Vacuum tubes</td><td>ENIAC, UNIVAC</td><td>Thousands ops/sec</td></tr>
+        <tr><td>1950s–60s</td><td>Transistors</td><td>IBM 7090</td><td>Millions ops/sec</td></tr>
+        <tr><td>1960s–70s</td><td>ICs</td><td>IBM System/360</td><td>Tens of millions/sec</td></tr>
+        <tr><td>1970s–now</td><td>Microprocessors</td><td>Intel x86, ARM</td><td>Billions ops/sec</td></tr>
+      </table>
+
+      <div class="note">
+        <div class="n-title">Moore's Law</div>
+        Gordon Moore, 1965: transistor count doubles ~every 2 years. Held roughly true for 50 years; now slowing as we approach physical limits.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5 — CS as a Discipline -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>§1.5 CS as a Discipline</h3></div>
+    <div class="card-body">
+      <div class="rule">Computer Science = the study of algorithms, data, and the machines that process them</div>
+
+      <div class="label">ACM Classification of CS Areas</div>
+      <ul class="items">
+        <li><strong>Algorithms and data structures</strong> — efficiency of computation</li>
+        <li><strong>Programming languages</strong> — design, implementation, paradigms</li>
+        <li><strong>Computer architecture</strong> — hardware organization</li>
+        <li><strong>Operating systems &amp; networking</strong> — resource management</li>
+        <li><strong>Software engineering</strong> — building reliable large systems</li>
+        <li><strong>Databases &amp; information retrieval</strong> — storing and querying data</li>
+        <li><strong>Artificial intelligence</strong> — intelligent behavior in machines</li>
+        <li><strong>Human-computer interaction</strong> — usability and interfaces</li>
+        <li><strong>Computational science</strong> — simulation and modeling</li>
+        <li><strong>Theory of computation</strong> — what is and isn't computable</li>
+      </ul>
+
+      <div class="label">Why Study CS Broadly?</div>
+      <ul class="items">
+        <li>CS overlaps with <em>every</em> other field: biology, physics, economics, arts</li>
+        <li>Computational thinking is a universal problem-solving skill</li>
+        <li>Understanding the whole discipline prevents narrow "tunnel vision" engineering</li>
+        <li>Emerging fields (AI, quantum computing, bioinformatics) draw from all CS areas</li>
+      </ul>
+
+      <div class="tip">
+        <div class="t-title">About This Textbook (FCS)</div>
+        This textbook covers ALL of these areas at an introductory level — designed as a CS0 survey course giving a complete bird's-eye view of the discipline.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6 — Book Outline (Road Map) -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Book Outline — Road Map</h3></div>
+    <div class="card-body">
+      <div class="label">Part I — Computer Hardware (CH01–CH05)</div>
+      <ul class="items">
+        <li>Organization, number systems, data storage, operations</li>
+      </ul>
+
+      <div class="label">Part II — Connectivity (CH06–CH07)</div>
+      <ul class="items">
+        <li>Networks, internet, operating systems</li>
+      </ul>
+
+      <div class="label">Part III — Algorithms &amp; Programming (CH08–CH10)</div>
+      <ul class="items">
+        <li>Constructs, languages, software engineering</li>
+      </ul>
+
+      <div class="label">Part IV — Data Management (CH11–CH14)</div>
+      <ul class="items">
+        <li>Structures, ADTs, files, databases</li>
+      </ul>
+
+      <div class="label">Part V — Advanced Topics (CH15–CH20)</div>
+      <ul class="items">
+        <li>Compression, security, theory, AI, social media, ethics</li>
+      </ul>
+
+      <div class="label">Connections to Later Chapters</div>
+      <ul class="items">
+        <li><strong>CH02</strong> — Number systems (binary, octal, hex) underpin everything in CH03–CH05</li>
+        <li><strong>CH04</strong> — Operations on bits directly implement the ALU described here</li>
+        <li><strong>CH05</strong> — Computer organization expands the Von Neumann model in depth</li>
+        <li><strong>CH09</strong> — Programming languages build on the algorithm concept introduced here</li>
+        <li><strong>CH18</strong> — Theory of computation revisits Turing machines and decidability formally</li>
+      </ul>
+
+      <div class="label">Key Themes Across All Chapters</div>
+      <ul class="items">
+        <li><strong>Abstraction</strong> — hiding complexity behind clean interfaces at every layer</li>
+        <li><strong>Representation</strong> — how data is encoded (binary, ASCII, RGB, floating-point)</li>
+        <li><strong>Efficiency</strong> — time and space complexity; doing more with less</li>
+        <li><strong>Correctness</strong> — proving or testing that a system behaves as specified</li>
+        <li><strong>Trade-offs</strong> — speed vs. memory, simplicity vs. power, security vs. usability</li>
+        <li><strong>Layering</strong> — hardware → firmware → OS → application; each layer depends on the one below</li>
+        <li><strong>Universality</strong> — the same hardware runs any software; Turing's insight made real</li>
+      </ul>
+
+      <div class="note">
+        <div class="n-title">Chapter Structure</div>
+        Each chapter ends with: recommended reading, key terms, summary, and practice problems with solutions on the book website.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ══ ROW 3 ═══════════════════════════════════════════════════════════════ -->
+<div class="grid section-gap">
+
+  <!-- Card 7 — Key Terms Table (full width) -->
+  <div class="card blue col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms — Chapter 1 Glossary</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr>
+          <th style="width:18%;">Term</th>
+          <th>Definition</th>
+        </tr>
+        <tr>
+          <td><strong>Computer</strong></td>
+          <td>Programmable electronic device that processes data according to stored instructions</td>
+        </tr>
+        <tr>
+          <td><strong>Program</strong></td>
+          <td>Finite set of instructions directing a computer to perform a specific task</td>
+        </tr>
+        <tr>
+          <td><strong>Hardware</strong></td>
+          <td>Physical components of a computer system (tangible)</td>
+        </tr>
+        <tr>
+          <td><strong>Software</strong></td>
+          <td>Programs and data that run on hardware (intangible)</td>
+        </tr>
+        <tr>
+          <td><strong>Data</strong></td>
+          <td>Raw facts that a program processes to produce information</td>
+        </tr>
+        <tr>
+          <td><strong>Algorithm</strong></td>
+          <td>Step-by-step procedure for solving a problem in finite time</td>
+        </tr>
+        <tr>
+          <td><strong>Turing machine</strong></td>
+          <td>Abstract mathematical model defining what is computable</td>
+        </tr>
+        <tr>
+          <td><strong>Von Neumann model</strong></td>
+          <td>Architecture storing programs and data in the same memory</td>
+        </tr>
+        <tr>
+          <td><strong>ALU</strong></td>
+          <td>Arithmetic Logic Unit — performs integer arithmetic and logical operations</td>
+        </tr>
+        <tr>
+          <td><strong>Control Unit</strong></td>
+          <td>Fetches, decodes, and controls execution of instructions</td>
+        </tr>
+        <tr>
+          <td><strong>Stored-program</strong></td>
+          <td>Concept of keeping both programs and data in main memory</td>
+        </tr>
+        <tr>
+          <td><strong>Transistor</strong></td>
+          <td>Semiconductor device that replaced vacuum tubes; basis of modern ICs</td>
+        </tr>
+        <tr>
+          <td><strong>Integrated Circuit</strong></td>
+          <td>Multiple electronic components fabricated on a single silicon chip</td>
+        </tr>
+        <tr>
+          <td><strong>Microprocessor</strong></td>
+          <td>Complete CPU on a single integrated circuit chip</td>
+        </tr>
+        <tr>
+          <td><strong>Cache</strong></td>
+          <td>Small, fast SRAM memory between the CPU and main RAM that stores frequently used data</td>
+        </tr>
+        <tr>
+          <td><strong>Operating System</strong></td>
+          <td>System software that manages hardware resources and provides services to application programs</td>
+        </tr>
+        <tr>
+          <td><strong>Compiler</strong></td>
+          <td>Program that translates high-level source code into machine-executable object code</td>
+        </tr>
+        <tr>
+          <td><strong>Binary</strong></td>
+          <td>Base-2 number system using only 0 and 1; the native language of digital computers</td>
+        </tr>
+        <tr>
+          <td><strong>Bit</strong></td>
+          <td>Binary digit — the smallest unit of data in a computer; has a value of 0 or 1</td>
+        </tr>
+        <tr>
+          <td><strong>Byte</strong></td>
+          <td>Group of 8 bits; the basic addressable unit of memory in most computer architectures</td>
+        </tr>
+        <tr>
+          <td><strong>Moore's Law</strong></td>
+          <td>Observation that transistor count on a chip doubles approximately every two years</td>
+        </tr>
+        <tr>
+          <td><strong>Church-Turing Thesis</strong></td>
+          <td>Hypothesis that any effectively computable function can be computed by a Turing machine</td>
+        </tr>
+        <tr>
+          <td><strong>Halting Problem</strong></td>
+          <td>Undecidable problem: no algorithm can determine in general whether a program will halt or run forever</td>
+        </tr>
+      </table>
+
+      <hr class="divider">
+
+      <div class="label">Chapter 1 — Quick Review Checklist</div>
+      <ul class="items">
+        <li>Can you name all four components of a Turing machine and explain each?</li>
+        <li>Can you explain the stored-program concept and why it was revolutionary?</li>
+        <li>Can you list the four Von Neumann components and describe the fetch-decode-execute cycle?</li>
+        <li>Can you name one key development from each of the four computer generations?</li>
+        <li>Can you distinguish system software from application software with examples?</li>
+        <li>Can you list at least five ACM areas of computer science?</li>
+        <li>Can you state Moore's Law and explain why it is significant?</li>
+        <li>Can you explain the Von Neumann bottleneck and how Harvard architecture addresses it?</li>
+        <li>Can you define: algorithm, data, program, hardware, software, transistor, VLSI?</li>
+        <li>Can you describe the Church-Turing Thesis and the Halting Problem in plain language?</li>
+        <li>Can you draw (or describe) the Von Neumann architecture with all four components and their connections?</li>
+        <li>Can you place ENIAC, UNIVAC, IBM System/360, and Intel 4004 in the correct generation?</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ══ FOOTER ═══════════════════════════════════════════════════════════════ -->
+<div class="footer">
+  <span>FCS4e · CH01 · Introduction</span>
+  <span><a href="../CSI.html" style="color:var(--text-muted);text-decoration:none;">← Back to FCS</a> &nbsp;|&nbsp; <a href="CH02-Number-Systems-CheatSheet.html" style="color:var(--text-muted);text-decoration:none;">CH02 →</a></span>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script></body>
+</html>

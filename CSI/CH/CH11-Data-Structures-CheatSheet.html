@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH11 · Data Structures · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}
+</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 11</h1>
+    <h2>Data Structures &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition — Forouzan</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§11.1 Arrays</span>
+      <span class="toc-item">§11.2 Linked Lists</span>
+      <span class="toc-item">§11.3 Stacks</span>
+      <span class="toc-item">§11.4 Queues</span>
+      <span class="toc-item">§11.5 Trees</span>
+      <span class="toc-item">§11.6 Graphs</span>
+      <span class="toc-item">§11.7 Complexity</span>
+      <span class="toc-item">§11.8 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH11</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — Arrays · Linked Lists · Stacks ═══ -->
+<div class="grid">
+
+  <!-- Card 1: Arrays -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Arrays</h3></div>
+    <div class="card-body">
+      <div class="rule">Array = contiguous block of memory holding elements of the same type, accessed via zero-based index</div>
+      <p>An <span class="tt" data-t="A fixed-size, ordered collection of same-type elements stored in contiguous memory locations">array</span> is the simplest and most widely used data structure. Size is fixed at declaration time.</p>
+
+      <div class="label">Dimensions</div>
+      <ul class="items">
+        <li><strong>1-D:</strong> <code>A[i]</code> — linear list; address = base + i × size</li>
+        <li><strong>2-D:</strong> <code>A[i][j]</code> — matrix; stored as rows or columns in 1-D memory</li>
+        <li><strong>n-D:</strong> generalised multi-dimensional grid</li>
+      </ul>
+
+      <div class="label">Memory Layout</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Order</th><th>Formula (2-D, n cols)</th><th>Common In</th></tr>
+        <tr><td>Row-major</td><td><code>base + (i·n + j)·s</code></td><td>C, C++, Java</td></tr>
+        <tr><td>Col-major</td><td><code>base + (j·m + i)·s</code></td><td>Fortran, MATLAB</td></tr>
+      </table>
+
+      <div class="label">Time Complexity</div>
+      <div class="formula">Access    O(1)  — direct index calculation
+Search    O(n)  — must scan (unsorted); O(log n) binary search (sorted)
+Insert    O(n)  — shift elements to make room
+Delete    O(n)  — shift elements to fill gap</div>
+
+      <div class="info">
+        <div class="i-title">Space Complexity</div>
+        Arrays use O(n) space with <strong>zero overhead</strong> per element — no pointers needed. Cache-friendly due to spatial locality.
+      </div>
+
+      <div class="tip">
+        <div class="t-title">When to Use Arrays</div>
+        Use arrays when the size is known, random access is frequent, and memory locality matters (e.g., image pixels, matrices, lookup tables).
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Linked Lists -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Linked Lists</h3></div>
+    <div class="card-body">
+      <div class="rule">Linked List = dynamic chain of nodes; each node holds data + pointer(s) to neighbour(s)</div>
+
+      <div class="label">Node Structure</div>
+      <div class="formula">struct Node {
+  data  : T          // payload
+  next  : *Node      // pointer to next (singly)
+  prev  : *Node      // pointer to prev (doubly)
+}</div>
+
+      <div class="label">Variants</div>
+      <ul class="items">
+        <li><strong>Singly:</strong> one <code>next</code> pointer; traversal forward only</li>
+        <li><strong>Doubly:</strong> <code>next</code> + <code>prev</code>; O(1) backward traversal; easier deletion</li>
+        <li><strong>Circular:</strong> tail's <code>next</code> → head; useful for round-robin, playlists</li>
+      </ul>
+
+      <div class="label">Operations &amp; Complexity</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Operation</th><th>Singly</th><th>Doubly</th></tr>
+        <tr><td>Insert at head</td><td style="color:var(--accent2);">O(1)</td><td style="color:var(--accent2);">O(1)</td></tr>
+        <tr><td>Insert at tail</td><td>O(n) / O(1)*</td><td style="color:var(--accent2);">O(1)*</td></tr>
+        <tr><td>Delete at head</td><td style="color:var(--accent2);">O(1)</td><td style="color:var(--accent2);">O(1)</td></tr>
+        <tr><td>Delete given node</td><td>O(n)</td><td style="color:var(--accent2);">O(1)</td></tr>
+        <tr><td>Search</td><td>O(n)</td><td>O(n)</td></tr>
+        <tr><td>Random access</td><td>O(n)</td><td>O(n)</td></tr>
+      </table>
+      <p style="font-size:10px;color:var(--text-dim);">* O(1) with a maintained <code>tail</code> pointer</p>
+
+      <div class="label">Array vs Linked List</div>
+      <table class="tbl">
+        <tr><th>Property</th><th>Array</th><th>Linked List</th></tr>
+        <tr><td>Size</td><td>Static</td><td>Dynamic</td></tr>
+        <tr><td>Access</td><td style="color:var(--accent2);">O(1)</td><td>O(n)</td></tr>
+        <tr><td>Insert/Delete</td><td>O(n)</td><td style="color:var(--accent2);">O(1) at known node</td></tr>
+        <tr><td>Memory overhead</td><td>None</td><td>Per-node pointer(s)</td></tr>
+        <tr><td>Cache locality</td><td style="color:var(--accent2);">Good</td><td>Poor</td></tr>
+      </table>
+
+      <div class="warn" style="margin-top:8px;">
+        <div class="w-title">Common Pitfall</div>
+        Forgetting to update the <code>tail</code> pointer on insert/delete at tail — leads to dangling references or memory leaks.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Stacks -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Stacks</h3></div>
+    <div class="card-body">
+      <div class="rule">Stack = LIFO (Last-In, First-Out) — only the top element is accessible at any time</div>
+      <p>A <span class="tt" data-t="LIFO structure: the last element pushed is the first to be popped; like a stack of plates">stack</span> restricts access to one end (the <strong>top</strong>). Think of a stack of plates.</p>
+
+      <div class="label">Core Operations — All O(1)</div>
+      <ul class="items">
+        <li><strong>push(x):</strong> add element <code>x</code> on top</li>
+        <li><strong>pop():</strong> remove &amp; return the top element</li>
+        <li><strong>peek() / top():</strong> return top without removing</li>
+        <li><strong>isEmpty():</strong> check if stack has no elements</li>
+        <li><strong>size():</strong> number of elements currently held</li>
+      </ul>
+
+      <div class="label">Implementations</div>
+      <div class="formula">Array-based:  top index tracks position; push = A[++top]=x; pop = A[top--]
+List-based:   insert/remove at head of singly linked list</div>
+
+      <div class="label">Applications</div>
+      <ul class="items">
+        <li><strong>Expression evaluation:</strong> infix → postfix; evaluate postfix (<span class="tt" data-t="Reverse Polish Notation: operands before operator, e.g. 3 4 + = 7">RPN</span>)</li>
+        <li><strong>Balanced brackets:</strong> push open, pop on close — mismatch = error</li>
+        <li><strong>Function call stack:</strong> activation records pushed/popped on call/return</li>
+        <li><strong>Undo/redo:</strong> editor keeps undo stack of reversible actions</li>
+        <li><strong>DFS:</strong> iterative depth-first search uses an explicit stack</li>
+        <li><strong>Backtracking:</strong> maze solving, N-Queens, parsing</li>
+      </ul>
+
+      <div class="note">
+        <div class="n-title">Stack Overflow</div>
+        Occurs when push is called on a full array-backed stack (fixed capacity). With linked list implementation, limited only by heap memory.
+      </div>
+
+      <div class="info">
+        <div class="i-title">Postfix Evaluation Example</div>
+        Expression <code>5 3 2 * +</code>: push 5, push 3, push 2, pop→2 pop→3 multiply→6 push 6, pop→6 pop→5 add→<strong>11</strong>.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — Queues · Trees · Graphs ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Queues -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Queues</h3></div>
+    <div class="card-body">
+      <div class="rule">Queue = FIFO (First-In, First-Out) — elements enter at rear, leave at front</div>
+      <p>A <span class="tt" data-t="FIFO structure: first element enqueued is the first to be dequeued; like a checkout line">queue</span> models any real-world waiting line. Two ends: <strong>front</strong> (dequeue) and <strong>rear</strong> (enqueue).</p>
+
+      <div class="label">Core Operations — All O(1)</div>
+      <ul class="items">
+        <li><strong>enqueue(x):</strong> add element at the rear</li>
+        <li><strong>dequeue():</strong> remove &amp; return element from front</li>
+        <li><strong>front() / peek():</strong> inspect front without removing</li>
+        <li><strong>rear():</strong> inspect rear without removing</li>
+        <li><strong>isEmpty() / size()</strong></li>
+      </ul>
+
+      <div class="label">Variants</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Type</th><th>Description</th></tr>
+        <tr><td><span class="tt" data-t="Array-based queue that wraps around: rear = (rear+1) % capacity">Circular Queue</span></td><td>Fixed array with modulo wrap; avoids wasted space after dequeue</td></tr>
+        <tr><td><span class="tt" data-t="Each element has a priority; highest priority element is dequeued first regardless of order">Priority Queue</span></td><td>Dequeue by priority; implemented with heap (O(log n) ops)</td></tr>
+        <tr><td><span class="tt" data-t="Double-ended queue: insert and delete allowed at both front and rear">Deque</span></td><td>Double-ended; supports push/pop at both ends; O(1) all ops</td></tr>
+      </table>
+
+      <div class="formula">Circular queue state:
+  front = (front + 1) % capacity   // after dequeue
+  rear  = (rear  + 1) % capacity   // after enqueue
+  full  : (rear + 1) % cap == front
+  empty : front == rear</div>
+
+      <div class="label">Applications</div>
+      <ul class="items">
+        <li><strong>BFS:</strong> breadth-first graph/tree traversal uses a queue</li>
+        <li><strong>CPU / disk scheduling:</strong> OS job queues, round-robin scheduling</li>
+        <li><strong>Print spooler:</strong> print jobs queued in FIFO order</li>
+        <li><strong>Asynchronous data transfer:</strong> keyboard buffer, network packet queues</li>
+        <li><strong>Simulation:</strong> modelling waiting lines (queueing theory)</li>
+      </ul>
+
+      <div class="tip">
+        <div class="t-title">Priority Queue vs Sorted Array</div>
+        Heap-based priority queue: insert O(log n), extract-min/max O(log n). Sorted array: insert O(n), extract O(1). Choose heap when inserts are frequent.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Trees -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Trees</h3></div>
+    <div class="card-body">
+      <div class="rule">Tree = hierarchical, acyclic, connected graph with one root; n nodes → n−1 edges</div>
+
+      <div class="label">Terminology</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td><span class="tt" data-t="The topmost node with no parent; unique in a rooted tree">Root</span></td><td>Top node; no parent</td></tr>
+        <tr><td><span class="tt" data-t="A node with no children; appears at the bottom of a branch">Leaf</span></td><td>Node with degree 0 (no children)</td></tr>
+        <tr><td><span class="tt" data-t="Number of children of a node; max degree of any node = degree of the tree">Degree</span></td><td>Number of children of a node</td></tr>
+        <tr><td><span class="tt" data-t="Distance from root to the node (root = depth 0)">Depth</span></td><td>Edge count from root to node</td></tr>
+        <tr><td><span class="tt" data-t="Longest path from the node down to a leaf">Height</span></td><td>Longest path from node to leaf; tree height = height of root</td></tr>
+        <tr><td>Level</td><td>All nodes at same depth share a level</td></tr>
+        <tr><td>Subtree</td><td>Node + all its descendants</td></tr>
+      </table>
+
+      <div class="label">Binary Search Tree (BST)</div>
+      <div class="formula">BST property: left subtree keys &lt; node key &lt; right subtree keys
+Insert: compare &amp; descend left/right; place at null slot      O(h)
+Search: compare &amp; descend left/right until found or null     O(h)
+Delete: 3 cases — leaf, one child, two children (inorder succ) O(h)
+h = O(log n) balanced, O(n) worst (degenerate/sorted input)</div>
+
+      <div class="label">Tree Traversals</div>
+      <ul class="items">
+        <li><strong>In-order</strong> (L → Root → R): produces <em>sorted</em> output from BST</li>
+        <li><strong>Pre-order</strong> (Root → L → R): used for copying/serialising tree</li>
+        <li><strong>Post-order</strong> (L → R → Root): used for deletion, expression evaluation</li>
+        <li><strong>Level-order (BFS):</strong> visits nodes level by level using a queue</li>
+      </ul>
+
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Balanced vs Degenerate BST</div>
+        A balanced BST (e.g., <span class="tt" data-t="Self-balancing BST named after Adelson-Velsky and Landis; height difference ≤ 1">AVL</span>, Red-Black) guarantees O(log n) ops. A degenerate BST (sorted insertion) degrades to O(n) — essentially a linked list.
+      </div>
+
+      <div class="note">
+        <div class="n-title">Complete vs Full Binary Tree</div>
+        <strong>Full:</strong> every node has 0 or 2 children. <strong>Complete:</strong> all levels full except possibly the last, filled left-to-right. Heaps are complete binary trees.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: Graphs -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Graphs</h3></div>
+    <div class="card-body">
+      <div class="rule">Graph G = (V, E): set of vertices V and edges E connecting pairs of vertices</div>
+
+      <div class="label">Classification</div>
+      <ul class="items">
+        <li><strong>Undirected:</strong> edge (u,v) = (v,u); no direction; models roads, friendships</li>
+        <li><strong>Directed (Digraph):</strong> edge (u,v) ≠ (v,u); one-way; models web links, dependencies</li>
+        <li><strong>Weighted:</strong> each edge carries a numeric weight (cost, distance, capacity)</li>
+        <li><strong>Cyclic / Acyclic:</strong> <span class="tt" data-t="Directed Acyclic Graph — no directed cycles; used for scheduling, dependencies">DAG</span> (Directed Acyclic Graph) has no cycles</li>
+        <li><strong>Connected:</strong> every vertex reachable from every other (undirected)</li>
+      </ul>
+
+      <div class="label">Representations</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Structure</th><th>Space</th><th>Edge check</th><th>Neighbours</th><th>Best for</th></tr>
+        <tr><td><span class="tt" data-t="V×V matrix where entry [i][j]=1 (or weight) if edge (i,j) exists">Adjacency Matrix</span></td><td>O(V²)</td><td style="color:var(--accent2);">O(1)</td><td>O(V)</td><td>Dense graphs</td></tr>
+        <tr><td><span class="tt" data-t="Array of V lists; list[i] contains all neighbours of vertex i">Adjacency List</span></td><td>O(V+E)</td><td>O(degree)</td><td style="color:var(--accent2);">O(degree)</td><td>Sparse graphs</td></tr>
+      </table>
+
+      <div class="label">Graph Traversals</div>
+      <div class="formula">BFS (Breadth-First Search):  queue-based; visits level by level
+  → shortest path in unweighted graphs; O(V+E)
+
+DFS (Depth-First Search):   stack/recursion; explores deep first
+  → cycle detection, topological sort, SCCs; O(V+E)</div>
+
+      <div class="label">Shortest Path Algorithms</div>
+      <ul class="items">
+        <li><span class="tt" data-t="Greedy single-source shortest path for non-negative weights; O((V+E) log V) with min-heap">Dijkstra</span>: non-negative weights; O((V+E) log V)</li>
+        <li><span class="tt" data-t="Dynamic programming SSSP; handles negative weights; detects negative cycles; O(VE)">Bellman-Ford</span>: handles negative weights; O(VE)</li>
+        <li><span class="tt" data-t="All-pairs shortest paths via dynamic programming; O(V³)">Floyd-Warshall</span>: all-pairs; O(V³)</li>
+      </ul>
+
+      <div class="warn" style="margin-top:8px;">
+        <div class="w-title">Negative Cycles</div>
+        Dijkstra fails on negative-weight edges. Use Bellman-Ford; it can also detect negative-weight cycles (shortest path is undefined when one exists).
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Complexity Table · Key Terms · Quick Review ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Complexity Table + Key Terms + Quick Review (col-span-3) -->
+  <div class="card blue col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Complexity Comparison · Key Terms · Quick Review</h3></div>
+    <div class="card-body">
+
+      <!-- Complexity Table -->
+      <div class="label">Big-O Complexity — All Data Structures × Operations</div>
+      <table class="tbl" style="margin-bottom:10px;">
+        <tr>
+          <th>Structure</th>
+          <th>Access</th>
+          <th>Search (avg)</th>
+          <th>Search (worst)</th>
+          <th>Insert (best)</th>
+          <th>Insert (worst)</th>
+          <th>Delete (best)</th>
+          <th>Delete (worst)</th>
+          <th>Space</th>
+        </tr>
+        <tr>
+          <td><strong>Array</strong></td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+        </tr>
+        <tr>
+          <td><strong>Singly Linked List</strong></td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+        </tr>
+        <tr>
+          <td><strong>Doubly Linked List</strong></td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td>O(n)</td>
+        </tr>
+        <tr>
+          <td><strong>Stack (array)</strong></td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td>O(n)</td>
+        </tr>
+        <tr>
+          <td><strong>Queue (array)</strong></td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td>O(n)</td>
+        </tr>
+        <tr>
+          <td><strong>BST (balanced)</strong></td>
+          <td>—</td>
+          <td style="color:var(--accent2);">O(log n)</td>
+          <td>O(n)</td>
+          <td style="color:var(--accent2);">O(log n)</td>
+          <td>O(n)</td>
+          <td style="color:var(--accent2);">O(log n)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+        </tr>
+        <tr>
+          <td><strong>Hash Table</strong></td>
+          <td>—</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td>O(n)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td>O(n)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td>O(n)</td>
+          <td>O(n)</td>
+        </tr>
+        <tr>
+          <td><strong>Graph (adj. list)</strong></td>
+          <td>—</td>
+          <td>O(V+E)</td>
+          <td>O(V+E)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td style="color:var(--accent2);">O(1)</td>
+          <td>O(E)</td>
+          <td>O(E)</td>
+          <td>O(V+E)</td>
+        </tr>
+      </table>
+
+      <hr class="divider">
+
+      <!-- Key Terms — 2 column layout -->
+      <div class="label">Key Terms</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 20px;margin-bottom:10px;">
+        <ul class="items">
+          <li><strong><span class="tt" data-t="Fixed-size contiguous memory block; O(1) access by index">Array</span></strong> — static, index-based, contiguous storage</li>
+          <li><strong><span class="tt" data-t="Chain of nodes each holding data and pointer(s) to neighbours">Linked List</span></strong> — dynamic, pointer-chained nodes</li>
+          <li><strong><span class="tt" data-t="Last-In First-Out restricted-access structure">Stack</span></strong> — LIFO; push/pop/peek at top</li>
+          <li><strong><span class="tt" data-t="First-In First-Out restricted-access structure">Queue</span></strong> — FIFO; enqueue at rear, dequeue at front</li>
+          <li><strong><span class="tt" data-t="Queue variant where elements are removed in priority order, not arrival order">Priority Queue</span></strong> — ordered by key; heap-backed</li>
+          <li><strong><span class="tt" data-t="Double-ended queue; O(1) insert/delete at both ends">Deque</span></strong> — double-ended queue</li>
+          <li><strong><span class="tt" data-t="Hierarchical structure: root, internal nodes, leaves connected by edges">Tree</span></strong> — acyclic hierarchy; root + children</li>
+          <li><strong><span class="tt" data-t="Binary tree where left child &lt; parent &lt; right child">BST</span></strong> — binary search tree; sorted structure</li>
+        </ul>
+        <ul class="items">
+          <li><strong><span class="tt" data-t="Self-balancing BST; |height(left)−height(right)| ≤ 1">AVL Tree</span></strong> — height-balanced BST; O(log n) all ops</li>
+          <li><strong><span class="tt" data-t="Complete binary tree satisfying heap property: parent ≤ children (min-heap) or ≥ (max-heap)">Heap</span></strong> — complete tree; min/max at root; O(log n) insert</li>
+          <li><strong><span class="tt" data-t="G=(V,E); models pairwise relationships between entities">Graph</span></strong> — vertices + edges; directed or undirected</li>
+          <li><strong><span class="tt" data-t="V×V boolean/weight matrix indicating edge existence">Adjacency Matrix</span></strong> — O(V²) space; O(1) edge lookup</li>
+          <li><strong><span class="tt" data-t="Per-vertex list of neighbouring vertices; O(V+E) space">Adjacency List</span></strong> — O(V+E) space; efficient for sparse</li>
+          <li><strong><span class="tt" data-t="Visiting all tree/graph nodes level-by-level using a queue">BFS</span></strong> — breadth-first search; shortest unweighted path</li>
+          <li><strong><span class="tt" data-t="Visiting tree/graph nodes by exploring as deep as possible before backtracking">DFS</span></strong> — depth-first search; uses stack/recursion</li>
+          <li><strong><span class="tt" data-t="Measure of algorithm's time/space growth rate as input size grows">Big-O Notation</span></strong> — asymptotic upper bound on complexity</li>
+        </ul>
+      </div>
+
+      <hr class="divider">
+
+      <!-- Quick Review -->
+      <div class="label">Quick Review — Chapter 11 Essentials</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+
+        <div class="info">
+          <div class="i-title">Structure Selection Guide</div>
+          <ul class="items" style="font-size:11px;">
+            <li>Need <strong>random access</strong>? → Array</li>
+            <li>Frequent <strong>insert/delete</strong> at ends? → Linked List / Deque</li>
+            <li>Reverse / nested calls? → Stack</li>
+            <li>Order preservation? → Queue</li>
+            <li>Sorted dynamic data? → BST / AVL</li>
+            <li>Fastest lookup (avg)? → Hash Table O(1)</li>
+            <li>Relationship modelling? → Graph</li>
+          </ul>
+        </div>
+
+        <div class="tip">
+          <div class="t-title">Tree Traversal Mnemonics</div>
+          <ul class="items" style="font-size:11px;">
+            <li><strong>In-order</strong>: Left–<em>Root</em>–Right → <em>sorted BST output</em></li>
+            <li><strong>Pre-order</strong>: <em>Root</em>–Left–Right → <em>copy/serialize</em></li>
+            <li><strong>Post-order</strong>: Left–Right–<em>Root</em> → <em>delete/evaluate</em></li>
+            <li><strong>Level-order</strong>: BFS → <em>shortest levels</em></li>
+          </ul>
+          <div class="formula" style="margin-top:6px;font-size:10px;">In-order of BST always yields sorted sequence</div>
+        </div>
+
+        <div class="note">
+          <div class="n-title">Key Principles</div>
+          <ul class="items" style="font-size:11px;">
+            <li>Arrays trade flexibility for speed — best cache performance</li>
+            <li>Linked lists trade speed for flexibility — dynamic size</li>
+            <li>Stack &amp; Queue restrict access for predictable behaviour</li>
+            <li>BST performance depends on balance — always check for skewed input</li>
+            <li>Graph complexity is expressed in V (vertices) <em>and</em> E (edges)</li>
+            <li>O(1) access is the gold standard; not all structures achieve it</li>
+          </ul>
+        </div>
+
+      </div><!-- /3-col quick review -->
+
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <span>
+    <a href="CH10-Software-Engineering-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">← CH10</a>
+    &nbsp;|&nbsp;
+    <a href="../CSI.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">Back to FCS</a>
+    &nbsp;|&nbsp;
+    <a href="CH12-Abstract-Data-Types-CheatSheet.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-decoration:none;">CH12 →</a>
+  </span>
+  <span>Foundations of Computer Science, 4th Ed. — Forouzan | Chapter 11: Data Structures</span>
+  <span>FCS4e · CH11 · §11.1–§11.6</span>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH08 · Algorithms · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 8</h1>
+    <h2>Algorithms &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition &nbsp;|&nbsp; Forouzan</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§8.1 Algorithm Concepts</span>
+      <span class="toc-item">§8.2 Three Constructs</span>
+      <span class="toc-item">§8.3 Algorithm Design</span>
+      <span class="toc-item">§8.4 Sorting</span>
+      <span class="toc-item">§8.5 Searching</span>
+      <span class="toc-item">§8.6 Complexity</span>
+      <span class="toc-item">§8.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH08</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — §8.1 · §8.2 · §8.3 ═══ -->
+<div class="grid">
+
+  <!-- ─── Card 1: Algorithm Concepts (blue) ─── -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Algorithm Concepts — §8.1</h3></div>
+    <div class="card-body">
+      <div class="rule">An algorithm is an ordered set of unambiguous steps that produces a result and terminates in a finite time.</div>
+
+      <div class="label">Definition</div>
+      <p>An <span class="tt" data-t="A finite, ordered, unambiguous set of steps for solving a problem — the logical blueprint before any coding.">algorithm</span> is a step-by-step procedure to solve a well-defined problem. It is independent of programming language and hardware — it is a <em>logical</em> construct.</p>
+
+      <div class="label">Five Essential Properties</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Property</th><th>Meaning</th></tr>
+        <tr><td><strong>Finiteness</strong></td><td>Must terminate after a finite number of steps — no infinite loops</td></tr>
+        <tr><td><strong>Definiteness</strong></td><td>Every step must be precisely and unambiguously defined</td></tr>
+        <tr><td><strong>Input</strong></td><td>Zero or more well-defined inputs supplied before execution</td></tr>
+        <tr><td><strong>Output</strong></td><td>One or more outputs — the result of the algorithm</td></tr>
+        <tr><td><strong>Effectiveness</strong></td><td>Each step is basic enough to be carried out in finite time</td></tr>
+      </table>
+
+      <div class="label">Informal vs Formal Description</div>
+      <ul class="items">
+        <li><strong>Informal:</strong> natural language description — easy to write, prone to ambiguity</li>
+        <li><strong>Formal:</strong> pseudocode or flowchart — structured, unambiguous, closer to implementation</li>
+      </ul>
+
+      <hr class="divider">
+
+      <div class="label">Pseudocode vs Flowchart</div>
+      <table class="tbl">
+        <tr><th>Tool</th><th>Format</th><th>Best For</th></tr>
+        <tr>
+          <td><span class="tt" data-t="An English-like notation to describe algorithm logic without strict syntax rules.">Pseudocode</span></td>
+          <td>Text, structured English</td>
+          <td>Sequential description, textbooks, code translation</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="A diagram using standard symbols (ovals, rectangles, diamonds) to depict algorithm control flow.">Flowchart</span></td>
+          <td>Diagram with symbols</td>
+          <td>Visualising control flow, decision logic, loops</td>
+        </tr>
+      </table>
+
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Pseudocode Conventions (Forouzan)</div>
+        Keywords: <code>Algorithm</code>, <code>Input</code>, <code>Output</code>, <code>if…else…end if</code>, <code>while…end while</code>, <code>for…end for</code>. Indentation shows nesting; ← denotes assignment.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Card 2: Three Constructs (green) ─── -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Three Constructs — §8.2</h3></div>
+    <div class="card-body">
+      <div class="rule">Any algorithm can be expressed using exactly three constructs: sequence, decision, and repetition (Böhm–Jacopini theorem).</div>
+
+      <div class="label">1 · Sequence</div>
+      <p>Statements execute one after another in the order written. No branching or looping.</p>
+      <pre class="rule" style="white-space:pre;line-height:1.6;">Algorithm AddTwo
+  Input: a, b
+  sum ← a + b
+  Output: sum</pre>
+
+      <div class="label">2 · Decision (Selection)</div>
+      <p>Chooses between paths based on a condition. Two forms:</p>
+      <pre class="rule" style="white-space:pre;line-height:1.6;">if (condition)
+  action_A
+else
+  action_B
+end if</pre>
+      <pre class="rule" style="white-space:pre;line-height:1.6;">switch (variable)
+  case val1: action_1
+  case val2: action_2
+  default:   action_default
+end switch</pre>
+
+      <div class="tip">
+        <div class="t-title">Switch vs If-Else</div>
+        Use <code>switch</code> for multi-way selection on discrete values; <code>if/else</code> for range comparisons or complex boolean conditions.
+      </div>
+
+      <div class="label">3 · Repetition (Loop)</div>
+      <table class="tbl" style="margin-bottom:6px;">
+        <tr><th>Loop</th><th>Test Position</th><th>Min Executions</th></tr>
+        <tr><td><code>while</code></td><td>Pre-test (top)</td><td>0</td></tr>
+        <tr><td><code>for</code></td><td>Pre-test + counter</td><td>0</td></tr>
+        <tr><td><code>do-while</code></td><td>Post-test (bottom)</td><td>1</td></tr>
+      </table>
+      <pre class="rule" style="white-space:pre;line-height:1.6;">i ← 1
+while (i ≤ n)
+  process(i)
+  i ← i + 1
+end while</pre>
+      <pre class="rule" style="white-space:pre;line-height:1.6;">for i ← 1 to n
+  process(i)
+end for</pre>
+
+      <div class="note">
+        <div class="n-title">Loop Invariant</div>
+        A condition that holds true before, during, and after each loop iteration. Used to prove correctness of repetition constructs.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Card 3: Algorithm Design (purple) ─── -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Algorithm Design — §8.3</h3></div>
+    <div class="card-body">
+      <div class="rule">Good algorithm design = decompose, refine, verify. Abstract first, detail later.</div>
+
+      <div class="label">Top-Down Design</div>
+      <p>Start with the <em>whole problem</em> as a single module, then progressively break it into smaller, more manageable sub-problems. Each level is a refinement of the level above.</p>
+      <ol class="steps">
+        <li>Define the overall goal (main module)</li>
+        <li>Identify major sub-tasks</li>
+        <li>Decompose each sub-task recursively</li>
+        <li>Implement at the leaf level</li>
+      </ol>
+
+      <div class="label">Modular Decomposition</div>
+      <p>Each <span class="tt" data-t="A self-contained logical unit of an algorithm performing a single, well-defined task.">module</span> has a single responsibility, a clear interface (inputs/outputs), and can be designed, tested, and understood independently.</p>
+      <ul class="items">
+        <li>Promotes code reuse and maintainability</li>
+        <li>Reduces complexity at each level</li>
+        <li>Enables parallel development by teams</li>
+      </ul>
+
+      <div class="label">Stepwise Refinement</div>
+      <p>Iteratively replace abstract actions with more concrete steps until the algorithm is fully specified. Each pass adds detail without changing intent.</p>
+
+      <hr class="divider">
+
+      <div class="label">Recursion vs Iteration</div>
+      <table class="tbl">
+        <tr><th>Aspect</th><th>Recursion</th><th>Iteration</th></tr>
+        <tr><td>Mechanism</td><td>Function calls itself</td><td>Loop repeats block</td></tr>
+        <tr><td>Memory</td><td>Call stack grows</td><td>Constant extra space</td></tr>
+        <tr><td>Termination</td><td>Base case</td><td>Loop condition false</td></tr>
+        <tr><td>Elegance</td><td>Concise for tree/graph problems</td><td>Explicit, easier to trace</td></tr>
+        <tr><td>Risk</td><td>Stack overflow if deep</td><td>Infinite loop if guard fails</td></tr>
+      </table>
+
+      <div class="warn" style="margin-top:8px;">
+        <div class="w-title">Recursive Requirement</div>
+        Every recursive algorithm <strong>must</strong> have a <span class="tt" data-t="The condition that stops recursion — the simplest sub-problem that can be solved directly.">base case</span> that does not recurse, otherwise it will run infinitely.
+      </div>
+
+      <div class="tip">
+        <div class="t-title">Recursion Example — Factorial</div>
+        <code>factorial(n) = if n=0 then 1 else n × factorial(n−1)</code><br>
+        Base case: <code>n = 0</code> → returns 1 without recursing.
+      </div>
+    </div>
+  </div>
+
+</div><!-- end row 1 -->
+
+<!-- ═══ ROW 2 — §8.4 · §8.5 · §8.6 ═══ -->
+<div class="grid section-gap">
+
+  <!-- ─── Card 4: Sorting Algorithms (orange) ─── -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Sorting Algorithms — §8.4</h3></div>
+    <div class="card-body">
+      <div class="rule">Sorting: rearrange a list of n elements into ascending (or descending) order.</div>
+
+      <div class="label">Selection Sort</div>
+      <p>Find the <em>minimum</em> element in the unsorted portion and swap it into position.</p>
+      <pre class="rule" style="white-space:pre;line-height:1.6;">for i ← 0 to n−2
+  min ← i
+  for j ← i+1 to n−1
+    if list[j] &lt; list[min]
+      min ← j
+    end if
+  end for
+  swap list[i] ↔ list[min]
+end for</pre>
+
+      <div class="label">Bubble Sort</div>
+      <p>Repeatedly compare <em>adjacent</em> pairs and swap if out of order; largest element "bubbles" to end each pass.</p>
+      <pre class="rule" style="white-space:pre;line-height:1.6;">for i ← 0 to n−2
+  for j ← 0 to n−i−2
+    if list[j] &gt; list[j+1]
+      swap list[j] ↔ list[j+1]
+    end if
+  end for
+end for</pre>
+
+      <div class="label">Insertion Sort</div>
+      <p>Build a sorted sub-list by inserting each new element into its correct position.</p>
+      <pre class="rule" style="white-space:pre;line-height:1.6;">for i ← 1 to n−1
+  key ← list[i]
+  j ← i − 1
+  while (j ≥ 0) and (list[j] &gt; key)
+    list[j+1] ← list[j]
+    j ← j − 1
+  end while
+  list[j+1] ← key
+end for</pre>
+
+      <div class="label">Complexity Summary</div>
+      <table class="tbl">
+        <tr><th>Algorithm</th><th>Best</th><th>Average</th><th>Worst</th><th>Stable?</th></tr>
+        <tr>
+          <td><span class="tt" data-t="Finds the minimum in the unsorted portion and places it — always O(n²) comparisons.">Selection</span></td>
+          <td style="color:var(--accent5);">O(n²)</td>
+          <td style="color:var(--accent5);">O(n²)</td>
+          <td style="color:var(--accent3);">O(n²)</td>
+          <td>No</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Compares adjacent elements repeatedly — simple but slow on large unsorted data.">Bubble</span></td>
+          <td style="color:var(--accent2);">O(n)</td>
+          <td style="color:var(--accent5);">O(n²)</td>
+          <td style="color:var(--accent3);">O(n²)</td>
+          <td>Yes</td>
+        </tr>
+        <tr>
+          <td><span class="tt" data-t="Inserts each element into its position in a growing sorted sub-list — efficient for nearly sorted data.">Insertion</span></td>
+          <td style="color:var(--accent2);">O(n)</td>
+          <td style="color:var(--accent5);">O(n²)</td>
+          <td style="color:var(--accent3);">O(n²)</td>
+          <td>Yes</td>
+        </tr>
+      </table>
+
+      <div class="note" style="margin-top:8px;">
+        <div class="n-title">When to Use</div>
+        All three are O(n²) — fine for small n (≤ 1 000). For large n, prefer O(n log n) algorithms (merge sort, quicksort, heap sort).
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Card 5: Searching Algorithms (red) ─── -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Searching Algorithms — §8.5</h3></div>
+    <div class="card-body">
+      <div class="rule">Searching: locate a target value (key) within a collection of n elements.</div>
+
+      <div class="label">Sequential (Linear) Search — O(n)</div>
+      <p>Examine each element one by one from the beginning until the key is found or the list is exhausted.</p>
+      <pre class="rule" style="white-space:pre;line-height:1.6;">Algorithm SeqSearch(list, n, key)
+  Input: list[0..n-1], target key
+  i ← 0
+  while (i &lt; n) and (list[i] ≠ key)
+    i ← i + 1
+  end while
+  if i &lt; n
+    Output: i          // found at index i
+  else
+    Output: −1         // not found</pre>
+
+      <div class="info">
+        <div class="i-title">Preconditions</div>
+        <strong>None.</strong> Sequential search works on any list — sorted, unsorted, with duplicates. The simplest search strategy.
+      </div>
+
+      <hr class="divider">
+
+      <div class="label">Binary Search — O(log n)</div>
+      <p>Repeatedly halve the search interval by comparing the key to the <em>middle</em> element. Works only on a <strong>sorted</strong> list.</p>
+      <pre class="rule" style="white-space:pre;line-height:1.6;">Algorithm BinSearch(list, n, key)
+  Input: sorted list[0..n-1], target key
+  lo ← 0 ; hi ← n − 1
+  while lo ≤ hi
+    mid ← (lo + hi) / 2
+    if key = list[mid]
+      Output: mid      // found
+    else if key &lt; list[mid]
+      hi ← mid − 1    // search left half
+    else
+      lo ← mid + 1    // search right half
+    end if
+  end while
+  Output: −1           // not found</pre>
+
+      <div class="warn">
+        <div class="w-title">Precondition: Sorted List Required</div>
+        Binary search <strong>fails</strong> on unsorted data. Always verify the list is in ascending order before applying binary search.
+      </div>
+
+      <div class="label">Comparison</div>
+      <table class="tbl">
+        <tr><th>Property</th><th>Sequential</th><th>Binary</th></tr>
+        <tr><td>Precondition</td><td>None</td><td>List must be sorted</td></tr>
+        <tr><td>Best Case</td><td style="color:var(--accent2);">O(1)</td><td style="color:var(--accent2);">O(1)</td></tr>
+        <tr><td>Worst / Average</td><td style="color:var(--accent3);">O(n)</td><td style="color:var(--accent2);">O(log n)</td></tr>
+        <tr><td>Comparisons (n=1024)</td><td>up to 1 024</td><td>up to 10</td></tr>
+        <tr><td>Data structure</td><td>Any array/list</td><td>Sorted array</td></tr>
+      </table>
+
+      <div class="tip" style="margin-top:6px;">
+        <div class="t-title">Why O(log n)?</div>
+        Each comparison eliminates <em>half</em> the remaining elements. After k steps, only n/2ᵏ elements remain. When n/2ᵏ = 1 → k = log₂ n.
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Card 6: Complexity Analysis (yellow) ─── -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Complexity Analysis — §8.6</h3></div>
+    <div class="card-body">
+      <div class="rule">Complexity measures how resource usage (time or space) grows as input size n increases — expressed using Big-O notation.</div>
+
+      <div class="label">Big-O Notation</div>
+      <p><span class="tt" data-t="Upper-bound asymptotic notation: f(n) = O(g(n)) means f grows no faster than g as n → ∞.">Big-O</span> describes the <em>upper bound</em> of growth rate. We drop constants and lower-order terms.</p>
+      <div class="formula">T(n) = 5n² + 3n + 7  →  O(n²)</div>
+      <div class="formula">T(n) = 2 log n + 1   →  O(log n)</div>
+
+      <div class="label">Common Complexity Classes (ascending)</div>
+      <table class="tbl">
+        <tr><th>Notation</th><th>Name</th><th>Example</th></tr>
+        <tr><td style="color:var(--accent2);"><code>O(1)</code></td><td>Constant</td><td>Array index access</td></tr>
+        <tr><td style="color:var(--accent2);"><code>O(log n)</code></td><td>Logarithmic</td><td>Binary search</td></tr>
+        <tr><td style="color:var(--accent);"><code>O(n)</code></td><td>Linear</td><td>Sequential search</td></tr>
+        <tr><td style="color:var(--accent);"><code>O(n log n)</code></td><td>Linearithmic</td><td>Merge sort, heap sort</td></tr>
+        <tr><td style="color:var(--accent5);"><code>O(n²)</code></td><td>Quadratic</td><td>Bubble / selection sort</td></tr>
+        <tr><td style="color:var(--accent3);"><code>O(2ⁿ)</code></td><td>Exponential</td><td>Recursive Fibonacci (naïve)</td></tr>
+      </table>
+
+      <div class="label">Growth Rate Ordering</div>
+      <div class="formula">O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n²) &lt; O(2ⁿ)</div>
+
+      <div class="label">Time vs Space Complexity</div>
+      <table class="tbl" style="margin-bottom:8px;">
+        <tr><th>Type</th><th>Measures</th><th>Notes</th></tr>
+        <tr><td><span class="tt" data-t="How the number of basic operations grows as input size n increases.">Time</span></td><td>Operations / steps</td><td>Machine-independent count</td></tr>
+        <tr><td><span class="tt" data-t="How much additional memory an algorithm needs as input size n grows.">Space</span></td><td>Memory used</td><td>Includes auxiliary storage</td></tr>
+      </table>
+
+      <div class="info">
+        <div class="i-title">Time-Space Trade-off</div>
+        Algorithms can often trade time for space: caching computed results (memoization) uses more memory but reduces recomputation — a classic time-space trade-off.
+      </div>
+
+      <div class="label">Complexity Classes</div>
+      <ul class="items">
+        <li><strong>P:</strong> solvable in polynomial time — tractable problems</li>
+        <li><strong>NP:</strong> solutions verifiable in polynomial time — includes hard combinatorial problems</li>
+        <li><strong>NP-complete:</strong> hardest problems in NP — no known poly-time solution</li>
+        <li><strong>Exponential:</strong> grows faster than any polynomial — intractable for large n</li>
+      </ul>
+
+      <div class="warn">
+        <div class="w-title">Practical Cut-off</div>
+        O(n²) is acceptable for n ≤ ~10 000. O(2ⁿ) becomes impractical for n &gt; 40. Always analyse complexity before choosing an algorithm.
+      </div>
+    </div>
+  </div>
+
+</div><!-- end row 2 -->
+
+<!-- ═══ ROW 3 — Key Terms + Quick Review (col-span-3) ═══ -->
+<div class="grid section-gap">
+
+  <!-- ─── Card 7: Key Terms + Quick Review (purple, col-span-3) ─── -->
+  <div class="card purple col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review — §8.7</h3></div>
+    <div class="card-body">
+
+      <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:16px;">
+
+        <!-- Key Terms table -->
+        <div>
+          <div class="label" style="margin-top:0;">Key Terms</div>
+          <table class="tbl">
+            <tr>
+              <th style="width:26%;">Term</th>
+              <th>Definition</th>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="An ordered, finite set of unambiguous steps that solves a problem and terminates.">Algorithm</span></td>
+              <td>Ordered, finite, unambiguous set of steps producing a result in finite time</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="An English-like informal notation used to describe algorithms without language-specific syntax.">Pseudocode</span></td>
+              <td>Informal, structured English notation for describing algorithm logic</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="A diagram using standard symbols to illustrate the flow of control through an algorithm.">Flowchart</span></td>
+              <td>Graphical representation of algorithm control flow using standardised symbols</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="A programming technique where a function calls itself with a smaller sub-problem.">Recursion</span></td>
+              <td>A function calling itself; requires a base case to ensure termination</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Solving a problem by repeating a block of code via loops rather than function self-calls.">Iteration</span></td>
+              <td>Repeating a set of instructions using loops (while, for, do-while)</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Big-O notation — describes the upper-bound growth rate of an algorithm's resource usage.">Big-O</span></td>
+              <td>Asymptotic upper-bound notation describing worst-case growth rate</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Rearranging data elements into a specified order (ascending or descending).">Sorting</span></td>
+              <td>Rearranging a collection of items into ascending or descending order</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Finding the position of a target value within a collection of data.">Searching</span></td>
+              <td>Locating a target key within a data collection; returns index or failure</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="A measure of how resource usage (time or space) scales with input size n.">Complexity</span></td>
+              <td>How time or memory requirements grow as a function of input size</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Selects the minimum unsorted element and swaps it to the front — O(n²) comparisons always.">Selection Sort</span></td>
+              <td>Finds minimum in unsorted sub-array each pass; always O(n²)</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Divides the search space in half each step; requires a sorted list — O(log n).">Binary Search</span></td>
+              <td>Halves search interval by comparing to midpoint; requires sorted input</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="How the number of basic operations an algorithm performs grows with input size n.">Time Complexity</span></td>
+              <td>Measure of number of basic operations as a function of input size n</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="How much additional memory an algorithm consumes relative to its input size.">Space Complexity</span></td>
+              <td>Amount of additional memory needed beyond the input itself</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Breaking a problem into independent sub-modules each with a single clear responsibility.">Modular</span></td>
+              <td>Decomposing a problem into self-contained modules with defined interfaces</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="The stopping condition in a recursive algorithm — the simplest case solved directly without further recursion.">Base Case</span></td>
+              <td>The terminating condition of a recursive algorithm; no further recursion</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Comparing adjacent elements and swapping them if out of order; largest value bubbles to end.">Bubble Sort</span></td>
+              <td>Passes through the list swapping adjacent elements; O(n²) worst case</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Builds a sorted sub-list by inserting each new element into its correct position.">Insertion Sort</span></td>
+              <td>Inserts each element into correct position in growing sorted sub-list</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Quick Review -->
+        <div>
+          <div class="label" style="margin-top:0;">Quick Review</div>
+
+          <div class="note">
+            <div class="n-title">Algorithm Must-Haves</div>
+            Finite · Definite · Has input(s) · Produces output(s) · Effective. If <em>any one</em> of these is missing, the procedure is not a valid algorithm.
+          </div>
+
+          <div class="info">
+            <div class="i-title">Three Constructs Theorem</div>
+            Böhm &amp; Jacopini (1966) proved that <em>any</em> computable algorithm can be expressed using only sequence, decision, and repetition. No <code>goto</code> needed.
+          </div>
+
+          <div class="tip">
+            <div class="t-title">Top-Down vs Bottom-Up</div>
+            <strong>Top-down:</strong> start from the whole, decompose downward (Forouzan's approach).<br>
+            <strong>Bottom-up:</strong> build small primitives first, compose upward. Used in some OOP and incremental development.
+          </div>
+
+          <div class="warn">
+            <div class="w-title">Sorting Choice Guide</div>
+            Small n (&lt;1 000): insertion sort.<br>
+            Nearly sorted: insertion or bubble.<br>
+            General large n: merge sort O(n log n).<br>
+            In-place with average good perf: quicksort.
+          </div>
+
+          <hr class="divider">
+
+          <div class="label">Complexity at a Glance (n = 1 000)</div>
+          <table class="tbl">
+            <tr><th>O(·)</th><th>Ops (approx)</th></tr>
+            <tr><td><code>O(1)</code></td><td style="color:var(--accent2);">1</td></tr>
+            <tr><td><code>O(log n)</code></td><td style="color:var(--accent2);">~10</td></tr>
+            <tr><td><code>O(n)</code></td><td style="color:var(--accent);">1 000</td></tr>
+            <tr><td><code>O(n log n)</code></td><td style="color:var(--accent);">~10 000</td></tr>
+            <tr><td><code>O(n²)</code></td><td style="color:var(--accent5);">1 000 000</td></tr>
+            <tr><td><code>O(2ⁿ)</code></td><td style="color:var(--accent3);">10³⁰¹ (intractable)</td></tr>
+          </table>
+
+          <hr class="divider">
+
+          <div class="label">Exam Checklist</div>
+          <ul class="items">
+            <li>State the <strong>5 properties</strong> of an algorithm</li>
+            <li>Write pseudocode for all three <strong>loop types</strong></li>
+            <li>Trace <strong>selection sort</strong> for a 5-element array</li>
+            <li>Trace <strong>binary search</strong> step-by-step</li>
+            <li>Identify <strong>base case</strong> in a recursive algorithm</li>
+            <li>Give the Big-O for O(n log n) vs O(n²) sorting</li>
+            <li>Explain the <strong>time-space trade-off</strong></li>
+          </ul>
+        </div>
+
+      </div><!-- end inner grid -->
+    </div>
+  </div>
+
+</div><!-- end row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <a href="CH07-Operating-Systems-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">← CH07 · Operating Systems</a>
+  <a href="../CSI.html" style="color:var(--text-dim);text-decoration:none;">↑ Back to FCS</a>
+  <a href="CH09-Programming-Languages-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">CH09 · Programming Languages →</a>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script></body>
+</html>

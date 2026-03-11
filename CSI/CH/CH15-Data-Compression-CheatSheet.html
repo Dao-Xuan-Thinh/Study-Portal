@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH15 · Data Compression · FCS4e</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}
+</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Chapter 15</h1>
+    <h2>Data Compression &nbsp;|&nbsp; Foundations of Computer Science, 4th Edition &nbsp;·&nbsp; Complete Study Reference</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§15.1 Compression Concepts</span>
+      <span class="toc-item">§15.2 Run-Length Encoding</span>
+      <span class="toc-item">§15.3 Huffman Coding</span>
+      <span class="toc-item">§15.4 LZW Compression</span>
+      <span class="toc-item">§15.5 Lossy — JPEG &amp; MPEG</span>
+      <span class="toc-item">§15.6 Audio &amp; Video Standards</span>
+      <span class="toc-item">§15.7 Key Terms</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH15</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 ═══ -->
+<div class="grid">
+
+  <!-- Card 1: Compression Concepts (blue) -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>Compression Concepts</h3></div>
+    <div class="card-body">
+      <div class="rule">Compression = removing redundancy from data without (or with limited) loss of information</div>
+      <div class="label">Lossless vs Lossy</div>
+      <table class="tbl">
+        <tr><th>Property</th><th>Lossless</th><th>Lossy</th></tr>
+        <tr><td>Reconstruction</td><td>Exact / perfect</td><td>Approximate</td></tr>
+        <tr><td>Reversible?</td><td style="color:var(--accent2);">Yes</td><td style="color:var(--accent3);">No</td></tr>
+        <tr><td>Typical ratio</td><td>2:1 – 8:1</td><td>10:1 – 100:1</td></tr>
+        <tr><td>Use cases</td><td>Text, executables, medical</td><td>Audio, video, photos</td></tr>
+        <tr><td>Examples</td><td>ZIP, PNG, FLAC, LZW</td><td>JPEG, MP3, MPEG, AAC</td></tr>
+      </table>
+      <div class="label">Compression Ratio &amp; Redundancy</div>
+      <div class="formula">Ratio     = size_original / size_compressed
+Redundancy = 1 − (1 / Ratio)
+Example:  1000 B → 250 B  ⟹  Ratio = 4:1,  Redundancy = 75%</div>
+      <div class="label">Types of Redundancy</div>
+      <ul class="items">
+        <li><strong>Spatial (data) redundancy</strong> — repeated patterns within a single image or file</li>
+        <li><strong>Temporal redundancy</strong> — similar content across consecutive video frames</li>
+        <li><strong>Coding redundancy</strong> — fixed-length codes for symbols of unequal probability</li>
+        <li><strong>Perceptual redundancy</strong> — details imperceptible to human senses (hearing, vision)</li>
+      </ul>
+      <div class="label">Entropy — Theoretical Limit</div>
+      <div class="formula">H = −Σ p_i · log₂(p_i)   [bits per symbol]
+Lower entropy → more predictable data → more compressible
+Max entropy (uniform dist.) → least compressible</div>
+      <div class="info">
+        <div class="i-title">Real-World Applications</div>
+        File archiving (ZIP/gzip), image formats (PNG, JPEG, GIF, WebP), video streaming (H.264, H.265, AV1), audio distribution (MP3, AAC, FLAC), network packet compression, database storage.
+      </div>
+      <div class="note">
+        <div class="n-title">Shannon's Source Coding Theorem</div>
+        It is impossible to compress data below its entropy rate on average. Huffman and arithmetic coding approach this limit for lossless methods.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Run-Length Encoding (green) -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Run-Length Encoding (RLE)</h3></div>
+    <div class="card-body">
+      <div class="rule">Replace runs of identical symbols with (count, symbol) pairs — O(n) time and space</div>
+      <div class="label">Encoding Algorithm</div>
+      <ol class="steps">
+        <li>Read input symbol by symbol; initialise <code>count = 1</code></li>
+        <li>If next symbol equals current symbol: <code>count++</code></li>
+        <li>Else: emit <code>(count, symbol)</code> pair; reset <code>count = 1</code>; update current symbol</li>
+        <li>On end of input: emit final <code>(count, symbol)</code> pair</li>
+      </ol>
+      <div class="label">Worked Example — Text</div>
+      <div class="formula">Input:   A  A  A  B  B  C  C  C  C  D  D
+Output:  3A     2B     4C        2D
+Saving:  11 symbols  →  8 values (4 pairs × 2 fields)</div>
+      <div class="label">Binary Image Example (Fax Line)</div>
+      <p>Each scan line encodes alternating runs of white (0) then black (1), always starting with white:</p>
+      <div class="formula">Pixels:  0 0 0 0 1 1 0 1 1 1 1 0
+Runs:    4-white, 2-black, 1-white, 4-black, 1-white
+Encoded: [4, 2, 1, 4, 1]   (5 values vs. 12 pixels)</div>
+      <div class="label">Best vs Worst Cases</div>
+      <table class="tbl">
+        <tr><th>Case</th><th>Input (n symbols)</th><th>Output</th><th>Effect</th></tr>
+        <tr><td style="color:var(--accent2);">Best</td><td>AAAAAAAA (8)</td><td>8A → 2 fields</td><td>4× reduction</td></tr>
+        <tr><td style="color:var(--accent3);">Worst</td><td>ABCDEFGH (8)</td><td>1A1B1C1D1E1F1G1H</td><td>2× expansion!</td></tr>
+        <tr><td>Typical</td><td>Mixed runs</td><td>Moderate savings</td><td>1.5–5× ratio</td></tr>
+      </table>
+      <div class="tip">
+        <div class="t-title">Real-World Uses</div>
+        Group 3/4 fax (ITU T.4 / T.6), Windows BMP (BI_RLE8/BI_RLE4 modes), PCX graphics, TIFF optional mode, PostScript, early game sprites.
+      </div>
+      <div class="warn">
+        <div class="w-title">Expansion Risk</div>
+        RLE <em>expands</em> data when runs are short. Practical implementations use an escape byte or flag bit to mark encoded pairs vs. literal sequences, avoiding worst-case expansion.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: Huffman Coding (purple) -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Huffman Coding</h3></div>
+    <div class="card-body">
+      <div class="rule">Assign shorter bit-strings to more-frequent symbols — provably optimal among prefix codes</div>
+      <div class="label">Building the Huffman Tree — Step by Step</div>
+      <ol class="steps">
+        <li>Count frequency of every distinct symbol; create one leaf node per symbol</li>
+        <li>Insert all nodes into a <span class="tt" data-t="A priority queue ordered by frequency (lowest first) for efficient min-extraction">min-priority queue</span> sorted by frequency</li>
+        <li>Dequeue the two nodes with the <em>lowest</em> frequencies</li>
+        <li>Create an internal node whose frequency = sum of the two children</li>
+        <li>Enqueue the new internal node back into the priority queue</li>
+        <li>Repeat steps 3–5 until exactly one node remains — this is the <strong>root</strong></li>
+        <li>Assign codes: traverse left edge → append <code>0</code>, right edge → append <code>1</code></li>
+      </ol>
+      <div class="label">Worked Example — Input "AABCDDDD"</div>
+      <div class="formula">Symbol freqs:  A=2   B=1   C=1   D=4
+Step 1: combine lowest B(1) + C(1) → BC(2)
+Step 2: combine BC(2) + A(2)  → BCA(4)
+Step 3: combine BCA(4) + D(4) → root(8)
+Codes:  D → 0    A → 10    B → 110    C → 111</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Symbol</th><th>Freq</th><th>Code</th><th>Code len</th><th>Bits used</th></tr>
+        <tr><td>D</td><td>4</td><td><code>0</code></td><td>1</td><td>4 × 1 = 4</td></tr>
+        <tr><td>A</td><td>2</td><td><code>10</code></td><td>2</td><td>2 × 2 = 4</td></tr>
+        <tr><td>B</td><td>1</td><td><code>110</code></td><td>3</td><td>1 × 3 = 3</td></tr>
+        <tr><td>C</td><td>1</td><td><code>111</code></td><td>3</td><td>1 × 3 = 3</td></tr>
+      </table>
+      <p style="margin-top:6px;"><strong>Total: 14 bits</strong> vs. 16 bits with fixed 2-bit codes. Average code length = 14 / 8 = <strong>1.75 bits/symbol</strong>.</p>
+      <div class="label">Decoding Example</div>
+      <div class="formula">Bitstream: 0 10 110 111  →  D A B C  (read left-to-right, match codes greedily)</div>
+      <div class="info">
+        <div class="i-title">Prefix-Free (Prefix Code) Property</div>
+        No codeword is a prefix of another. This guarantees unambiguous decoding: traverse the tree bit-by-bit and emit a symbol whenever a leaf is reached.
+      </div>
+      <div class="note">
+        <div class="n-title">Adaptive Huffman</div>
+        Updates frequency counts and rebuilds the tree on-the-fly during encoding. Single-pass; no pre-scan needed — but more complex to implement.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /row 1 -->
+
+<!-- ═══ ROW 2 ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: LZW Compression (orange) -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>LZW Compression</h3></div>
+    <div class="card-body">
+      <div class="rule">Dictionary grows automatically during encoding — no pre-scan and no transmitted dictionary</div>
+      <p><span class="tt" data-t="Lempel-Ziv-Welch (1984): dictionary-based lossless algorithm by Lempel, Ziv, and Welch">LZW</span> initialises its dictionary with all single-character entries, then extends it with multi-character strings as they are encountered in the input stream.</p>
+      <div class="label">Encoding Algorithm</div>
+      <ol class="steps">
+        <li>Initialise dictionary with every single-character string (entries 0 … 255 for ASCII)</li>
+        <li>Set working string <code>W = ""</code> (empty)</li>
+        <li>Read next input character <code>K</code>; form candidate <code>W + K</code></li>
+        <li>If <code>W + K</code> exists in dictionary → set <code>W = W + K</code> and go to step 3</li>
+        <li>Else → output code for <code>W</code>; add <code>W + K</code> to dictionary; set <code>W = K</code>; go to step 3</li>
+        <li>End of input: output code for current <code>W</code></li>
+      </ol>
+      <div class="label">Encoding Trace — "AABABABA"</div>
+      <div class="formula">Init: A=0, B=1
+W=A; K=A → AA∉dict → out 0, add AA=2, W=A
+W=A; K=B → AB∉dict → out 0, add AB=3, W=B
+W=B; K=A → BA∉dict → out 1, add BA=4, W=A
+W=A; K=B → AB∈dict(3) → W=AB
+W=AB;K=A → ABA∉dict → out 3, add ABA=5, W=A
+W=A; K=B → AB∈dict(3) → W=AB
+W=AB;K=A → ABA∈dict(5) → W=ABA  [end of input]
+Final out: 5
+Compressed codes: [0, 0, 1, 3, 5]  (5 codes vs. 8 chars)</div>
+      <div class="label">Decoding</div>
+      <div class="tip">
+        <div class="t-title">Self-Synchronising Decoder</div>
+        The decoder reconstructs the <em>exact same dictionary</em> from the code stream alone. No dictionary needs to be sent with the compressed file.
+      </div>
+      <div class="label">Applications</div>
+      <ul class="items">
+        <li><code>GIF</code> — 8-bit palette images; uses 9–12-bit LZW codes; Unisys patent expired 2003/2004</li>
+        <li><code>TIFF</code> — LZW is one of several optional compression modes</li>
+        <li><code>PDF</code> — LZWDecode filter for compressing stream objects</li>
+        <li><code>Unix compress</code> — classic <code>.Z</code> files; 16-bit LZW variant</li>
+      </ul>
+      <div class="warn">
+        <div class="w-title">Dictionary Overflow</div>
+        Fixed-size dictionaries eventually fill up. Strategies: freeze dictionary (stop adding), flush and restart, or use a sliding window (LZ77 basis of gzip/deflate).
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 5: Lossy Compression — JPEG & MPEG (red) -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>Lossy Compression — JPEG &amp; MPEG</h3></div>
+    <div class="card-body">
+      <div class="warn">
+        <div class="w-title">Irreversible</div>
+        Once lossy compression is applied, the original data <em>cannot</em> be recovered. Data is permanently discarded to achieve high compression ratios.
+      </div>
+      <div class="label">JPEG Encoding Pipeline</div>
+      <ol class="steps">
+        <li><strong>Color space conversion</strong>: RGB → YCbCr; chroma channels subsampled 4:2:0 (human eyes less sensitive to color than luminance)</li>
+        <li><strong>Block partition</strong>: image divided into non-overlapping 8×8 pixel blocks</li>
+        <li><strong><span class="tt" data-t="Discrete Cosine Transform — converts the 64 spatial pixel values of an 8×8 block into 64 frequency coefficients">DCT</span> (Discrete Cosine Transform)</strong>: each block mapped to 64 frequency coefficients; DC = average, AC = detail</li>
+        <li><strong>Quantization</strong>: each coefficient divided by a value from a quality-dependent quantization table, then rounded — this is the lossy step that discards high-frequency detail</li>
+        <li><strong>Zigzag scan</strong>: reorder 8×8 coefficient matrix into 1-D sequence; low-freq first, trailing zeros grouped at end</li>
+        <li><strong>Entropy coding</strong>: RLE for runs of AC zeros + Huffman coding of remaining non-zero values</li>
+      </ol>
+      <div class="label">JPEG Quality vs. Size</div>
+      <table class="tbl">
+        <tr><th>Quality</th><th>Approx. Ratio</th><th>Typical Use</th></tr>
+        <tr><td>90–100</td><td>~3:1</td><td>Medical, archival photography</td></tr>
+        <tr><td>60–80</td><td>~10:1</td><td>General web photos</td></tr>
+        <tr><td>20–40</td><td>~30:1</td><td>Thumbnails, rough preview</td></tr>
+      </table>
+      <div class="label">MPEG — Motion Video Compression</div>
+      <div class="formula">Frame types:
+  I-frame (Intra-coded) — full JPEG-like snapshot; self-contained
+  P-frame (Predicted)   — encodes difference from nearest prior I/P frame
+  B-frame (Bi-directional) — differences from prior AND future I/P frames
+Typical GOP: I B B P B B P B B I  (Group of Pictures)</div>
+      <ul class="items">
+        <li><strong>Motion estimation</strong>: finds best-matching block in reference frame; only residual error coded</li>
+        <li><strong>Temporal redundancy</strong>: consecutive frames share ≫90% pixel content — P/B frames are tiny</li>
+        <li>B-frames require future reference → encoding order ≠ display order</li>
+        <li>Seeking requires decoding the entire preceding GOP to reach a P or B frame</li>
+      </ul>
+      <div class="note">
+        <div class="n-title">MPEG Standards Timeline</div>
+        MPEG-1 (VCD, 1993) → MPEG-2 (DVD / broadcast, 1995) → MPEG-4 (internet, 1998) → H.264/AVC (2003) → H.265/HEVC (2013) → AV1 (2018).
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: Audio Compression (yellow) -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Audio &amp; Video Compression Standards</h3></div>
+    <div class="card-body">
+      <div class="rule">Audio codecs exploit psychoacoustic masking to discard inaudible data</div>
+      <div class="label">PCM — Uncompressed Baseline</div>
+      <div class="formula">CD Audio: 44,100 Hz × 16 bits × 2 ch = 1,411,200 bps ≈ 1.4 Mbps
+     → ~10 MB/minute per channel</div>
+      <div class="label">MP3 — MPEG-1 Audio Layer III</div>
+      <ol class="steps">
+        <li><strong>Sub-band filter bank</strong>: split audio into 32 equal-width frequency sub-bands</li>
+        <li><strong>Psychoacoustic model</strong>: for each band compute <span class="tt" data-t="The minimum level at which a tone must be present to be heard in the presence of other louder tones nearby">masking threshold</span></li>
+        <li><strong>Bit allocation</strong>: assign more bits to audible, less-masked bands; zero bits to fully masked bands</li>
+        <li><strong>MDCT</strong>: Modified DCT applied per sub-band for finer frequency resolution (18 coefficients per band)</li>
+        <li><strong>Huffman encoding</strong>: lossless stage compresses the quantized MDCT coefficients</li>
+      </ol>
+      <div class="info">
+        <div class="i-title">Psychoacoustic Masking Effects</div>
+        <strong>Simultaneous masking</strong>: a loud tone masks quieter tones at nearby frequencies at the same instant.<br>
+        <strong>Temporal (pre/post) masking</strong>: loud sound masks quieter sounds up to ~200 ms before and ~500 ms after it occurs.
+      </div>
+      <div class="label">AAC — Advanced Audio Coding (MPEG-4)</div>
+      <ul class="items">
+        <li>Successor to MP3; same bit rate → noticeably higher perceptual quality</li>
+        <li>Larger transform window (1024 vs. 576 MDCT coefficients) → better frequency resolution</li>
+        <li>Supports up to 48 full-bandwidth channels; used in YouTube, iTunes, iOS, Android</li>
+        <li>Variants: AAC-LC (low-complexity), HE-AAC (spectral band replication for very low bitrates)</li>
+      </ul>
+      <div class="label">Video Standards at a Glance</div>
+      <table class="tbl">
+        <tr><th>Standard</th><th>Also Called</th><th>Key Use</th><th>Savings vs MPEG-2</th></tr>
+        <tr><td>H.264</td><td>MPEG-4 AVC</td><td>Blu-ray, streaming, Zoom</td><td>~2×</td></tr>
+        <tr><td>H.265</td><td>HEVC</td><td>4K UHD, HEIF</td><td>~4×</td></tr>
+        <tr><td>VP9</td><td>—</td><td>YouTube (royalty-free)</td><td>~2×</td></tr>
+        <tr><td>AV1</td><td>—</td><td>Web streaming (open)</td><td>~4–5×</td></tr>
+      </table>
+      <div class="note">
+        <div class="n-title">Typical Audio Compression Ratios</div>
+        MP3 128 kbps vs. PCM 1,411 kbps ≈ <strong>11:1</strong> ratio. AAC 128 kbps ≈ equivalent perceived quality to MP3 192 kbps.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /row 2 -->
+
+<!-- ═══ ROW 3 — Key Terms + Quick Review ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 7: Key Terms & Quick Review (col-span-3, yellow) -->
+  <div class="card yellow col-span-3">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms &amp; Quick Review</h3></div>
+    <div class="card-body">
+      <div class="grid-2">
+
+        <!-- Left column: Key Terms table -->
+        <div>
+          <div class="label">Key Terms</div>
+          <table class="tbl">
+            <tr><th>Term</th><th>Definition</th></tr>
+            <tr>
+              <td><span class="tt" data-t="Compression from which original data can be perfectly recovered">Lossless compression</span></td>
+              <td>Reduces file size without discarding any data; exact reconstruction guaranteed</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Compression that permanently removes data; higher ratios but irreversible">Lossy compression</span></td>
+              <td>Achieves higher ratios by allowing controlled, irreversible information loss</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Ratio = original_size / compressed_size">Compression ratio</span></td>
+              <td>Ratio of original size to compressed size; e.g., 4:1 means 75% space saved</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="H = −Σ p·log₂(p) bits per symbol; theoretical minimum for lossless coding">Entropy</span></td>
+              <td>Theoretical minimum average bits per symbol; measures information content of source</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Run-Length Encoding: replace (count, symbol) pairs for repeated runs">RLE</span></td>
+              <td>Run-Length Encoding — lossless; effective only when data contains long repeated runs</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Variable-length prefix-free code built from a frequency-sorted binary tree">Huffman coding</span></td>
+              <td>Optimal variable-length code: frequent symbols get shorter codes; uses prefix tree</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Lempel-Ziv-Welch: dictionary-based lossless algorithm; used in GIF/TIFF/PDF">LZW</span></td>
+              <td>Dictionary-based lossless method; dictionary built on-the-fly; no pre-transmission needed</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Discrete Cosine Transform: maps an 8×8 pixel block to 64 frequency coefficients">DCT</span></td>
+              <td>Frequency-domain transform used in JPEG to separate perceptually important low-frequency data</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Joint Photographic Experts Group — lossy image format using DCT, quantization, Huffman">JPEG</span></td>
+              <td>Lossy still-image format; pipeline: color convert → 8×8 DCT → quantize → entropy code</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Moving Picture Experts Group — lossy video standards exploiting temporal redundancy with I/P/B frames">MPEG</span></td>
+              <td>Family of lossy video standards; uses intra (I), predicted (P), bi-directional (B) frames</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="MPEG-1 Audio Layer III — perceptual audio codec using psychoacoustic masking model">MP3</span></td>
+              <td>Lossy audio codec; sub-band coding + psychoacoustic model + MDCT + Huffman</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Divide DCT coefficients by quantization table entries and round — the lossy step in JPEG/MPEG">Quantization</span></td>
+              <td>Divides DCT coefficients by a quality table; rounds result — discards fine detail irreversibly</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="No codeword is a prefix of another; allows unambiguous bit-by-bit decoding">Prefix code</span></td>
+              <td>Variable-length code where no codeword is a prefix of any other; enables unique decodability</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Lookup table mapping strings or symbols to compressed codes; built in LZW or pre-computed in Huffman">Dictionary</span></td>
+              <td>Table mapping patterns to codes; central to LZW (dynamic) and Huffman (static per file)</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="I=full snapshot, P=forward difference, B=bidirectional difference">I / P / B frames</span></td>
+              <td>MPEG frame types: intra (full), predicted (1 reference), bi-directional (2 references)</td>
+            </tr>
+            <tr>
+              <td><span class="tt" data-t="Louder sounds mask nearby quieter ones — MP3/AAC allocate zero bits to masked frequencies">Psychoacoustic masking</span></td>
+              <td>Perceptual property exploited by MP3/AAC to remove frequencies inaudible to human listeners</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Right column: Quick Review -->
+        <div>
+          <div class="label">When to Choose Each Method</div>
+          <div class="tip">
+            <div class="t-title">Use Lossless When…</div>
+            Data must be reproduced exactly: source code, executables, medical/legal images, financial records, text files, program data. Use: ZIP, gzip, PNG, FLAC, LZW, Huffman.
+          </div>
+          <div class="tip">
+            <div class="t-title">Use Lossy When…</div>
+            Perceptual quality is sufficient and file size matters: web photographs, music distribution, video streaming, video conferencing. Use: JPEG, MP3, AAC, MPEG, H.264/H.265.
+          </div>
+          <div class="note">
+            <div class="n-title">Huffman vs. LZW — Key Differences</div>
+            <strong>Huffman</strong>: requires two passes (count frequencies, then encode); frequency table must accompany the file or be pre-agreed. Optimal for known symbol distributions.<br>
+            <strong>LZW</strong>: single-pass; dictionary is self-embedded — decoder rebuilds it from the code stream. Better for text with long repeated substrings.
+          </div>
+          <div class="info">
+            <div class="i-title">JPEG vs. PNG — Format Choice Guide</div>
+            <strong>JPEG</strong>: lossy; excellent for photographs and natural images; small files; avoid for sharp-edged graphics, text, or images requiring exact pixel values.<br>
+            <strong>PNG</strong>: lossless (LZ77 + Huffman); larger files; exact pixel reconstruction; supports full transparency; ideal for logos, icons, screenshots.
+          </div>
+          <div class="divider"></div>
+          <div class="info">
+            <div class="i-title">Compression in the FCS4e Context</div>
+            Forouzan covers lossless methods (RLE, Huffman, LZW) as foundational algorithms and lossy methods (JPEG, MPEG, MP3) as applied system examples. The chapter bridges data representation (CH14) and security (CH16), where compressed data is often then encrypted.
+          </div>
+          <div class="label">Algorithm Complexity &amp; Ratio Summary</div>
+          <table class="tbl">
+            <tr><th>Algorithm</th><th>Type</th><th>Time</th><th>Typical Ratio</th><th>Passes</th></tr>
+            <tr><td>RLE</td><td>Lossless</td><td>O(n)</td><td>1.5 – 5 : 1</td><td>1</td></tr>
+            <tr><td>Huffman</td><td>Lossless</td><td>O(n log n)</td><td>2 – 8 : 1</td><td>2</td></tr>
+            <tr><td>LZW</td><td>Lossless</td><td>O(n)</td><td>2 – 6 : 1</td><td>1</td></tr>
+            <tr><td>JPEG</td><td>Lossy</td><td>O(n)</td><td>10 – 50 : 1</td><td>1</td></tr>
+            <tr><td>MP3</td><td>Lossy</td><td>O(n)</td><td>7 – 14 : 1</td><td>1</td></tr>
+            <tr><td>MPEG-2/H.264</td><td>Lossy</td><td>O(n)</td><td>20 – 100 : 1</td><td>1</td></tr>
+          </table>
+          <div class="warn" style="margin-top:8px;">
+            <div class="w-title">Common Exam Traps</div>
+            <strong>(1)</strong> RLE <em>expands</em> data (up to 2×) when no repeated runs exist — always consider the worst case.<br>
+            <strong>(2)</strong> LZW never shrinks its dictionary once an entry is added — it only grows (or resets).<br>
+            <strong>(3)</strong> Huffman requires <em>two passes</em>; LZW needs <em>one pass</em>.<br>
+            <strong>(4)</strong> JPEG quantization is the only lossy step — all other JPEG stages (DCT, zigzag, Huffman) are mathematically lossless.<br>
+            <strong>(5)</strong> B-frames in MPEG depend on <em>future</em> frames → transmission order differs from display order.
+          </div>
+        </div>
+
+      </div><!-- /grid-2 -->
+    </div>
+  </div>
+
+</div><!-- /row 3 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <a href="CH14-Databases-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">← CH14</a>
+  <a href="../CSI.html" style="color:var(--text-dim);text-decoration:none;">Back to FCS</a>
+  <a href="CH16-Security-CheatSheet.html" style="color:var(--text-dim);text-decoration:none;">CH16 →</a>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script>
+</body>
+</html>

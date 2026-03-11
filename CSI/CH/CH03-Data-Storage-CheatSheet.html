@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH03 – Data Storage | FCS</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);border-radius:6px 6px 0 0;overflow:hidden;}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--yellow);cursor:help;display:inline;background:rgba(227,179,65,0.15);color:var(--yellow);border-radius:2px;padding:0 2px;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(calc(-50% + var(--tt-shift,0px)));background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+/* ── Floating TOC ── */
+#page-toc{position:fixed;right:14px;top:80px;width:172px;background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:0;z-index:100;max-height:calc(100vh - 100px);overflow:hidden;font-family:'IBM Plex Mono',monospace;transition:max-height 0.22s ease;}
+#page-toc.toc-open{overflow-y:auto;max-height:calc(100vh - 100px);}
+#page-toc.toc-collapsed{max-height:30px;overflow:hidden;}
+#page-toc::-webkit-scrollbar{width:3px;}
+#page-toc::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+.toc-hdr{font-size:9px;font-weight:600;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;padding:6px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;height:30px;box-sizing:border-box;}
+.toc-hdr:hover{color:var(--text-muted);}
+.toc-chevron{font-size:10px;transition:transform 0.22s ease;display:inline-block;}
+#page-toc.toc-collapsed .toc-chevron{transform:rotate(-90deg);}
+.toc-body{padding:4px 0;}
+.toc-link{display:block;font-size:10px;color:var(--text-muted);padding:4px 12px;text-decoration:none;border-left:2px solid transparent;transition:color 0.15s,border-color 0.15s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+.toc-link:hover{color:var(--text);background:rgba(255,255,255,0.03);}
+.toc-link.active{color:var(--accent);border-left-color:var(--accent);background:rgba(88,166,255,0.06);}
+@media(max-width:1200px){#page-toc{display:none;}}
+@keyframes card-flash{0%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}30%{outline:2px solid rgba(88,166,255,0.7);box-shadow:0 0 0 6px rgba(88,166,255,0.15);}100%{outline:2px solid rgba(88,166,255,0);box-shadow:0 0 0 0 rgba(88,166,255,0);}}
+.card-focus{animation:card-flash 0.9s ease forwards;border-radius:6px;}</style>
+</head>
+<body>
+<nav id="page-toc"><div class="toc-hdr">Contents</div></nav>
+
+<!-- ═══════════════════════════════════════════════════════════════ HEADER -->
+<div class="header">
+  <div class="header-left">
+    <h1>Data Storage — Chapter 3</h1>
+    <h2>Foundations of Computer Science, 4th Edition | Complete Study Reference</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§3.1 Data Types</span>
+      <span class="toc-item">§3.2 Integers</span>
+      <span class="toc-item">§3.3 IEEE 754 Reals</span>
+      <span class="toc-item">§3.4 Text</span>
+      <span class="toc-item">§3.5 Audio</span>
+      <span class="toc-item">§3.6 Images</span>
+      <span class="toc-item">§3.7 Video</span>
+    </div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+    <span class="badge">FCS4e · CH03</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ ROW 1 — 3 cards -->
+<div class="grid">
+
+  <!-- ── Card 1: Data Types Overview ── -->
+  <div class="card blue">
+    <div class="card-header"><span class="dot"></span><h3>§3.1 Data Types Overview</h3></div>
+    <div class="card-body">
+      <div class="rule">All computer data — numbers, text, images, audio, video — is stored as patterns of 0s and 1s</div>
+      <p>The meaning of a <span class="tt" data-t="A sequence of 0s and 1s — raw computer data whose meaning (integer, character, color, etc.) depends entirely on how the program interprets it">bit pattern</span> depends on context (data type):</p>
+      <ul class="items" style="margin-bottom:8px;">
+        <li><code>01000001</code> = 65 (unsigned integer)</li>
+        <li><code>01000001</code> = <code>'A'</code> (ASCII)</li>
+        <li><code>01000001</code> = something else (float component)</li>
+      </ul>
+      <table class="tbl" style="margin-bottom:8px;">
+        <thead>
+          <tr><th>Data Type</th><th>Storage Method</th><th>Format Examples</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Integer</td><td>Binary (2's complement)</td><td>42, -7, 0</td></tr>
+          <tr><td>Real / Float</td><td>IEEE 754</td><td>3.14, -0.001, 6.022e23</td></tr>
+          <tr><td>Text</td><td>Unicode code points (UTF-8)</td><td>'A'=65, '中'=U+4E2D</td></tr>
+          <tr><td>Audio</td><td>PCM amplitude samples</td><td>WAV, FLAC, MP3</td></tr>
+          <tr><td>Image</td><td>Pixel color values (RGB)</td><td>BMP, PNG, JPEG</td></tr>
+          <tr><td>Video</td><td>Frames + audio + metadata</td><td>MP4, AVI, MKV</td></tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <div class="n-title">Note</div>
+        The computer doesn't know what a bit pattern "means" — only the program's data type declarations give meaning to the raw bits stored in memory.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Card 2: Storing Integers: Unsigned ── -->
+  <div class="card green">
+    <div class="card-header"><span class="dot"></span><h3>§3.2 Integers — Unsigned</h3></div>
+    <div class="card-body">
+      <div class="rule">Unsigned integers use ALL bits for magnitude — no sign representation</div>
+      <p>n-bit unsigned range: <strong>0 to 2ⁿ − 1</strong></p>
+      <table class="tbl" style="margin-bottom:8px;">
+        <thead>
+          <tr><th>Bits</th><th>Min</th><th>Max</th><th>Common Use</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>8</td><td>0</td><td>255</td><td>Byte, ASCII, pixel channel</td></tr>
+          <tr><td>16</td><td>0</td><td>65,535</td><td>Port numbers, small counters</td></tr>
+          <tr><td>32</td><td>0</td><td>4,294,967,295</td><td>IPv4 address, file sizes</td></tr>
+          <tr><td>64</td><td>0</td><td>~1.8 × 10¹⁹</td><td>Large file sizes, timestamps</td></tr>
+        </tbody>
+      </table>
+      <div class="formula">n-bit unsigned range: [0, 2ⁿ − 1]</div>
+      <div class="label">Overflow behaviour</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>Adding 1 to max wraps back to 0</li>
+        <li>8-bit: 255 + 1 = 0 (wraps around)</li>
+      </ul>
+      <div class="warn">
+        <div class="w-title">⚠ Warning</div>
+        <span class="tt" data-t="When an arithmetic result exceeds the maximum representable value for the number of bits — the excess bits are lost, causing incorrect results">Overflow</span> is a common source of bugs and security vulnerabilities — if a program expects positive values and wraps to 0, logic errors can occur.
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Card 3: Sign-Magnitude & Two's Complement ── -->
+  <div class="card red">
+    <div class="card-header"><span class="dot"></span><h3>§3.2 Integers — Signed</h3></div>
+    <div class="card-body">
+      <div class="rule">Two's complement is the universal standard for signed integers in modern hardware</div>
+      <div class="label">Sign-Magnitude (older / simpler)</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li><span class="tt" data-t="Most Significant Bit — the leftmost bit; in signed representations it is the sign bit (0=positive, 1=negative)">MSB</span> = sign bit: 0 = positive, 1 = negative</li>
+        <li>+25 = <code>00011001</code> &nbsp;|&nbsp; −25 = <code>10011001</code> (8-bit)</li>
+        <li>Problem: TWO zeros (+0 = <code>00000000</code>, −0 = <code>10000000</code>)</li>
+        <li>Problem: Addition requires checking signs separately</li>
+      </ul>
+      <div class="label">Two's Complement (modern standard)</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>−N = flip all bits of N, then add 1</li>
+        <li>Example −25 in 8-bit:<br>
+          +25 = <code>00011001</code> → flip = <code>11100110</code> → +1 = <code>11100111</code></li>
+        <li>Only <strong>ONE</strong> zero representation (<code>00000000</code>)</li>
+        <li>Addition and subtraction use the <strong>SAME</strong> hardware circuit</li>
+      </ul>
+      <table class="tbl" style="margin-bottom:8px;">
+        <thead>
+          <tr><th>Bits</th><th>Two's Complement Range</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>8-bit</td><td>−128 to +127</td></tr>
+          <tr><td>16-bit</td><td>−32,768 to +32,767</td></tr>
+          <tr><td>32-bit</td><td>−2,147,483,648 to +2,147,483,647</td></tr>
+          <tr><td>64-bit</td><td>−9,223,372,036,854,775,808 to +9,223,372,036,854,775,807</td></tr>
+        </tbody>
+      </table>
+      <div class="formula">-N = ~N + 1 &nbsp;&nbsp;(bitwise NOT then add 1)</div>
+      <span class="tt" data-t="Standard signed integer representation — negate by flipping all bits then adding 1; single zero; addition/subtraction use same circuit; range: -2^(n-1) to 2^(n-1)-1">two's complement</span>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══════════════════════════════════════════════════════ ROW 2 — 3 cards -->
+<div class="grid section-gap">
+
+  <!-- ── Card 4: IEEE 754 Floating-Point ── -->
+  <div class="card purple">
+    <div class="card-header"><span class="dot"></span><h3>§3.3 IEEE 754 Floating-Point</h3></div>
+    <div class="card-body">
+      <div class="rule">IEEE 754 is the universal standard for storing real numbers — supported by all modern CPUs</div>
+      <p>Scientific notation in binary: ±1.fraction × 2<sup>exponent</sup></p>
+      <div class="label">32-bit Single Precision layout</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>[sign 1 bit][exponent 8 bits][mantissa 23 bits]</li>
+        <li>Sign: 0 = positive, 1 = negative</li>
+        <li>Biased exponent: stored value = true exponent + 127 (<span class="tt" data-t="Constant added to true exponent before storage in IEEE 754 — bias=127 for 32-bit; allows representing negative exponents without a separate sign bit">bias</span>)</li>
+        <li><span class="tt" data-t="Also called significand or fraction — the significant digit bits of a floating-point number; IEEE 754 stores only the fractional part with an implicit leading 1">Mantissa</span>: fractional part after the implicit leading 1</li>
+      </ul>
+      <div class="formula">Value = (−1)^sign × 1.mantissa × 2^(exponent − 127)</div>
+      <p>64-bit Double Precision: [sign 1][exponent 11][mantissa 52], bias = 1023</p>
+      <table class="tbl" style="margin-bottom:8px;">
+        <thead>
+          <tr><th>Type</th><th>Bits</th><th>Exp</th><th>Mantissa</th><th>Approx Range</th><th>Precision</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Single (float)</td><td>32</td><td>8 bits</td><td>23 bits</td><td>±3.4×10³⁸</td><td>~7 decimal digits</td></tr>
+          <tr><td>Double</td><td>64</td><td>11 bits</td><td>52 bits</td><td>±1.8×10³⁰⁸</td><td>~15 decimal digits</td></tr>
+        </tbody>
+      </table>
+      <div class="label">Special Values</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>+Inf: exp=<code>11111111</code>, mant=0</li>
+        <li>−Inf: exp=<code>11111111</code>, mant=0, sign=1</li>
+        <li>NaN: exp=<code>11111111</code>, mant≠0</li>
+        <li>±0: exp=<code>00000000</code>, mant=0</li>
+      </ul>
+      <div class="label">Encoding Example: +6.75₁₀</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>6.75 = 110.11₂ = 1.1011 × 2²</li>
+        <li>Sign = 0</li>
+        <li>Exponent = 2 + 127 = 129 = <code>10000001</code>₂</li>
+        <li>Mantissa = <code>10110000000000000000000</code></li>
+        <li>Final: <code>0 10000001 10110000000000000000000</code></li>
+      </ul>
+      <div class="warn">
+        <div class="w-title">⚠ Precision Warning</div>
+        Floating-point arithmetic is NOT exact. <code>0.1 + 0.2 = 0.30000000000000004</code> in most languages. Never use <code>==</code> to compare floats — use <code>|a−b| &lt; ε</code>.
+      </div>
+      <hr class="divider">
+      <div class="label">Converting Decimal Fraction → Binary</div>
+      <ul class="items">
+        <li>Multiply fraction by 2 repeatedly; integer part of each result is the next bit</li>
+        <li>0.625 × 2 = 1.25 → bit=1; 0.25 × 2 = 0.5 → bit=0; 0.5 × 2 = 1.0 → bit=1</li>
+        <li>0.625₁₀ = 0.101₂  (terminates) &nbsp;|&nbsp; 0.1₁₀ never terminates in binary!</li>
+      </ul>
+      <div class="label">Common Floating-Point Gotchas</div>
+      <ul class="items">
+        <li>Loss of significance: subtracting nearly-equal numbers loses precision</li>
+        <li>Catastrophic cancellation: (1 + ε) − 1 ≠ ε when ε is very small</li>
+        <li>Rounding modes: round-to-nearest (default), round-up, round-down, round-to-zero</li>
+        <li>Denormal numbers: very small values near zero with reduced precision</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── Card 5: Storing Text ── -->
+  <div class="card orange">
+    <div class="card-header"><span class="dot"></span><h3>§3.4 Text — ASCII &amp; Unicode</h3></div>
+    <div class="card-body">
+      <div class="rule">Text is stored as numeric code points — each character maps to a unique integer</div>
+      <div class="label">ASCII (7-bit, 128 characters)</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>0–31: control characters (NUL, TAB, LF, CR, ESC…)</li>
+        <li>32–126: printable (space, A–Z, a–z, 0–9, punctuation)</li>
+      </ul>
+      <table class="tbl" style="margin-bottom:8px;">
+        <thead><tr><th>Char</th><th>Dec</th><th>Char</th><th>Dec</th><th>Char</th><th>Dec</th></tr></thead>
+        <tbody>
+          <tr><td>Space</td><td>32</td><td>'0'</td><td>48</td><td>'9'</td><td>57</td></tr>
+          <tr><td>'A'</td><td>65</td><td>'Z'</td><td>90</td><td>'a'</td><td>97</td></tr>
+          <tr><td>'z'</td><td>122</td><td colspan="4" style="color:var(--text-muted);">—</td></tr>
+        </tbody>
+      </table>
+      <div class="label"><span class="tt" data-t="Universal character encoding assigning a unique code point to every character in every human language and symbol set — supersedes ASCII">Unicode</span> — all human writing systems (150,000+ chars)</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>Range: U+0000 to U+10FFFF</li>
+        <li>U+0041 = 'A' &nbsp;|&nbsp; U+4E2D = '中' &nbsp;|&nbsp; U+1F600 = '😀'</li>
+      </ul>
+      <div class="label"><span class="tt" data-t="Variable-length Unicode encoding using 1–4 bytes per character; backward-compatible with ASCII; dominant encoding on the web (97% of websites)">UTF-8</span> encoding (most common — web, Linux, modern software)</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>1 byte: U+0000–U+007F (ASCII-compatible!)</li>
+        <li>2 bytes: U+0080–U+07FF (Latin, Greek, Arabic, Hebrew…)</li>
+        <li>3 bytes: U+0800–U+FFFF (CJK, most symbols)</li>
+        <li>4 bytes: U+10000–U+10FFFF (emoji, rare scripts)</li>
+      </ul>
+      <div class="label">Other Encodings</div>
+      <ul class="items">
+        <li>UTF-16: 2 or 4 bytes; used in Windows internals, Java, JavaScript</li>
+        <li>UTF-32: fixed 4 bytes; simple indexing but 4× larger than UTF-8</li>
+      </ul>
+      <hr class="divider">
+      <div class="label">String Storage in Memory</div>
+      <ul class="items">
+        <li>C strings: null-terminated — last byte is <code>0x00</code> (NUL)</li>
+        <li>Pascal / Java strings: length-prefixed — first bytes store character count</li>
+        <li>Python 3: internally uses Latin-1, UCS-2, or UCS-4 depending on contents</li>
+        <li>Byte Order Mark (BOM): optional prefix indicating UTF-16/32 endianness</li>
+      </ul>
+      <div class="label">Encoding Pitfalls</div>
+      <ul class="items">
+        <li>Mojibake: garbled text from reading with wrong encoding (e.g., UTF-8 as Latin-1)</li>
+        <li>Always specify encoding explicitly — never rely on OS default</li>
+        <li>HTTP <code>Content-Type: text/html; charset=UTF-8</code> declares encoding</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── Card 6: Storing Audio ── -->
+  <div class="card yellow">
+    <div class="card-header"><span class="dot"></span><h3>§3.5 Audio Storage</h3></div>
+    <div class="card-body">
+      <div class="rule">Audio is digitized by sampling the analog waveform at regular intervals</div>
+      <div class="label">Analog-to-Digital Conversion (ADC)</div>
+      <ol class="steps" style="margin-bottom:8px;">
+        <li><strong>Sample:</strong> measure amplitude at regular time intervals</li>
+        <li><strong>Quantize:</strong> round to nearest discrete level</li>
+        <li><strong>Encode:</strong> store as binary number</li>
+      </ol>
+      <div class="label"><span class="tt" data-t="Number of amplitude measurements taken per second — must be at least twice the highest frequency to avoid aliasing (Nyquist-Shannon theorem)">Sampling Rate</span> (Hz)</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>CD quality: 44,100 Hz (captures up to 22 kHz — Nyquist: must be 2× max freq)</li>
+        <li>DVD / Studio: 48,000–96,000 Hz</li>
+        <li>Telephone: 8,000 Hz</li>
+      </ul>
+      <div class="label">Bit Depth (bits per sample — resolution)</div>
+      <ul class="items" style="margin-bottom:8px;">
+        <li>8-bit: 256 levels (low quality)</li>
+        <li>16-bit: 65,536 levels (CD quality)</li>
+        <li>24-bit: 16.7 million levels (professional)</li>
+      </ul>
+      <div class="formula">Uncompressed size = sample_rate × bit_depth × channels × duration / 8  (bytes)<br>
+        <span style="color:var(--text-muted);font-size:10px;">Example: 3-min stereo CD = 44100 × 16 × 2 × 180 / 8 ≈ 31 MB</span>
+      </div>
+      <div class="label">Common Audio Formats</div>
+      <ul class="items">
+        <li>WAV / AIFF — uncompressed PCM (lossless, large)</li>
+        <li>FLAC — lossless compression (~50–60% smaller)</li>
+        <li>MP3 / AAC / OGG — lossy compression (90%+ smaller)</li>
+      </ul>
+      <p style="margin-top:6px;font-size:11px;color:var(--text-muted);">
+        <span class="tt" data-t="Rounding a sampled amplitude to the nearest available discrete level — quantization noise decreases as bit depth increases">Quantization</span> noise decreases as bit depth increases.
+      </p>
+      <hr class="divider">
+      <div class="label">Nyquist–Shannon Sampling Theorem</div>
+      <ul class="items">
+        <li>To accurately reproduce a frequency f, sample at ≥ 2f (Nyquist rate)</li>
+        <li>Human hearing: ~20 Hz – 20 kHz → CD uses 44,100 Hz (> 2 × 20,000)</li>
+        <li>Sampling below Nyquist causes <strong>aliasing</strong> — false low-frequency artefacts</li>
+      </ul>
+      <div class="label">Channels</div>
+      <ul class="items">
+        <li>Mono (1 ch) — telephone, podcasts</li>
+        <li>Stereo (2 ch) — CD, streaming music</li>
+        <li>Surround 5.1 (6 ch) — DVD, Blu-ray</li>
+        <li>Surround 7.1 (8 ch) — high-end home theatre</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══════════════════════════════════════════════════════ ROW 3 — 2 cards -->
+<div class="grid-2 section-gap">
+
+  <!-- ── Card 7: Images & Video (col-span-2) ── -->
+  <div class="card blue col-span-2">
+    <div class="card-header"><span class="dot"></span><h3>§3.6–3.7 Images &amp; Video Storage</h3></div>
+    <div class="card-body">
+
+      <!-- Left + Right two-column layout inside the card -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+        <!-- Images column -->
+        <div>
+          <div class="label">Raster (Bitmap) Images</div>
+          <p>Grid of pixels; each pixel stores color as numbers.</p>
+          <div class="label">Color Depth (bits per pixel)</div>
+          <ul class="items" style="margin-bottom:8px;">
+            <li>1-bit: 2 colors (B&amp;W)</li>
+            <li>8-bit: 256 colors (indexed / paletted)</li>
+            <li>24-bit true color: 8 bits each for R, G, B → 16.7 million colors</li>
+            <li>32-bit: RGBA (+ 8-bit alpha transparency)</li>
+          </ul>
+          <div class="formula">Image size (bytes) = width × height × (bits_per_pixel / 8)<br>
+            <span style="color:var(--text-muted);font-size:10px;">1920×1080 true color = 1920×1080×3 ≈ 6 MB uncompressed</span>
+          </div>
+          <table class="tbl">
+            <thead>
+              <tr><th>Format</th><th>Compression</th><th>Transparency</th><th>Notes</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>BMP</td><td>None</td><td>No</td><td>Large; Windows native</td></tr>
+              <tr><td>PNG</td><td>Lossless</td><td>Yes</td><td>Web graphics, exact reproduction</td></tr>
+              <tr><td>JPEG</td><td>Lossy</td><td>No</td><td>Photos; 90%+ size reduction</td></tr>
+              <tr><td>GIF</td><td>Lossless</td><td>Yes (1-bit)</td><td>256 colors; animation</td></tr>
+              <tr><td>WebP</td><td>Both</td><td>Yes</td><td>Modern web; better than JPEG/PNG</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Video column -->
+        <div>
+          <div class="label">Video Storage</div>
+          <p>Video = sequence of frames + synchronized audio + metadata.</p>
+          <div class="label">Frame Rates</div>
+          <ul class="items" style="margin-bottom:8px;">
+            <li>24 fps — film / cinema</li>
+            <li>30 fps — broadcast TV</li>
+            <li>60 fps — gaming / sports</li>
+            <li>120+ fps — high-speed / slow-motion</li>
+          </ul>
+          <div class="label">Compression Techniques</div>
+          <ul class="items" style="margin-bottom:8px;">
+            <li><strong>Spatial:</strong> within each frame (similar to JPEG)</li>
+            <li><strong>Temporal:</strong> only store differences between frames</li>
+            <li><strong>I-frames</strong> (keyframes): complete image</li>
+            <li><strong>P-frames:</strong> changes from previous frame</li>
+            <li><strong>B-frames:</strong> interpolated between I and P frames</li>
+          </ul>
+          <div class="label">Codecs</div>
+          <ul class="items" style="margin-bottom:8px;">
+            <li>H.264 / AVC — most widely used; excellent quality/size</li>
+            <li>H.265 / HEVC — 2× better than H.264; streaming 4K</li>
+            <li>VP9 — Google open-source; YouTube</li>
+            <li>AV1 — royalty-free; best compression (newest)</li>
+          </ul>
+          <div class="formula">Raw video ≈ width × height × fps × color_depth × duration<br>
+            <span style="color:var(--text-muted);font-size:10px;">1080p 30fps 1 min uncompressed ≈ 11 GB → H.264 ≈ 130 MB (98% smaller!)</span>
+          </div>
+          <p style="font-size:11px;color:var(--text-muted);margin-top:6px;">
+            <span class="tt" data-t="Coder-Decoder — algorithm that compresses video/audio for storage and decompresses for playback; H.264 is the most widely used video codec worldwide">codec</span> = coder-decoder; container formats (MP4, AVI, MKV) wrap codec bitstreams.
+          </p>
+        </div>
+
+      </div><!-- /inner grid -->
+    </div>
+  </div>
+
+  <!-- ── Card 8: Storage Units ── -->
+  <div class="card green">
+    <div class="card-header"><span class="dot"></span><h3>Storage Units &amp; Prefixes</h3></div>
+    <div class="card-body">
+      <table class="tbl" style="margin-bottom:8px;">
+        <thead>
+          <tr><th>Unit</th><th>Symbol</th><th>Bytes (SI)</th><th>Binary Equivalent</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Bit</td><td>b</td><td>1/8</td><td>—</td></tr>
+          <tr><td>Byte</td><td>B</td><td>1</td><td>8 bits</td></tr>
+          <tr><td>Kilobyte</td><td>KB</td><td>1,000</td><td>Kibibyte (KiB) = 1,024 B</td></tr>
+          <tr><td>Megabyte</td><td>MB</td><td>1,000,000</td><td>Mebibyte (MiB) = 1,048,576 B</td></tr>
+          <tr><td>Gigabyte</td><td>GB</td><td>10⁹</td><td>Gibibyte (GiB) = 2³⁰ B</td></tr>
+          <tr><td>Terabyte</td><td>TB</td><td>10¹²</td><td>Tebibyte (TiB) = 2⁴⁰ B</td></tr>
+          <tr><td>Petabyte</td><td>PB</td><td>10¹⁵</td><td>Pebibyte (PiB) = 2⁵⁰ B</td></tr>
+        </tbody>
+      </table>
+      <div class="note">
+        <div class="n-title">Note — The "Missing Space" Mystery</div>
+        Hard drive manufacturers use decimal (SI) prefixes — a "1 TB" drive = 10¹² bytes. Operating systems use binary — so it shows as ~931 GiB. This 7% "missing space" is just the unit difference.
+      </div>
+      <div class="label" style="margin-top:10px;">Quick Size Reference</div>
+      <ul class="items">
+        <li>Plain text page ≈ 2–4 KB</li>
+        <li>MP3 song (4 min) ≈ 3–5 MB</li>
+        <li>HD photo (JPEG) ≈ 2–6 MB</li>
+        <li>Full HD movie (H.264) ≈ 1–4 GB</li>
+        <li>Blu-ray disc capacity ≈ 25–100 GB</li>
+      </ul>
+      <hr class="divider">
+      <div class="label">SI vs Binary Prefix Quick-Convert</div>
+      <ul class="items">
+        <li>1 GiB = 1,073,741,824 bytes &nbsp;≈&nbsp; 1.074 GB (decimal)</li>
+        <li>1 TiB = 1,099,511,627,776 bytes &nbsp;≈&nbsp; 1.1 TB (decimal)</li>
+        <li>Ratio formula: (1024/1000)ⁿ where n = prefix order (1 for K, 2 for M, etc.)</li>
+        <li>IEC 80000-13 defines official KiB, MiB, GiB, TiB, PiB, EiB symbols</li>
+      </ul>
+      <div class="info">
+        <div class="i-title">Context Matters</div>
+        RAM and CPU cache are reported in binary (GiB). Network speeds use SI (Mbps). Storage manufacturers use SI (GB). Windows File Explorer labels binary sizes as "GB" — causing apparent "missing space."
+        Always clarify which unit system is in use when communicating storage or memory capacities.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid-2 row 3 -->
+
+<!-- ═══════════════════════════════════════════════════════════════ FOOTER -->
+<div class="footer">
+  <span>FCS4e · CH03 · Data Storage</span>
+  <span><a href="CH02-Number-Systems-CheatSheet.html" style="color:var(--text-muted);text-decoration:none;">← CH02</a> &nbsp;|&nbsp; <a href="../CSI.html" style="color:var(--text-muted);text-decoration:none;">Back to FCS</a> &nbsp;|&nbsp; <a href="CH04-Operations-on-Data-CheatSheet.html" style="color:var(--text-muted);text-decoration:none;">CH04 →</a></span>
+</div>
+
+<script>
+(function(){
+  var toc=document.getElementById('page-toc');
+  if(!toc)return;
+  var hdr=toc.querySelector('.toc-hdr');
+  // Add chevron toggle
+  var chev=document.createElement('span');
+  chev.className='toc-chevron';
+  chev.textContent='▾';
+  hdr.appendChild(chev);
+  // Wrap links in .toc-body
+  var body=document.createElement('div');
+  body.className='toc-body';
+  toc.appendChild(body);
+  // Collapse state
+  var STORE='toc-c';
+  function applyState(collapsed){
+    toc.classList.toggle('toc-collapsed',collapsed);
+    toc.classList.toggle('toc-open',!collapsed);
+  }
+  applyState(localStorage.getItem(STORE)==='1');
+  hdr.addEventListener('click',function(){
+    var c=!toc.classList.contains('toc-collapsed');
+    applyState(c);
+    localStorage.setItem(STORE,c?'1':'0');
+  });
+  // Build links
+  var cards=Array.from(document.querySelectorAll('.card'));
+  cards.forEach(function(card,i){
+    var h3=card.querySelector('.card-header h3');
+    if(!h3)return;
+    var id='card-'+i;
+    card.id=id;
+    var a=document.createElement('a');
+    a.className='toc-link';
+    a.href='#'+id;
+    a.textContent=h3.textContent;
+    a.onclick=function(e){
+      e.preventDefault();
+      card.scrollIntoView({behavior:'smooth',block:'start'});
+      card.classList.remove('card-focus');void card.offsetWidth;
+      card.classList.add('card-focus');
+      setTimeout(function(){card.classList.remove('card-focus');},900);
+    };
+    body.appendChild(a);
+  });
+  // Scroll spy — position-based
+  var links=Array.from(body.querySelectorAll('.toc-link'));
+  function updateActive(){
+    var mid=window.scrollY+window.innerHeight*0.3;
+    var best=null,bestDist=Infinity;
+    cards.forEach(function(c){
+      if(!c.id)return;
+      var top=c.getBoundingClientRect().top+window.scrollY;
+      var dist=Math.abs(top-mid);
+      if(dist<bestDist){bestDist=dist;best=c.id;}
+    });
+    links.forEach(function(l){l.classList.toggle('active',!!(best&&l.href.endsWith('#'+best)));});
+  }
+  window.addEventListener('scroll',updateActive,{passive:true});
+  updateActive();
+  // Tooltip viewport clamp
+  document.querySelectorAll('.tt').forEach(function(el){
+    el.addEventListener('mouseenter',function(){
+      var r=el.getBoundingClientRect(),w=220,cx=r.left+r.width/2,shift=0;
+      if(cx-w/2<10)shift=10-(cx-w/2);
+      else if(cx+w/2>window.innerWidth-10)shift=window.innerWidth-10-(cx+w/2);
+      el.style.setProperty('--tt-shift',shift+'px');
+    });
+    el.addEventListener('mouseleave',function(){el.style.removeProperty('--tt-shift');});
+  });
+})();
+</script></body>
+</html>

@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CH05 – Computer Organization | FCS</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
+    --accent:#58a6ff;--accent2:#3fb950;--accent3:#f78166;--accent4:#d2a8ff;--accent5:#ffa657;
+    --text:#e6edf3;--text-muted:#8b949e;--text-dim:#6e7681;--yellow:#e3b341;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--bg);color:var(--text);font-family:'IBM Plex Sans',sans-serif;font-size:13px;line-height:1.5;padding:24px;max-width:1400px;margin:0 auto;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid var(--accent);padding-bottom:16px;margin-bottom:24px;gap:20px;}
+  .header-left h1{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:28px;color:var(--accent);letter-spacing:-0.5px;line-height:1.1;}
+  .header-left h2{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-muted);font-weight:400;margin-top:4px;}
+  .badge{background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;padding:3px 8px;border-radius:3px;white-space:nowrap;}
+  .toc{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);background:var(--surface);border:1px solid var(--border);padding:3px 8px;border-radius:3px;}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+  .col-span-2{grid-column:span 2;}
+  .col-span-3{grid-column:span 3;}
+  .section-gap{margin-top:20px;}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+  .card-header{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);}
+  .card-header .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .card-header h3{font-family:'IBM Plex Sans Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:0.3px;text-transform:uppercase;}
+  .card-body{padding:12px;}
+  .blue .card-header{background:rgba(88,166,255,0.08);} .blue .dot{background:var(--accent);} .blue h3{color:var(--accent);}
+  .green .card-header{background:rgba(63,185,80,0.08);} .green .dot{background:var(--accent2);} .green h3{color:var(--accent2);}
+  .red .card-header{background:rgba(247,129,102,0.08);} .red .dot{background:var(--accent3);} .red h3{color:var(--accent3);}
+  .purple .card-header{background:rgba(210,168,255,0.08);} .purple .dot{background:var(--accent4);} .purple h3{color:var(--accent4);}
+  .orange .card-header{background:rgba(255,166,87,0.08);} .orange .dot{background:var(--accent5);} .orange h3{color:var(--accent5);}
+  .yellow .card-header{background:rgba(227,179,65,0.08);} .yellow .dot{background:var(--yellow);} .yellow h3{color:var(--yellow);}
+  p{color:var(--text);margin-bottom:6px;} p:last-child{margin-bottom:0;}
+  .label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;margin-top:10px;}
+  .label:first-child{margin-top:0;}
+  code{font-family:'IBM Plex Mono',monospace;font-size:11px;background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:1px 5px;color:var(--accent3);}
+  .mono{font-family:'IBM Plex Mono',monospace;font-size:11px;}
+  .rule{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--yellow);margin-bottom:6px;}
+  .formula{background:rgba(210,168,255,0.07);border:1px solid rgba(210,168,255,0.25);border-left:3px solid var(--accent4);border-radius:4px;padding:7px 10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent4);margin-bottom:6px;}
+  ul.items{list-style:none;padding:0;}
+  ul.items li{padding:4px 0 4px 14px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;}
+  ul.items li:last-child{border-bottom:none;}
+  ul.items li::before{content:'›';position:absolute;left:0;color:var(--text-dim);}
+  ol.steps{list-style:none;padding:0;counter-reset:steps;}
+  ol.steps li{padding:5px 0 5px 26px;position:relative;color:var(--text);border-bottom:1px solid rgba(255,255,255,0.04);counter-increment:steps;font-size:12px;}
+  ol.steps li:last-child{border-bottom:none;}
+  ol.steps li::before{content:counter(steps);position:absolute;left:0;top:5px;width:18px;height:18px;background:var(--accent);color:#000;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:700;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tbl{width:100%;border-collapse:collapse;font-size:11px;}
+  .tbl th{background:var(--surface2);color:var(--text-muted);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.5px;padding:5px 8px;border:1px solid var(--border);text-align:left;}
+  .tbl td{padding:4px 8px;border:1px solid var(--border);font-size:11px;vertical-align:top;}
+  .tbl tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+  .warn{background:rgba(247,129,102,0.08);border:1px solid rgba(247,129,102,0.3);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .warn .w-title{color:var(--accent3);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .info{background:rgba(88,166,255,0.07);border:1px solid rgba(88,166,255,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .info .i-title{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .tip{background:rgba(63,185,80,0.07);border:1px solid rgba(63,185,80,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .tip .t-title{color:var(--accent2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .note{background:rgba(227,179,65,0.07);border:1px solid rgba(227,179,65,0.25);border-radius:4px;padding:7px 10px;margin-bottom:6px;font-size:12px;}
+  .note .n-title{color:var(--yellow);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;font-weight:600;margin-bottom:3px;}
+  .divider{border:none;border-top:1px solid var(--border);margin:10px 0;}
+  .footer{margin-top:20px;border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);}
+  @media print{body{background:white;color:black;} .card{border:1px solid #ccc;break-inside:avoid;}}
+
+/* ── Keyword Tooltips ── */
+.tt{position:relative;border-bottom:1px dotted var(--accent,#58a6ff);cursor:help;display:inline;}
+.tt::after{content:attr(data-t);position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%);background:#1c2128;color:#e6edf3;padding:6px 10px;border-radius:6px;font-size:11px;font-family:'IBM Plex Sans',sans-serif;font-weight:400;line-height:1.4;white-space:normal;width:220px;z-index:200;opacity:0;pointer-events:none;transition:opacity .18s ease;border:1px solid #30363d;box-shadow:0 4px 12px rgba(0,0,0,.5);}
+.tt:hover::after{opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="header-left">
+    <h1>Computer Organization — Chapter 5</h1>
+    <h2>Foundations of Computer Science, 4th Edition &nbsp;|&nbsp; Complete Study Reference</h2>
+    <div class="toc" style="margin-top:10px;">
+      <span class="toc-item">§5.1 CPU</span>
+      <span class="toc-item">§5.2 Main Memory</span>
+      <span class="toc-item">§5.3 I/O Subsystem</span>
+      <span class="toc-item">§5.4 Interconnection</span>
+      <span class="toc-item">§5.5 Program Execution</span>
+      <span class="toc-item">§5.6 Architectures</span>
+      <span class="toc-item">§5.7 A Simple Computer</span>
+    </div>
+  </div>
+  <div style="text-align:right;flex-shrink:0;">
+    <div class="badge">FCS4e · CH05</div>
+  </div>
+</div>
+
+<!-- ═══ ROW 1 — CPU · Main Memory · I/O Subsystem ═══ -->
+<div class="grid">
+
+  <!-- Card 1: CPU -->
+  <div class="card blue">
+    <div class="card-header"><div class="dot"></div><h3>CPU: Central Processing Unit — §5.1</h3></div>
+    <div class="card-body">
+      <div class="rule">The CPU is the brain of the computer — it fetches, decodes, and executes instructions</div>
+      <p>The CPU has three main internal components that work together every clock cycle to process program instructions.</p>
+
+      <div class="label">Three Main Components</div>
+      <ul class="items">
+        <li><strong><span class="tt" data-t="Arithmetic Logic Unit — the digital circuit that performs integer addition, subtraction, AND, OR, NOT, XOR, and comparisons inside the CPU">ALU</span> (Arithmetic Logic Unit):</strong> performs integer arithmetic, bitwise logic, and comparisons on operands fetched from registers</li>
+        <li><strong>Control Unit (CU):</strong> decodes instructions, generates control signals, coordinates data flow between all components</li>
+        <li><strong>Registers:</strong> small, ultra-fast storage directly inside the CPU — the only data the ALU can operate on directly</li>
+      </ul>
+
+      <div class="label">Register Types</div>
+      <ul class="items">
+        <li><strong>Data registers:</strong> hold operands and results (e.g., general-purpose registers R0–R15, EAX–EDX in x86)</li>
+        <li><strong>Address registers:</strong> hold memory addresses (SP = stack pointer, BP = base pointer, SI/DI = index registers)</li>
+        <li><strong>Status register (flags):</strong> condition codes set by ALU — zero flag (Z), carry (C), overflow (V), sign/negative (N)</li>
+        <li><strong>Program counter (PC):</strong> holds the address of the <em>next</em> instruction to fetch; auto-incremented after each fetch</li>
+        <li><strong>Instruction register (IR):</strong> holds the <em>current</em> instruction being decoded and executed by the CU</li>
+        <li><strong>Memory address register (MAR):</strong> address output to memory bus — set before any read or write operation</li>
+        <li><strong>Memory data register (MDR):</strong> bidirectional buffer — holds data read from memory or data about to be written</li>
+      </ul>
+
+      <div class="label">Key Registers Summary</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Register</th><th>Size</th><th>Purpose</th></tr>
+        <tr><td><code>PC</code></td><td>32/64-bit</td><td>Points to next instruction to fetch</td></tr>
+        <tr><td><code>IR</code></td><td>32/64-bit</td><td>Holds current instruction being decoded</td></tr>
+        <tr><td><code>MAR</code></td><td>32/64-bit</td><td>Memory address for current read/write</td></tr>
+        <tr><td><code>MDR</code></td><td>32/64-bit</td><td>Data buffer between CPU and memory</td></tr>
+        <tr><td>Flags</td><td>16–32 bit</td><td>Condition codes: Z, C, N, V</td></tr>
+      </table>
+
+      <div class="label" style="margin-top:10px;">ALU Operations by Category</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Category</th><th>Operations</th><th>Flag Effects</th></tr>
+        <tr><td>Arithmetic</td><td>ADD, SUB, MUL, DIV, INC, DEC</td><td>Z, N, C, V all updated</td></tr>
+        <tr><td>Logical</td><td>AND, OR, XOR, NOT</td><td>Z, N updated; C and V cleared</td></tr>
+        <tr><td>Shift/Rotate</td><td>SHL, SHR, SAR, ROL, ROR</td><td>C receives shifted-out bit</td></tr>
+        <tr><td>Compare</td><td>CMP (SUB without storing result)</td><td>Flags updated; result discarded</td></tr>
+      </table>
+
+      <div class="label" style="margin-top:10px;">Condition Flag Meanings</div>
+      <ul class="items">
+        <li><strong>Z (Zero):</strong> set when result = 0; used for equality comparison after CMP</li>
+        <li><strong>N (Negative / Sign):</strong> set when MSB of result = 1; indicates negative in two's complement</li>
+        <li><strong>C (Carry):</strong> set when unsigned addition overflows or subtraction borrows from MSB</li>
+        <li><strong>V (Overflow):</strong> set when signed result overflows the word size (e.g., 127 + 1 in 8-bit)</li>
+      </ul>
+
+      <div class="label" style="margin-top:10px;">Control Unit Design Approaches</div>
+      <ul class="items">
+        <li><strong>Hardwired CU:</strong> combinational logic gates directly implement control signals — extremely fast, inflexible, common in RISC</li>
+        <li><strong>Microprogrammed CU:</strong> a ROM/PLA maps opcodes to sequences of micro-operations — easier to design/update; used in CISC (x86 internally translates complex instructions to micro-ops)</li>
+      </ul>
+
+      <div class="label" style="margin-top:10px;">Key Terms</div>
+      <p>
+        <span class="tt" data-t="Arithmetic Logic Unit — the digital circuit that performs integer addition, subtraction, AND, OR, NOT, XOR, and comparisons inside the CPU">ALU</span> &nbsp;·&nbsp;
+        <span class="tt" data-t="Tiny, extremely fast storage location directly inside the CPU — typically 32 or 64 bits wide; much faster than RAM but very limited in number">register</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Card 2: Main Memory -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Main Memory — §5.2</h3></div>
+    <div class="card-body">
+      <div class="rule">Main memory (RAM) stores both programs and data currently in use — volatile</div>
+      <p>Memory is modelled as a large array of bytes. Every byte has a unique numeric address starting at 0. The CPU accesses memory through MAR (address) and MDR (data).</p>
+
+      <div class="label">Address Space</div>
+      <ul class="items">
+        <li><strong>n address bits</strong> → 2ⁿ addressable locations (each 1 byte wide)</li>
+        <li>32-bit addresses → 2³² = 4,294,967,296 bytes = <strong>4 GB</strong> address space</li>
+        <li>64-bit addresses → 2⁶⁴ = 16 exabytes theoretical address space</li>
+        <li>Physical memory installed may be much less than the maximum address space</li>
+      </ul>
+
+      <div class="formula">Address space = 2^(address bus width) bytes</div>
+
+      <div class="label">Memory Access Protocol</div>
+      <ul class="items">
+        <li><strong>Read:</strong> CPU puts address in MAR → memory reads that location and puts value in MDR → CPU reads MDR</li>
+        <li><strong>Write:</strong> CPU puts address in MAR and data in MDR → memory stores MDR value at address in MAR</li>
+      </ul>
+
+      <div class="label">Memory Types</div>
+      <ul class="items">
+        <li><strong>RAM (Random Access Memory):</strong> <span class="tt" data-t="Memory that loses its contents when power is removed — RAM is volatile; ROM, flash, and hard disks are non-volatile">volatile</span>; read + write; DRAM used for main memory, SRAM used for <span class="tt" data-t="Small, fast memory between CPU and main RAM that holds recently/frequently accessed data to reduce average memory access time">cache</span></li>
+        <li><strong>ROM (Read-Only Memory):</strong> non-volatile; factory-programmed; used for BIOS, firmware, boot code</li>
+        <li><strong>EEPROM / Flash:</strong> electrically erasable; non-volatile; used for SSDs, USB drives, firmware updates</li>
+        <li><strong>Cache (L1/L2/L3):</strong> small, fast SRAM on or near the CPU die; exploits temporal and spatial locality</li>
+      </ul>
+
+      <div class="label">Memory Hierarchy — Speed vs Cost</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Memory Type</th><th>Speed</th><th>Volatility</th><th>Cost/GB</th><th>Use</th></tr>
+        <tr><td>Registers</td><td>~1 ns</td><td>Volatile</td><td>N/A</td><td>CPU internal</td></tr>
+        <tr><td>L1 Cache</td><td>~4 ns</td><td>Volatile</td><td>Very high</td><td>CPU chip</td></tr>
+        <tr><td>L2/L3 Cache</td><td>~10 ns</td><td>Volatile</td><td>High</td><td>CPU chip/nearby</td></tr>
+        <tr><td>DRAM (RAM)</td><td>~100 ns</td><td>Volatile</td><td>Low</td><td>Main memory</td></tr>
+        <tr><td>SSD</td><td>~100 µs</td><td>Non-volatile</td><td>Medium</td><td>Storage</td></tr>
+        <tr><td>HDD</td><td>~10 ms</td><td>Non-volatile</td><td>Very low</td><td>Storage</td></tr>
+      </table>
+
+      <div class="label" style="margin-top:10px;">Addressing Modes</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Mode</th><th>Example</th><th>Effective Address / Value</th></tr>
+        <tr><td>Immediate</td><td><code>MOV R1, #5</code></td><td>Operand IS the constant 5</td></tr>
+        <tr><td>Direct</td><td><code>LOAD R1, 200</code></td><td>EA = literal address 200</td></tr>
+        <tr><td>Indirect</td><td><code>LOAD R1, (200)</code></td><td>EA = memory[200] — pointer</td></tr>
+        <tr><td>Register</td><td><code>ADD R1, R2</code></td><td>Operand is value in R2</td></tr>
+        <tr><td>Register Indirect</td><td><code>LOAD R1, (R2)</code></td><td>EA = value stored in R2</td></tr>
+        <tr><td>Base+Offset</td><td><code>LOAD R1, 8(R2)</code></td><td>EA = R2 + 8 (struct fields, arrays)</td></tr>
+      </table>
+
+      <div class="label" style="margin-top:10px;">Endianness</div>
+      <ul class="items">
+        <li><strong>Big-endian:</strong> most-significant byte at the lowest address — SPARC, IBM mainframes, network byte order (TCP/IP)</li>
+        <li><strong>Little-endian:</strong> least-significant byte at the lowest address — x86, x86-64; ARM (configurable)</li>
+        <li>Matters when exchanging binary data between systems or casting byte pointers to multi-byte types</li>
+      </ul>
+
+      <div class="tip">
+        <div class="t-title">Locality of Reference</div>
+        Caches work because programs exhibit <strong>temporal locality</strong> (recently used data used again soon) and <strong>spatial locality</strong> (data near recently-used data accessed soon). This is why a small L1 cache dramatically improves average memory access time.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: I/O Subsystem -->
+  <div class="card red">
+    <div class="card-header"><div class="dot"></div><h3>I/O Subsystem — §5.3</h3></div>
+    <div class="card-body">
+      <div class="rule">I/O devices connect the computer to the external world — keyboards, displays, disks, network</div>
+
+      <div class="label">I/O Device Categories</div>
+      <ul class="items">
+        <li><strong>Input only:</strong> keyboard, mouse, scanner, microphone, barcode reader, camera</li>
+        <li><strong>Output only:</strong> monitor/display, printer, speakers, projector</li>
+        <li><strong>Both input and output:</strong> touchscreen, disk drive, network interface card, USB flash drive, modem</li>
+      </ul>
+
+      <div class="label">I/O Controllers</div>
+      <p style="font-size:12px;margin-bottom:6px;">Each I/O device has a dedicated <strong>controller</strong> chip. The CPU communicates only with the controller, not the device directly. The controller handles timing, buffering, format conversion, and error detection.</p>
+      <ul class="items">
+        <li>Controller registers: <strong>data register</strong> (transfer buffer), <strong>status register</strong> (ready/busy/error), <strong>control register</strong> (commands)</li>
+        <li>CPU reads status register to check if device is ready; writes command register to initiate operations</li>
+      </ul>
+
+      <div class="label">I/O Addressing</div>
+      <ul class="items">
+        <li><strong>Memory-mapped I/O:</strong> controller registers appear at specific memory addresses — CPU uses normal LOAD/STORE instructions to access them (used by ARM, RISC-V)</li>
+        <li><strong>Port-mapped I/O (isolated I/O):</strong> separate I/O address space with dedicated IN/OUT instructions — used by x86</li>
+      </ul>
+
+      <div class="label">Three I/O Methods</div>
+      <ul class="items">
+        <li><strong>Programmed I/O (polling):</strong> CPU executes a busy-wait loop reading the device status register — wastes CPU cycles, but simple</li>
+        <li><strong><span class="tt" data-t="A signal to the CPU that an event requires attention — CPU saves current state, jumps to interrupt handler routine, then resumes original task">Interrupt</span>-driven I/O:</strong> device signals the CPU when it is ready; CPU handles other tasks in the meantime — efficient for slow devices (keyboard, serial)</li>
+        <li><strong><span class="tt" data-t="Direct Memory Access — a controller that can transfer data between I/O device and memory without involving the CPU for each byte, greatly improving throughput">DMA</span> (Direct Memory Access):</strong> DMA controller autonomously transfers blocks of data between device and memory; only interrupts CPU when entire transfer finishes — ideal for disks, network, GPU</li>
+      </ul>
+
+      <div class="label">I/O Method Comparison</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Method</th><th>CPU Involvement</th><th>Efficiency</th></tr>
+        <tr><td>Polling</td><td>100% busy-wait</td><td>Poor — CPU wasted on checking</td></tr>
+        <tr><td>Interrupt-driven</td><td>Only at completion</td><td>Good — CPU free between I/O events</td></tr>
+        <tr><td>DMA</td><td>Only at start and end</td><td>Best — for bulk transfers</td></tr>
+      </table>
+
+      <div class="label" style="margin-top:10px;">Interrupt Mechanism Steps</div>
+      <ol class="steps">
+        <li>Device finishes operation and asserts interrupt request line (IRQ)</li>
+        <li>CPU finishes current instruction, then checks interrupt flag</li>
+        <li>CPU saves registers (PC, flags) on the stack — preserves context</li>
+        <li>CPU jumps to the <strong>Interrupt Service Routine (ISR)</strong> address from the interrupt vector table</li>
+        <li>ISR services the device (reads data, clears interrupt flag)</li>
+        <li>CPU restores saved registers (IRET) and resumes original program</li>
+      </ol>
+
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Modern Systems</div>
+        Modern systems use interrupts and DMA together: the DMA controller handles the bulk data transfer to RAM while the CPU runs other processes, then fires an interrupt to notify the CPU that the transfer is complete.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 1 -->
+
+<!-- ═══ ROW 2 — Bus · Fetch-Decode-Execute · Architectures ═══ -->
+<div class="grid section-gap">
+
+  <!-- Card 4: Bus / Interconnection -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Subsystem Interconnection: The Bus — §5.4</h3></div>
+    <div class="card-body">
+      <div class="rule">A bus is a shared communication pathway connecting CPU, memory, and I/O</div>
+      <p>The <span class="tt" data-t="A set of parallel wires (or a serial link) shared among multiple components for data transfer — compromises speed for lower cost versus dedicated point-to-point links">bus</span> is the fundamental interconnect in classical computer designs. Being shared means only one device may transmit at a time — devices must arbitrate for ownership.</p>
+
+      <div class="label">Three Types of Bus Lines</div>
+      <ul class="items">
+        <li><strong>Data bus:</strong> carries actual data — bidirectional; width = word size (8/16/32/64-bit); wider = more data per cycle</li>
+        <li><strong>Address bus:</strong> carries memory or I/O address — unidirectional (CPU → memory/I/O); width determines maximum addressable space</li>
+        <li><strong>Control bus:</strong> carries control signals — read/write enable, interrupt request, DMA request, bus grant, clock, reset</li>
+      </ul>
+
+      <div class="label">Bus Bandwidth</div>
+      <div class="formula">Bus bandwidth (bytes/s) = bus width (bytes) × bus clock frequency</div>
+      <p style="font-size:12px;margin-bottom:8px;">Example: 64-bit bus at 100 MHz = 8 bytes × 100,000,000 = <strong>800 MB/s</strong></p>
+
+      <div class="label">Synchronous vs Asynchronous Bus</div>
+      <ul class="items">
+        <li><strong>Synchronous bus:</strong> all events clocked by a shared bus clock — simple, fast, but all devices must match the clock speed; prone to clock skew on long buses</li>
+        <li><strong>Asynchronous bus:</strong> uses handshaking signals (request/acknowledge) instead of a shared clock — more flexible, works with mixed-speed devices; slightly slower overhead</li>
+      </ul>
+
+      <div class="label">Bus Arbitration (Multiple Masters)</div>
+      <ul class="items">
+        <li><strong>Daisy-chain:</strong> bus grant signal passes through devices in series — simple wiring, priority = physical position; far devices get low priority</li>
+        <li><strong>Centralized parallel:</strong> dedicated arbiter chip; each device has its own bus request line to the arbiter — fair priority schemes possible</li>
+        <li><strong>Distributed (self-selection):</strong> each device monitors bus and applies its own priority logic — no central arbiter; higher complexity</li>
+      </ul>
+
+      <div class="label">Bus Standards (Historical to Modern)</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Standard</th><th>Width</th><th>Peak BW</th><th>Notes</th></tr>
+        <tr><td>ISA (1981)</td><td>8/16-bit</td><td>8 MB/s</td><td>Original IBM PC bus</td></tr>
+        <tr><td>PCI (1992)</td><td>32/64-bit</td><td>133/266 MB/s</td><td>Replaced ISA; shared parallel</td></tr>
+        <tr><td>PCIe 4.0 (2017)</td><td>Serial ×16</td><td>~32 GB/s</td><td>Point-to-point; GPU, NVMe</td></tr>
+        <tr><td>PCIe 5.0 (2019)</td><td>Serial ×16</td><td>~64 GB/s</td><td>Current high-end standard</td></tr>
+        <tr><td>USB 3.2 Gen 2×2</td><td>Serial</td><td>20 Gb/s</td><td>Peripheral connectivity</td></tr>
+      </table>
+
+      <div class="warn" style="margin-top:8px;">
+        <div class="w-title">Von Neumann Bottleneck</div>
+        A single shared bus between CPU and memory limits throughput — especially as CPUs get faster while memory latency stays high. The memory wall is a fundamental constraint: even a 4 GHz CPU stalls for ~400 cycles waiting for a DRAM access (~100 ns).
+      </div>
+
+      <div class="label" style="margin-top:10px;">Modern Alternatives</div>
+      <ul class="items">
+        <li><strong>PCIe:</strong> point-to-point serial lanes; each device has a dedicated link to a root complex — eliminates bus contention</li>
+        <li><strong>HyperTransport / QPI (QuickPath):</strong> CPU-to-CPU and CPU-to-memory links for multi-socket systems</li>
+        <li><strong>AXI / AMBA:</strong> on-chip bus protocol used inside ARM-based SoCs for connecting CPU cores, peripherals, and memory controllers</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Card 5: Fetch-Decode-Execute -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Program Execution: Fetch-Decode-Execute — §5.5</h3></div>
+    <div class="card-body">
+      <div class="rule">The CPU repeatedly cycles through fetch → decode → execute until the program ends</div>
+
+      <div class="label">Detailed Cycle Steps</div>
+      <ol class="steps">
+        <li><strong>Fetch:</strong> <span class="tt" data-t="CPU register that holds the memory address of the next instruction to be fetched — automatically incremented after each fetch">PC</span> → MAR; memory[MAR] → MDR → IR; PC is incremented to point to the next instruction in sequence</li>
+        <li><strong>Decode:</strong> Control unit reads the opcode field of IR; determines the operation type, addressing modes, and identifies source/destination operands</li>
+        <li><strong>Evaluate operands:</strong> if operands are in memory, calculate effective addresses and perform additional memory reads (indirect addressing adds extra cycles)</li>
+        <li><strong>Execute:</strong> ALU performs the operation on the operands; result is stored in destination register or written to memory via MAR/MDR; condition flags updated</li>
+        <li><strong>Repeat</strong> from step 1 — or handle interrupt if interrupt flag set and interrupts enabled</li>
+      </ol>
+
+      <div class="label">Clock and Performance</div>
+      <ul class="items">
+        <li>Each stage takes one or more clock cycles — the clock is the heartbeat of the CPU</li>
+        <li><strong>CPI (Cycles Per Instruction):</strong> metric of how many cycles each instruction uses on average</li>
+        <li>RISC architectures target CPI = 1 for most instructions; complex CISC instructions may take 10–100+ cycles</li>
+      </ul>
+
+      <div class="formula">CPU time = Instruction Count × CPI × Clock Period</div>
+      <div class="formula">CPU time = (IC × CPI) / Clock Frequency</div>
+
+      <div class="label">Pipelining — The Assembly Line Analogy</div>
+      <p style="font-size:12px;margin-bottom:6px;"><span class="tt" data-t="Technique of overlapping the execution stages of multiple instructions — an instruction enters a new stage each cycle, increasing throughput without increasing clock speed">Pipelining</span> overlaps execution of multiple instructions in different stages simultaneously. Throughput approaches 1 instruction/cycle even if each instruction takes 5 cycles.</p>
+      <ul class="items">
+        <li><strong>Classic 5-stage RISC pipeline:</strong> IF (Instruction Fetch) → ID (Instruction Decode) → EX (Execute) → MEM (Memory access) → WB (Write-Back)</li>
+        <li>At any instant, 5 different instructions are in different pipeline stages simultaneously</li>
+      </ul>
+
+      <div class="label">Pipeline Hazards</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Hazard Type</th><th>Cause</th><th>Solution</th></tr>
+        <tr><td>Data hazard (RAW)</td><td>Instruction reads register written by previous not-yet-finished instruction</td><td>Forwarding (bypassing) or pipeline stall (bubble)</td></tr>
+        <tr><td>Control hazard</td><td>Branch instruction — next instruction unknown until branch resolves</td><td>Branch prediction; delayed branch slots</td></tr>
+        <tr><td>Structural hazard</td><td>Two instructions need the same hardware resource simultaneously</td><td>Resource duplication or stall</td></tr>
+      </table>
+
+      <div class="info" style="margin-top:8px;">
+        <div class="i-title">Modern CPU Enhancements</div>
+        Modern high-end CPUs execute <strong>multiple instructions per cycle</strong> (superscalar — 4–8 way), <strong>reorder instructions</strong> dynamically (out-of-order execution, Tomasulo algorithm), and <strong>predict branches</strong> with &gt;95% accuracy to keep deep pipelines (20+ stages) filled at all times.
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 6: CPU Architectures -->
+  <div class="card yellow">
+    <div class="card-header"><div class="dot"></div><h3>Different CPU Architectures — §5.6</h3></div>
+    <div class="card-body">
+      <div class="rule">Different architectures make different trade-offs in ISA design, register count, and memory access</div>
+
+      <div class="label">CISC — Complex Instruction Set Computer</div>
+      <ul class="items">
+        <li>Many complex instructions, variable-length encoding, rich addressing modes</li>
+        <li>Can perform memory-to-memory operations in a single instruction (e.g., <code>ADD [mem1], [mem2]</code>)</li>
+        <li>Historically designed to close the "semantic gap" between high-level languages and hardware</li>
+        <li>Examples: <strong>x86, x86-64</strong> (Intel Core, AMD Ryzen, Xeon, EPYC)</li>
+        <li><strong>Pros:</strong> powerful instructions reduce code density; <strong>Cons:</strong> complex decoder, variable-length makes pipelining harder</li>
+      </ul>
+
+      <div class="label">RISC — Reduced Instruction Set Computer</div>
+      <ul class="items">
+        <li>Small number of simple instructions, fixed-length encoding (uniformly 32-bit), load/store architecture</li>
+        <li>Only <code>LOAD</code> and <code>STORE</code> access memory; ALL other operations work only on register operands</li>
+        <li>Large register file (16–32+ registers) reduces memory traffic</li>
+        <li>Examples: <strong>ARM, MIPS, RISC-V, PowerPC, Apple Silicon (M-series)</strong></li>
+        <li><strong>Pros:</strong> simple uniform pipeline, high clock speed, compiler-friendly; <strong>Cons:</strong> more instructions needed for same task, more registers used</li>
+      </ul>
+
+      <div class="label">CISC vs RISC Feature Comparison</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Feature</th><th><span class="tt" data-t="Complex Instruction Set Computer — architecture with many complex multi-step instructions; x86 is the dominant CISC architecture in desktop/server computing">CISC</span> (x86-64)</th><th><span class="tt" data-t="Reduced Instruction Set Computer — architecture philosophy using simple, uniform instructions executed in one cycle, enabling efficient pipelining; examples: ARM, RISC-V">RISC</span> (ARM64)</th></tr>
+        <tr><td>Instruction count</td><td>Fewer, more complex</td><td>More, simpler</td></tr>
+        <tr><td>Instruction length</td><td>Variable (1–15 bytes)</td><td>Fixed (4 bytes)</td></tr>
+        <tr><td>Memory access</td><td>Many ops can access memory</td><td>Load/store only</td></tr>
+        <tr><td>Register count</td><td>8 (x86-32) / 16 (x86-64)</td><td>31 general-purpose</td></tr>
+        <tr><td>Pipeline friendly</td><td>Requires internal decode to RISC-like micro-ops</td><td>Yes — uniform stages</td></tr>
+        <tr><td>Code density</td><td>Good (variable length)</td><td>Fixed 4 bytes / instr.</td></tr>
+        <tr><td>Power efficiency</td><td>Moderate</td><td>Excellent (dominant in mobile)</td></tr>
+        <tr><td>Used in</td><td>Desktop, laptop, server</td><td>Mobile, embedded, Apple Silicon</td></tr>
+      </table>
+
+      <div class="label" style="margin-top:10px;">Harvard vs Von Neumann Architecture</div>
+      <ul class="items">
+        <li><strong>Von Neumann:</strong> single unified memory holds both instructions and data; one bus — simpler but creates instruction/data fetch conflict; used by all general-purpose CPUs</li>
+        <li><strong>Harvard:</strong> physically separate instruction memory and data memory with separate buses — allows simultaneous instruction fetch and data access; used in microcontrollers (PIC, AVR), DSPs</li>
+        <li><strong>Modified Harvard:</strong> shared DRAM but separate L1 instruction cache and L1 data cache — modern CPUs use this; gets most of Harvard's benefit with Von Neumann simplicity</li>
+      </ul>
+
+      <div class="note">
+        <div class="n-title">Modern x86 Reality</div>
+        Modern x86 processors are CISC externally (for backward compatibility) but translate CISC instructions into internal RISC-like micro-operations before execution. The pipeline itself is essentially RISC inside — best of both worlds.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 2 -->
+
+<!-- ═══ ROW 3 — Simple Computer · Key Terms ═══ -->
+<div class="grid-2 section-gap">
+
+  <!-- Card 7: Forouzan's Simple Computer -->
+  <div class="card blue col-span-2">
+    <div class="card-header"><div class="dot"></div><h3>A Simple Computer Example — §5.7 (Forouzan's Model)</h3></div>
+    <div class="card-body">
+      <div class="rule">A simple conceptual CPU with 16 instructions illustrates how real processors work</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+          <div class="label">Forouzan's Simple Computer Specs</div>
+          <ul class="items">
+            <li><strong>16 instructions</strong> — 4-bit opcode field (opcodes 0–15)</li>
+            <li><strong>256 bytes of memory</strong> — 8-bit addresses (0x00–0xFF)</li>
+            <li><strong>16 general-purpose registers</strong> — R0 through R15, each 4-bit register ID</li>
+            <li><strong>16-bit instruction word</strong> — exactly one 16-bit word per instruction</li>
+            <li><strong>16-bit data words</strong> — each register holds 16 bits</li>
+          </ul>
+
+          <div class="label">Instruction Format</div>
+          <div class="formula">[opcode 4-bit | operand 12-bit]</div>
+          <p style="font-size:12px;margin-bottom:8px;">The 12-bit operand field encodes register IDs (4-bit each), memory addresses (8-bit), or immediate values depending on the instruction type. E.g., a 3-register instruction uses three 4-bit fields.</p>
+
+          <div class="label">Complete Instruction Set</div>
+          <table class="tbl" style="margin-top:4px;">
+            <tr><th>Opcode</th><th>Mnemonic</th><th>Operation</th></tr>
+            <tr><td>0</td><td><code>LOAD Rx, addr</code></td><td>Rx ← mem[addr]</td></tr>
+            <tr><td>1</td><td><code>LOAD Rx, #imm</code></td><td>Rx ← immediate 8-bit value</td></tr>
+            <tr><td>2</td><td><code>STORE Rx, addr</code></td><td>mem[addr] ← Rx</td></tr>
+            <tr><td>3</td><td><code>MOVE Rx, Ry</code></td><td>Rx ← Ry (register copy)</td></tr>
+            <tr><td>4</td><td><code>ADD Rx, Ry, Rz</code></td><td>Rx ← Ry + Rz (integer)</td></tr>
+            <tr><td>5</td><td><code>ADD Rx, Ry, Rz</code></td><td>Rx ← Ry + Rz (floating-point)</td></tr>
+            <tr><td>6</td><td><code>OR Rx, Ry, Rz</code></td><td>Rx ← Ry OR Rz (bitwise)</td></tr>
+            <tr><td>7</td><td><code>AND Rx, Ry, Rz</code></td><td>Rx ← Ry AND Rz (bitwise)</td></tr>
+            <tr><td>8</td><td><code>XOR Rx, Ry, Rz</code></td><td>Rx ← Ry XOR Rz (bitwise)</td></tr>
+            <tr><td>9</td><td><code>ROT Rx, n</code></td><td>Rotate Rx right by n bits</td></tr>
+            <tr><td>A</td><td><code>JUMP Rx, addr</code></td><td>If Rx = R0, PC ← addr</td></tr>
+            <tr><td>B</td><td><code>HALT</code></td><td>Stop execution</td></tr>
+          </table>
+        </div>
+
+        <div>
+          <div class="label">Example 1: Compute A + B, Store Result</div>
+          <pre style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent3);overflow-x:auto;line-height:1.7;margin-bottom:10px;">LOAD  R1, 200    <span style="color:var(--text-dim);">; R1 = memory[200] = A</span>
+LOAD  R2, 201    <span style="color:var(--text-dim);">; R2 = memory[201] = B</span>
+ADD   R3, R1, R2 <span style="color:var(--text-dim);">; R3 = A + B</span>
+STORE R3, 202    <span style="color:var(--text-dim);">; memory[202] = result</span>
+HALT             <span style="color:var(--text-dim);">; stop execution</span></pre>
+
+          <div class="label">Example 2: Sum Array of 4 Values (Loop)</div>
+          <pre style="background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:10px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--accent3);overflow-x:auto;line-height:1.7;margin-bottom:10px;">LOAD  R0, #0     <span style="color:var(--text-dim);">; R0 = 0 (sum accumulator)</span>
+LOAD  R1, #4     <span style="color:var(--text-dim);">; R1 = loop counter = 4</span>
+LOAD  R2, #210   <span style="color:var(--text-dim);">; R2 = base address of array</span>
+<span style="color:var(--accent);">; LOOP start (address 3)</span>
+LOAD  R3, (R2)   <span style="color:var(--text-dim);">; R3 = mem[R2] = current element</span>
+ADD   R0, R0, R3 <span style="color:var(--text-dim);">; sum += R3</span>
+ADD   R2, R2, #1 <span style="color:var(--text-dim);">; advance array pointer</span>
+ADD   R1, R1, #-1<span style="color:var(--text-dim);">; decrement counter</span>
+JUMP  R1, 3      <span style="color:var(--text-dim);">; if R1 = R0(=0), jump to loop</span>
+STORE R0, 220    <span style="color:var(--text-dim);">; store sum at address 220</span>
+HALT</pre>
+
+          <div class="label">Fetch-Decode-Execute Trace (LOAD R1, 200)</div>
+          <table class="tbl" style="margin-top:4px;">
+            <tr><th>Step</th><th>Action</th><th>Register State</th></tr>
+            <tr><td>Fetch</td><td>PC → MAR; mem[MAR] → MDR → IR; PC++</td><td>IR = LOAD R1, 200</td></tr>
+            <tr><td>Decode</td><td>CU reads opcode=0 (LOAD), Rx=R1, addr=200</td><td>Operation identified</td></tr>
+            <tr><td>EvalAddr</td><td>200 → MAR</td><td>MAR = 200</td></tr>
+            <tr><td>Execute</td><td>mem[MAR] → MDR; MDR → R1</td><td>R1 = value of A</td></tr>
+          </table>
+
+          <div class="info" style="margin-top:8px;">
+            <div class="i-title">Scaling to Real CPUs</div>
+            This simple model captures the essence of all real processors. The difference is scale: x86-64 has ~2000+ instructions, 16 visible + hundreds of internal registers, 20+ pipeline stages, out-of-order execution with 200+ instruction windows, and branch prediction at &gt;95% accuracy.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 8: Key Terms -->
+  <div class="card green">
+    <div class="card-header"><div class="dot"></div><h3>Key Terms Quick Reference</h3></div>
+    <div class="card-body">
+      <table class="tbl">
+        <tr><th>Term</th><th>Definition</th></tr>
+        <tr><td><code>CPU</code></td><td>Central Processing Unit — fetches, decodes, and executes instructions</td></tr>
+        <tr><td><code>ALU</code></td><td>Arithmetic Logic Unit — computes integer math and bitwise logic</td></tr>
+        <tr><td>Control Unit</td><td>Decodes instructions, generates control signals, coordinates all CPU components</td></tr>
+        <tr><td><code>PC</code></td><td>Program Counter — holds address of the next instruction to fetch; auto-incremented</td></tr>
+        <tr><td><code>IR</code></td><td>Instruction Register — holds the current instruction being decoded/executed</td></tr>
+        <tr><td><code>MAR</code></td><td>Memory Address Register — holds address for the current memory read/write</td></tr>
+        <tr><td><code>MDR</code></td><td>Memory Data Register — bidirectional data buffer between CPU and memory</td></tr>
+        <tr><td>Bus</td><td>Shared communication pathway (data + address + control lines) connecting CPU, memory, I/O</td></tr>
+        <tr><td>ISA</td><td>Instruction Set Architecture — the programmer-visible CPU interface (instructions, registers, addressing)</td></tr>
+        <tr><td>Opcode</td><td>Operation code — binary field in an instruction encoding which operation to perform</td></tr>
+        <tr><td>Operand</td><td>Data value, register name, or memory address that an instruction operates on</td></tr>
+        <tr><td>CPI</td><td>Cycles Per Instruction — average number of clock cycles per instruction; RISC targets ~1</td></tr>
+        <tr><td>DMA</td><td>Direct Memory Access — controller transfers data between device and RAM without CPU per-byte involvement</td></tr>
+        <tr><td>Interrupt</td><td>Asynchronous signal to CPU requesting service; CPU saves state, runs ISR, then resumes</td></tr>
+        <tr><td>ISR</td><td>Interrupt Service Routine — code that handles a specific interrupt event</td></tr>
+        <tr><td>RISC</td><td>Reduced Instruction Set Computer — simple fixed-length instructions, load/store, many registers</td></tr>
+        <tr><td>CISC</td><td>Complex Instruction Set Computer — rich variable-length instructions; x86 family</td></tr>
+        <tr><td>Pipeline</td><td>Overlapping execution of multiple instructions in different stages simultaneously</td></tr>
+        <tr><td>Cache</td><td>Small fast SRAM between CPU and DRAM exploiting temporal and spatial locality</td></tr>
+        <tr><td>Von Neumann</td><td>Architecture with unified memory for code and data; bottleneck = single shared bus</td></tr>
+        <tr><td>Harvard</td><td>Architecture with separate instruction and data memories; allows simultaneous access</td></tr>
+      </table>
+
+        <tr><td>TLB</td><td>Translation Lookaside Buffer — hardware cache of virtual-to-physical address mappings</td></tr>
+        <tr><td>Page fault</td><td>Accessing a virtual page not currently in physical RAM — OS loads it from disk</td></tr>
+        <tr><td>Superscalar</td><td>CPU that issues and executes more than one instruction per clock cycle</td></tr>
+        <tr><td>Out-of-order</td><td>CPU reorders instruction execution to avoid stalls while preserving correct results</td></tr>
+        <tr><td>Branch prediction</td><td>CPU guesses direction of a branch before it resolves to keep the pipeline full</td></tr>
+        <tr><td>Cache line</td><td>Minimum unit of data transferred between cache and DRAM — typically 64 bytes wide</td></tr>
+        <tr><td>Write-back</td><td>Cache write policy that defers DRAM update until the modified line is evicted</td></tr>
+        <tr><td>Endianness</td><td>Byte ordering within multi-byte words — big-endian (MSB first) vs little-endian (LSB first)</td></tr>
+        <tr><td>DRAM</td><td>Dynamic RAM — main memory technology; cheap, dense, but slow (~100 ns); requires periodic refresh</td></tr>
+      </table>
+
+      <div class="note" style="margin-top:10px;">
+        <div class="n-title">Chapter 5 Big Picture</div>
+        A computer system = CPU + Main Memory + I/O Subsystem, linked by buses. The CPU fetch-decode-execute cycle drives all computation. Architectural choices (RISC vs CISC, Harvard vs Von Neumann, bus design, cache strategy) reflect fundamental trade-offs between cost, speed, power, and programmability.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 3 -->
+
+<!-- ═══ ROW 4 — Cache Memory · Performance Analysis ═══ -->
+<div class="grid-2 section-gap">
+
+  <!-- Card 9: Cache Memory -->
+  <div class="card purple">
+    <div class="card-header"><div class="dot"></div><h3>Cache Memory — Deep Dive</h3></div>
+    <div class="card-body">
+      <div class="rule">Cache exploits locality: recently-used and nearby data are likely to be used again soon</div>
+      <p>Cache sits between CPU registers and main DRAM. Because DRAM latency (~100 ns) is ~100× slower than the CPU clock cycle (~0.25 ns at 4 GHz), a small fast cache dramatically reduces <em>average</em> memory access time.</p>
+
+      <div class="label">Two Types of Locality</div>
+      <ul class="items">
+        <li><strong>Temporal locality:</strong> a memory location accessed now will likely be accessed again soon (loops, frequently-called functions)</li>
+        <li><strong>Spatial locality:</strong> if address X is accessed, addresses near X (X+1, X+2 …) are likely to be accessed soon (arrays, sequential code)</li>
+      </ul>
+
+      <div class="label">Cache Hit vs Miss</div>
+      <ul class="items">
+        <li><strong>Cache hit:</strong> requested data is found in cache → fast access (~4 ns for L1)</li>
+        <li><strong>Cache miss:</strong> data not in cache → must fetch from next cache level or DRAM → slow access</li>
+        <li>On a miss, an entire <strong>cache line</strong> (typically 64 bytes) is loaded from DRAM — exploits spatial locality</li>
+      </ul>
+
+      <div class="formula">Average Access Time = Hit Rate × T_cache + (1 − Hit Rate) × T_DRAM</div>
+
+      <div class="label">Cache Mapping Strategies</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Strategy</th><th>How It Works</th><th>Pros / Cons</th></tr>
+        <tr><td>Direct-mapped</td><td>Each memory block maps to exactly one cache line (addr mod cache_size)</td><td>Simple, fast lookup; suffers thrashing with conflicting accesses</td></tr>
+        <tr><td>Fully associative</td><td>Any block can go into any cache line</td><td>No thrashing; complex search logic (CAM hardware); expensive</td></tr>
+        <tr><td>N-way set-associative</td><td>Cache divided into sets; each block maps to one set but any of N lines within that set</td><td>Best trade-off; most common (L1: 4–8 way, L2: 8–16 way)</td></tr>
+      </table>
+
+      <div class="label" style="margin-top:10px;">Cache Replacement Policies</div>
+      <ul class="items">
+        <li><strong>LRU (Least Recently Used):</strong> evict the line that has not been accessed for the longest time — best hit rate, hardware overhead to track order</li>
+        <li><strong>FIFO (First In First Out):</strong> evict the oldest loaded line regardless of access pattern — simple</li>
+        <li><strong>Random:</strong> evict a randomly chosen line — simple hardware, surprisingly competitive with LRU</li>
+      </ul>
+
+      <div class="label" style="margin-top:10px;">Write Policies</div>
+      <ul class="items">
+        <li><strong>Write-through:</strong> every write to cache also writes immediately to DRAM — memory always consistent; high bus traffic</li>
+        <li><strong>Write-back:</strong> write to cache only; dirty line written to DRAM only when evicted — less bus traffic; requires dirty bit; main cache design used today</li>
+      </ul>
+
+      <div class="label" style="margin-top:10px;">Multi-Level Cache (Typical Modern CPU)</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Level</th><th>Size</th><th>Latency</th><th>Shared?</th></tr>
+        <tr><td>L1-I / L1-D</td><td>32–64 KB each</td><td>4–5 cycles</td><td>Per core</td></tr>
+        <tr><td>L2</td><td>256 KB – 1 MB</td><td>12 cycles</td><td>Per core</td></tr>
+        <tr><td>L3 (LLC)</td><td>4 MB – 64 MB+</td><td>40–50 cycles</td><td>Shared across cores</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card 10: Performance Analysis -->
+  <div class="card orange">
+    <div class="card-header"><div class="dot"></div><h3>Performance Analysis &amp; Key Metrics</h3></div>
+    <div class="card-body">
+      <div class="rule">Performance = how fast a computer executes programs — measured by execution time or throughput</div>
+
+      <div class="label">CPU Performance Equation</div>
+      <div class="formula">CPU Time = IC × CPI × (1 / f)</div>
+      <ul class="items">
+        <li><strong>IC</strong> (Instruction Count): total instructions executed — determined by algorithm + ISA + compiler</li>
+        <li><strong>CPI</strong> (Cycles Per Instruction): hardware efficiency — improved by pipelining, caches, out-of-order execution</li>
+        <li><strong>f</strong> (Clock frequency): CPU speed in Hz — limited by heat, power, and signal propagation</li>
+        <li>To improve performance: reduce any one of IC, CPI, or (1/f) — but they are interdependent</li>
+      </ul>
+
+      <div class="label">Amdahl's Law — Limits of Speedup</div>
+      <div class="formula">Speedup = 1 / ((1 − P) + P / S)</div>
+      <ul class="items">
+        <li><strong>P</strong> = fraction of program that can be parallelized / improved</li>
+        <li><strong>S</strong> = speedup factor applied to that fraction</li>
+        <li>The serial fraction (1 − P) is the <em>bottleneck</em> — limits overall gain even with infinite speedup on P</li>
+        <li>Example: if 90% of code can be sped up 10×, max speedup = 1 / (0.1 + 0.9/10) = <strong>5.26×</strong></li>
+      </ul>
+
+      <div class="label">Bandwidth vs Latency</div>
+      <table class="tbl" style="margin-top:4px;">
+        <tr><th>Metric</th><th>Definition</th><th>Measured In</th></tr>
+        <tr><td>Latency</td><td>Time for one operation to complete (request → response)</td><td>nanoseconds (ns)</td></tr>
+        <tr><td>Bandwidth</td><td>Maximum data transfer rate (throughput)</td><td>GB/s, MB/s</td></tr>
+        <tr><td>Throughput</td><td>Operations completed per unit time</td><td>MIPS, GFLOPS</td></tr>
+      </table>
+
+      <div class="label" style="margin-top:10px;">MIPS and FLOPS</div>
+      <ul class="items">
+        <li><strong>MIPS</strong> (Millions of Instructions Per Second): <code>MIPS = f / (CPI × 10⁶)</code> — misleading across different ISAs (more MIPS ≠ more useful work)</li>
+        <li><strong>FLOPS</strong> (Floating-Point Operations Per Second): measures floating-point throughput; relevant for scientific/ML workloads</li>
+        <li>Modern CPUs: ~hundreds of GFLOPS (single-precision); modern GPUs: tens of TFLOPS</li>
+      </ul>
+
+      <div class="label" style="margin-top:10px;">Factors Affecting Real Performance</div>
+      <ul class="items">
+        <li><strong>Memory latency:</strong> cache misses cause CPU to stall — often the dominant bottleneck in data-intensive programs</li>
+        <li><strong>Branch misprediction:</strong> incorrect speculative execution must be flushed — costs 15–20 cycles per misprediction on deep pipelines</li>
+        <li><strong>I/O bound vs CPU bound:</strong> a program limited by disk/network speed will not benefit from a faster CPU</li>
+        <li><strong>Compiler optimization:</strong> good compilers can dramatically reduce IC and exploit instruction-level parallelism</li>
+      </ul>
+
+      <div class="tip">
+        <div class="t-title">Rule of Thumb</div>
+        Measure before optimizing. Profile the program to find the actual bottleneck (CPU, memory, I/O, branch) before applying architecture-level optimizations — Amdahl's Law ensures only the bottleneck fraction matters.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /grid row 4 -->
+
+<!-- ═══ FOOTER ═══ -->
+<div class="footer">
+  <span>FCS4e · CH05 · Computer Organization</span>
+  <span><a href="CH04-Operations-on-Data-CheatSheet.html" style="color:var(--text-muted);text-decoration:none;">← CH04</a> &nbsp;|&nbsp; <a href="../CSI.html" style="color:var(--text-muted);text-decoration:none;">Back to FCS</a> &nbsp;|&nbsp; <a href="CH06-Computer-Networks-Internet-CheatSheet.html" style="color:var(--text-muted);text-decoration:none;">CH06 →</a></span>
+</div>
+
+</body>
+</html>
