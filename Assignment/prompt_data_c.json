@@ -1,0 +1,269 @@
+{
+ "chapters": [
+  {
+   "number": 11,
+   "title": "Data Structure",
+   "text_excerpt": "In the preceding chapters, we used variables that store a single entity. Although single \nvariables are used extensively in programming languages, they cannot be used to solve \ncomplex problems efficiently. In this chapter, we introduce data structures. This chapter is \na prelude to the next chapter, in which we introduce abstract data types (ADTs).\nA data structure uses a collection of related variables that can be accessed individually \nor as a whole. In other words, a data structure represents a set of data items that share a \nspecific relationship. We discuss three data structures in this chapter: arrays, records, and \nlinked lists. Most programming languages have an implicit implementation of the first two. \nThe third, however, is simulated using pointers and records.\nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDefine a data structure.\n❑\n❑\nDefine an array as a data structure and how it is used to store a list of data items. \n❑\n❑\nDistinguish between the name of an array and the names of the elements in an array.\n❑\n❑\nDescribe operations defined for an array.\n❑\n❑\nDefine a record as a data structure and how it is used to store attributes belonging to \na single data element.\n❑\n❑\nDistinguish between the name of a record and the names of its fields. \n❑\n❑\nDefine a linked list as a data structure and how it is implemented using pointers.\n❑\n❑\nDescribe operations defined for a linked list. \n❑\n❑\nCompare and contrast arrays, records, and linked lists.\n❑\n❑\nDefine the applications of arrays, records, and linked lists. \nCHAPTER\t 11\nData Structure\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nData Structure\n292\n11.1  ARRAYS\nImagine that we have 100 scores. We need to read them, process them, and print them. \nWe must also keep these 100 scores in memory for the duration of the program. We can \ndefine a hundred variables, each with a different name, as shown in Figure 11.1.\nFigure 11.1  A hundred individual variables\nscore1\nscore2\nscore100\nBut having 100 different names creates other problems. We need 100 references to read \nthem, 100 references to process them, and 100 references to write them. Figure 11.2 \nshows a diagram that illustrates this problem. \nFigure 11.2  Processing individual variables\nStart\nStop\nWrite score1\nWrite score100\nProcess score1\nProcess score100\nRead score1\nRead score100\nThe number of instructions we need to handle even this relatively small number of \nscores is unacceptable. To process large amounts of data, we need a data structure such \nas an array. \nAn array is a sequenced collection of elements, of the same data type. We can refer \nto the elements in the array as the first element, the second element, and so forth until \nwe get to the last element. If we were to put our 100 scores into an array, we could \ndesignate the elements as scores[1], scores[2], and so on. The index indicates the ordi-\nnal number of the element, counting from the beginning of the array. The elements of \nthe array are individually addressed through their subscripts (Figure 11.3). The array \nas a whole has a name, scores, but each score can be accessed individually using its \nsubscript. \nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n11.1  Arrays\n293\nWe can use loops to read and write the elements in an array. We can also use loops to \nprocess elements. Now it does not matter if there are 100, 1000, or 10 000 elements to be \nprocessed—loops make it easy to handle them all. We can use an integer variable to con-\ntrol the loop, and remain in the loop as long as the value of this variable is less than the \ntotal number of elements in the array (Figure 11.4). \nWe have used indexes that start from 1; some modern languages  \nsuch as C, C++, and Java start indexes from 0. \nExample 11.1\nCompare the number of instructions needed to handle 100 individual elements in \n­Figure 11.2 and the array with 100 in Figure 11.4. Assume that processing each score \nneeds only one instruction.\nFigure 11.3  Arrays with indexes\nscores [1]\nscores [2]\nscores [100]\nscores\nAn array\nFigure 11.4  Processing an array\nStop\nStart\n[i > 100]\n[i  > 100]\n[i > 100]\ni\n1\ni\n1\ni\n1\nRead scores [i]\ni\ni + 1\nProcess scores [i]\ni\ni + 1\nWrite scores [i]\ni\ni + 1\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nhttps://sanet.st/blogs/polatebooks/\nData Structure\n294\nSolution\n❑\n❑\nIn the first case, we need 100 in",
+   "questions": {
+    "easy": [
+     {
+      "q": "Define a data structure and identify the three data structures discussed in Chapter 11 of Forouzan.",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Explain the difference between the name of an array and the names of its elements. Using the array 'scores' from the chapter, distinguish between the array identifier and an element identifier such as scores[3].",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Describe the structure of a linked list node as presented in Chapter 11. What two parts does each node contain, and what does the null pointer in the last node indicate?",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Using the row-major address formula y = x + Cols x (i-1) + (j-1) from Chapter 11 (Example 11.4), find the memory address of element students[5][3] in a 100x4 array where students[1][1] is at address 1000 and each element occupies one memory location. Show your working.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Compare inserting a new element at position 9 in a 30-element array versus a linked list. How many element shifts are required in the array (as described in Section 11.1.4)? What is the equivalent operation in a linked list, and why is it more efficient?",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Distinguish between an array and a record as data structures. Using the student record example (fields: id, name, grade) from Figure 11.8, explain when you would combine them into an array of records. How is the id of the third student accessed using the dot and index operators?",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate the trade-offs between arrays and linked lists across four criteria: (1) memory overhead per element, (2) random access efficiency, (3) insertion/deletion in the middle, and (4) memory layout (contiguous vs. non-contiguous). Based on Chapter 11, for which application profile would you select each structure?",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "In Examples 11.1-11.3, processing 100 individual variables requires 300 instructions while an array requires only 12. Evaluate the program reusability trade-off: if the number of scores changes from 100 to 1000, how many changes are needed in each approach? Generalize what this reveals about the relationship between array-based programs and data scalability.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a pseudocode algorithm (similar to Algorithm 11.1 from the chapter) that inserts a new student record (id, name, grade) into a sorted array of 30 student records, maintaining ascending order by id. Your algorithm must shift elements from the end to avoid data loss, mirroring the insertion pseudocode in Section 11.1.4.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Construct a comparison of how deletion of the middle element differs between a five-element array (scores[1..5] = 66, 72, 74, 85, 96) and a five-element linked list (as in Figure 11.11). Show the pointer update needed in the linked list versus the element-shifting in the array, and justify why linked list deletion requires only pointer changes while array deletion requires O(n) shifts.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 12,
+   "title": "Abstract Data Types",
+   "text_excerpt": "In this chapter we discuss abstract data types (ADTs), which are data types at a higher \nlevel of abstraction than the data structures we discussed in Chapter 11. ADTs use data \nstructures for implementation. We begin this chapter with a brief background on ADTs. \nWe then give a definition and propose a model. The remainder of the chapter discusses \nvarious ADTs, such as stacks, queues, general linear lists, trees, binary trees, binary search \ntrees, and graphs.\nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDefine the concept of an abstract data type (ADT).\n❑\n❑\nDefine a stack, the basic operations on stacks, their applications, and how they can be \nimplemented.\n❑\n❑\nDefine a queue, the basic operations on queues, their applications, and how they can \nbe implemented.\n❑\n❑\nDefine a general linear list, the basic operations on lists, their applications, and how \nthey can be implemented. \n❑\n❑\nDefine a general tree and its application.\n❑\n❑\nDefine a binary tree—a special kind of tree—and its applications.\n❑\n❑\nDefine a binary search tree (BST) and its applications.\n❑\n❑\nDefine a graph and its applications.\nCHAPTER\t 12\nAbstract Data Types\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n318\nAbstract Data Types\n12.1  BACKGROUND\nProblem solving with a computer means processing data. To process data, we need to \ndefine the data type and the operation to be performed on the data. For example, to find \nthe sum of a list of numbers, we should select the type for the number (integer or real) \nand define the operation (addition). The definition of the data type and the definition of \nthe operation to be applied to the data is part of the idea behind an abstract data type \n(ADT)—to hide how the operation is performed on the data. In other word, the user of \nan ADT needs only to know that a set of operations are available for the data type, but \ndoes not need to know how they are applied. \n12.1.1  Simple ADTs\nMany programming languages already define some simple ADTs as integral parts of the \nlanguage. For example, the C language defines a simple ADT called an integer. The type of \nthis ADT is integer with predefined ranges. C also defines several operations that can be \napplied on this data type (addition, subtraction, multiplication, division, and so on). \nC  explicitly defines these operations on integers and what we expect as the results. \nA  ­programmer who writes a C program to add two integers should know about the \n­integer ADT and the operations that can be applied to it. \nThe programmer, however, does not need to know how these operations are actually \nimplemented. For example, the programmer uses the expression z ← x + y and expects the \nvalue of x (an integer) to be added to the value of y (an integer) and the result to be \nnamed z (an integer). The programmer does not need to know how the addition is \n­performed. We learned in previous chapters that the way this addition is done by a com-\nputer is to store the two integers in two memory locations in two’s complement format, \nto load them into the CPU register, to add them in binary, and to store the result back to \nanother memory location. The programmer, however, does not need to know this. An in-\nteger in C is a simple abstract data type with predefined operations. How the operations \nare performed is not a concern for the programmer. \n12.1.2  Complex ADTs\nAlthough several simple ADTs, such as integer, real, character, pointer, and so on, have \nbeen implemented and are available for use in most languages, many useful complex \nADTs are not. As we will see in this chapter, we need a list ADT, a stack ADT, a queue \nADT, and so on. To be efficient, these ADTs should be created and stored in the library of \nthe computer to be used. The user of a list, for example, should only need to know what \noperations are available for the list, not how these operations are performed.\nTherefore, with an ADT, users are not concerned with how the task is done, but rath-\ner with what it can do. In other words, the ADT consists of a set of definitions that allow \nprogrammers to use the operation while their implementation is hidden. This generaliza-\ntion of operations with unspecified implementations is known as abstraction. We abstract \nthe essence of the process and leave the implementation details hidden.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n12.1  Background\n319\nThe concept of abstraction means:\n1.  We know what a data type can do.\n2.  How it is done is hidden. \n12.1.3  Definition\nLet us now define an ADT. An abstract data type is a data type packaged with the \n­operations that are meaningful for the data type. We then encapsulate the data and the \noperations on the data and hide them from the user. \nAbstract Data Type\n1.  Definition of data\n2.  Definition of operations\n3.  Encapsulation of data and operation\n12.1.4  Model for an abstract data type\nTh",
+   "questions": {
+    "easy": [
+     {
+      "q": "List the four basic operations defined for the Stack ADT in Chapter 12 (stack, push, pop, empty) and describe what each operation does in terms of its effect on the stack.",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Explain the difference between a stack (LIFO) and a queue (FIFO) in terms of where insertions and deletions are performed. Give one real-world analogy of each as provided in Chapter 12.",
+      "bloom": "Understand"
+     },
+     {
+      "q": "According to Chapter 12, what are the three key components of an ADT definition? Describe the role of the public interface and encapsulation in the ADT model shown in Figure 12.1.",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Apply Algorithm 12.1 (DecimalToBinary) from the chapter to convert the decimal number 13 to binary. Show each push and pop operation on stack S and write the final binary output produced by the algorithm.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "For the binary tree in Figure 12.20 (root A, internal nodes B and F, leaves C, D, E, G, H, I), determine the preorder, inorder, and postorder traversal sequences as defined in Section 12.5.2. State the rule applied in each traversal.",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Compare stack implementation using an array versus a linked list as described in Section 12.2.4. What extra fields does the array record require (count and top index)? What extra node and fields does the linked list implementation require? How does each store the reference to the top element?",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate the suitability of a stack versus a queue for three applications from Chapter 12: (a) checking balanced parentheses in a compiler, (b) managing a print spool queue, (c) converting decimal to binary (Algorithm 12.1). Justify each choice by referencing the LIFO or FIFO property and the specific algorithm used in the chapter.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Using Algorithm 12.2 (CheckingParentheses) from Chapter 12, trace through the expression '((A + B) * (C - D)' character by character. Show the state of stack S after each parenthesis is encountered, and determine what error message (if any) is generated at the end of the expression.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Construct a Binary Search Tree (BST) by inserting the following keys in order: 14, 23, 7, 3, 10, 33. Draw the resulting tree structure showing parent-child relationships. Then show the inorder traversal result and explain why BST inorder traversal always yields a sorted sequence.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Design an extension of Algorithm 12.4 (ChangeGrade from the chapter) that changes a student grade only if the new grade is in the set {A, B, C, D, F}. Describe how the delete-modify-insert pattern operates entirely at the ADT level without exposing the underlying data structure, and explain why this separation between ADT and implementation is a key benefit of abstraction.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 13,
+   "title": "File Structure",
+   "text_excerpt": "In this chapter we discuss file structures. Based on the application, files are stored in \nauxiliary storage devices using various methods. We also discuss how individual records \nare retrieved. This chapter is a prelude to the following chapter, which discusses how a \ncollection of related files, called a database, is organized and accessed. \nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDefine two categories of access methods: sequential access and random access. \n❑\n❑\nUnderstand the structure of sequential files and how they are updated. \n❑\n❑\nUnderstand the structure of indexed files and the relation between the index and the \ndata file.\n❑\n❑\nUnderstand the idea behind hashed files and describe some hashing methods. \n❑\n❑\nDescribe address collisions and how they can be resolved.\n❑\n❑\nDefine directories and how they can be used to organize files. \n❑\n❑\nDistinguish between text and binary files. \nCHAPTER\t 13\nFile Structure\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nFile Structure\n350\n13.1  INTRODUCTION\nFiles are stored on auxiliary or secondary storage devices. The two most common \nforms of secondary storage are disk and tape. Files in secondary storage can be both \nread from and written to. Files can also exist in forms that the computer can write to \nbut not read. For example, the display of information on the system monitor is a form \nof file, as is data sent to a printer. In a general sense, the keyboard is also a file, although \nit cannot store data.\nFor our purposes, a file is a collection of data records in which each record consists of \none or more fields, as defined in Chapter 11.\nWhen we design a file, the important issue is how we will retrieve information ­ \n(a specific record) from the file. Sometimes we need to process records one after another, \nwhereas sometimes we need to access a specific record quickly without retrieving the \npreceding records. The access method determines how records can be retrieved: sequen-\ntially or randomly.\n13.1.1  Sequential access\nIf we need to access a file sequentially—that is, one record after another, from beginning \nto end—we use a sequential file structure. \n13.1.2  Random access\nIf we need to access a specific record without having to retrieve all records before it, we \nuse a file structure that allows random access. Two file structures allow this: indexed files \nand hashed files. This taxonomy of file structures is shown in Figure 13.1.\n13.2  SEQUENTIAL FILES\nA sequential file is one in which records can only be accessed one after another from \nbeginning to end. Figure 13.2 shows the layout of a sequential file. Records are stored one \nafter another in auxiliary storage, such as tape or disk, and there is an EOF (end-of-file) \nmarker after the last record. The operating system has no information about the record \nFigure 13.1  A taxonomy of file structures\nFiles\nSequential\naccess\nRandom\naccess\nIndexed ﬁle\nHashed ﬁle\nSequential ﬁle\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n13.2  Sequential Files\n351\naddresses, it only knows where the whole file is stored. The only thing known to the \noperating system is that the records are sequential. \nFigure 13.2  A sequential file\nSequential ﬁle\nEOF\nRecord\nRecord\nRecord\nRecord\nAlgorithm 13.1 shows how records in a sequential file are processed. We process the \nrecords one by one. After the operating system processes the last record, the EOF is \ndetected and the loop is exited. \nAlgorithm 13.1  Pseudocode for processing records in a sequential file\nAlgorithm: SequentialFileProcessing (file)\nPurpose: Process all records in a sequential file\nPre: Given the beginning address of the file on the auxiliary storage \nPost: None\nReturn: None\n{\nwhile (Not EOF)\n{ \nRead the next record from the auxiliary storage into memory\nProcess the record\n}\n}\nSequential files are used in applications that need to access all records from beginning to \nend. For example, if personal information about each employee in a company is stored in \na file, we can use sequential access to retrieve each record at the end of the month to print \nthe paychecks. Because we have to process each record, sequential access is more efficient \nand easier than random access. \nHowever, the sequential file is not efficient for random access. For example, if all cus-\ntomer records in a bank can only be accessed sequentially, a customer who needs to get \nmoney from an ATM would have to wait as the system checks each record from the \n­beginning of the file until it reaches the customer’s record. If this bank has a million cus-\ntomers, the system, on average, would retrieve half a million records before reaching the \ncustomer’s record. This is very inefficient.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from",
+   "questions": {
+    "easy": [
+     {
+      "q": "Identify the three types of file structures described in Chapter 13 and state the access method (sequential or random) each supports. Which two types support random access?",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Describe the sequential file update process. Name the four files involved and the three types of transactions (Add, Change, Delete) that can be applied, as described in Section 13.2.1.",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Explain the fundamental difference between an indexed file and a hashed file in terms of how a record's address is obtained from its key. Which method requires an auxiliary file (the index) and which uses a mathematical function?",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Using the modulo division hashing formula (address = key mod list_size + 1) with the prime file size of 307 from Figure 13.9, calculate the hash address for the employee key 121267. Show each step of your calculation and verify it matches the example in the chapter.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Analyze the four error conditions that can arise during a sequential file update as listed in Section 13.2.1. For each error, describe a specific scenario using the example data from Figure 13.4 (keys 10, 13, 14, 16, 20, 21, 22, 25, 35).",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Distinguish between open addressing and linked list resolution as collision resolution methods for hashed files (Figures 13.11 and 13.12). What is the key disadvantage of open addressing stated in the chapter, and how does linked list resolution (storing the second record in an overflow area with a pointer) eliminate it?",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate the trade-offs among sequential files, indexed files, and hashed files across: (1) speed of specific-record retrieval, (2) storage overhead, (3) suitability for batch processing all records, (4) collision handling. Cite specific chapter examples (e.g., ATM scenario for sequential, Section 13.3 for indexed) to support each comparison.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "An inverted file supports multiple indexes on the same data file, such as an employee file indexed by both social security number and last name (Section 13.3.1). Evaluate the advantages and drawbacks of maintaining multiple indexes compared to a single-index file. Under what circumstance would maintaining multiple indexes become prohibitively costly?",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a digit extraction hashing scheme for a student database with capacity for 500 students. Given 9-digit IDs and needing a 3-digit address space (000-999), specify which digit positions to extract and justify your selection. Then describe how to resolve a collision between two students who hash to the same address using the linked list resolution method illustrated in Figure 13.12.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Construct a pseudocode algorithm for updating a sequential file that handles all three transaction types (A=Add, C=Change, D=Delete) and generates error-report entries for at least two error conditions described in Section 13.2.1. The algorithm must compare keys from the transaction file and old master file following the four update rules, and write correctly to the new master file.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 14,
+   "title": "Databases",
+   "text_excerpt": "In this chapter we discuss databases and database management systems (DBMS). We \npresent the three-level architecture for a DBMS, focusing on the relational database \nmodel, with examples of its operation. We also discuss a language (Standard Query \n­Language) that operates on relational databases. We briefly touch on the design of the \ndatabases, and finally mention other database models.\nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDefine a database and a database management system (DBMS) and describe the com-\nponents of a DBMS. \n❑\n❑\nDescribe the architecture of a DBMS based on the ANSI/SPARC definition. \n❑\n❑\nDefine the three traditional database models: hierarchical, networking, and relational. \n❑\n❑\nDescribe the relational model and relations. \n❑\n❑\nUnderstand operations on a relational database based on commands available in SQL. \n❑\n❑\nDescribe the steps in database design. \n❑\n❑\nDefine ERM and E-R diagrams and explain the entities and relationships in this ­model.\n❑\n❑\nDefine the hierarchical levels of normalization and understand the rationale for \n­normalizing the relations.\n❑\n❑\nList database types other than the relational model.\nCHAPTER\t 14\nDatabases\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nDatabases\n370\n14.1  INTRODUCTION\nData storage traditionally used individual, unrelated files, sometimes called flat-files. In the \npast, each application program in an organization used its own file. In a university, for \nexample, each department might have its own set of files: the record office kept a file about \nthe student information and their grades, the financial aid office kept its own file about \nstudents that needed financial aid to continue their education, the scheduling office kept \nthe name of the professors and the courses they were teaching, the payroll department \nkept its own file about the whole staff (including professors), and so on. Today, however, all \nof these flat-files can be combined in a single entity, the database for the whole university.\n14.1.1  Definition\nAlthough it is difficult to give a universally agreed definition of a database, we use the \nfollowing common definition:\nDefinition: A database is a collection of related, logically coherent,  \ndata used by the application programs in an organization.\n14.1.2  Advantages of databases\nComparing the flat-file system, we can mention several advantages of a database system. \nLess redundancy\nIn a flat-file system there is a lot of redundancy. For example, in the flat-file system for a \nuniversity, the names of professors and students are stored in more than one file.\nInconsistency avoidance\nIf the same piece of information is stored in more than one place, then any changes in the data \nneed to occur in all places that data is stored. For example, if a female student marries and \naccepts the last name of her husband, the last name of the student needs to be changed in all \nfiles that hold information about the student. Lack of care may create inconsistency in the data.\nEfficiency\nA database is usually more efficient that a flat-file system, because a piece of information \nis stored in fewer locations.\nData integrity\nIn a database system it is easier to maintain data integrity (see Chapter 16) because a piece \nof data is stored in fewer locations.\nConfidentiality\nIt is easier to maintain the confidentiality of the information if the storage of data is \n­centralized in one location. \nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n14.1  Introduction\n371\n14.1.3  Database management systems\nA database management system (DBMS)  defines, creates, and maintains a database. The \nDBMS also allows controlled access to data in the database. A DBMS is a combination of \nfive components: hardware, software, data, users, and procedures (Figure 14.1).\nFigure 14.1  DBMS components\nDBMS\nHardware\nSoftware\nData\nUsers\nProcedures\nHardware\nThe hardware is the physical computer system that allows access to data. For example, the \nterminals, hard disk, main computer, and workstations are considered part of the hardware \nin a DBMS.\nSoftware\nThe software is the actual program that allows users to access, maintain, and update data. \nIn addition, the software controls which user can access which parts of the data in the \ndatabase.\nData\nThe data in a database is stored physically on the storage devices. In a database, data is a \nseparate entity from the software that accesses it. This separation allows the organization \nto change the software without having to change the physical data or the way in which it \nis stored. If an organization decides to use a DBMS, then all the information needed by the \norganization should be kept together as one entity, to be accessible by the software in the \nDBMS. \nUsers\nThe term users in a DBMS has a broad meaning. We can divide users into two categories: \nend users and application programs.\nEnd users\nEnd us",
+   "questions": {
+    "easy": [
+     {
+      "q": "List the five components of a DBMS as shown in Figure 14.1 (hardware, software, data, users, procedures) and describe the specific role of each component in managing a database.",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Describe the ANSI/SPARC three-level database architecture (internal, conceptual, external). What does each level handle, and how does the conceptual level act as an intermediary that frees users from dealing with physical storage?",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Using the COURSES relation from Figure 14.6 (columns No, Course-Name, Unit; four rows), define: relation, attribute, tuple, degree, and cardinality. What is the degree of the COURSES relation, and how does cardinality change as rows are added or deleted?",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Write the SQL commands to perform the following operations on the COURSES relation (No, Course-Name, Unit): (a) insert the tuple (CIS55, 'Operating Systems', 4), (b) delete the course where No = 'CIS19', (c) select all tuples where Unit = 5. Use the exact SQL syntax described in Section 14.4.2.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Distinguish between the SELECT and PROJECT operations in SQL using the COURSES relation. (a) Write a SELECT query returning all five-unit courses (as in Figure 14.10). (b) Write a PROJECT query returning only No and Unit (as in Figure 14.11). Explain how each operation changes the shape of the resulting relation (rows vs. columns).",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Compare the hierarchical, network, and relational database models as described in Section 14.3. What structural constraint does the hierarchical model impose that the network model relaxes? Why are both considered obsolete? What specific organizational flexibility does the relational model offer over the other two?",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate the necessity of First Normal Form (1NF) using the TEACHES relation from Figure 14.19. If professor 8256 teaches CIS15, CIS18, and CIS21 in a non-1NF relation and needs to stop teaching only CIS15, what deletion anomaly arises? Explain why this anomaly does not occur in the 1NF version where each row holds exactly one course.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Evaluate all five advantages of databases over flat-file systems listed in Section 14.1.2 (less redundancy, inconsistency avoidance, efficiency, data integrity, confidentiality). For each advantage, describe the specific problem that exists in the university flat-file scenario described at the start of Chapter 14, and how the database system resolves it.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design an E-R diagram for a hospital database with entities PATIENT (P-ID, Name, Address), DOCTOR (D-ID, Name, Specialty), and TREATMENT (T-ID, Date, Diagnosis). Mark key attributes, indicate relationship cardinalities (e.g., one doctor treats many patients), and convert the E-R diagram into normalized relational tables following the process in Sections 14.5.1-14.5.2.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Construct the SQL JOIN query that combines the COURSES relation and TAUGHT-BY relation from Figure 14.12 to produce a result showing No, Course-Name, Unit, and Professor. Write the full SQL command using the format from Section 14.4.2, specify the common attribute used in the WHERE clause, and describe the attributes and number of tuples in the resulting relation.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 15,
+   "title": "Data Compression",
+   "text_excerpt": "In recent years technology has changed the way we transmit and store data. For example, \nfiber-optic cable allows us to transmit data much faster, and DVDs allow us to store huge \namounts of data on a physically small medium. However, as in other aspects of life, the \nrate of demand from the public is ever increasing. Today, we want to download more and \nmore data in a shorter and shorter amount of time. We also want to store more and more \ndata in a smaller space. \nCompressing data can reduce the amount of data to be sent or stored by partially \neliminating inherent redundancy. Redundancy is created when we produce data. Through \ndata compression, we make transmission and storage more efficient, and at the same time, \nwe preserve the integrity of the data.\nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDistinguish between lossless and lossy compression.\n❑\n❑\nDescribe run-length encoding and how it achieves compression. \n❑\n❑\nDescribe Huffman coding and how it achieves compression.\n❑\n❑\nDescribe Lempel Ziv encoding and the role of the dictionary in encoding and decoding.\n❑\n❑\nDescribe the main idea behind the JPEG standard for compressing still images. \n❑\n❑\nDescribe the main idea behind the MPEG standard for compressing video and its \nrelation to JPEG.\n❑\n❑\nDescribe the main idea behind the MP3 standard for compressing audio.\nCHAPTER\t 15\nData Compression\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nData Compression\n392\n15.1  INTRODUCTION\nData compression implies sending or storing a smaller number of bits. Although many \nmethods are used for this purpose, in general these methods can be divided into two broad \ncategories: lossless and lossy methods. Figure 15.1 shows the two categories and common \nmethods used in each category. \nWe first discuss lossless compression methods, as they are simpler and easier to under-\nstand. We then present lossy compression methods.\n15.2  LOSSLESS COMPRESSION METHODS\nIn lossless data compression, the integrity of the data is preserved. The original data and \nthe data after compression and decompression are exactly the same because, in these \n­methods, the compression and decompression algorithms are exact inverses of each other: \nno part of the data is lost in the process. Redundant data is removed in compression and \nadded during decompression. \nLossless compression methods are normally used when we cannot afford to lose any \ndata. For example, we must not lose data when we compress a text file or an application \nprogram. \nWe discuss three lossless compression methods in this section: run-length encoding, \nHuffman coding, and the Lempel Ziv algorithm. \n15.2.1  Run-length encoding\nRun-length encoding is probably the simplest method of compression. It can be used to \ncompress data made of any combination of symbols. It does not need to know the fre-\nquency of occurrence of symbols (as is necessary for Huffman coding) and can be very \nefficient if data is represented as 0s and 1s.\nThe general idea behind this method is to replace consecutive repeating occurrences \nof a symbol by one occurrence of the symbol followed by the number of occurrences. \nFor example, AAAAAAAA can be replaced by A08. Figure 15.2 shows an example of this \nsimple compression method. Note that we use a fixed number of digits (two) to represent \nthe count. \nFigure 15.1  Data compression methods\nData compression\nmethods\nLossless methods\n(text or programs)\nRun-length\nHuffman\nLempel Ziv\nLossy methods\n(image, video, audio)\nJPEG\nMPEG\nMP3\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n15.2  Lossless Compression Methods\n393\nThe method can be even more efficient if the data uses only two symbols (for example \n0 and 1) in its bit pattern and one symbol is more frequent than the other. For example, let’s say \nwe have an image represented by mostly 0s and some 1s. In this case, we can reduce the number \nof bits by sending (or storing) the number of 0s occurring between two 1s (Figure 15.3). \nWe have represented the counts as a 4-bit binary number (unsigned integer). In an actual \nsituation, we would find an optimal number of bits to avoid introducing extra redundancy. \nIn Figure 15.3, there are fourteen 0s before the first 1. These fourteen 0s are compressed to \nthe binary pattern 1110 (14 in binary). The next set of 0s is compressed to 0100 because \nthere are four 0s. Next we have two 1s in the original data, which are represented by 0000 \nin the compressed data. Finally, the last twelve 0s in the data are compressed to 1100.\nNote that, given a 4-bit binary compression, if there are more than fifteen 0s, they are \nbroken into two or more groups. For example, a sequence of twenty-five 0s is encoded as \n1111 1010. Now the question is how the decoding algorithm knows that this consists of \ntwenty-five 0s and not fifteen 0s, then a 1, and then ten 0s. The answer is that if the first \ncount is 1111, the",
+   "questions": {
+    "easy": [
+     {
+      "q": "Identify the two broad categories of data compression from Figure 15.1 and list the three lossless methods (run-length encoding, Huffman, Lempel Ziv) and three lossy methods (JPEG, MPEG, MP3). Why must lossless compression be used for text files and program files?",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Describe how run-length encoding works. Using the example from Figure 15.2, show how the string BBBBBBBBBAAAAAAAAAAAAAAAANMMMMMMMMMM is compressed into B09A16N01M10. What is the general rule stated in the chapter for replacing consecutive repeated symbols?",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Explain why Huffman coding is called an 'instantaneous code.' What prefix-free property of the code prevents ambiguity during decoding, and why does this property allow encoded characters to be written consecutively without delimiters?",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Using the Huffman code from Figure 15.5 (A=00, B=010, C=011, D=10, E=11), encode the text 'EAEBAECDEA' as shown in Figure 15.6. Count the total bits in the encoded result (22 bits) and compare with the 3-bit fixed-length encoding of the same 10 characters (30 bits). Calculate the compression ratio.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Analyze the first four steps of Lempel Ziv encoding for the string 'BAABABBBAABBBBAA' (Figure 15.8). For each step, state: (a) the smallest substring extracted from the uncompressed string, (b) what is added to the dictionary and its index, and (c) what token appears in the compressed output.",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Distinguish among the three phases of JPEG compression: DCT, quantization, and lossless compression (Section 15.3.1). Which single phase makes JPEG lossy and why is this phase not reversible? How does processing 8x8 blocks (needing 64^2 operations each) instead of the full 307,200-pixel image reduce computation, as calculated in the chapter?",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate the edge cases in binary run-length encoding (Section 15.2.1) using a 4-bit count: (a) write the compressed bit pattern when there are exactly 15 zeros between two 1s, (b) write the pattern for 25 zeros. Explain how the decoder distinguishes between '15 zeros, then a 1, then 10 zeros' versus 'a continuous run of 25 zeros', referencing the continuation rule described in the chapter.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Compare Huffman coding and Lempel Ziv (LZ) encoding across four criteria: (1) need for prior frequency statistics before compression begins, (2) adaptability during the compression process, (3) whether the dictionary must be transmitted to the receiver, (4) suitability for different data types. Based on Chapter 15, justify which method is preferable for compressing a text file whose character frequency distribution is already known.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Given the character frequencies A=17, B=12, C=12, D=27, E=32 (Table 15.1), construct the Huffman tree step-by-step following Figure 15.4: at each step merge the two nodes with the smallest weights, show the combined weight of the new node, and continue until a single root node with weight 100 is formed. Assign bit codes to all five characters and verify the prefix-free property holds for all pairs of codes.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Design a JPEG compression analysis for a 640x480 grayscale image. Calculate: (a) the total number of 8x8 blocks (80 x 60 = 4800 blocks), (b) operations without JPEG (307,200^2 as stated), (c) operations with JPEG (64^2 x 4800 = 19,660,800), confirming the 4800x reduction. Then describe what the DCT transformation produces for a uniform 8x8 block where all pixels equal 20 (Figure 15.12): explain the DC value, why all AC values are 0, and what this means for the subsequent quantization and run-length encoding steps.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  }
+ ]
+}

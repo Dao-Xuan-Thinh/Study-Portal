@@ -1,0 +1,269 @@
+{
+ "chapters": [
+  {
+   "number": 6,
+   "title": "Computer Networks and Internet",
+   "text_excerpt": "The development of the personal computer has brought about tremendous changes for \nbusiness, industry, science, and education. A similar revolution has occurred in network-\ning. Technological advances are making it possible for communication links to carry more \nand faster signals. As a result, services are evolving to allow use of this expanded capacity. \nResearch in this area has resulted in new technologies. One goal is to be able to exchange \ndata such as text, audio, and video from all parts of the world. We want to access the \nInternet to download and upload information quickly and accurately and at any time.\nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDescribe local and wide area networks (LANs and WANs).\n❑\n❑\nDistinguish an internet from the Internet.\n❑\n❑\nDescribe the TCP/IP protocol suite as the network model in the Internet.\n❑\n❑\nDefine the layers in the TCP/IP protocol suite and their relationship.\n❑\n❑\nDescribe some applications at the application layer.\n❑\n❑\nDescribe the services provided by the transport-layer protocols.\n❑\n❑\nDescribe the services provided by the network-layer protocols \n❑\n❑\nDescribe different protocols used at the data-link layer.\n❑\n❑\nDescribe the duties of the physical layer.\n❑\n❑\nDescribe the different transmission media used in computer networking. \nCHAPTER\t 6\nComputer Networks  \nand ­Internet\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nComputer Networks and ­Internet\n134\n6.1  OVERVIEW\nAlthough the goal of this chapter is to discuss the Internet, a system that interconnects \nbillions of computers in the world, we think of the Internet not as a single network, but as \nan internetwork, a combination of networks. Therefore, we start our journey by first \n­defining a network. We then show how we can connect networks to create small \n­internetworks. Finally, we show the structure of the Internet and open the gate to study \nthe Internet in the rest of this chapter. \n6.1.1  Networks\nA network is the interconnection of a set of devices capable of communication. In this \ndefinition, a device can be a host (or an end system as it is sometimes called) such as a \nlarge computer, desktop, laptop, workstation, cellular phone, or security system. A device \nin this definition can also be a connecting device such as a router which connects the \nnetwork to other networks, a switch which connects devices together, a modem (modulator-­\ndemodulator) that changes the form of data, and so on. These devices in a network are \nconnected using wired or wireless transmission media such as cable or air. When we \n­connect two computers at home using a plug-and-play router, we have created a network, \nalthough very small. \nLocal area network\nA local area network (LAN) is usually privately owned and connects some hosts in a sin-\ngle office, building, or campus. Depending on the needs of an organization, a LAN can be \nas simple as two PCs and a printer in someone’s home office, or it can extend throughout \na company and include audio and video devices. Each host in a LAN has an identifier, an \naddress, that uniquely defines the host in the LAN. A packet sent by a host to another host \ncarries both the source host’s and the destination host’s addresses. Figure 6.1 shows an \nexample of a LAN.\nFigure 6.1  Example of a LAN\nSwitch\nHost 2\nHost 3\nHost 4\nHost 5\nHost 6\nHost 7\nHost 8\nHost 1\nWide area network\nA wide area network (WAN) is also an interconnection of devices capable of communica-\ntion. However, there are some differences between a LAN and a WAN. A LAN is normally \nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n6.1  Overview\n135\nlimited in size, spanning an office, a building, or a campus; a WAN has a wider geographical \nspan, spanning a town, a state, a country, or even the world. A LAN interconnects hosts; a \nWAN interconnects connecting devices such as switches, routers, or modems. A LAN is \nnormally privately owned by the organization that uses it; a WAN is normally created and \nrun by communication companies and leased by an organization that uses it. We see two \ndistinct examples of WANs today: point-to-point WANs and switched WANs as shown in \nFigure 6.2.\nFigure 6.2  A point-to-point and a switched WAN\nTo another\nnetwork\nTo another\nnetwork\na. Point-to-point WAN\nb. Switched WAN\nTo another\nnetwork\nTo another\nnetwork\nTo another\nnetwork\nTo another\nnetwork\nTo another\nnetwork\nTo another\nnetwork\nTo another\nnetwork\nTo another\nnetwork\nA switch\n Medium\nLegend\nA point-to-point WAN is a network that connects two communicating devices through a \ntransmission medium (cable or air). \nA switched WAN is a network with more than two ends. A switched WAN, as we \nwill see shortly, is used in the backbone of global communication today. We can say that \na switched WAN is a combination of several point-to-point WANs that are connected by \nswitches.\nInternetwork\nToday, it is very rare to see a LAN ",
+   "questions": {
+    "easy": [
+     {
+      "q": "According to Forouzan, list the five layers of the TCP/IP protocol suite from bottom (Layer 1) to top (Layer 5) as shown in Figure 6.7.",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Explain the distinction Forouzan makes between a LAN and a WAN: how do they differ in geographic scope, what types of devices each interconnects, and which is typically privately owned versus leased?",
+      "bloom": "Understand"
+     },
+     {
+      "q": "According to Chapter 6, what is the difference between an internet (lowercase) and the Internet (uppercase)? Give the specific definition the book provides for each term.",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "As illustrated in Figure 6.9 of the book, identify the specific address type and packet name used at each of the four addressing layers of the TCP/IP suite (Application, Transport, Network, and Data-Link). Explain why the Physical layer has no address.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Compare and contrast the role of a router and a link-layer switch in the TCP/IP model, as described in the communication scenario of Figure 6.8. Specifically, which protocol layers does each device participate in, and why do they differ?",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Chapter 6 describes how DNS maps a host name to an IP address in six steps (Figure 6.16). Trace through those six steps when a user invokes a file-transfer client using the server name “afilesource.com”, identifying which agent (DNS client, DNS server, file-transfer client) acts at each step.",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "The book describes two application-layer paradigms: client–server and peer-to-peer. Evaluate the trade-offs of each paradigm in terms of scalability, fault tolerance, and cost. Using specific examples from the chapter (e.g., HTTP/FTP for client–server, Napster/BitTorrent for P2P), justify which paradigm is more appropriate for a large-scale video-streaming service.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "TELNET and SSH are both remote-login protocols described in Chapter 6. Evaluate the security limitations of TELNET that led to its replacement by SSH. What specific vulnerability does TELNET exhibit, and how does SSH address it? Justify why continued use of TELNET would be considered unacceptable in a modern networked environment.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a small internetwork based on the structure described in Section 6.1 of the book. Your design should include at least two LANs connected via a switched WAN. For each component (hosts, switches, routers), specify which TCP/IP layers it must implement and explain why intermediate devices (switches and routers) do not require all five layers.",
+      "bloom": "Create"
+     },
+     {
+      "q": "The DNS uses a hierarchical, distributed name space rather than a single central directory (as described in Section 6.2.8). Construct an argument explaining why a centralized DNS would fail for the modern Internet. Reference the book’s discussion of the generic domains (Table 6.1) and country domains to illustrate the scale of the namespace, and describe how the hierarchical structure distributes the naming authority.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 7,
+   "title": "Operating Systems",
+   "text_excerpt": "This is the first chapter in this book to deal with computer software. In this chapter we \nexplore the role of the operating system in a computer. \nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nUnderstand the role of the operating system in a computer system. \n❑\n❑\nGive a definition of an operating system.\n❑\n❑\nUnderstand the process of bootstrapping to load the operating system into memory.\n❑\n❑\nList the components of an operating system.\n❑\n❑\nDiscuss the role of the memory manager in an operating system. \n❑\n❑\nDiscuss the role of the process manager in an operating system.\n❑\n❑\nDiscuss the role of the device manager in an operating system. \n❑\n❑\nDiscuss the role of the file manager in an operating system.\n❑\n❑\nUnderstand the main features of three common operating systems: UNIX, Linux, and \nWindows.\nCHAPTER\t 7\nOperating Systems\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n188\nOperating Systems\n7.1  INTRODUCTION\nA computer is a system composed of two major components: hardware and software. \nComputer hardware is the physical equipment. Software is the collection of programs \nthat allows the hardware to do its job. Computer software is divided into two broad cate-\ngories: the operating system and application programs (Figure 7.1). Application programs \nuse the computer hardware to solve users’ problems. The operating system, on the other \nhand, controls the access to hardware by users.\n7.1.1  Operating system\nAn operating system is complex, so it is difficult to give a simple universal definition. \nInstead, here are some common definitions:\n❑\t An operating system is an interface between the hardware of a computer and the user \n(programs or humans). \n❑\t An operating system is a program (or a set of programs) that facilitates the execution \nof other programs. \n❑\t An operating system acts as a general manager supervising the activity of each com-\nponent in the computer system. As a general manager, the operating system checks \nthat hardware and software resources are used efficiently, and when there is a con-\nflict in using a resource, the operating system mediates to solve it. \nAn operating system is an interface between the hardware of a computer and the \nuser (programs or humans) that facilitates the execution of other programs  \nand the access to hardware and software resources.\nTwo major design goals of an operating system are:\n❑\t Efficient use of hardware.\n❑\t Easy use of resources.\n7.1.2 \nBootstrap process\nThe operating system, based on the above definitions, provides support for other pro-\ngrams. For example, it is responsible for loading other programs into memory for execu-\ntion. However, the operating system itself is a program that needs to be loaded into the \nmemory and be run. How is this dilemma solved?\nFigure 7.1  A computer system\nHardware\nSoftware\nOperating system\nApplication programs\nComputer\nsystem\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n7.2  Evolution\n189\nThe problem can be solved if the operating system is stored (by the manufacturer) in \npart of memory using ROM technology. The program counter of the CPU (see Chapter 5) \ncan be set to the beginning of this ROM memory. When the computer is turned on, the \nCPU reads instructions from ROM and executes them. This solution, however, is not very \nefficient, because a significant part of the memory would need to be composed of ROM \nand could not therefore be used by other programs. Today’s technology needs to allocate \njust a small part of memory to part of the operating system.\nThe solution adopted today is a two-stage process. A very small section of memory is made \nof ROM and holds a small program called the bootstrap program. When the computer is turned \non, the CPU counter is set to the first instruction of this bootstrap program and executes the \ninstructions in this program. This program is only responsible for loading the operating system \nitself, or that part of it required to start up the computer, into RAM memory. When loading is \ndone, the program counter in the CPU is set to the first instruction of the operating system in \nRAM and the operating system is executed. Figure 7.2 illustrates the bootstrap process. \n7.2  EVOLUTION\nOperating systems have gone through a long history of evolution, which we summarize next.\n7.2.1  Batch systems\nBatch operating systems were designed in the 1950s to control mainframe computers. At \nthat time, computers were large machines that used punched cards for input, line printers \nfor output, and tape drives for secondary storage media. \nEach program to be executed was called a job. A programmer who wished to execute a \njob sent a request to the operating room along with punched cards for the program and data. \nThe punched cards were fed into the computer by an operator. If the program was success-\nful, a printout of the result was sent to the programmer—if not, a printout of the ",
+   "questions": {
+    "easy": [
+     {
+      "q": "As defined in Chapter 7, state the formal definition of an operating system given by Forouzan. Then list the two major design goals of an operating system stated in Section 7.1.1.",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Describe the two-stage bootstrap process as illustrated in Figure 7.2. What is stored in ROM, what does the bootstrap program do, and where does the operating system ultimately reside and execute?",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Identify and briefly describe the five main components of an operating system as listed in Chapter 7 (memory manager, process manager, device manager, file manager, and user interface), explaining the primary responsibility of each.",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Chapter 7 describes three techniques for handling device I/O: polling, interrupts, and Direct Memory Access (DMA). Compare these three techniques in terms of CPU involvement and efficiency. In which scenarios is each technique most appropriate?",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Forouzan describes four process-scheduling algorithms: FIFO, Shortest-Job-First (SJF), Round-Robin, and Priority scheduling. Analyze each algorithm in terms of fairness and potential for starvation. Which algorithm guarantees that every process will eventually be served, and why can Priority scheduling lead to indefinite postponement?",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Distinguish between monoprogramming and multiprogramming as described in Section 7.3 (Memory Management). What specific limitation of monoprogramming does multiprogramming overcome? How does partitioning memory enable multiple programs to reside in RAM simultaneously?",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Chapter 7 describes virtual memory and demand paging as solutions for programs that are larger than available physical memory. Evaluate the advantages and disadvantages of demand paging compared to simple multiprogramming with fixed partitions. Under what circumstances might demand paging degrade system performance, and how might this be mitigated?",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "The operating system acts as an interface between hardware and users (Figure 7.1). Evaluate how this role creates a tension between the two design goals stated in the book: “efficient use of hardware” and “easy use of resources.” Give a specific example from memory management and one from process management where these goals may conflict, and discuss how the OS resolves the conflict.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a scheduling strategy for a hospital computer system that runs three types of processes: (1) real-time patient-monitoring alerts, (2) interactive nurse-workstation queries, and (3) batch overnight billing reports. Using the scheduling concepts from Chapter 7 (FIFO, SJF, Round-Robin, Priority), construct a policy that assigns each process type to an appropriate algorithm, justifying each assignment with respect to response time and fairness.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Based on the evolution of operating systems described in Section 7.2 (batch systems → time-sharing systems → personal computers), construct a timeline explaining how the problems of each generation motivated the design decisions of the next. For each transition, identify the specific inefficiency that was being solved and the OS mechanism introduced to address it.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 8,
+   "title": "Algorithms",
+   "text_excerpt": "In this chapter we introduce the concept of algorithms, step-by-step procedures for solv-\ning a problem. We then discuss the tools used to develop algorithms. Finally, we give some \nexamples of common iterative and recursive algorithms. \nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDefine an algorithm and relate it to problem solving.\n❑\n❑\nDefine three constructs—sequence, selection, and repetition—and describe their use \nin algorithms. \n❑\n❑\nDescribe UML diagrams and how they can be used when representing algorithms.\n❑\n❑\nDescribe pseudocode and how it can be used when representing algorithms.\n❑\n❑\nList basic algorithms and their applications.\n❑\n❑\nDescribe the concept of sorting and understand the mechanisms behind three \n­primitive sorting algorithms. \n❑\n❑\nDescribe the concept of searching and understand the mechanisms behind two \n­common searching algorithms.\n❑\n❑\nDefine subalgorithms and their relations to algorithms.\n❑\n❑\nDistinguish between iterative and recursive algorithms.\nCHAPTER\t 8\nAlgorithms\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nAlgorithms\n214\n8.1  CONCEPT\nIn this section we informally define an algorithm and elaborate on the concept using an \nexample. \n8.1.1  Informal definition\nAn informal definition of an algorithm is:\nAlgorithm:  a step-by-step method for solving a problem or doing a task.\nIn this definition, an algorithm is independent of the computer system. More specifically, \nwe should also note that the algorithm accepts input data and creates output data \n(Figure 8.1). \nFigure 8.1  Informal definition of an algorithm used in a computer\nInput data\nOutput data\nAlgorithm\nA step-by-step method for \nsolving a problem or doing a task\n8.1.2  Example \nLet us elaborate on this simple definition with an example. We want to develop an \nalgorithm for finding the largest integer among a list of positive integers. The algorithm \nshould find the largest integer among a list of any size (for example 5, 1000, 10 000, \n1 000 000). The algorithm should be general and not depend on the number of integers.\nIt is obvious that finding the largest integer among many integers is a task that cannot \nbe done in one step, either by a human or a computer. The algorithm needs to test each \ninteger one by one. \nTo solve this problem, we need an intuitive approach. First use a small number of \nintegers (for example, five), then extend the solution to any number of integers. Our solu-\ntion for five integers follows the same principles and restrictions for one thousand or one \nmillion integers. Assume, even for a five-integer case, that the algorithm handles the inte-\ngers one by one. It looks at the first integer without knowing the values of the remaining \nintegers. After it handles the first one, it looks at the second integer, and so on. Figure 8.2 \nshows one way to solve this problem.\nWe call the algorithm FindLargest. Each algorithm has a name to distinguish it from \nother algorithms. The algorithm receives a list of five integers as input and gives the largest \ninteger as output. \nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n8.1  Concept\n215\nFigure 8.2  Finding the largest integer among five integers\nLargest\nList\nList\nList\nList\nList\nStep 1\nStep 2\nStep 3\nStep 4\nStep 5\nInput data\n(\n)\n12\n8\n13\n9\n11\n(13)\nFindLargest\nOutput data\nLargest\nLargest\nLargest\nLargest\n12\n8\n13\n9\n11\n12\n8\n13\n9\n11\n12\n8\n13\n9\n11\n12\n8\n13\n9\n11\n12\n8\n13\n9\n11\n12\n12\n13\n13\n13\nInput\nThe algorithm accepts the list of five integers as input.\nProcessing\nThe algorithm uses the following five steps to find the largest integer:\nStep 1\nIn this step, the algorithm inspects the first integer (12). Since it does not know the values \nof other integers, it decides that the largest integer (so far) is the first integer. The algorithm \ndefines a data item, called Largest, and sets its value to the first integer (12). \nStep 2\nThe largest integer so far is 12, but the new integer may change the situation. The algorithm \nmakes a comparison between the value of Largest (12) and the value of the second integer \n(8). It finds that Largest is larger than the second integer, which means that Largest is still \nholding the largest integer. There is no need to change the value of Largest. \nStep 3\nThe largest integer so far is 12, but the new integer (13) is larger than Largest. This means than \nthe value of Largest is no longer valid. The value of Largest should be replaced by the third \ninteger (13). The algorithm changes the value of Largest to 13 and moves to the next step. \nStep 4\nNothing is changed in this step because Largest is larger than the fourth integer (9). \nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not",
+   "questions": {
+    "easy": [
+     {
+      "q": "Using Forouzan’s informal definition from Section 8.1.1, define what an algorithm is. Then name and briefly describe the three constructs that every algorithm is composed of, as introduced in Chapter 8.",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Describe the FindLargest algorithm from Figure 8.2. Explain step-by-step how it processes the input list (12, 8, 13, 9, 11) to produce the output 13. What is the value of the variable “Largest” after each of the five steps?",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Distinguish between sequential search and binary search as described in Chapter 8. What precondition must be satisfied before binary search can be applied, and what property of binary search makes it more efficient than sequential search for large lists?",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Apply the selection sort algorithm as described in Chapter 8 to the following list: [64, 25, 12, 22, 11]. Show the state of the list after each complete pass of the outer loop, clearly identifying the element selected and placed in its final position at each pass.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Chapter 8 presents both iterative and recursive algorithms for computing the factorial of a number. Trace through the recursive factorial algorithm for n = 4, showing each recursive call and its return value as it unwinds. Compare this trace with the equivalent iterative approach and analyze how the call stack depth grows with n.",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Compare bubble sort and insertion sort as described in Chapter 8 in terms of their basic operation and best-case behavior. For a list that is already nearly sorted, which algorithm would perform fewer comparisons and why? Use the specific algorithmic descriptions from the book to support your answer.",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "The book introduces the concept of time complexity for sorting algorithms. Evaluate the three primitive sorting algorithms (selection sort, bubble sort, and insertion sort) in terms of their worst-case number of comparisons for a list of n elements. Explain why all three are considered O(n²) and discuss the practical implications of this complexity for large datasets.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Chapter 8 describes subalgorithms as a way to break complex problems into smaller, reusable units. Evaluate the benefits of using subalgorithms (modularity, reusability) against the overhead they introduce (function call mechanics). Under what conditions would it be better to inline the subalgorithm’s code rather than calling it separately?",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Using the pseudocode conventions introduced in Chapter 8, write a complete pseudocode algorithm named “FindSecondLargest” that finds the second-largest integer in a list of n positive integers. Your algorithm must use only the three constructs (sequence, selection, repetition) and should handle edge cases such as all elements being equal. Trace your algorithm on the input [3, 1, 4, 1, 5, 9, 2, 6].",
+      "bloom": "Create"
+     },
+     {
+      "q": "Design a recursive algorithm for binary search as described in the searching concepts of Chapter 8. Write the algorithm in pseudocode showing the base cases (target found, list exhausted) and the recursive case (search upper or lower half). Then trace your algorithm searching for the value 22 in the sorted list [11, 12, 22, 25, 64], showing the midpoint calculation and which half is selected at each step.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 9,
+   "title": "Programming Languages",
+   "text_excerpt": "In Chapter 8 we discussed algorithms. We showed how we can write algorithms in UML \nor pseudocode to solve a problem. In this chapter, we examine programming languages \nthat can implement pseudocode or UML descriptions of a solution into a programming \nlanguage. This chapter is not designed to teach a particular programming language; it is \nwritten to compare and contrast different languages. \nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDescribe the evolution of programming languages from machine language to \n­high-­level languages.\n❑\n❑\nUnderstand how a program in a high-level language is translated into machine \n­language using an interpreter or a compiler.\n❑\n❑\nDistinguish between four computer language paradigms.\n❑\n❑\nUnderstand the procedural paradigm and the interaction between a program unit and \ndata items in the paradigm.\n❑\n❑\nUnderstand the object-oriented paradigm and the interaction between a program unit \nand objects in this paradigm.\n❑\n❑\nDefine functional paradigm and understand its applications. \n❑\n❑\nDefine a declaration paradigm and understand its applications.\n❑\n❑\nDefine common concepts in procedural and object-oriented languages. \nCHAPTER\t 9\nProgramming Languages\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nProgramming Languages\n244\n9.1  EVOLUTION\nTo write a program for a computer, we must use a computer language. A computer \n­language is a set of predefined words that are combined into a program according to pre-\ndefined rules (syntax). Over the years, computer languages have evolved from machine \nlanguage to ­high-level languages. \n9.1.1  Machine languages\nIn the earliest days of computers, the only programming languages available were machine \nlanguages. Each computer had its own machine language, which was made of streams of \n0s and 1s. In Chapter 5 we showed that in a primitive hypothetical computer, we need to \nuse 11 lines of code to read two integers, add them, and print the result. These lines of \ncode, when written in machine language, make 11 lines of binary code, each of 16 bits, as \nshown in Table 9.1. \nTable 9.1  Code in machine language to add two integers\nHexadecimal\nCode in machine language\n(1FEF)16\n0001\n1111\n1110\n1111\n(240F)16\n0010\n0100\n0000\n1111\n(1FEF)16\n0001\n1111\n1110\n1111\n(241F)16 \n0010\n0100\n0001\n1111\n(1040)16\n0001\n0000\n0100\n0000\n(1141)16\n0001\n0001\n0100\n0001\n(3201)16\n0011\n0010\n0000\n0001\n(2422)16\n0010\n0100\n0010\n0010\n(1F42)16\n0001\n1111\n0100\n0010\n(2FFF)16\n0010\n1111\n1111\n1111\n(0000)16\n0000\n0000\n0000\n0000\nMachine language is the only language understood by the computer hardware, which is \nmade of electronic switches with two states: off (representing 0) and on (representing (1). \nThe only language understood by a computer is machine language.\nAlthough a program written in machine language truly represents how data is manipulated \nby the computer, it has at least two drawbacks. First, it is machine-dependent. The machine \nlanguage of one computer is different than the machine language of another ­computer if \nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n9.1  Evolution\n245\nthey use different hardware. Second, it is very tedious to write programs in this language \nand very difficult to find errors. The era of machine language is now is referred to as the first \ngeneration of programming languages. \n9.1.2  Assembly languages\nThe next evolution in programming came with the idea of replacing binary code for \ninstruction and addresses with symbols or mnemonics. Because they used symbols, these \nlanguages were first known as symbolic languages. The set of these mnemonic languages \nwere later referred to as assembly languages. The assembly language for our hypothetical \ncomputer to replace the machine language in Table 9.1 is shown in Table 9.2. \nTable 9.2  Code in assembly language to add two integers\nCode in assembly language\nDescription\nLOAD\nRF\nKeyboard\nLoad from keyboard controller to register F\nSTORE\nNumber1 RF\nStore register F into Number1 \nLOAD\nRF\nKeyboard\nLoad from keyboard controller to register F\nSTORE\nNumber2 RF\nStore register F into Number2\nLOAD\nR0\nNumber1\nLoad Number1 into register 0\nLOAD\nR1\nNumber2\nLoad Number2 into register 1\nADDI\nR2\nR0\nR1\nAdd registers 0 and 1 with result in register 2 \nSTORE\nResult\nR2\nStore register 2 into Result\nLOAD\nRF\nResult\nLoad Result into register F\nSTORE\nMonitor\nRF\nStore register F into monitor controller\nHALT\nStop\nA special program called an assembler is used to translate code in assembly language into \nmachine language. \n9.1.3  High-level languages\nAlthough assembly languages greatly improved programming efficiency, they still required \nprogrammers to concentrate on the hardware they were using. Working with symbolic \nlanguages was also very tedious, because each machine instruction had to be individually \ncoded. The desire to improve programmer efficiency and to change the focus from the \ncomputer to the problem be",
+   "questions": {
+    "easy": [
+     {
+      "q": "According to Section 9.1 of the book, describe the four generations of programming language evolution: machine language, assembly language, high-level languages, and fourth-generation languages. For each generation, identify one characteristic feature and one example language or tool.",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Explain the difference between an interpreter and a compiler as described in Section 9.2 of the book. How does each tool translate a high-level language program into a form the computer can execute, and what is the key difference in when translation occurs?",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Identify the four programming language paradigms described in Chapter 9 (procedural, object-oriented, functional, declarative/logic). For each paradigm, name at least one programming language that exemplifies it as cited by Forouzan.",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Using Table 9.1 and Table 9.2 from Chapter 9, compare the machine language representation and assembly language representation of the program that adds two integers. Specifically, identify what must be manually managed by the programmer at the assembly level that is automated at the high-level language level (as shown in Program 9-1 in C++).",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Analyze the concepts of encapsulation, inheritance, and polymorphism in the object-oriented paradigm as described in Chapter 9. For each concept, provide a concrete example of how it solves a specific problem that would be more difficult to address in the procedural paradigm (e.g., in C versus Java or C++).",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Chapter 9 describes passing parameters by value versus passing by reference in procedural languages. Distinguish between these two mechanisms: what is copied in each case, what effect does the called function have on the caller’s variables, and when would a programmer specifically choose one over the other?",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate the trade-offs between using a compiled language (like C or C++) and an interpreted language when developing a large scientific computing application. Reference the book’s description of how compilers and interpreters work to discuss differences in execution speed, portability, and debugging ease. Justify which approach you would recommend.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "The declarative (logic) paradigm, exemplified by Prolog, differs fundamentally from the procedural paradigm. Using the concepts from Chapter 9, evaluate the suitability of Prolog for solving a problem such as a family-relationship database versus writing an OS scheduler. What inherent limitations of the declarative paradigm make it unsuitable for certain classes of problems?",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a simple class hierarchy in pseudocode for a university registration system using the object-oriented concepts described in Chapter 9 (class, object, encapsulation, inheritance, polymorphism). Your design should include at least a base class “Person” and two derived classes (“Student” and “Instructor”). Identify the inherited attributes, the overridden methods, and explain how encapsulation protects internal data.",
+      "bloom": "Create"
+     },
+     {
+      "q": "The functional paradigm (LISP, Scheme) treats functions as first-class objects, as described in Chapter 9. Construct an explanation of how a functional language would solve the problem of summing all elements in a list recursively—without using loops or mutable variables. Compare this approach to the equivalent procedural solution using a repetition loop, and evaluate which approach is more readable and which is more closely aligned with mathematical reasoning.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 10,
+   "title": "Software Engineering",
+   "text_excerpt": "In this chapter we introduce the concept of software engineering. We begin with the idea \nof the software lifecycle. We then show two models used for the development process: the \nwaterfall model and the incremental model. A brief discussion of four phases in the devel-\nopment process follows.  \nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nUnderstand the concept of the software lifecycle in software engineering.\n❑\n❑\nDescribe two major types of development process, the waterfall and incremental \n­models.\n❑\n❑\nUnderstand the analysis phase and describe two separate approaches in the analysis \nphase: procedure-oriented analysis and object-oriented analysis.\n❑\n❑\nUnderstand the design phase and describe two separate approaches in the design \nphase: procedure-oriented design and object-oriented design.\n❑\n❑\nDescribe the implementation phase and recognize the quality issues in this phase.\n❑\n❑\nDescribe the testing phase and distinguish between glass-box testing and black-box \ntesting. \n❑\n❑\nRecognize the importance of documentation in software engineering and distinguish \nbetween user documentation, system documentation, and technical documentation. \nSoftware engineering is the establishment and use of sound engineering methods and \nprinciples to obtain reliable software. This definition, taken from the first ­international \nconference on software engineering in 1969, was proposed 30 years after the first \n­computer was built. \nCHAPTER\t 10\nSoftware Engineering\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nSoftware Engineering\n274\n10.1  THE SOFTWARE LIFECYCLE\nA fundamental concept in software engineering is the software lifecycle. Software, like \nmany other products, goes through a cycle of repeating phases (Figure 10.1).\nFigure 10.1  The software lifecycle\n[true]\n[false]\nSoftware not\n yet obsolete?\nModiﬁcation\nDevelopment\nUse\nStart\nStop\nSoftware is first developed by a group of developers. Usually it is in use for a while before \nmodifications are necessary. Modification is often needed due to errors found in the soft-\nware, changes in the rules or laws governing its design, or changes in the company itself. \nThe software therefore needs to be modified before further use. These two steps, use and \nmodify, continue until the software becomes obsolete. By ‘obsolete’, we mean that the \nsoftware loses its validity because of inefficiency, obsolescence of the language, major \nchanges in user requirements, or other factors. \n10.1.1  Development process models\nAlthough software engineering involves all three processes in Figure 10.1, in this chap-\nter we discuss only the development process, which is shown outside the cycle in \n­Figure 10.1. The development process in the software lifecycle involves four phases: \nanalysis, design, implementation, and testing. There are several models for the develop-\nment process. We discuss the two most common here: the waterfall model and the \nincremental model.\nThe waterfall model\nOne very popular model for the software development process is known as the waterfall \nmodel (Figure 10.2). In this model, the development process flows in only one direction. \nThis means that a phase cannot be started until the previous phase is completed. \nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n10.1  The Software Lifecycle\n275\nFigure 10.2  The waterfall model\nAnalysis\nDesign\nImplementation\nTesting\nFor example, the analysis phase of the whole project should be completed before its \ndesign phase is started. The entire design phase should be finished before the implemen-\ntation phase can be started. \nThere are advantages and disadvantages to the waterfall model. One advantage is \nthat each phase is completed before the next phase starts. The group that works on the \ndesign phase, for example, knows exactly what to do because they have the complete \nresults of the analysis phase. The testing phase can test the whole system because the \nentire system under development is ready. However, a disadvantage of the waterfall \nmodel is the difficulty in locating a problem: if there is a problem in part of the process, \nthe entire process must be checked. \nThe incremental model\nIn the incremental model, software is developed in a series of steps. The developers first \ncomplete a simplified version of the whole system. This version represents the entire sys-\ntem but does not include the details. Figure 10.3 shows the incremental model concept.\nIn the second version, more details are added, while some are left unfinished, and \nthe system is tested again. If there is a problem, the developers know that the problem is \nwith the new functionality. They do not add more functionality until the existing system \nworks properly. This process continues until all required functionality has been added. \nFigure 10.3  The incremental model\nTime\nFunctionality\nA\nA\nA\nD\nD\nD\nI\nI\nI\nT\nT\nT\nA: Analysis Phase\nD: Des",
+   "questions": {
+    "easy": [
+     {
+      "q": "According to Figure 10.1 in the book, describe the software lifecycle. List the three phases a software product goes through after initial development, and identify the condition under which the lifecycle ends (i.e., the software becomes obsolete).",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Describe the waterfall model of software development as illustrated in Figure 10.2. List the four sequential phases in order, explain the key constraint that defines this model (i.e., what must be true before a new phase begins), and state one advantage and one disadvantage the book identifies.",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Chapter 10 distinguishes between three types of software documentation. Identify and describe user documentation, system documentation, and technical documentation, explaining the intended audience and primary content of each.",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Apply the incremental development model (Figure 10.3) to the scenario of developing a student-grade management system. Describe what a simplified “Increment 1” version might contain, what would be added in “Increment 2,” and explain how this approach allows developers to isolate and fix problems more easily than the waterfall model.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Chapter 10 describes two approaches to the analysis phase: procedure-oriented analysis (using data flow diagrams and entity-relationship diagrams) and object-oriented analysis (using use case diagrams). Compare these two approaches: what aspect of the system does each model emphasize, and how do they differ in the kind of output produced for the design phase?",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Distinguish between glass-box testing and black-box testing as described in Section 10.4 of the book. For each approach, identify the specific sub-strategies named by Forouzan (e.g., basis path testing for glass-box; exhaustive, random, and boundary-value testing for black-box), and explain which type of defect each strategy is best suited to detect.",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate the waterfall model versus the incremental model for a safety-critical medical-device software project where requirements may be incomplete at the start. Using the advantages and disadvantages described in Section 10.1, justify which model is more appropriate, and identify a specific phase of the waterfall model where incomplete requirements would cause the greatest harm.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Chapter 10 defines four quality metrics for the implementation phase: readability, portability, reusability, and maintainability. Evaluate a scenario where a developer writes highly optimized, architecture-specific C code to maximize performance on a single hardware platform. Which quality metrics are sacrificed, which (if any) are preserved, and what long-term costs does this trade-off impose on the software lifecycle described in Section 10.1?",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a complete software development plan for a simple library-catalogue application using the waterfall model described in Chapter 10. For each of the four phases (Analysis, Design, Implementation, Testing), specify: (a) the primary deliverable produced, (b) the modeling tool used (e.g., data flow diagram, structure chart, class diagram), and (c) the testing strategy applied. Indicate whether you would use procedure-oriented or object-oriented approaches and justify your choice.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Using the object-oriented analysis and design concepts from Chapter 10, construct a use case diagram and a class diagram for an online hotel reservation system (similar to the booking system example in Figure 10.4). Your class diagram must include at least three classes with defined attributes and methods, show one inheritance relationship, and one aggregation relationship. Explain how the design phase artifacts (class diagram) flow naturally from the analysis phase artifacts (use case diagram).",
+      "bloom": "Create"
+     }
+    ]
+   }
+  }
+ ]
+}

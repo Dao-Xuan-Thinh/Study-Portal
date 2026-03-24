@@ -1,0 +1,2326 @@
+In this chapter we discuss the organization of a stand-alone computer. We explain how 
+every computer is made up of three subsystems. We also show how a simple, hypothetical 
+computer can run a simple program to perform primitive arithmetic or logic operations. 
+Objectives
+After studying this chapter, the student should be able to:
+❑
+❑
+List the three subsystems of a computer.
+❑
+❑
+Describe the role of the central processing unit (CPU) in a computer.
+❑
+❑
+Describe the fetch–decode–execute phases of a cycle in a typical computer. 
+❑
+❑
+Describe the main memory and its addressing space.
+❑
+❑
+Distinguish between main memory and cache memory. 
+❑
+❑
+Define the input/output subsystem.
+❑
+❑
+Understand the interconnection of subsystems and list different bus systems.
+❑
+❑
+Describe different methods of input/output addressing.
+❑
+❑
+Distinguish the two major trends in the design of computer architecture.
+❑
+❑
+Understand how computer throughput can be improved using pipelining.
+❑
+❑
+Understand how parallel processing can improve the throughput of computers. 
+CHAPTER	 5
+Computer Organization
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+92
+Computer Organization
+5.1  INTRODUCTION
+We can divide the parts that make up a computer into three broad categories or subsys-
+tems: the central processing unit (CPU), the main memory, and the input/output subsys-
+tem. The next three sections discuss these subsystems and how they are connected to 
+make a standalone computer. Figure 5.1 shows the three subsystems of a standalone 
+computer. 
+5.2  CENTRAL PROCESSING UNIT
+The central processing unit (CPU) performs operations on data. In most architectures it 
+has three parts: an arithmetic logic unit (ALU), a control unit, and a set of registers, 
+(­Figure 5.2).
+Figure 5.1  Computer hardware (subsystems)
+Input / output subsystem
+Central Processing Unit
+(CPU)
+Memory
+Figure 5.2  Central processing unit (CPU)
+ALU
+Control Unit
+Registers
+R: Register
+PC: Program Counter
+IR: Instruction Register
+Central Processing Unit (CPU)
+R0
+R1
+R2
+Rn
+PC
+IR
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.2  Central Processing Unit
+93
+5.2.1  The arithmetic logic unit (ALU)
+The arithmetic logic unit (ALU) performs logic, shift, and arithmetic operations on data. 
+Logic operations
+We discussed several logic operations, such as NOT, AND, OR, and XOR, in Chapter 4. 
+These operations treat the input data as bit patterns and the result of the operation is also 
+a bit pattern. 
+Shift operations
+We discussed two groups of shift operations on data in Chapter 4: logical shift operations 
+and arithmetic shift operations. Logical shift operations are used to shift bit patterns to the 
+left or right, while arithmetic operations are applied to integers. Their main purpose is to 
+divide or multiply integers by two. 
+Arithmetic operation
+We discussed some arithmetic operations on integers and reals on Chapter 4. We men-
+tioned that some operations can be implemented more efficiently in hardware. 
+5.2.2  Registers
+Registers are fast stand-alone storage locations that hold data temporarily. Multiple 
+­registers are needed to facilitate the operation of the CPU. Some of these registers are 
+shown in Figure 5.2. 
+Data registers
+In the past computers had only a few data registers to hold the input data and the result 
+of the operations. Today, computers use dozens of registers inside the CPU to speed up 
+their operations, because complex operations are done using hardware instead of software. 
+These require several registers to hold the intermediate results. Data registers are named 
+R1 to Rn in Figure 5.2. 
+Instruction registers
+Today computers store not only data, but also programs, in their memory. The CPU is 
+responsible for fetching instructions one by one from memory, storing them in the instruc-
+tion register (IR in Figure 5.2), decoding them, and executing them. We will discuss this 
+issue later in the chapter. 
+Program counter
+Another common register in the CPU is the program counter (PC in Figure 5.2). The 
+program counter keeps track of the instruction currently being executed. After execution 
+of the instruction, the counter is incremented to point to the address of the next instruc-
+tion in memory.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+94
+Computer Organization
+5.2.3  The control unit
+The third part of any CPU is the control unit. The control unit controls the operation of 
+each subsystem. Controlling is achieved through signals sent from the control unit to 
+other subsystems. 
+5.3  MAIN MEMORY
+Main memory is the second major subsystem in a computer (Figure 5.3). It consists of a 
+collection of storage locations, each with a unique identifier, called an address. Data is 
+transferred to and from memory in groups of bits called words. A word can be a group of 
+8 bits, 16 bits, 32 bits, or 64 bits (and growing). If the word is 8 bits, it is referred to as a 
+byte. The term ‘byte’ is so common in computer science that sometimes a 16-bit word is 
+referred to as a 2-byte word, or a 32-bit word is referred to as a 4-byte word. 
+5.3.1  Address space
+To access a word in memory requires an identifier. Although programmers use a name to 
+identify a word (or a collection of words), at the hardware level each word is identified by 
+an address. The total number of uniquely identifiable locations in memory is called the 
+address space. For example, a memory with 64 kilobytes and a word size of 1 byte has an 
+address space that ranges from 0 to 65 535. 
+Table 5.1 shows the units used to refer to memory. Note that the terminology is mis-
+leading: it approximates the number of bytes in powers of 10, but the actual number of 
+bytes is in powers of 2. Units in powers of 2 facilitates addressing.
+Table 5.1  Memory units
+Unit
+Exact Number of Bytes 
+Approximation
+kilobyte
+210 (1024) bytes
+103 bytes 
+megabyte
+220 (1 048 576) bytes
+106 bytes
+gigabyte
+230 (1 073 741 824) bytes
+109 bytes
+terabyte
+240 bytes
+1012 bytes
+Figure 5.3  Main memory
+Address
+Memory
+Contents (values)
+0
+0
+0
+1 1 1
+1 0
+0
+0
+0 0
+1
+1
+1
+1
+1
+0
+1
+1 1 0
+1 0
+0
+1
+0 0
+1
+1
+1
+1
+0
+0
+0
+0 0 0
+1 1
+0
+0
+0 1
+1
+1
+1
+1
+0
+0
+0
+0 0 0
+1 0
+1
+1
+0 0
+1
+1
+1
+1
+0
+0
+0
+0 0 0
+0 0 0 0
+0
+0
+0
+0 0 0
+0 0 0 1
+1
+1
+1
+1 1 1
+1 1 1 1
+0
+0
+0
+0 0 0
+0 0 1 0
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.3  Main Memory
+95
+Addresses as bit patterns
+Because computers operate by storing numbers as bit patterns, a memory address is also 
+represented as a bit pattern. So if a computer has 64 kilobytes (216) of memory with a 
+word size of 1 byte, we need a bit pattern of 16 bits to define an address. Recall from 
+Chapter 3 that addresses can be represented as unsigned integers (we do not have nega-
+tive addresses). In other words, the first location is referred to as address 0000000000000000 
+(address 0), and the last location is referred to as address 1111111111111111 (address 
+65535). In general, if a computer has N words of memory, we need an unsigned integer of 
+size log2 N bits to refer to each memory location.
+Memory addresses are defined using unsigned binary integers.
+Example 5.1
+A computer has 32 MB (megabytes) of memory. How many bits are needed to address 
+any single byte in memory? 
+Solution
+The memory address space is 32 MB, or 225 (25 × 220). This means that we need log2 225, or 
+25 bits, to address each byte.
+Example 5.2
+A computer has 128 MB of memory. Each word in this computer is eight bytes. How many 
+bits are needed to address any single word in memory? 
+Solution
+The memory address space is 128 MB, which means 227. However, each word is eight (23) 
+bytes, which means that we have 224 words. This means that we need log2 224, or 24 bits, 
+to address each word. 
+5.3.2  Memory types
+Two main types of memory exist: RAM and ROM. 
+RAM
+Random access memory (RAM) makes up most of the main memory in a computer. In 
+a random access device, a data item can be accessed randomly—using the address of the 
+memory location—without the need to access all data items located before it. However, 
+the term is confusing, because ROM can also be accessed randomly. What distinguishes 
+RAM from ROM is that RAM can be read from and written to. The CPU can write some-
+thing to RAM and later overwrite it. Another characteristic of RAM is that it is volatile: the 
+information (program or data) is lost if the computer is powered down. In other words, all 
+information in RAM is erased if you turn off the computer or if there is a power outage. 
+RAM technology is divided into two broad categories: SRAM and DRAM.
+SRAM
+Static RAM (SRAM) technology uses traditional flip-flop gates (see Appendix E) to hold 
+data. The gates hold their state (0 or 1), which means that data is stored as long as the 
+power is on and there is no need to refresh memory locations. SRAM is fast but expensive. 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+96
+Computer Organization
+DRAM
+Dynamic RAM (DRAM) technology uses capacitors, electrical devices that can store 
+energy, for data storage. If a capacitor is charged, the state is 1; if it is discharged, the state 
+is 0. Because a capacitor loses some of its charge with time, DRAM memory cells need to 
+be refreshed periodically. DRAMs are slow but inexpensive. 
+ROM
+The contents of read-only memory (ROM) are written by the manufacturer, and the CPU 
+can read from, but not write to, ROM. Its advantage is that it is nonvolatile—its contents are 
+not lost if you turn off the computer. Normally, it is used for programs or data that must 
+not be erased or changed even if you turn off the computer. For example, some computers 
+come with ROM that holds the boot program that runs when we switch on the computer. 
+PROM
+One variation of ROM is programmable read-only memory (PROM). This type of mem-
+ory is blank when the computer is shipped. The user of the computer, with some special 
+equipment, can store programs on it. When programs are stored, it behaves like ROM and 
+cannot be overwritten. This allows a computer user to store specific programs in PROM.
+EPROM
+A variation of PROM is erasable programmable read-only memory (EPROM). It can be 
+programmed by the user, but can also be erased with a special device that applies ultraviolet 
+light. To erase EPROM memory requires physical removal and reinstallation of the EPROM.
+EEPROM
+A variation of EPROM is electrically erasable programmable read-only memory 
+(EEPROM). EEPROM can be programmed and erased using electronic impulses without 
+being removed from the computer. 
+5.3.3  Memory hierarchy
+Computer users need a lot of memory, especially memory that is very fast and inexpen-
+sive. This demand is not always possible to satisfy—very fast memory is usually not cheap. 
+A compromise needs to be made. The solution is hierarchical levels of memory (­Figure 5.4). 
+The hierarchy is based on the following:
+Figure 5.4  Memory hierarchy
+Registers
+More costly
+Fastest
+Slowest
+Less costly
+Cache memory
+Main memory
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.4  Input/Output Subsystem
+97
+❑
+❑
+Use a very small amount of costly high-speed memory where speed is crucial. The 
+registers inside the CPU are of this type.
+❑
+❑
+Use a moderate amount of medium-speed memory to store data that is accessed ­often. 
+Cache memory, discussed next, is of this type.
+❑
+❑
+Use a large amount of low-speed memory for data that is accessed less often. Main 
+memory is of this type.
+5.3.4  Cache memory
+Cache memory is faster than main memory but slower than the CPU and its registers. 
+Cache memory, which is normally small in size, is placed between the CPU and main 
+memory (Figure 5.5). 
+Cache memory at any time contains a copy of a portion of main memory. When the CPU 
+needs to access a word in main memory, it follows this procedure:
+1.	 The CPU checks the cache. 
+2.	 If the word is there, it copies the word: if not, the CPU accesses main memory and 
+copies a block of memory starting with the desired word. This block replaces the pre-
+vious contents of cache memory.
+3.	 The CPU accesses the cache and copies the word.
+This procedure can expedite operations; if the word is in the cache, it is accessed immedi-
+ately. If the word is not in the cache, the word and a whole block are copied to the cache. 
+Since it is probable that the CPU, in its next cycle, will need to access the words following 
+the first word, the existence of the cache speeds processing.
+We might wonder why cache memory is so efficient despite its small size. The answer 
+lies in the ‘80–20 rule’. It has been observed that most computers typically spend 80 per 
+cent of their time accessing only 20 per cent of the data. In other words, the same data is 
+accessed over and over again. Cache memory, with its high speed, can hold this 20 per 
+cent to make access faster at least 80 per cent of the time. 
+5.4  INPUT/OUTPUT SUBSYSTEM
+The third major subsystem in a computer is the collection of devices referred to as the 
+input/output (I/O) subsystem. This subsystem allows a computer to communicate with 
+Figure 5.5  Cache memory
+Cache
+CPU
+Memory
+Control Unit
+ALU
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+98
+Computer Organization
+the outside world, and to store programs and data even when the power is off. Input/output 
+devices can be divided into two broad categories: nonstorage and storage devices. 
+5.4.1  Nonstorage devices
+Nonstorage devices allow the CPU/memory to communicate with the outside world, but 
+they cannot store information.
+Keyboard and monitor
+Two of the more common nonstorage input/output devices are the keyboard and the 
+monitor. The keyboard provides input, the monitor displays output and at the same time 
+echoes input typed on the keyboard. Programs, commands, and data are input or output 
+using strings of characters. The characters are encoded using a code such as ASCII 
+(see Appendix A). Other devices that fall in this category are mice, joysticks, and so on. 
+Printer
+A printer is an output device that creates a permanent record. A printer is a nonstorage 
+device because the printed material cannot be directly entered into a computer again 
+unless someone retypes or scans it. 
+5.4.2  Storage devices
+Storage devices, although classified as I/O devices, can store large amounts of information 
+to be retrieved at a later time. They are cheaper than main memory, and their contents are 
+nonvolatile—that is, not erased when the power is turned off. They are sometimes referred 
+to as auxiliary storage devices. We can categorize them as either magnetic or optical. 
+Magnetic storage devices
+Magnetic storage devices use magnetization to store bits of data. If a location is 
+­magnetized, it represents 1, if not magnetized, it represents 0.
+Magnetic disks
+A magnetic disk consists of one or more disks stacked on top of each other. The disks are 
+coated with a thin magnetic film. Information is stored on and retrieved from the surface 
+of the disk using a read/write head for each magnetized surface of the disk. Figure 5.6 
+shows the physical layout of a magnetic disk drive and the organization of a disk. 
+Figure 5.6  A magnetic disk
+Track
+Intertrack
+gap
+Intersector
+gap
+a. Disk drive
+b. Tracks and Sectors
+Sector
+Disk
+Disk
+Read / write
+heads
+Controller
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.4  Input/Output Subsystem
+99
+❑
+❑
+Surface organization. To organize data stored on the disk, each surface is divided into 
+tracks, and each track is divided into sectors (Figure 5.6). The tracks are separated by 
+an intertrack gap, and the sectors are separated by an intersector gap. 
+❑
+❑
+Data access. A magnetic disk is considered a random access device. In a random access 
+device, a data item can be accessed randomly without the need to access all other data 
+items located before it. However, the smallest storage area that can be accessed at one 
+time is a sector. A block of data can be stored in one or more sectors and retrieved 
+without the need to retrieve the rest of the information on the disk. 
+❑
+❑
+Performance. The performance of a disk depends on several factors, the most import-
+ant being the rotational speed, the seek time, and the transfer time. The rotational 
+speed defines how fast the disk is spinning. The seek time defines the time to move 
+the read/write head to the desired track where the data is stored. The transfer time 
+defines the time to move data from the disk to the CPU/memory.
+Magnetic tape
+Magnetic tape comes in various sizes. One common type is half-inch plastic tape coated 
+with a thick magnetic film. The tape is mounted on two reels and uses a read/write head 
+that reads or writes information when the tape is passed through it. Figure 5.7 shows the 
+mechanical configuration of a magnetic tape drive.
+❑
+❑
+Surface organization. The width of the tape is divided into nine tracks, each location 
+on a track storing 1 bit of information. Nine vertical locations can store 8 bits of infor-
+mation related to a byte plus a bit for error detection (Figure 5.7). 
+❑
+❑
+Data access. A magnetic tape is considered a sequential access device. Although the sur-
+face may be divided into blocks, there is no addressing mechanism to access each block. 
+To retrieve a specific block on the tape, we need to pass through all the previous blocks.  
+❑
+❑
+Performance. Although magnetic tape is slower than a magnetic disk, it is cheaper. 
+Today, people use magnetic tape to back up large amounts of data.
+Optical storage devices
+Optical storage devices, a relatively recent technology, use laser light to store and retrieve 
+data. The use of optical storage technology followed the invention of the compact disk (CD) 
+used to store audio information. Today, the same technology—slightly improved—is used 
+Figure 5.7  Magnetic tape
+Take-up reel
+Tape reel
+Read / write head
+a. Tape drive 
+b. Surface orgnization 
+Tape
+Tape
+Block
+Block
+Track 1
+Track 9
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+100
+Computer Organization
+to store information in a computer. Devices that use this technology include CD‑ROMs, 
+CD-Rs, CD-RWs, and DVDs. 
+CD-ROMs
+Compact disk read-only memory (CD-ROM) disks use the same technology as the audio 
+CD, originally developed by Phillips and Sony for recording music. The only difference 
+between these two technologies is enhancement: a CD-ROM drive is more robust and 
+checks for errors. Figure 5.8 shows the steps involved in creating and using a CD-ROM.
+❑
+❑
+Creation. CD-ROM technology uses three steps to create a large number of discs:
+a.	A master disk is created using a high-power infrared laser that creates bit patterns on 
+­coated plastic. The laser translates the bit patterns into a sequence of pits (holes) and 
+lands (no holes). The pits usually represent 0s and the lands usually represent 1s. 
+­However, this is only a convention, and it can be reversed. Other schemes use a transi­
+tion (pit to land or land to pit) to represent 1, and a lack of transition to represent 0. 
+b.	From the master disk, a mold is made. In the mold, the pits (holes) are replaced by bumps.
+c.	Molten polycarbonate resin is injected into the mold to produce the same pits as 
+the master disk. A very thin layer of aluminum is added to the polycarbonate to 
+provide a reflective surface. On top of this, a protective layer of lacquer is applied 
+and a label is added. Only this last step needs to be repeated for each disk.
+❑
+❑
+Reading. The CD-ROM is read using a low-power laser beam. The beam is reflected 
+by the aluminum surface when passing through a land. It is reflected twice when it 
+­encounters a pit, once by the pit boundary and once by the aluminum boundary. The two 
+reflections have a destructive effect, because the depth of the pit is chosen to be ­exactly 
+Figure 5.8  Creation and use of CD-ROMs
+Land
+Land
+Land
+Land
+Land
+Pit
+Pit
+Pit
+Pit Pit
+Pit
+Plastic or glass
+Polycarbonate 
+resin
+b. Mold
+c. CD-ROM
+a. Master disc
+Reﬂective layer
+Protective layer
+Label
+Molding material
+Laser source
+Laser Detector
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.4  Input/Output Subsystem
+101
+one-fourth of the beam wavelength. In other words, the sensor installed in the drive 
+detects more light when the location is a land and less light when the location is a pit, 
+so can read what was recorded on the original master disk and copied to the CD-ROM.
+❑
+❑
+Format. CD-ROM technology uses a different format than magnetic disk (Figure 5.9). 
+The format of data on a CD-ROM is based on:
+a.	A block of 8-bit data transformed into a 14-bit symbol using an error-correction 
+method called Hamming code. 
+b.	A frame made up from 42 symbols (14 bits/symbol). 
+c.	A sector made up from 98 frames (2352 bytes). 
+❑
+❑
+Speed. CD-ROM drives come in different speeds. Single speed is referred to as 1x, 
+double speed 2x, and so on. If the drive is single speed, it can read up to 153 600 
+bytes per second. Table 5.2 shows the speeds and their corresponding data rates.
+Table 5.2  CD-ROM speeds
+Speed
+Data rate
+Approximation
+1x
+153 600 bytes per second 
+150 KB/s 
+2x
+307 200 bytes per second
+300 KB/s
+4x
+614 400 bytes per second
+600 KB/s 
+6x
+921 600 bytes per second
+900 KB/s 
+8x
+1 228 800 bytes per second
+1.2 MB/s
+12x
+1 843 200 bytes per second
+1.8 MB/s
+16x
+2 457 600 bytes per second
+2.4 MB/s
+24x
+3 688 400 bytes per second
+3.6 MB/s
+32x
+4 915 200 bytes per second
+4.8 MB/s
+40x
+6 144 000 bytes per second
+6 MB/s
+❑
+❑
+Application. The expense involved in creating a master disk, mold, and the actual disk 
+can be justified if there are a large number of potential customers. In other words, this 
+technology is economical if the discs are mass produced. 
+Figure 5.9  CD-ROM format
+Byte (8 bit)
+Symbol (14 bit)
+Frame (42 symbols)
+Sector (98 frames)
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+https://sanet.st/blogs/polatebooks/
+102
+Computer Organization
+CD-R
+Clearly, CD-ROM technology is justifiable only if the manufacturer can create a large num-
+ber of disks. On the other hand, the compact disk recordable (CD-R) format allows users 
+to create one or more disks without going through the expense involved in creating ­CD-­ROMs. 
+It is particularly useful for making backups. You can write once to CD-R disks, but they can 
+be read many times. This is why the format is sometimes called write once, read many 
+(WORM). 
+❑
+❑
+Creation. CD-R technology uses the same principles as CD-ROM to create a disk 
+(Figure 5.10). The following lists the differences:
+a.	 There is no master disk or mold. 
+b.	The reflective layer is made of gold instead of aluminum.
+c.	 There are no physical pits (holes) in the polycarbonate: the pits and lands are only 
+simulated. To simulate pits and lands, an extra layer of dye, similar to the material 
+used in photography, is added between the reflective layer and the polycarbonate. 
+d.	A high-power laser beam, created by the CD burner of the drive, makes a dark spot 
+in the dye, changing its chemical composition, which simulates a pit. The areas not 
+struck by the beam become lands.
+❑
+❑
+Reading. CD-Rs can be read by a CD-ROM or a CD-R drive. This means that any differ-
+ences should be transparent to the drive. The same low-power laser beam passes in front 
+of the simulated pits and lands. For a land, the beam reaches the reflective layer and is 
+reflected. For a simulated pit, the spot is opaque, so the beam cannot be reflected back.
+❑
+❑
+Format and speed. The format, capacity, and speed of CD-Rs are the same as 
+CD‑ROMs.
+❑
+❑
+Application. This technology is very attractive for the creation and distribution of a 
+small number of disks. It is also very useful for making archive files and backups. 
+CD-RW
+Although CD-Rs have become very popular, they can be written to only once. To overwrite 
+previous materials, a new technology allows a new type of disk called compact disk rewrit-
+able (CD-RW). It is sometimes called an erasable optical disk.
+Figure 5.10  Making a CD-R
+Polycarbonate
+resin
+Protective layer
+Label
+Dye
+Laser source
+Laser detector
+Simulated pit
+Reﬂective layer
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.4  Input/Output Subsystem
+103
+❑
+❑
+Creation. CD-RW technology uses the same principles as CD-R to create the disk 
+(Figure 5.11). The following lists the differences: 
+a.	 Instead of dye, the technology uses an alloy of silver, indium, antimony, and tel-
+lurium. This alloy has two stable states: crystalline (transparent) and amorphous 
+(nontransparent).
+b.	The drive uses high-power lasers to create simulated pits in the alloy (changing it 
+from crystalline to amorphous).
+❑
+❑
+Reading. The drive uses the same type of low-power laser beam as CD-ROM and 
+CD-R to detect pits and lands.
+❑
+❑
+Erasing. The drive uses a medium-power laser beam to change pits to lands. The beam 
+changes a location from the amorphous state to the crystalline state. 
+❑
+❑
+Format and speed. The format, capacity, and speed of CD-RWs are the same as 
+CD-ROMs.
+❑
+❑
+Application. The technology is definitely more attractive than CD-R technology. 
+However, CD-Rs are more popular for two reasons. First, blank CD-R discs are less 
+expensive than blank CD-RW discs. Second, CD-Rs are preferable in cases where the 
+created disk must not be changed, either accidentally or intentionally.
+DVD
+The industry has felt the need for digital storage media with even higher capacity. The 
+capacity of a CD-ROM (650 MB) is insufficient to store video information. The latest 
+optical memory storage device on the market is called a digital versatile disk (DVD). It 
+uses a technology similar to CD-ROM, but with the following differences:
+a.	 The pits are smaller: 0.4 microns in diameter instead of the 0.8 microns used 
+in CDs.
+b.	The tracks are closer to each other.
+c.	 The beam is a red laser instead of infrared.
+d.	DVDs use one to two recording layers, and can be single-sided or double-sided. 
+❑
+❑
+Capacity. These improvements result in higher capacities (Table 5.3).
+Figure 5.11  Making a CD-RW
+Polycarbonate
+resin
+Reﬂective Layer
+Protective Layer
+Label
+Laser source
+Laser detector
+Amorphous (pit)
+Crystalline (land)
+Alloy
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+104
+Computer Organization
+Table 5.3  DVD capacities
+Feature
+Capacity
+Single-sided, single-layer
+4.7 GB
+Single-sided, dual-layer
+8.5 GB
+Double-sided, single-layer
+9.4 GB
+Double-sided, dual-layer
+17 GB
+❑
+❑
+Compression. DVD technology uses MPEG (see Chapter 15) for compression. This 
+means that a single-sided, single-layer DVD can hold 133 minutes of video at high 
+resolution. This also includes both audio and subtitles. 
+❑
+❑
+Application. Today, the high capacity of DVDs attracts many applications that need 
+to store a high volume of data. 
+5.5  SUBSYSTEM INTERCONNECTION
+The previous sections outlined the characteristics of the three subsystems (CPU, main 
+memory, and I/O) in a stand-alone computer. In this section, we explore how these three 
+subsystems are interconnected. The interconnection plays an important role because 
+information needs to be exchanged between the three subsystems.
+5.5.1  Connecting CPU and memory
+The CPU and memory are normally connected by three groups of connections, each called 
+a bus: data bus, address bus, and control bus (Figure 5.12).
+Data bus
+The data bus is made of several connections, each carrying 1 bit at a time. The number of 
+connections depends on the size of the word used by the computer. If the word is 32 bits 
+(4 bytes), we need a data bus with 32 connections so that all 32 bits of a word can be 
+transmitted at the same time.
+Figure 5.12  Connecting CPU and memory using three buses
+Data bus
+Control bus
+Address bus
+CPU
+Memory
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.5  Subsystem Interconnection
+105
+Address bus
+The address bus allows access to a particular word in memory. The number of connec-
+tions in the address bus depends on the address space of the memory. If the memory has 
+2n words, the address bus needs to carry n bits at a time. Therefore, it must have n 
+connections.
+Control bus
+The control bus carries communication between the CPU and memory. For example, 
+there must be a code, sent from the CPU to memory, to specify a read or write operation. 
+The number of connections used in the control bus depends on the total number of 
+­control commands a computer needs. If a computer has 2m control actions, we need m 
+connections for the control bus, because m bits can define 2m different operations.
+5.5.2  Connecting I/O devices
+I/O devices cannot be connected directly to the buses that connect the CPU and memory 
+because the nature of I/O devices is different from the nature of CPU and memory. I/O 
+devices are electromechanical, magnetic, or optical devices, whereas the CPU and memory 
+are electronic devices. I/O devices also operate at a much slower speed than the CPU/
+memory. There is a need for some sort of intermediary to handle this difference. Input/
+output devices are therefore attached to the buses through input/output controllers or 
+interfaces. There is one specific controller for each input/output device (Figure 5.13).
+Controllers
+Controllers or interfaces bridge the gap between the nature of the I/O device and the 
+CPU and memory. A controller can be a serial or parallel device. A serial controller has 
+only one data wire, while a parallel controller has several data connections so that several 
+bits can be transferred at a time. 
+Several kinds of controllers are in use. The most common ones today are SCSI, Fire-
+Wire, USB, and HDMI.
+Figure 5.13  Connecting I/O devices to the buses
+Disk
+controller
+CPU
+Memory
+Keyboard
+controller
+Monitor
+controller
+Printer
+controller
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+106
+Computer Organization
+SCSI
+The small computer system interface (SCSI) was first developed for Macintosh comput-
+ers in 1984. Today it is used in many systems. It has a parallel interface with 8, 16, or 32 
+connections. The SCSI interface provides a daisy-chained connection, as shown in 
+­Figure  5.14. Both ends of the chain must be connected to a special device called a 
+­terminator, and each device must have a unique address (target ID). 
+FireWire
+IEEE standard 1394 defines a serial interface commonly called FireWire. It is a high-speed serial 
+interface that transfers data in packets, achieving a transfer rate of up to 50 MB/sec, or double 
+that in the most recent version. It can be used to connect up to 63 devices in a daisy chain or a 
+tree connection (using only one connection). Figure 5.15 shows the connection of input/output 
+devices to a FireWire controller. There is no need for termination as there is for SCSI. 
+Figure 5.14  SCSI controller
+Memory
+SCSI
+Controller
+Disk
+CD-ROM
+Scanner
+Tape
+ID = 5
+ID = 3
+ID = 4
+ID = 2
+Terminator
+Terminator
+CPU
+Figure 5.15  FireWire controller
+FireWire
+Controller
+Disk
+Tape
+CD-ROM
+DVD
+Printer
+Camera
+Scanner
+CPU
+Memory
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.5  Subsystem Interconnection
+107
+USB
+Universal Serial Bus (USB) is a competitor for FireWire. Although the nomenclature uses 
+the term bus, USB is a serial controller that connects both low- and high-speed devices 
+to the computer bus. Figure 5.16 shows the connection of the USB controller to the bus 
+and the connection of devices to the controller. 
+Multiple devices can be connected to a USB controller, which is also referred to as a root 
+hub. USB-2 (USB Version 2.0) allows up to 127 devices to be connected to a USB control-
+ler using a tree-like topology with the controller as the root of the tree, hubs as the inter-
+mediate nodes, and the devices as the end nodes. The difference between the controller 
+(root hub) and the other hubs is that the controller is aware of the presence of other hubs 
+in the tree, but other hubs are passive devices that simply pass the data. 
+Devices can easily be removed or attached to the tree without powering down the 
+computer. This is referred to as hot-swappable. When a hub is removed from the system, 
+all devices and other hubs connected to it are also removed. 
+USB uses a cable with four wires. Two wires (+5 volts and ground) are used to provide 
+power for low-power devices such as keyboards or mice. A high-power device needs to be 
+connected to a power source. A hub gets its power from the bus and can provide power 
+for low-power devices. The other two wires (twisted together to reduce noise) are used to 
+carry data, addresses, and control signals. USB uses two different connectors: A and B. The 
+A connector (downstream connector) is rectangular and is used to connect to the USB 
+controller or the hub. The B connector (upstream connector) is close to square and is used 
+to connect to the device. Recently two new connectors, mini A and mini B, have been 
+introduced that are used for connecting to small devices and laptop computers. 
+USB-2 provides three data transfer rates: 1.5 Mbps (megabits per second), 12 Mbps, 
+and 480 Mbps. The low data rate can be used with slow devices such as keyboards and 
+mice, the medium data rate with printers, and the high data rate with mass storage devices. 
+Figure 5.16  USB controller
+USB Controller
+(Root hub)
+CPU
+Memory
+Device
+USB Cable
+Device
+Device
+Device
+Device
+Hub
+Hub
+Device
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+108
+Computer Organization
+Data is transferred over USB in packets (see Chapter 6). Each packet contains an 
+address part (device identifier), a control part, and part of the data to be transmitted to 
+that device. All devices will receive the same packet, but only those devices with the 
+­address defined in the packet will accept it. 
+USB 3.0 is another revision of the Universal Serial Bus (USB) standard for computer 
+connectivity. USB 3.0 adds a new transfer mode called SuperSpeed capable of transferring 
+data at up to 4.8 Gbit/s. It is promised to update USB 3.0 to 10 Gbit/s.
+HDMI
+HDMI (High-Definition Multimedia Interface) is a digital replacement for existing analog 
+video standards. It can be used for transferring video data digital audio data from a source to a 
+compatible computer monitor, video projector, digital television, or digital audio device. There 
+are a number of HDMI-standard cables available including standard, enhanced, high defini-
+tion, and 3D video signals; up to eight channels of compressed or uncompressed digital audio; 
+a CEC (Consumer Electronics Control) connection; and an Ethernet data connection. 
+5.5.3  Addressing input/output devices
+The CPU usually uses the same bus to read data from or write data to main memory and 
+I/O device. The only difference is the instruction. If the instruction refers to a word in main 
+memory, data transfer is between main memory and the CPU. If the instruction identifies 
+an I/O device, data transfer is between the I/O device and the CPU. There are two methods 
+for handling the addressing of I/O devices: isolated I/O and memory-mapped I/O.
+Isolated I/O
+In the isolated I/O method, the instructions used to read/write memory are totally differ-
+ent than the instructions used to read/write I/O devices. There are instructions to test, 
+control, read from, and write to I/O devices. Each I/O device has its own address. The I/O 
+addresses can overlap with memory addresses without any ambiguity because the instruc-
+tion itself is different. For example, the CPU can use a command ‘Read 101’ to read from 
+memory word 101, and it can use a command ‘Input 101’ to read from I/O device 101. 
+There is no confusion, because the read command is for reading from memory and the 
+input command is for reading from an I/O device (Figure 5.17).
+Figure 5.17  Isolated I/O addressing
+Controller
+System bus
+101
+101
+102
+103
+104
+Input 101
+Read 101
+CPU
+Memory
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.6  Program Execution
+109
+Memory-mapped I/O
+In the memory-mapped I/O method, the CPU treats each register in the I/O controller 
+as a word in memory. In other words, the CPU does not have separate instructions for 
+transferring data from memory and I/O devices. For example, there is only one ‘Read’ 
+instruction. If the address defines a word from memory, the data is read from that word. 
+If the address defines a register from an I/O device, the data is read from that register. The 
+advantage of the memory-mapped configuration is a smaller number of instructions: all 
+the memory instructions can be used by I/O devices. The disadvantage is that part of the 
+memory address space is allocated to registers in I/O controllers. For example, if we have 
+five I/O controllers and each has four registers, 20 addresses are used for this purpose. 
+The size of the memory is reduced by 20 words. Figure 5.18 shows the memory-mapped 
+I/O concept.
+5.6  PROGRAM EXECUTION
+Today, general-purpose computers use a set of instructions called a program to process 
+data. A computer executes the program to create output data from input data. Both the 
+program and the data are stored in memory. 
+At the end of this chapter we give some examples of how a  
+hypothetical simple computer executes a program. 
+5.6.1  Machine cycle
+The CPU uses repeating machine cycles to execute instructions in the program, one by 
+one, from beginning to end. A simplified cycle can consist of three phases: fetch, decode, 
+and execute (Figure 5.19).
+Figure 5.18  Memory-mapped I/O addressing
+Controller
+System bus
+64001
+64002
+64003
+64004
+101
+64000
+Read 101
+Read 64001
+CPU
+Memory
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+110
+Computer Organization
+Fetch
+In the fetch phase, the control unit orders the system to copy the next instruction into the 
+instruction register in the CPU. The address of the instruction to be copied is held in the 
+program counter register. After copying, the program counter is incremented to refer to 
+the next instruction in memory. 
+Decode
+The second phase in the cycle is the decode phase. When the instruction is in the instruc-
+tion register, it is decoded by the control unit. The result of this decode step is the binary 
+code for some operation that the system will perform. 
+Execute
+After the instruction is decoded, the control unit sends the task order to a component in 
+the CPU. For example, the control unit can tell the system to load (read) a data item from 
+memory, or the CPU can tell the ALU to add the contents of two input registers and put 
+the result in an output register. This is the execute phase.
+5.6.2  Input/output operation
+Commands are required to transfer data from I/O devices to the CPU and memory. 
+Because I/O devices operate at much slower speeds than the CPU, the operation of the 
+CPU must be somehow synchronized with the I/O devices. Three methods have been 
+devised for this synchronization: programmed I/O, interrupt-driven I/O, and direct 
+memory access (DMA).
+Programmed I/O
+In the programmed I/O method, synchronization is very primitive: the CPU waits for the 
+I/O device (Figure 5.20). 
+Figure 5.19  The steps of a cycle
+Start
+Stop
+[No more instructions]
+Fetch
+Decode
+Execute
+F
+E
+T
+C
+H
+ 
+ 
+ 
+ 
+ 
+D
+E
+C
+O
+D
+E
+ 
+ 
+ 
+ 
+ 
+E
+X
+E
+C
+U
+T
+E
+Machine
+  Cycle
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.6  Program Execution
+111
+Figure 5.20  Programmed I/O
+Start
+Stop
+[more words?]
+[ready]
+Issue I/O
+command
+Check
+device status
+Transfer
+a word
+An input/output
+instruction
+encountered
+Continue with
+the next instruction
+in the program
+The transfer of data between the I/O device and the CPU is done by an instruction 
+in the program. When the CPU encounters an I/O instruction, it does nothing else 
+until the data transfer is complete. The CPU constantly checks the status of the I/O 
+device: if the device is ready to transfer, data is transferred to the CPU. If the device 
+is not ready, the CPU continues checking the device status until the I/O device is 
+ready. The big issue here is that CPU time is wasted by checking the status of the I/O 
+device for each unit of data to be transferred. Note that data is transferred to memory 
+after the input operation, while data is transferred from memory before the output 
+operation.
+Interrupt-driven I/O
+In the interrupt-driven I/O method, the CPU informs the I/O device that a transfer is 
+going to happen, but it does not test the status of the I/O device continuously. The I/O 
+device informs (interrupts) the CPU when it is ready. During this time, the CPU can do 
+other jobs such as running other programs or transferring data from or to other I/O devices 
+(Figure 5.21).
+In this method, CPU time is not wasted—the CPU can do something else while 
+the slow I/O device is finishing a task. Note that, like programmed I/O, this method 
+also transfers data between the device and the CPU. Data is transferred to memory 
+after the input operation. while data is transferred from memory before the output 
+operation.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+112
+Computer Organization
+Figure 5.21  Interrupt-driven I/O
+Interrupt
+Start
+Stop
+[more words?]
+Issue I/O
+command
+Transfer
+a word
+An input/output
+instruction
+encountered
+Continue with
+the next instruction
+in the program
+Do something
+else, but monitor
+the interrupt
+Direct memory access (DMA)
+The third method used for transferring data is direct memory access (DMA). This method 
+transfers a large block of data between a high-speed I/O device, such as a disk, and mem-
+ory directly without passing it through the CPU. This requires a DMA controller that 
+relieves the CPU of some of its functions. The DMA controller has registers to hold a 
+block of data before and after memory transfer. Figure 5.22 shows the DMA connection 
+to the data, address, and control buses.
+Figure 5.22  DMA connection to the general bus
+Address
+Control
+Count
+Buffer
+Disk
+Disk controller
+DMA
+System bus
+Message (1)
+Bus request (2)
+Block data transfer (5) 
+Data (3)
+ACK (4)
+CPU
+Memory
+Control Unit
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.7  Different Architectures
+113
+Using this method for an I/O operation, the CPU sends a message to the DMA. The mes-
+sage contains the type of transfer (input or output), the beginning address of the memory 
+location, and the number of bytes to be transferred. The CPU is then available for other 
+jobs (Figure 5.23). 
+When ready to transfer data, the DMA controller informs the CPU that it needs to take 
+­control of the buses. The CPU stops using the buses and lets the controller use them. 
+­After data transfer directly between the DMA and memory, the CPU continues its nor-
+mal ­operation. Note that, in this method, the CPU is idle for a time. However, the dura-
+tion of this idle period is very short compared to other methods—the CPU is idle only 
+during the data transfer between the DMA and memory, not while the device prepares 
+the data.
+5.7  DIFFERENT ARCHITECTURES
+The architecture and organization of computers have gone through many changes in 
+recent decades. In this section we discuss some common architectures and organizations 
+that differ from the simple computer architecture we discussed earlier. 
+5.7.1  CISC
+CISC (pronounced sisk) stands for complex instruction set computer (CISC). The strat-
+egy behind CISC architectures is to have a large set of instructions, including complex 
+ones. Programming CISC-based computers is easier than in other designs because there is 
+a single instruction for both simple and complex tasks. Programmers therefore do not 
+have to write a set of instructions to do a complex task.
+Figure 5.23  DMA input/output
+Interrupt (DMA ready for data transfer)
+Interrupt (DMA has ﬁnished data transfer)
+Start
+Stop
+Issue I/O
+command
+Wait
+An input/output
+instruction
+encountered
+Continue with
+the next instruction
+in the program
+Do something
+else, but monitor
+the interrupt
+Release access
+to buses and wait 
+for DMA to ﬁnish
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+114
+Computer Organization
+The complexity of the instruction set makes the circuitry of the CPU and the con-
+trol unit very complicated. The designers of CISC architectures have come up with a 
+solution to reduce this complexity: programming is done on two levels. An instruction 
+in machine language is not executed directly by the CPU—the CPU performs only sim-
+ple operations, called microoperations. A complex instruction is transformed into a set of 
+these simple operations and then executed by the CPU. This necessitates the addition of 
+a special memory called micromemory that holds the set of operations for each complex 
+instruction in the instruction set. The type of programming that uses microoperations is 
+called ­microprogramming. 
+One objection to CISC architecture is the overhead associated with microprogram-
+ming and access to micromemory. However, proponents of the architecture argue that this 
+compensates for smaller programs at the machine level. An example of CISC architecture 
+can be seen in the Pentium series of processors developed by Intel. 
+5.7.2  RISC
+RISC (pronounced risk) stands for reduced instruction set computer. The strategy 
+behind RISC architecture is to have a small set of instructions that do a minimum 
+number of simple operations. Complex instructions are simulated using a subset of 
+simple instructions. Programming in RISC is more difficult and time-consuming than 
+in the other design because most of the complex instructions are simulated using 
+simple instructions. 
+5.7.3  Pipelining
+We have learned that a computer uses three phases of fetch, decode, and execute for 
+each instruction. In early computers, these three phases needed to be done in series for 
+each instruction. In other words, instruction n needs to finish all of these phases before the 
+instruction n + 1 can start its own phases. Modern computers use a technique called pipe-
+lining to improve the throughput (the total number of instructions performed in each 
+period of time). The idea is that if the control unit can do two or three of these phases 
+simultaneously, the next instruction can start before the previous one is finished. 
+­Figure 5.24.a shows how three consecutive instructions are handled in a computer that 
+uses no pipelining. Figure 5.24.b shows how pipelining can increase the throughput of the 
+computer by allowing different types of phases belonging to different instructions to be 
+done simultaneously. In other words, when the CPU is performing the decode phase of 
+the first instruction, it can also perform the fetch phase of the second instruction. The first 
+computer can perform on average 9 phases in the specific period of time, while the 
+­pipelined computer can perform 24 phases in the same period of time. If we assume that 
+each phase uses the same amount of time, the first computer has done 9/3 = 3 instructions 
+while the second computer has done 24/3 = 8 instructions. The throughput is therefore 
+increased 8/3 or 266 per cent.
+Of course, pipelining is not as easy as this. There are some problems, such as when a 
+jump instruction is encountered. In this case, the instruction in the pipe should be discard-
+ed. However, new CPU designs have overcome most drawbacks. Some new CPU designs 
+can even do several fetch cycles simultaneously. 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.7  Different Architectures
+115
+Figure 5.24  Pipelining
+Time
+b. Pipelining
+Fetch
+Fetch
+Fetch
+Decode
+Decode
+Decode
+Execute
+Execute
+Execute
+Fetch
+Fetch
+Fetch
+Decode
+Decode
+Decode
+Execute
+Execute
+Fetch
+Fetch
+Fetch
+Decode
+Decode
+Execute
+Execute
+Instruction 1
+Instruction 2
+Instruction 3
+Time
+a. No pipelining
+Fetch
+Fetch
+Fetch
+Decode
+Decode
+Decode
+Execute
+Execute
+Execute
+5.7.4  Parallel processing
+Traditionally a computer had a single control unit, a single arithmetic logic unit, and a 
+single memory unit. With the evolution in technology and the drop in the cost of com-
+puter hardware, today we can have a single computer with multiple control units, multi-
+ple arithmetic logic units and multiple memory units. This idea is referred to as parallel 
+processing. Like pipelining, parallel processing can improve throughput. 
+Parallel processing involves many different techniques. A general view of parallel 
+processing is given by the taxonomy proposed by M. J. Flynn. This taxonomy divides the 
+computer’s organization (in term of processing data) into four categories, as shown in 
+Figure 5.25. According to Flynn, parallel processing may occur in the data stream, the 
+instruction stream, or both.
+SISD organization
+A single instruction-stream, single data-stream (SISD) organization represents a com-
+puter that has one control unit, one arithmetic logic unit, and one multiple memory units. 
+The instructions are executed sequentially and each instruction may access one or more 
+data items in the data stream. Our simple computer introduced earlier in the chapter is 
+an example of SISD organization. Figure 5.26 shows the concept of configuration for an 
+SISD organization. 
+Figure 5.25  A taxonomy of computer organization
+Organization
+SISD
+Single Instruction-stream, Single Data-stream
+SIMD
+Single Instruction-stream, Multiple Data-stream
+MIMD
+MISD
+Multiple Instruction-stream, Single Data-stream
+Multiple Instruction-stream, Multiple Data-stream
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+116
+Computer Organization
+SIMD organization
+A single instruction-stream, multiple data-stream (SIMD) organization represents a 
+computer that has one control unit, multiple processing units, and multiple memory 
+units. All processor units receive the same instruction from the control unit, but operate 
+on different items of data. An array processor that simultaneously operates on an array of 
+data belongs to this category. Figure 5.27 shows the concept and implementation of an 
+SIMD organization. 
+Figure 5.27  SIMD organization
+ALU
+ALU
+ALU
+CU
+MUs
+Data 
+streams
+Instruction
+stream
+17
+81
+25
+32
+14
+22
+Load R1 40
+Load R1 50 
+a. Concept
+b. Implementation
+CU: Control Unit
+ALU: Arithmetic Logic Unit
+MU: Memory Unit
+MISD organization
+A multiple instruction-stream, single data-stream (MISD) architecture is one in which 
+­several instructions belonging to several instruction streams simultaneously operate 
+on the same data stream. Figure 5.28 shows the concept, but it has never been 
+implemented. 
+Figure 5.26  SISD organization
+PU
+CU
+MU
+a. Concept
+b. Conﬁguration
+CU: Control unit
+PU: Processing unit
+MU: Memory unit
+Data 
+stream
+Instruction
+stream
+14
+22
+Load R1 40
+Load R1 50 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.8  A Simple Computer
+117
+Figure 5.28  MISD organization
+Data 
+stream
+Instruction
+streams
+14
+22
+Load R1 40
+Load R2 50 
+Load R3 80
+Load R4 81 
+Load R26 120
+Load R27 121 
+MIMD organization
+A multiple instruction-stream, multiple data-stream (MIMD) architecture is one in which 
+several instructions belonging to several instruction streams simultaneously operate on sev-
+eral data streams (each instruction on one data stream). Figure 5.29 shows the concept and 
+implementation. MIMD organization is considered as a true parallel processing architecture 
+by some experts. In this architecture several tasks can be performed simultaneously. The 
+architecture can use a single shared memory or multiple memory sections. 
+Parallel processing has found some applications, mostly in the scientific community, in which 
+a task may take several hours or days if done using a traditional computer architecture. Some 
+examples of this can be found in multiplication of very large matrices, in simultaneous pro-
+cessing of large amounts of data for weather prediction, or in space flight simulations. 
+5.8  A SIMPLE COMPUTER
+To explain the architecture of computers as well as their instruction processing, we intro-
+duce a simple (unrealistic) computer, as shown in Figure 5.30. Our simple computer has 
+three components: CPU, memory, and an input/output subsystem.
+Figure 5.29  MIMD organization
+14
+22
+71
+25
+32
+111
+Instruction
+streams
+Data 
+streams
+Load R1 40
+Load R2 50 
+Load R3 80
+Load R4 81 
+Load R26 120
+Load R27 121 
+a. Concept
+ALU
+ALU
+ALU
+CU
+CU
+CU
+MUs
+b. Implementation
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+118
+Computer Organization
+Figure 5.30  The components of a simple computer
+ALU
+Control unit
+CPU
+Memory
+FE: Keyboard Address
+FF: Monitor Address
+PC: Program Counter
+IR: Instruction Register
+R: Register
+Program
+Contents
+(16 bits)
+Address
+(8 bits)
+Data
+Registers
+R0
+R1
+R2
+R15
+PC
+IR
+1 4 0 0
+00
+00
+01
+40
+3F
+41
+42
+FD
+FE
+Input/output devices
+Keyboard
+FF
+Monitor
+5.8.1  CPU
+The CPU itself is divided into three sections: data registers, arithmetic logic unit (ALU), 
+and the control unit.
+Data registers
+There are sixteen 16-bit data registers with hexadecimal addresses (0, 1, 2,..., F)16, but we 
+refer to them as R0 to R15. In most instructions, they hold 16-bit data, but in some instruc-
+tions they may hold other information.
+Control unit
+The control unit has the circuitry to control the operations of the ALU, access to memory, 
+and access to the I/O subsystem. In addition, it has two dedicated registers: program 
+counter and instruction register. The program counter (PC), which can hold only eight bits, 
+keeps track of which instruction is to be executed next. The contents of the PC points to 
+the address of the memory location of the main memory that holds the next program 
+instruction. After each machine cycle the program counter is incremented by one to point 
+to the next program instruction. The instruction register (IR) holds a 16-bit value which is 
+the encoded instruction for the current cycle. 
+5.8.2  Main memory
+The main memory has 256 16-bit memory locations with binary addresses (00000000 to 
+11111101)2 or hexadecimal addresses (00 to FD)16. The main memory holds both data and 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.8  A Simple Computer
+119
+program instruction. The first 64 locations (00 to 3F)16 are dedicated to program instruc-
+tions. Program instructions for any program are stored in consecutive memory locations. 
+Memory locations (40 to FD)16 are used for storing data. 
+5.8.3  Input/output subsystem
+Our simple computer has a very primitive input/output subsystem. The subsystem consists 
+of a keyboard and a monitor. Although we show the keyboard and monitor in a separate box 
+in Figure 5.30, the subsystem is part of the memory address-wise. These devices have 
+­memory-mapped addresses, as discussed earlier in the chapter. We assume that the ­keyboard 
+(as the input device) and monitor (as the only output device) act like memory locations 
+with addresses (FE)16 and (FF)16 respectively, as shown in the figure. In other words, we 
+assume that they behave as 16-bit registers that interact with the CPU as a memory location 
+would. These two devices transfer data from the outside world to the CPU and vice versa.
+5.8.4  Instruction set
+Our simple computer is capable of having a set of 16 instructions, although we are using 
+only 14 of these instructions. Each computer instruction consists of two parts: the opera-
+tion code (opcode) and the operand(s). The opcode specifies the type of operation to be 
+performed on the operand(s). Each instruction consists of 16 bits divided into four 4-bit 
+fields. The leftmost field contains the opcode and the other three fields contain the operand 
+or address of operand(s), as shown in Figure 5.31. 
+The instructions are listed in Table 5.4 below. Note that not every instruction requires three 
+operands. Any operand field not needed is filled with (0)16. For example, all three operand fields 
+of the halt instruction, and the last field of the move and NOT instructions, are filled with (0)16. 
+Also note that a register address is described by a single hexadecimal digit and thus uses a single 
+field, but a memory location is described by two hexadecimal digits and uses two fields.
+There are two add instructions: one for adding integers (ADDI) and one for adding float-
+ing points numbers (ADDF). The simple computer can take input from keyboard if we use 
+Figure 5.31  Format and different instruction types
+Opcode
+4 bits
+12 bits
+Operand
+a. Instruction format
+b. Instruction types
+Opcode
+Opcode
+R-address R-address R-address
+Opcode
+Memory address
+R-address
+Opcode
+R-address
+0 or 1
+n
+Opcode
+R-address
+Opcode
+R-address R-address
+Opcode
+Memory address
+R-address
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+120
+Computer Organization
+address (FE)16 as the second operand of the LOAD instruction. Similarly, the computer sends 
+output to the monitor if we use the address (FF)16 as the second operand of the STORE 
+­instruction. If the third operand of the ROTATE instruction is 0, the instruction circularly 
+rotates the bit pattern in R to the right n places: if the third operand is 1, it rotates it to the 
+left. We have also included one increment (INC) and one decrement (DEC) instruction. 
+Table 5.4  List of instructions for the simple computer
+Instruction
+Code
+Operands
+Action
+d1
+d2
+d3
+d4
+HALT
+0
+Stops the execution of the program
+LOAD
+1
+RD
+MS
+RD ← MS
+STORE
+2
+MD
+RS
+MD  ← RS
+ADDI
+3
+RD
+RS1
+RS2
+RD  ← RS1 + RS2 
+ADDF
+4
+RD
+RS1
+RS2
+RD ← RS1 + RS2
+MOVE
+5
+RD
+RS
+RD ← RS
+NOT
+6
+RD
+RS
+RD ← RS
+AND
+7
+RD
+RS1
+RS2
+RD ← RS1 AND RS2
+OR
+8
+RD
+RS1
+RS2
+RD  ← RS1 OR RS2
+XOR
+9
+RD
+RS1
+RS2
+RD  ← RS1 XOR RS2
+INC
+A
+R
+R ← R + 1
+DEC
+B
+R
+R     ← R - 1
+ROTATE
+C
+R
+n
+0 or 1
+Rotn R
+JUMP
+D
+R
+n
+IF R0 ≠ R then PC 5 n, otherwise continue
+Key: RS, RS1, RS2: Hexadecimal address of source registers 
+RD: Hexadecimal address of destination register 
+MS: Hexadecimal address of source memory location 
+MD: Hexadecimal address of destination memory location 
+n: Hexadecimal number 
+d1, d2, d3, d4: First, second, third, and fourth hexadecimal digits
+5.8.5  Processing the instructions
+Our simple computer, like most computers, uses machine cycles. A cycle is made of 
+three phases: fetch, decode, and execute. During the fetch phase, the instruction whose 
+address is determined by the PC is obtained from the memory and loaded into the IR. 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.8  A Simple Computer
+121
+The PC is then incremented to point to the next instruction. During the decode phase, 
+the instruction in the IR is decoded and the required operands are fetched from the 
+register or from memory. During the execute phase, the instruction is executed and the 
+results are placed in the appropriate memory location or the register. Once the third 
+phase is completed, the control unit starts the cycle again, but now the PC is pointing 
+to the next instruction. The process continues until the CPU reaches a HALT 
+instruction.
+An example
+Let us show how our simple computer can add two integers A and B and create the result 
+as C. We assume that integers are in two’s complement format. Mathematically, we show 
+this operation as:
+C  5  A 1 B
+To solve this problem with the simple computer, it is necessary for the first two inte-
+gers to be held in two registers (for example, R0 and R1) and the result of the operation 
+to be held in a third register (for example R2). The ALU can only operate on the data 
+that is stored in data registers in the CPU. However, most computers, including our 
+simple computer, have a limited number of registers in the CPU. If the number of data 
+items is large and they are supposed to stay in the computer for the duration of the 
+program, it is better to store them in memory and only bring them to the registers 
+temporarily. So we assume that the first two integers are stored in memory locations 
+(40)16 and (41)16 and the result should be stored in memory location (42)16. This 
+means that two integers need to be loaded into the CPU and the result needs to be 
+stored in the memory. Therefore, a simple program to do the simple addition needs 
+five instructions, as shown below: 
+1. Load the contents of M40 into register R0 (R0 ← M40).
+2. Load the contents of M41 into register R1 (R1 ← M41).
+3. Add the contents of R0 and R1 and place the result in R2 (R2 ← R0 + R1).
+4. Store the contents R2 in M42 (M42 ← R2).
+5. Halt.
+In the language of our simple computer, these five instructions are encoded as:
+Code
+Interpretation 
+(1040)16     
+1: LOAD 
+0: R0 
+40: M40 
+(1141)16
+1: LOAD 
+1: R1 
+41: M41 
+(3201)16
+3: ADDI 
+2: R2 
+0: R0 
+1: R1 
+(2422)16
+2: STORE 
+42: M42 
+2: R2 
+(0000)16
+0: HALT
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+122
+Computer Organization
+5.8.6  Storing program and data
+To follow the von Neumann model, we need to store the program and the data in memory. 
+We can store the five-line program in memory starting from location (00)16 to (04)16. We 
+already know that the data needs to be stored in memory locations (40)16, (41)16, and (42)16.
+5.8.7  Cycles
+Our computer uses one cycle per instruction. If we have a small program with five instruc-
+tions, we need five cycles. We also know that each cycle is normally made up of three 
+steps: fetch, decode, execute. Assume for the moment that we need to add 161 + 254 = 415. 
+The numbers are shown in memory in hexadecimal is, (00A1)16, (00FE)16, and (019F)16.
+Cycle 1
+At the beginning of the first cycle (Figure 5.32), the PC points to the first instruction of the 
+program, which is at memory location (00)16. The control unit goes through three steps:
+1.	 The control unit fetches the instruction stored in memory location (00)16 and puts it 
+in the IR. After this step, the value of the PC is incremented. 
+2.	 The control unit decodes the instruction (1040)16 as R0 ← M40. 
+3.	 The control unit executes the instruction, which means that a copy of the integer 
+stored in memory location (40) is loaded into register R0. 
+Cycle 2
+At the beginning of the second cycle (Figure 5.33), the PC points to the second instruc-
+tion of the program, which is at memory location (01)16. The control unit goes through 
+three steps:
+Figure 5.32  Status of cycle 1
+ALU
+Control unit
+Memory
+Decoding of (1040)16
+Registers
+R0
+R1
+R2
+R15
+1040
+00A1
+1040
+1141
+3201
+2422
+0000
+00
+00
+01
+02
+03
+04
+40
+41
+42
+2
+1
+3
+Decode
+2
+Fetch
+1
+Execute
+3
+M40
+ R0 
+00A1
+00FE
+PC
+IR
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.8  A Simple Computer
+123
+1.	 The control unit fetches the instruction stored in memory location (01)16 and puts it 
+in the IR. After this step, the value of the PC is incremented. 
+2.	 The control unit decodes the instruction (1141)16 as R1 ← M41. 
+3.	 The control unit executes the instruction, which means that a copy of integer stored 
+in memory location (41)16 is loaded into register R1. 
+Cycle 3
+At the beginning of the third cycle (Figure 5.34), the PC points to the third instruction of 
+the program, which is at memory location (02)16. The control unit goes through three steps:
+1.	 The control unit fetches the instruction stored in memory location (02)16 and puts it 
+in the IR. After this step, the value of the PC is incremented. 
+2.	 The control unit decodes the instruction (3201)16 as R2 ← R0 + R1. 
+3.	 The control unit executes the instruction, which means that the contents of R0 is add-
+ed to the content of R1 (by the ALU) and the result is put in R2. 
+Cycle 4
+At the beginning of the fourth cycle (Figure 5.35), the PC points to the fourth instruction of 
+the program, which is at memory location (03)16. The control unit goes through three steps:
+1.	 The control unit fetches the instruction stored in memory location (03)16 and puts it 
+in the IR. After this step, the value of the PC is incremented. 
+2.	 The control unit decodes the instruction (2422)16 as M42 ← R2. 
+3.	 The control unit executes the instruction, which means a copy of integer in register R2 
+is stored in memory location (42)16. 
+Figure 5.33  Status of cycle 2
+ALU
+Control unit
+Memory
+Decoding of (1141)16
+Registers
+R0
+R1
+R2
+R15
+1040
+00A1
+00A1
+00FE
+00FE
+1141
+1141
+3201
+2422
+0000
+00
+01
+01
+02
+03
+04
+40
+41
+42
+2
+1
+3
+Decode
+2
+Fetch
+1
+Execute
+3
+M41
+ R1 
+PC
+IR
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+124
+Computer Organization
+Cycle 5
+At the beginning of the fifth cycle (Figure 5.36), the PC points to the fifth instruction of the 
+program, which is at memory location (04)16. The control unit goes through three steps:
+Figure 5.34  Status of cycle 3
+ALU
+Control unit
+Memory
+Decoding of (3201)16
+Registers
+R0
+R1
+R2
+R15
+PC
+IR
+1040
+00A1
+00A1
+00FE
+019F
+00FE
+3201
+1141
+3201
+2422
+0000
+00
+02
+01
+02
+03
+04
+40
+41
+42
+2
+1
+3
+Decode
+2
+Fetch
+1
+Execute
+3
+R0 + R1
+ R2 
+Figure 5.35  Status of cycle 4
+ALU
+Control unit
+Memory
+Decoding of (2422)16
+Registers
+R0
+R1
+R2
+R15
+1040
+00A1
+00A1
+00FE
+019F
+019F
+00FE
+2422
+1141
+3201
+2422
+0000
+00
+03
+01
+02
+03
+04
+40
+41
+42
+2
+1
+Decode
+2
+Fetch
+1
+Execute
+3
+R2
+ M42 
+3
+PC
+IR
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.8  A Simple Computer
+125
+1.	 The control unit fetches the instruction stored in memory location (04)16 and puts it 
+in the IR. After this step, the value of the PC is incremented. 
+2.	 The control unit decodes the instruction (0000)16 as Halt.
+3.	 The control unit executes the instruction, which means that the computer stops. 
+5.8.8  Another example
+In the previous example we assumed that the two integers to be added were already in 
+memory. We also assume that the result of addition will be held in memory. You may ask 
+how we can store the two integers we want to add in memory, or how we use the result 
+when it is stored in the memory. In a real situation, we enter the first two integers into 
+memory using an input device such as keyboard, and we display the third integer through 
+an output device such as a monitor. Getting data via an input device is normally called a 
+read operation, while sending data to an output device is normally called a write operation. 
+To make our previous program more practical, we need to modify it as follows: 
+1. Read an integer into M40. 
+2. R0 ← M40.
+3. Read an integer into M41.
+4. R1 ← M41.
+5. R2 ← R0 + R1.
+6. M42 ← R2.
+7. Write the integer from M42.
+8. Halt.
+There are many ways to implement input and output. Most computers today do direct 
+data transfer from an input device to memory and direct data transfer from memory to an 
+Figure 5.36  Status of cycle 5
+ALU
+Control unit
+Memory
+Decoding of (0000)16
+Registers
+R0
+R1
+R2
+R15
+1040
+00A1
+00A1
+00FE
+019F
+019F
+00FE
+0000
+1141
+3201
+2422
+0000
+00
+04
+01
+02
+03
+04
+40
+41
+42
+2
+1
+Decode
+2
+Fetch
+1
+Halt 
+PC
+IR
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+126
+Computer Organization
+output device. However, our simple computer is not one of them. In our computer we can 
+simulate read and write operations using the LOAD and STORE instruction. Furthermore, 
+LOAD and STORE read data input to the CPU and write data from the CPU. We need two 
+instructions to read data into memory or write data out of memory. The read operation is:
+R ← MFE    Because the keyboard is assumed to be memory location (FE)16
+M ← R 
+The write operation is: 
+R ← M 
+MFF ← R   Because the monitor is assumed to be memory location (FF)16
+You may ask, if the operations are supposed to be done in the CPU, why do we transfer 
+the data from the keyboard to the CPU, then to the memory, then to the CPU for process-
+ing? Could we directly transfer data to the CPU? The answer is that we can do this for this 
+small problem, but we should not do it in principle. Think what happens if we need to add 
+1000 numbers or sort 1 000 000 integers. The number of registers in the CPU is limited (it 
+may be hundreds in a real computer, but still not enough).
+The input operation must always read data from an input device  
+into memory: the output operation must always write data  
+from memory to an output device. 
+With this in mind, the program is coded as: 
+1
+(1FFE)16            
+5
+(1040)16               
+9
+(1F42)16
+2
+(240F)16              
+6
+(1141)16
+10
+(2FFF)16
+3
+(1FFE)16             
+7
+(3201)16
+11
+(0000)16
+4
+(241F)16              
+8
+(2422)16
+Operations 1 to 4 are for input and operations 9 and 10 are for output. When we run this 
+program, it waits for the user to input two integers on the keyboard and press the enter 
+key. The program then calculates the sum and displays the result on the monitor. 
+5.8.9  Reusability
+One of the advantages of a computer over a non-programmable calculator is that we can 
+use the same program over and over. We can run the program several times and each time 
+enter different inputs and obtain a different output.
+5.9  END-CHAPTER MATERIALS
+5.9.1  Recommended reading
+For more details about subjects discussed in this chapter, the following books are 
+recommended: 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.9  End-Chapter Materials
+127
+❑
+❑
+Englander, I. The Architecture of Computer Hardware and Systems Software, Hoboken, 
+NJ: Wiley, 2003
+❑
+❑
+Mano, M. Computer System Architecture, Upper Saddle River, NJ: Prentice-Hall, 1993
+❑
+❑
+Null, L. and Lobur, J. Computer Organization and Architecture, Sudbury, MA: Jones 
+and Bartlett, 2003
+❑
+❑
+Hamacher, C., Vranesic, Z. and Zaky, S. Computer Organization, New York: 
+­McGraw-Hill, 2002
+❑
+❑
+Warford, S. Computer Systems, Sudbury, MA: Jones and Bartlett, 2005
+❑
+❑
+Ercegovac, M., Lang, T. and Moreno, J. Introduction to Digital Systems, Hoboken, NJ: 
+Wiley, 1998
+❑
+❑
+Cragon, H. Computer Architecture and Implementation, Cambridge: Cambridge 
+­University Press, 2000
+❑
+❑
+Stallings, W. Computer Organization and Architecture, Upper Saddle River, NJ: 
+­Prentice-Hall, 2002
+5.9.2  Key terms
+(Continued)
+address bus 105
+magnetic disk 98
+address space 94
+magnetic tape 99
+arithmetic logic unit (ALU) 92
+main memory 94
+bus 104
+master disk 100
+cache memory 97
+memory mapped I/O 109
+central processing unit (CPU) 92
+monitor 98
+compact disk (CD) 99
+multiple instruction-stream, multiple data-
+stream (MIMD) 117
+compact disk read-only memory 
+(CD‑ROM) 100
+multiple instruction-stream, single data-
+stream (MISD) 116
+compact disk recordable (CD-R) 102
+nonstorage device 98
+complex instruction set computer  
+(CISC) 113
+optical storage device 99
+control bus 105
+output device 98
+controller 105
+parallel processing 115
+control unit 94
+pipelining 114
+data bus 104
+pit 100
+decode 110
+polycarbonate resin 100
+digital versatile disk (DVD) 103
+printer 98
+direct memory access (DMA) 112
+program counter 93
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+128
+Computer Organization
+5.9.3  Summary
+❑
+❑
+The parts that make up a computer can be divided into three broad categories or sub-
+systems: the central processing unit (CPU), the main memory, and the input/output 
+subsystem. 
+❑
+❑
+The central processing unit (CPU) performs operations on data. It has three parts: an 
+arithmetic logic unit (ALU), a control unit, and a set of registers. The arithmetic logic 
+unit (ALU) performs logic, shift, and arithmetic operations on data. Registers are fast 
+stand-alone storage locations that hold data temporarily. The control unit controls the 
+operation of each part of the CPU. 
+dynamic RAM (DRAM) 96
+programmed I/O 110
+electrically erasable programmable 
+read-only memory (EEPROM) 96
+random access memory (RAM) 95
+erasable programmable read-only 
+memory (EPROM) 96
+read-only memory (ROM) 96
+execute 110
+read/write head 98
+fetch 110
+reduced instruction set computer (RISC) 114
+FireWire 106
+register 93
+HDMI (High-Definition Multimedia 
+Interface) 108
+rotational speed 99
+hub 107
+sector 99
+input/output controller 105
+seek time 99
+input/output subsystem 97
+single instruction-stream, multiple data-
+stream (SIMD) 116
+instruction register 93
+static RAM (SRAM) 95
+interrupt-driven I/O 111
+storage device 98
+intersector gap 99
+throughput 114
+intertrack gap 99
+topology 107
+isolated I/O 108
+track 99
+land 100
+transfer time 99
+machine cycle 109
+Universal Serial Bus (USB) 107
+programmable read-only memory 
+(PROM) 96
+write once, read many (WORM) 102
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.9  End-Chapter Materials
+129
+❑
+❑
+Main memory is a collection of storage locations, each with a unique identifier called 
+the address. Data is transferred to and from memory in groups of bits called words. The 
+total number of uniquely identifiable locations in memory is called the address space. 
+Two types of memory are available: random access memory (RAM) and read-only 
+memory (ROM).
+❑
+❑
+The collection of devices referred to as the input/output (I/O) subsystem allows a 
+computer to communicate with the outside world and to store programs and data 
+even when the power is off. Input/output devices can be divided into two broad cat-
+egories: nonstorage and storage devices. Nonstorage devices allow the CPU/memory 
+to communicate with the outside world. Storage devices can store large amounts of 
+information to be retrieved at a later time. Storage devices are categorized as either 
+magnetic or optical. 
+❑
+❑
+The interconnection of the three subsystems of a computer plays an important 
+role, because information needs to be exchanged between these subsystems. 
+The CPU and memory are normally connected by three groups of connections, 
+each called a bus: data bus, address bus, and control bus. Input/output devices 
+are attached to the buses through an input/output controller or interface. Several 
+kinds of controllers are in use. The most common ones today are SCSI, FireWire, 
+and USB.
+❑
+❑
+There are two methods of handling the addressing of I/O devices: isolated I/O and 
+memory-mapped I/O. In the isolated I/O method, the instructions used to read/write 
+to and from memory are different from the instructions used to read/write to and 
+from input/output devices. In the memory-mapped I/O method, the CPU treats each 
+register in the I/O controller as a word in memory.
+❑
+❑
+Today, general-purpose computers use a set of instructions called a program to process 
+data. A computer executes the program to create output data from input data. Both 
+the program and the data are stored in memory. The CPU uses repeating machine 
+cycles to execute instructions in the program, one by one, from beginning to end. A 
+simplified cycle can consist of three phases: fetch, decode, and execute.
+❑
+❑
+Three methods have been devised for synchronization between I/O devices 
+and the CPU: programmed I/O, interrupt-driven I/O, and direct memory access 
+(DMA).
+❑
+❑
+The architecture and organization of computers have gone through many changes during 
+recent decades. We can divide computer architecture into two broad categories: CISC 
+(complex instruction set computers) and RISC (reduced instruction set computers). 
+❑
+❑
+Modern computers use a technique called pipelining to improve their throughput. 
+The idea is to allow the control unit to perform two or three phases simultaneously, 
+which means that processing of the next instruction can start before the previous one 
+is finished.
+❑
+❑
+Traditionally, a computer had a single control unit, a single arithmetic logic unit, and 
+a single memory unit. Parallel processing can improve throughput by using multiple 
+instruction streams to handle multiple data streams. 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+130
+Computer Organization
+5.10  PRACTICE SET
+5.10.1  Quizzes
+A set of interactive quizzes for this chapter can be found on the book’s website. It is 
+strongly recommended that the student takes the quizzes to check his/her understanding 
+of the materials before continuing with the practice set.
+5.10.2  Review questions
+Q5-1.	
+What are the three subsystems that make up a computer?
+Q5-2.	
+What are the components of a CPU?
+Q5-3.	
+What is the function of the ALU?
+Q5-4.	
+What is the function of the control unit?
+Q5-5.	
+What is the function of main memory?
+Q5-6.	
+Define RAM, ROM, SRAM, DRAM PROM, EPROM, and EEPROM.
+Q5-7.	
+What is the purpose of cache memory?
+Q5-8.	
+Describe the physical components of a magnetic disk.
+Q5-9.	
+How are the surfaces of a magnetic disk and magnetic tape organized?
+Q5-10.	 Compare and contrast CD-R, CD-RW, and DVD.
+Q5-11.	 Compare and contrast SCSI, FireWire and USB controllers.
+Q5-12.	 Compare and contrast the two methods for handling the addressing of I/O 
+devices.
+Q5-13.	 Compare and contrast the three methods for handling the synchronization of the 
+CPU with I/O devices.
+Q5-14.	 Compare and contrast CISC architecture with RISC architecture.
+Q5-15.	 Describe pipelining and its purpose.
+Q5-16.	 Describe parallel processing and its purpose. 
+5.10.3  Problems
+P5-1.	
+A computer has 64 MB (megabytes) of memory. Each word is 4 bytes. How many 
+bits are needed to address each single word in memory?
+P5-2.	
+How many bytes of memory are needed to store a full screen of data if the screen 
+is made of 24 lines with 80 characters in each line? The system uses ASCII code, 
+with each ASCII character stored as a byte.
+P5-3.	
+An imaginary computer has 16 data registers (R0 to R15), 1024 words in mem-
+ory, and 16 different instructions (add, subtract, and so on). What is the minimum 
+size of an add instruction in bits if a typical instruction uses the following format: 
+add M R2. 
+P5-4.	
+If the computer in P5-3 uses the same size of word for data and instructions, what 
+is the size of each data register?
+P5-5.	
+What is the size of the instruction register in the computer in P5-3?
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+5.10  Practice Set
+131
+P5-6.	
+What is the size of the program counter in the computer in P5-3? 
+P5-7.	
+What is the size of the data bus in the computer in P5-3?
+P5-8.	
+What is the size of the address bus in the computer in P5-3?
+P5-9.	
+What is the minimum size of the control bus in the computer in P5-3?
+P5-10.	 A computer uses isolated I/O addressing. Its memory has 1024 words. If each con-
+troller has 16 registers, how many controllers can be accessed by this computer?
+P5-11.	 A computer uses memory-mapped I/O addressing. The address bus uses ten lines 
+(10 bits). If memory is made up of 1000 words, how many four-register control-
+lers can be accessed by the computer?
+P5-12.	 Using the instruction set of the simple computer in Section 5.8, write the code 
+for a program that performs the following calculation: D ← A + B + C, in which 
+A, B, C, and D are integers in two’s complement ­format. The user types the value 
+of A, B, and, C, and the value of D is displayed on the monitor.
+P5-13.	 Using the instruction set of the simple computer, write the code for a program 
+that performs the following calculation:
+B ← A + 3
+	
+	
+A and 3 are integers in two’s complement format. The user types the value 
+of A and the value of B is displayed on the monitor. (Hint: use the increment 
+instruction.)
+P5-14.	 Using the instruction set of the simple computer in Section 5.8, write the code 
+for a program that performs the following calculation:
+B  ← A - 2
+	
+	
+A and are integers in two’s complement format. The user types the value of A and 
+the value of B is displayed on the monitor. (Hint: use the decrement instruction.)
+P5-15.	 Using the instruction set of the simple computer in Section 5.8, write the code 
+for a program that adds n integers typed on the keyboard and displays their sum. 
+You need first to type the value of n. (Hint: use decrement and jump instructions 
+and repeat the addition n times.)
+P5-16.	 Using the instruction set of the simple computer in Section 5.8, write the code 
+for a program that accepts two integers from the keyboard. If the first integer 
+is 0, the program increment the second integer, and if the first integer is 1, the 
+programs decrement the second integer. The first integer must be only 0 or 1 
+otherwise the program fails. The program displays the result of the increment or 
+decrement.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202

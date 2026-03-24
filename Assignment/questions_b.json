@@ -1,0 +1,414 @@
+{
+  "chapters": [
+    {
+      "number": 6,
+      "title": "Computer Networks and Internet",
+      "questions": {
+        "easy": [
+          {
+            "q": "List the five layers of the TCP/IP protocol suite from bottom to top and state the primary responsibility of each.",
+            "bloom": "Remember",
+            "answer": "From bottom to top: Physical, Data-Link, Network, Transport, Application. The Physical layer handles bits over a medium; Data-Link handles frames between adjacent nodes; Network (IP) handles datagrams and logical addressing across the internet; Transport (TCP/UDP) handles segments/user datagrams and port-number addressing; Application provides services such as HTTP, FTP, TELNET, SSH, and DNS.",
+            "explanation": "The TCP/IP model has five layers, each adding its own header as data moves down and stripping it on the way up. Each layer communicates logically with its peer layer at the remote host while physically passing data to the layer below. Understanding the layering helps isolate problems and design interoperable protocols.",
+            "source": "Section 6.1.3–6.1.4, pp. 140–145"
+          },
+          {
+            "q": "Define LAN, MAN, and WAN in terms of geographic scope and give a typical example technology for each.",
+            "bloom": "Understand",
+            "answer": "A LAN (Local Area Network) is privately owned and spans a single office, building, or campus; hosts share a common identifier space and are often connected by Ethernet or Wi-Fi. A WAN (Wide Area Network) spans a large geographic area, often a country or globe, and may be point-to-point (connecting two devices) or switched (with internal switching nodes). WANs typically interconnect LANs and use public or leased infrastructure.",
+            "explanation": "The distinction matters because LANs are under a single administrative domain with high bandwidth and low latency, while WANs introduce routing across many administrative domains. Routers connect LANs to WANs and forward packets between networks using IP addresses.",
+            "source": "Section 6.1.1, pp. 135–137"
+          },
+          {
+            "q": "What is DNS, what type of address does it translate from, and what type of address does it translate to?",
+            "bloom": "Understand",
+            "answer": "An internet (lowercase i) is any interconnection of two or more networks that can communicate with each other. The Internet (uppercase I) is the specific, globally unique interconnection of thousands of networks—including backbones, provider networks, and customer networks—that together form the worldwide public internet we use today.",
+            "explanation": "The distinction is important: the concept of an internet is generic (any combination of networks), whereas the Internet refers to the global infrastructure built on TCP/IP that billions of people access. The Internet is composed of backbone networks owned by large communication companies, connected through peering points, with smaller ISPs and customer networks attached.",
+            "source": "Section 6.1.2, pp. 137–138"
+          }
+        ],
+        "medium": [
+          {
+            "q": "In the TCP/IP protocol suite, each layer uses a specific address type and gives its data unit a specific name. The relationship is: Application layer — uses names (e.g., someorg.com) and its data unit is called a message; Transport layer — uses port numbers (local identifiers for running programs) and its data unit is a segment or user datagram; Network layer — uses logical (IP) addresses (globally unique, Internet-scope) and its data unit is a datagram; Data-Link layer — uses link-layer (MAC) addresses and its data unit is a frame; Physical layer — transmits individual bits and has no address. For each TCP/IP layer, identify the address type used and the name of the data unit, and explain why each addressing scheme is appropriate for that layer's role.",
+            "bloom": "Understand",
+            "answer": "Physical layer: no address; data unit = bit — the physical layer only moves raw bits across the medium. Data-Link layer: link-layer (MAC) addresses; data unit = frame — MAC addresses identify devices on the same physical link. Network layer: logical (IP) addresses; data unit = datagram — IP addresses are globally unique and route packets across the entire Internet. Transport layer: port numbers; data unit = segment (TCP) or user datagram (UDP) — port numbers identify the specific application process on a host. Application layer: names (domain names / email addresses); data unit = message — human-readable names are resolved to IP addresses by DNS.",
+            "explanation": "Each addressing scheme matches its layer's scope of communication. MAC addresses work within a single link; IP addresses work across the global internet; port numbers distinguish multiple concurrent application processes on one host; names provide human-friendly identifiers resolved by DNS. This layered model allows each concern to be addressed independently.",
+            "source": "Section 6.1.4, pp. 142–145"
+          },
+          {
+            "q": "Trace the 6-step DNS resolution for 'www.example.com': local cache, recursive resolver, root server, TLD server, authoritative server, and final response.",
+            "bloom": "Analyze",
+            "answer": "A router operates at the Network layer (Layer 3): it reads the IP address in each datagram's header and forwards the packet toward the destination across potentially different link technologies. A link-layer switch operates at the Data-Link layer (Layer 2): it forwards frames within a single network based on MAC addresses and does not examine IP headers. Routers connect different networks; switches connect devices within the same network.",
+            "explanation": "Routers are involved in one network-layer protocol but must support multiple link-layer protocols (one per connected link), because different links may use different technologies (e.g., Ethernet, Wi-Fi). Switches are transparent at the network layer—they simply fast-forward frames between ports. This distinction matters for network design: switches reduce collision domains, while routers separate broadcast domains and enable inter-network communication.",
+            "source": "Section 6.1.4, pp. 143–145"
+          },
+          {
+            "q": "The Domain Name System (DNS) maps a host name to an IP address. The process works as follows: (1) The user passes the host name to the file-transfer client application. (2) The file-transfer client passes the host name to the DNS client. (3) The DNS client sends a query message to a known DNS server (whose IP address was stored when the computer booted). (4) The DNS server responds with the IP address of the desired host. (5) The DNS client passes the IP address back to the file-transfer client. (6) The file-transfer client now uses the received IP address to contact the file-transfer server. Using this six-step DNS resolution process as a model, explain why DNS uses a hierarchical, distributed architecture rather than a single central database, and identify what would happen if step 3 failed.",
+            "bloom": "Analyze",
+            "answer": "DNS uses a hierarchical, distributed architecture to avoid a single point of failure, handle billions of queries efficiently, and distribute the administrative burden. A single central database would be a bottleneck and a single point of failure for the entire Internet. If step 3 failed (the DNS client cannot reach the known DNS server), the client cannot resolve the name to an IP address and the connection to the file-transfer server cannot be established—the application reports an error such as 'host not found'. In practice, computers are configured with multiple DNS server addresses to provide redundancy.",
+            "explanation": "DNS is one of the most critical Internet services because virtually every application-layer connection requires name resolution before an IP connection can be made. The hierarchical namespace (root → TLD → authoritative) distributes both load and authority. Caching at each level further reduces query traffic and improves resilience.",
+            "source": "Section 6.2.8, pp. 158–161"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Why did SSH replace TELNET as the remote-login standard? Describe the specific cryptographic mechanism SSH uses to secure the session.",
+            "bloom": "Evaluate",
+            "answer": "In the client–server paradigm, a dedicated server process runs continuously waiting for client connections; clients initiate requests and servers provide services. This centralizes resources but creates a bottleneck at the server. In the peer-to-peer (P2P) paradigm, each node can act as both client and server simultaneously; no always-on server is required. P2P scales better for file sharing and other high-load applications because the load is distributed across many peers, but it is harder to manage, secure, and coordinate. Real-world systems often combine both: e.g., a P2P network may use a central directory server (hybrid P2P).",
+            "explanation": "The client–server model is well-suited to services that need centralized control and strong consistency (e.g., web servers, email). The P2P model excels at distributing large files or streams because each downloader also uploads, increasing aggregate throughput. The choice of paradigm directly affects scalability, fault tolerance, and security design.",
+            "source": "Section 6.2.1, pp. 145–147"
+          },
+          {
+            "q": "Why does DNS use a hierarchical distributed architecture rather than one central server? Evaluate the availability, scalability, and consistency trade-offs.",
+            "bloom": "Evaluate",
+            "answer": "TELNET (TErminaL NETwork) allows remote login but transmits all data—including the username and password—in plaintext, making it vulnerable to eavesdropping and man-in-the-middle attacks. SSH (Secure Shell) was designed to replace TELNET: it encrypts all traffic, authenticates the server using public-key cryptography (preventing impersonation), and supports secure file transfer (SCP/SFTP) and port forwarding. For any security-sensitive environment, SSH is mandatory and TELNET should be disabled. The only scenario where TELNET might still appear is in isolated, air-gapped laboratory environments where encryption overhead matters and confidentiality is not a concern.",
+            "explanation": "The insecurity of TELNET stems from its origin in a trusted academic network era where confidentiality was not a design goal. SSH adds a cryptographic layer that protects confidentiality, integrity, and authenticity. The shift from TELNET to SSH illustrates how protocol design must evolve as threat models change.",
+            "source": "Sections 6.2.6–6.2.7, pp. 156–158"
+          },
+          {
+            "q": "Identify the protocol at each TCP/IP layer when a web browser fetches an HTTPS page and describe the function each protocol performs.",
+            "bloom": "Create",
+            "answer": "A small internetwork connecting three LANs would require at least two routers. Each LAN would use a different network address (e.g., LAN A: 192.168.1.0/24, LAN B: 192.168.2.0/24, LAN C: 192.168.3.0/24). Routers R1 and R2 would each have interfaces on two different networks, forwarding datagrams based on their IP routing tables. Hosts within each LAN use link-layer switches to forward frames locally; routers connect the LANs and forward packets based on IP addresses. Each device needs a unique IP address within its subnet, and routers need addresses on each connected network.",
+            "explanation": "The internetwork design reflects the TCP/IP layering: switches operate at Layer 2 within a LAN, while routers operate at Layer 3 across LANs. Each LAN forms a separate broadcast domain. IP addressing must be planned so that no two networks share the same address range, and routing tables must direct packets between networks.",
+            "source": "Section 6.1, pp. 135–145"
+          },
+          {
+            "q": "Justify whether TCP or UDP is appropriate for video streaming, DNS queries, and file transfer, and explain the performance cost of TCP's reliability mechanism.",
+            "bloom": "Evaluate",
+            "answer": "A single centralized DNS server would create a massive bottleneck: it would receive billions of queries per second from every Internet-connected device, making it impossible to scale. It would also be a catastrophic single point of failure—if it went down, the entire Internet's name resolution would fail. The hierarchical distributed design solves this by delegating authority: root servers know TLD servers, TLD servers (e.g., .com) know authoritative servers, and authoritative servers hold records for their domain. Caching at recursive resolvers further reduces load. Each level is replicated for redundancy.",
+            "explanation": "DNS is a prime example of a distributed system designed for high availability and scalability. The hierarchy mirrors the structure of domain names (e.g., mail.example.com resolves right-to-left: .com TLD → example.com authoritative server → mail). TTL-based caching means most resolutions never reach authoritative servers.",
+            "source": "Section 6.2.8, pp. 158–161"
+          }
+        ]
+      }
+    },
+    {
+      "number": 7,
+      "title": "Operating Systems",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define an operating system and describe its two primary roles.",
+            "bloom": "Remember",
+            "answer": "An operating system is an interface between the hardware of a computer and the user (programs or humans) that facilitates the execution of other programs. It acts as a general manager, supervising the activity of each component in the computer system, ensuring that hardware and software resources are used efficiently, and mediating resource conflicts.",
+            "explanation": "The OS sits between user applications and the underlying hardware, providing abstractions (files, processes, memory regions) that make programming easier and hardware-independent. Without an OS, each application would need to manage hardware directly, leading to unsafe and incompatible systems.",
+            "source": "Section 7.1.1, pp. 186–188"
+          },
+          {
+            "q": "The bootstrap process in a computer works as follows: A small section of memory is built from ROM (Read-Only Memory) and holds a tiny program called the bootstrap program. When the computer is turned on, the CPU's program counter is set to the first instruction of this bootstrap program and begins executing it. The bootstrap program's only job is to load the operating system (or the essential part of it) from disk into RAM. Once loading is complete, the CPU's program counter is set to the first instruction of the operating system, which then takes over. Describe this two-stage bootstrap process, explain why the bootstrap program is stored in ROM rather than RAM, and identify what would happen if the bootstrap program itself were corrupted.",
+            "bloom": "Understand",
+            "answer": "The two-stage bootstrap process: (1) The CPU starts by executing the small bootstrap program stored in ROM—ROM is used because it retains its content without power and cannot be accidentally overwritten. (2) The bootstrap program loads the OS kernel from disk into RAM, then hands control to the OS. If the bootstrap program in ROM were corrupted (e.g., by a hardware defect), the computer would not be able to start at all because there would be no valid code for the CPU to execute at power-on, and the OS could never be loaded.",
+            "explanation": "ROM-based bootstrap is necessary because RAM is volatile—it loses its contents when power is off—so the very first instructions must come from non-volatile storage. Using a tiny ROM program to load a larger OS from disk is an elegant two-stage solution that keeps the ROM small while allowing the full OS to be updated on disk.",
+            "source": "Section 7.1.2, pp. 188–189"
+          },
+          {
+            "q": "List the five main components of a modern operating system.",
+            "bloom": "Remember",
+            "answer": "The five main components of an operating system are: (1) Memory Manager — manages allocation and deallocation of memory to processes, handles paging and virtual memory. (2) Process Manager — controls the creation, scheduling, and termination of processes. (3) Device Manager — manages access to I/O devices and controls device queues. (4) File Manager — controls access to files on storage, managing permissions and directory structures. (5) User Interface — provides the shell or GUI through which users and programs interact with the OS.",
+            "explanation": "Each OS component manages a different type of computer resource. The memory manager and process manager are tightly coupled since processes need memory. The device manager handles the mismatch in speed between the CPU and I/O devices. The file manager provides a persistent, organized storage abstraction above raw disk access.",
+            "source": "Section 7.3, pp. 191–204"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Compare FIFO, Shortest Job First, Round Robin, and Priority CPU scheduling algorithms and give a scenario where each is most appropriate.",
+            "bloom": "Analyze",
+            "answer": "Polling: the CPU continuously checks (polls) a device to see if it has completed an operation—simple but wastes CPU cycles in a busy-wait loop. Interrupt-driven I/O: the device signals the CPU with an interrupt when it is ready; the CPU handles other work between interrupts—more efficient, but interrupt handling adds overhead. Direct Memory Access (DMA): a dedicated DMA controller transfers data directly between the I/O device and memory without CPU involvement for each byte; the CPU is only interrupted once per transfer block—most efficient for large transfers such as disk reads.",
+            "explanation": "The three techniques represent increasing levels of efficiency and hardware complexity. Polling is simplest but wastes CPU cycles. Interrupts allow the CPU to multitask but add interrupt-handling complexity. DMA offloads bulk data movement entirely, freeing the CPU for computation. Modern systems use all three depending on device speed and transfer size.",
+            "source": "Section 7.3.3, pp. 202–203"
+          },
+          {
+            "q": "Explain virtual memory: how does it allow a process to use more memory than physically installed, and what triggers a page fault?",
+            "bloom": "Apply",
+            "answer": "FIFO (First-In-First-Out): processes run in arrival order—simple and fair but ignores burst time, so a long job can block many short ones. Shortest-Job-First (SJF): the shortest remaining process runs next—minimizes average waiting time but requires knowing job lengths in advance and can starve long jobs. Round-Robin: each process gets a fixed time quantum in rotation—fair and prevents starvation, suitable for time-sharing. Priority-based: the highest-priority process runs first—flexible but can cause starvation of low-priority processes unless aging is used.",
+            "explanation": "Scheduling algorithms represent fundamental trade-offs between fairness, throughput, and response time. FIFO is easy to implement; SJF is optimal in average wait time but impractical without prior knowledge of run times; round-robin is the basis for most interactive OS schedulers; priority scheduling is used in real-time and embedded systems.",
+            "source": "Section 7.3.3, pp. 197–200"
+          },
+          {
+            "q": "Distinguish between a process and a thread, and explain why threads are more efficient than processes for concurrent tasks within one application.",
+            "bloom": "Analyze",
+            "answer": "Monoprogramming: only one program occupies main memory at a time; the CPU is idle while that program waits for I/O, wasting resources. Multiprogramming: several jobs are kept in memory simultaneously; when one process waits for I/O the CPU is assigned to another, maximising CPU utilisation. Multiprogramming requires the OS to manage memory partitioning, protect each process's memory space from others, and schedule the CPU among competing processes.",
+            "explanation": "Multiprogramming was the key innovation that made time-sharing systems possible. By overlapping CPU computation with I/O waits of other processes, system throughput increases dramatically. It requires more complex OS mechanisms—memory protection, process scheduling, and synchronisation—but these costs are justified by the efficiency gains.",
+            "source": "Section 7.3.2, pp. 192–196"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Evaluate the tension between the OS's two roles — serving users and protecting the system — and explain how dual-mode operation resolves this conflict.",
+            "bloom": "Evaluate",
+            "answer": "Demand paging divides each program into fixed-size pages; only the pages currently needed are loaded into physical memory frames, while the rest stay on disk. When a program references a page not in memory, a page fault occurs and the OS loads that page from disk, possibly evicting another page. Virtual memory is the illusion given to each process that it has a large, contiguous address space even if physical RAM is smaller than the combined memory requirements of all running processes. For example, if RAM is 10 MB and three programs need 30 MB total, demand paging lets all three run by keeping only their active pages in RAM.",
+            "explanation": "Virtual memory decouples the logical address space a programmer sees from the physical RAM actually available. Demand paging implements virtual memory efficiently: since programs tend to exhibit locality of reference, only a small working set of pages needs to be in RAM at any time. The trade-off is page-fault overhead when the working set does not fit in RAM, causing thrashing.",
+            "source": "Section 7.3.2, pp. 193–196"
+          },
+          {
+            "q": "A computer system can be viewed as two broad layers: (1) Hardware — the physical components (CPU, memory, I/O devices). (2) Software — divided into the operating system (which controls access to hardware) and application programs (which use the hardware to solve users' problems). The operating system sits between the hardware and application programs, acting as an interface for users and programs. Given this layered view of a computer system, critically evaluate how the operating system fulfils its three roles: interface, resource manager, and general supervisor. Discuss what would happen if application programs were allowed to access hardware directly without an OS.",
+            "bloom": "Evaluate",
+            "answer": "As an interface, the OS provides system calls that abstract hardware details—programs call read() or write() without knowing disk geometry. As a resource manager, the OS allocates CPU time, memory, and I/O devices among competing processes, resolving conflicts through scheduling and memory protection. As a general supervisor, it monitors activity, enforces security, and prevents one process from corrupting another. Without an OS, applications would each need to implement hardware drivers, leading to incompatibility, unsafe direct memory access, inability to share hardware, and likely system crashes when two programs try to use the same device simultaneously.",
+            "explanation": "The OS abstraction layer is what makes modern software ecosystems possible: programmers write to stable APIs rather than hardware registers. The protection mechanisms (kernel mode vs. user mode) ensure that a buggy application cannot crash the entire system. This separation of concerns is fundamental to OS design.",
+            "source": "Section 7.1.1, pp. 186–188"
+          },
+          {
+            "q": "Define the four Coffman conditions for deadlock and describe one prevention strategy for each condition.",
+            "bloom": "Evaluate",
+            "answer": "For a hospital system with three process types: (1) Life-critical monitoring (real-time, highest priority) — use a priority-based preemptive scheduler with the highest priority assigned; these processes must never be delayed more than milliseconds. (2) Administrative batch jobs (lowest priority, non-time-sensitive) — use FIFO or SJF scheduling when life-critical processes are idle. (3) Interactive physician queries (medium priority) — use round-robin with a short time quantum to ensure responsiveness. Implement priority aging to prevent administrative jobs from starving indefinitely. Use separate memory partitions with protection to prevent a crashing administrative job from affecting monitoring processes.",
+            "explanation": "Real-world scheduling requires combining multiple algorithms. Safety-critical systems always assign the highest priority to life-critical processes. Interactive users need short response times (round-robin), while batch jobs can tolerate delays. Aging prevents indefinite starvation of low-priority processes while maintaining overall priority ordering.",
+            "source": "Section 7.3.3, pp. 197–200"
+          },
+          {
+            "q": "Design an OS memory management strategy for 10 processes each requiring 200 MB on a machine with 1 GB RAM. Specify page size, swap space, and page eviction policy.",
+            "bloom": "Create",
+            "answer": "Batch systems (1950s–1960s): jobs were batched together and run sequentially without user interaction; the OS simply transferred resources from one job to the next. Time-sharing systems (1960s–1970s): multiprogramming and CPU scheduling enabled multiple users to share one machine interactively. Personal computers (1980s): single-user OS (MS-DOS, early Mac OS); convenience over efficiency. Distributed systems (1990s–present): multiple networked computers share resources; the OS must manage network transparency and consistency. Real-time systems: strict timing guarantees for embedded/safety-critical applications. Future systems will likely feature greater autonomy, AI-driven resource management, and tighter integration of cloud and edge resources.",
+            "explanation": "Each OS generation solved a new bottleneck: batch systems solved operator-time waste; time-sharing solved CPU idle time; personal computers solved access cost; distributed systems solved geographic separation. Understanding this evolution illuminates why modern OS features (virtual memory, multi-threading, networking) exist.",
+            "source": "Section 7.2, pp. 189–191"
+          }
+        ]
+      }
+    },
+    {
+      "number": 8,
+      "title": "Algorithms",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define an algorithm and list the five properties it must have.",
+            "bloom": "Remember",
+            "answer": "An algorithm is a step-by-step method for solving a problem or doing a task. It accepts input data and produces output data. It is independent of the computer system and programming language used to implement it.",
+            "explanation": "Forouzan's informal definition emphasises that an algorithm is a general, language-independent recipe. The key properties are: it must be unambiguous (each step precisely defined), finite (it terminates after a finite number of steps), and effective (each step is doable). These properties distinguish an algorithm from a vague strategy.",
+            "source": "Section 8.1.1, p. 215"
+          },
+          {
+            "q": "Consider the following algorithm called FindLargest, which finds the largest integer in a list of n positive integers. It works by scanning the list one element at a time and keeping track of the largest value seen so far. For example, applied to the list [12, 8, 13, 9, 11]: Step 1 — inspect 12; set Largest = 12 (no prior comparison). Step 2 — inspect 8; 8 < 12, Largest stays 12. Step 3 — inspect 13; 13 > 12, Largest = 13. Step 4 — inspect 9; 9 < 13, Largest stays 13. Step 5 — inspect 11; 11 < 13, Largest stays 13. Output: 13. (a) Write pseudocode for the generalised FindLargest algorithm that works for a list of any size n. (b) Explain step-by-step how your pseudocode produces the output 13 for the input list [12, 8, 13, 9, 11].",
+            "bloom": "Remember",
+            "answer": "(a) Pseudocode:\n  Algorithm FindLargest(List, n)\n    Largest ← −∞   // or List[1] if n ≥ 1\n    i ← 1\n    while i ≤ n\n      if List[i] > Largest then\n        Largest ← List[i]\n      end if\n      i ← i + 1\n    end while\n    return Largest\n\n(b) Trace: i=1, List[1]=12 > −∞ → Largest=12; i=2, 8 < 12 → no change; i=3, 13 > 12 → Largest=13; i=4, 9 < 13 → no change; i=5, 11 < 13 → no change; loop ends; return 13.",
+            "explanation": "The FindLargest algorithm uses a single pass (linear scan) through the list, updating the running maximum whenever a larger element is found. Initialising Largest to negative infinity (or the first element) ensures correctness for any list. This is an O(n) algorithm—the most efficient possible for an unsorted list.",
+            "source": "Section 8.1.2, pp. 215–217"
+          },
+          {
+            "q": "Define Big-O notation and rank these from best to worst: O(n²), O(1), O(n log n), O(n), O(2ⁿ).",
+            "bloom": "Understand",
+            "answer": "Sequential search: scans each element from the beginning until the target is found or the list is exhausted; works on unsorted lists; worst case requires examining all n elements (O(n)). Binary search: requires a sorted list; repeatedly halves the search range by comparing the target with the middle element; much faster at O(log n) worst case. Binary search is dramatically faster for large sorted lists but cannot be applied to unsorted data.",
+            "explanation": "The key trade-off is that binary search requires the preprocessing cost of sorting, but for a list searched many times, that cost is amortised. For a one-time search of an unsorted list, sequential search is appropriate. Binary search's O(log n) complexity means it searches a list of 1,000,000 elements in at most 20 comparisons.",
+            "source": "Section 8.5.5, pp. 231–234"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Trace bubble sort on [4, 3, 1, 2], showing each pass, and count the total number of comparisons.",
+            "bloom": "Apply",
+            "answer": "Selection sort on [64, 25, 12, 22, 11]: divide into sorted (left) and unsorted (right) sublists, find the minimum of the unsorted part and swap it to the front.\nPass 1: min of [64,25,12,22,11]=11; swap with 64 → [11 | 25,12,22,64]\nPass 2: min of [25,12,22,64]=12; swap with 25 → [11,12 | 25,22,64]\nPass 3: min of [25,22,64]=22; swap with 25 → [11,12,22 | 25,64]\nPass 4: min of [25,64]=25; no swap → [11,12,22,25 | 64]\nResult: [11, 12, 22, 25, 64]",
+            "explanation": "Selection sort works by repeatedly selecting the minimum element from the unsorted sublist and moving it to the end of the sorted sublist. It requires exactly n−1 passes for a list of n elements. The algorithm performs O(n²) comparisons in all cases (best, average, and worst), making it inefficient for large lists but simple to implement.",
+            "source": "Section 8.5.1, pp. 226–228"
+          },
+          {
+            "q": "Compare selection sort and insertion sort on [5, 2, 8, 1, 9] in terms of number of swaps. Which performs fewer swaps and why?",
+            "bloom": "Analyze",
+            "answer": "Iterative factorial: Factorial(n) = n × (n−1) × (n−2) × … × 2 × 1 (multiply n down to 1 in a loop; base case: Factorial(0) = 1). Recursive factorial: Factorial(n) = n × Factorial(n−1) with base case Factorial(0) = 1. Both produce the same result. The iterative version uses O(1) stack space; the recursive version uses O(n) stack frames (one per call). Recursive code is often more concise and mirrors the mathematical definition, but deep recursion risks stack overflow.",
+            "explanation": "Recursion expresses a problem in terms of itself (the algorithm calls itself with a smaller input). Every recursive algorithm must have a base case (here, n=0) to terminate. The iterative and recursive forms of factorial are equivalent in output but differ in memory use and clarity. Chapter 8 uses factorial as the canonical example to contrast the two approaches.",
+            "source": "Section 8.7, pp. 236–239"
+          },
+          {
+            "q": "Write the recursive factorial algorithm and trace the call stack for n = 4, showing each call and return value.",
+            "bloom": "Apply",
+            "answer": "Bubble sort: compares adjacent elements and swaps them if out of order; repeats passes until no swaps occur; the largest unsorted element 'bubbles up' each pass. Insertion sort: takes each element and inserts it into its correct position in the already-sorted prefix, shifting larger elements right. Both have O(n²) worst-case comparisons. Bubble sort performs well only when the list is nearly sorted (O(n) best case with early termination). Insertion sort is generally faster in practice and is stable (preserves relative order of equal elements). Both are simple to implement but impractical for large lists.",
+            "explanation": "Bubble sort's repeated adjacent swaps make it intuitive but inefficient; insertion sort's strategy of building a sorted prefix resembles how humans sort playing cards. Both are quadratic but serve as pedagogical tools before introducing faster algorithms like merge sort or quicksort (O(n log n)).",
+            "source": "Sections 8.5.2–8.5.3, pp. 228–231"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Prove that binary search runs in O(log n) by showing how many steps are needed for n = 1,024 and explain why unsorted data requires O(n) sequential search.",
+            "bloom": "Evaluate",
+            "answer": "Selection sort: O(n²) comparisons in all cases—always performs (n−1)+(n−2)+…+1 = n(n−1)/2 comparisons regardless of input order. Bubble sort: O(n²) worst and average case; O(n) best case (already sorted, with early-exit optimisation). Insertion sort: O(n²) worst case; O(n) best case (already sorted). None of the three is efficient for large n. Merge sort and quicksort (O(n log n)) are far superior for large inputs, though they are not covered until Chapter 17. Time complexity matters because the difference between O(n²) and O(n log n) is enormous: for n=1,000,000, n²=10¹² operations vs n log n ≈ 20,000,000 operations.",
+            "explanation": "Time complexity analysis lets us compare algorithms independent of hardware speed. Big-O notation captures the dominant growth factor. The three sorts in Chapter 8 are all quadratic—fine for classroom examples and small lists but impractical for the data volumes in real applications. This motivates the need for more advanced algorithms.",
+            "source": "Section 8.4 / 8.5, pp. 222–231"
+          },
+          {
+            "q": "Describe merge sort's divide-and-conquer strategy, analyze its O(n log n) complexity, and compare the number of operations to bubble sort for n = 1,000,000.",
+            "bloom": "Evaluate",
+            "answer": "A subalgorithm is a self-contained algorithm called by a larger (main) algorithm to perform a specific subtask. Subalgorithms promote modularity, code reuse, and readability. For example, the selection sort algorithm can be decomposed into a main sort routine and a FindSmallest subalgorithm that finds the index of the minimum element in a sublist. The main algorithm calls FindSmallest n−1 times. This decomposition makes each part testable independently and allows FindSmallest to be reused in other contexts. In structured programming, breaking problems into subalgorithms (top-down design) is the primary method for managing complexity.",
+            "explanation": "Subalgorithms correspond to functions/methods in actual programming languages. The principle of decomposition reduces a complex problem into manageable units, each with a single, well-defined responsibility. This directly supports the software engineering goal of modularity discussed in Chapter 10.",
+            "source": "Section 8.6, pp. 233–234"
+          },
+          {
+            "q": "State the halting problem and prove by contradiction that no algorithm can solve it for all programs.",
+            "bloom": "Evaluate",
+            "answer": "Pseudocode for sorting a list of n integers using insertion sort:\n  Algorithm InsertionSort(List, n)\n    i ← 2\n    while i ≤ n\n      current ← List[i]\n      j ← i − 1\n      while j ≥ 1 AND List[j] > current\n        List[j+1] ← List[j]\n        j ← j − 1\n      end while\n      List[j+1] ← current\n      i ← i + 1\n    end while\n    return List\nTrace on [5, 3, 8, 1]: i=2: insert 3 before 5 → [3,5,8,1]; i=3: 8>5, no move → [3,5,8,1]; i=4: insert 1 before all → [1,3,5,8].",
+            "explanation": "Pseudocode uses constructs (sequence, selection, repetition) from structured programming without being tied to any language syntax. Insertion sort builds a sorted prefix by taking each new element and inserting it at the correct position among already-sorted elements. The inner while loop shifts elements right to make room.",
+            "source": "Section 8.2 / 8.5.3, pp. 218–231"
+          },
+          {
+            "q": "Design an O(n log n) algorithm to find all duplicate values in an unsorted array of n integers. Justify the time complexity and space requirements.",
+            "bloom": "Create",
+            "answer": "Recursive binary search pseudocode:\n  Algorithm BinarySearch(List, target, first, last)\n    if first > last then\n      return −1   // target not found\n    end if\n    mid ← (first + last) / 2\n    if List[mid] = target then\n      return mid\n    else if List[mid] > target then\n      return BinarySearch(List, target, first, mid − 1)\n    else\n      return BinarySearch(List, target, mid + 1, last)\n    end if\nBase cases: (1) first > last → not found; (2) List[mid] = target → found. Recursive case: search either the left or right half. This halves the search space each call, giving O(log n) time complexity.",
+            "explanation": "Binary search is a classic divide-and-conquer algorithm: it divides the problem in half at each step, conquers one half recursively, and ignores the other. The recursive form mirrors the mathematical definition of binary search and illustrates that recursion is natural for divide-and-conquer problems. Requires a sorted list as a precondition.",
+            "source": "Sections 8.5.5, 8.7, pp. 231–239"
+          }
+        ]
+      }
+    },
+    {
+      "number": 9,
+      "title": "Programming Languages",
+      "questions": {
+        "easy": [
+          {
+            "q": "List the three categories of programming languages in order from lowest to highest abstraction, with one example language each.",
+            "bloom": "Remember",
+            "answer": "First generation: machine language — binary codes directly executable by the CPU; machine-dependent and tedious to write. Second generation: assembly language — symbolic mnemonics (e.g., LOAD, ADD, STORE) replace binary op-codes; assembled into machine code by an assembler; still machine-dependent. Third generation: high-level languages (FORTRAN, COBOL, C, Pascal, Java) — portable, human-readable, compiled or interpreted; programmer focuses on the problem rather than hardware. Fourth generation: application-oriented or special-purpose languages (SQL, report generators, spreadsheet formulas) — even closer to the problem domain; less procedural, more declarative.",
+            "explanation": "Each generation of programming languages raised the level of abstraction, making programming more productive and portable. The progression from binary to symbolic to structured to declarative languages reflects the ongoing effort to let programmers express solutions in terms of the problem rather than the machine.",
+            "source": "Section 9.1, pp. 244–248"
+          },
+          {
+            "q": "Distinguish between a compiler and an interpreter. Which produces a standalone executable and which translates line-by-line at runtime?",
+            "bloom": "Understand",
+            "answer": "A compiler translates an entire high-level language program into machine code (or an intermediate form) before execution; the translation and execution are separate steps; compiled programs run fast because translation overhead occurs only once. An interpreter translates and executes the source code one statement at a time at runtime; there is no separate compilation step; interpreted programs are typically slower but easier to debug interactively. Examples: C uses a compiler; Python and older BASIC use an interpreter; Java uses both (compiled to bytecode, then interpreted by the JVM).",
+            "explanation": "The key distinction is when translation occurs: compilers pay the translation cost once up front; interpreters pay it repeatedly at runtime. Compiled programs are faster; interpreted programs offer portability and easier interactive development. Modern languages often use hybrid approaches (just-in-time compilation) to balance both advantages.",
+            "source": "Section 9.2, pp. 248–250"
+          },
+          {
+            "q": "Name the four programming paradigms covered in this chapter and give one example language for each.",
+            "bloom": "Remember",
+            "answer": "The four programming language paradigms are: (1) Procedural (imperative) — programs are sequences of instructions that change state; examples: C, Pascal, FORTRAN. (2) Object-oriented — programs model the world as interacting objects with data and methods; examples: C++, Java, Smalltalk. (3) Functional — programs are expressions evaluated as mathematical functions without mutable state; examples: LISP, Scheme. (4) Declarative (logic) — programs state what is true (facts and rules) and the system deduces answers; examples: Prolog.",
+            "explanation": "Each paradigm reflects a different philosophy about what a program is. Procedural programming mimics how hardware executes; OOP models real-world entities; functional programming mirrors mathematical function composition; declarative programming separates the specification of a problem from its solution strategy. Modern languages often blend multiple paradigms.",
+            "source": "Section 9.3, pp. 250–261"
+          }
+        ],
+        "medium": [
+          {
+            "q": "The following shows the same program—adding two integers read from the keyboard and writing the result to the screen—written in two languages for a hypothetical computer.\n\nTable 9.1 — Machine Language (each line is a 16-bit binary instruction, shown with hex equivalent):\n  (1FEF)₁₆ → 0001 1111 1110 1111  [Load from keyboard to register F]\n  (240F)₁₆ → 0010 0100 0000 1111  [Store register F to Number1]\n  (1FEF)₁₆ → 0001 1111 1110 1111  [Load from keyboard to register F]\n  (241F)₁₆ → 0010 0100 0001 1111  [Store register F to Number2]\n  (1040)₁₆ → 0001 0000 0100 0000  [Load Number1 to register 0]\n  (1141)₁₆ → 0001 0001 0100 0001  [Load Number2 to register 1]\n  (3201)₁₆ → 0011 0010 0000 0001  [Add R0 and R1, result to R2]\n  (2422)₁₆ → 0010 0100 0010 0010  [Store R2 to Result]\n  (1F42)₁₆ → 0001 1111 0100 0010  [Load Result to register F]\n  (2FFF)₁₆ → 0010 1111 1111 1111  [Store register F to monitor]\n  (0000)₁₆ → 0000 0000 0000 0000  [HALT]\n\nTable 9.2 — Assembly Language (same program using mnemonics):\n  LOAD  RF  Keyboard    ; Load from keyboard to register F\n  STORE Number1  RF     ; Store RF into Number1\n  LOAD  RF  Keyboard    ; Load from keyboard to register F\n  STORE Number2  RF     ; Store RF into Number2\n  LOAD  R0  Number1     ; Load Number1 into register 0\n  LOAD  R1  Number2     ; Load Number2 into register 1\n  ADDI  R2  R0  R1      ; Add R0 and R1, result in R2\n  STORE Result  R2      ; Store R2 into Result\n  LOAD  RF  Result      ; Load Result into register F\n  STORE Monitor  RF     ; Store RF to monitor controller\n  HALT                  ; Stop\n\nCompare these two representations of the same program. What are the key differences in readability, portability, and ease of programming? Why was assembly language considered a major improvement over machine language, and what limitations does it still share with machine language?",
+            "bloom": "Analyze",
+            "answer": "Key differences: Machine language uses 16-bit binary patterns (unreadable by humans) while assembly uses English-like mnemonics (LOAD, STORE, ADDI, HALT) that map one-to-one to machine instructions. Readability: assembly is far more readable—a programmer can understand LOAD RF Keyboard without memorising binary codes. Portability: both are machine-dependent—the binary patterns and mnemonics are specific to this hypothetical CPU's instruction set; neither is portable across different CPU architectures. Ease of programming: assembly is much easier to write and debug than raw binary; finding an error in binary code is extremely difficult. Limitations shared: both require the programmer to manage individual registers and memory addresses; neither allows high-level abstractions like loops, functions, or data types. An assembler program translates assembly mnemonics into machine language automatically.",
+            "explanation": "Assembly language was the first major step toward human-readable programming. While it retained the one-instruction-per-machine-operation granularity of machine language, the use of symbolic names made programs comprehensible and maintainable. Both languages remain machine-dependent, which is why high-level languages (third generation) were developed to achieve portability.",
+            "source": "Sections 9.1.1–9.1.2, pp. 244–246"
+          },
+          {
+            "q": "Explain pass-by-value vs. pass-by-reference. Show what happens when a swap(a, b) function is called with two integer variables under each method.",
+            "bloom": "Analyze",
+            "answer": "Encapsulation: bundling data (attributes) and the methods that operate on that data into a single unit (class), hiding internal implementation details from the outside — promotes information hiding and reduces coupling. Inheritance: a subclass (derived class) inherits the attributes and methods of a superclass (base class) and can add or override them — enables code reuse and hierarchical classification (e.g., class Rectangle inherits from class GeometricalShape). Polymorphism ('many forms'): multiple classes can define a method with the same name that behaves differently in each class — e.g., an area() method works differently for Rectangle and Circle. Together, these three principles allow large, maintainable, and extensible software systems.",
+            "explanation": "These three OOP principles address the main problems of large-scale software development. Encapsulation controls complexity by exposing only interfaces. Inheritance avoids code duplication. Polymorphism allows writing generic code that works with any subclass. C++, Java, and Python were all designed around these principles.",
+            "source": "Section 9.3.2, pp. 253–258"
+          },
+          {
+            "q": "Compare procedural and object-oriented paradigms. How does OOP encapsulation improve maintainability for large software projects?",
+            "bloom": "Analyze",
+            "answer": "Pass by value: the called subprogram receives a copy of the actual parameter's value; changes made inside the subprogram do not affect the variable in the calling program. Communication is one-way (caller to callee). Example: printing a number — the subprogram gets the value but cannot change the original variable. Pass by reference: the called subprogram receives a reference (address) to the actual parameter; both the calling program and the subprogram share the same memory location. Changes inside the subprogram directly change the original variable. Example: a swap subprogram that exchanges two values in the calling program must use pass by reference — pass by value would only swap local copies and leave the originals unchanged.",
+            "explanation": "The distinction matters for correctness: if you intend a subprogram to modify a caller's variable, you must pass by reference. If you want to protect the original value from modification, use pass by value. Understanding this distinction is essential for debugging unexpected side effects in procedural and OOP programs.",
+            "source": "Section 9.4.2, pp. 263–267"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Compare Prolog (logic/declarative) and C (procedural) for solving 'find all ancestors of a person'. Which paradigm expresses the solution more naturally and why?",
+            "bloom": "Evaluate",
+            "answer": "Compiled languages (C, C++): translation happens once before execution; runtime is fast; errors are caught at compile time; the executable is platform-specific (must recompile for each target OS/CPU). Interpreted languages (Python, older BASIC): translated line-by-line at runtime; slower execution; easier to debug interactively; portable (same source runs on any platform with the interpreter). Trade-offs: use compiled languages for performance-critical applications (operating systems, games, embedded systems); use interpreted languages for rapid development, scripting, and platform independence. Hybrid (Java): compiled to bytecode, then interpreted by the JVM — balances portability and performance. Modern JIT compilers blur the line by compiling hot code paths at runtime.",
+            "explanation": "The compiled vs. interpreted distinction affects development workflow and performance. Compiled programs run at near-hardware speed but require a build step; interpreted programs have immediate feedback. This trade-off drives language selection in real projects: systems programming favours compiled languages; data science and web scripting favour interpreted ones.",
+            "source": "Section 9.2, pp. 248–250"
+          },
+          {
+            "q": "Explain how functional programming's immutability and pure functions make programs easier to parallelize than imperative programs with mutable shared state.",
+            "bloom": "Evaluate",
+            "answer": "The declarative paradigm (e.g., Prolog) requires the programmer to state facts and rules about a domain rather than writing step-by-step instructions. The inference engine deduces answers. Example: given facts 'Socrates is human' and 'all humans are mortal', Prolog can deduce 'Socrates is mortal'. This differs fundamentally from procedural programming (C) where the programmer must explicitly code the search strategy. The power of declarative programming lies in expressing complex logical relationships concisely; the weakness is efficiency — the inference engine may explore many unproductive paths, making it slow for problems that don't have a natural logical structure. It is best suited to expert systems, natural language processing, and constraint satisfaction problems.",
+            "explanation": "The declarative paradigm inverts the typical programming model: instead of specifying how to solve a problem, you specify what is true about it. This is a powerful abstraction for certain domains but requires understanding formal logic and accepts that the programmer surrenders control over execution strategy to the inference engine.",
+            "source": "Section 9.3.4, pp. 259–261"
+          },
+          {
+            "q": "Evaluate the trade-offs between compiled (C/C++) and interpreted (Python) languages across development speed, execution speed, portability, and memory management.",
+            "bloom": "Evaluate",
+            "answer": "Pseudocode class hierarchy for a university registration system:\n\n  class Person\n    attributes: id, name, email\n    methods: getInfo(), setEmail()\n\n  class Student inherits Person\n    attributes: major, courseList\n    methods: enroll(course), drop(course), getGrades()\n\n  class GraduateStudent inherits Student\n    attributes: thesisAdvisor, dissertationTitle\n    methods: submitThesis()\n\n  class Professor inherits Person\n    attributes: department, courses\n    methods: gradeCourse(), listStudents()\n\nThis uses inheritance (Student and Professor inherit from Person), encapsulation (attributes are bundled with their methods), and polymorphism (getInfo() can be overridden in each subclass to display type-specific information).",
+            "explanation": "Class hierarchies model the 'is-a' relationships in a domain. Student is-a Person; GraduateStudent is-a Student. Each level adds specialisation while inheriting common attributes. This avoids duplicating id, name, and email in every class. Polymorphism allows a single function that takes a Person to work correctly with Students and Professors.",
+            "source": "Section 9.3.2, pp. 253–258"
+          },
+          {
+            "q": "Design an OOP class hierarchy for a university system with Person, Student, GraduateStudent, and Professor. Identify attributes and methods, and explain how inheritance and polymorphism apply.",
+            "bloom": "Create",
+            "answer": "In the functional paradigm, functions are first-class objects: they can be passed as arguments, returned from other functions, and assigned to variables. Programs are built by composing pure functions (no side effects, no mutable state). LISP/Scheme examples: (map square '(1 2 3)) applies square to each element, returning (1 4 9) without modifying the original list. Advantages: easier to reason about (no hidden state), naturally parallel (pure functions have no data dependencies), concise for data transformation pipelines. Disadvantages: unfamiliar paradigm for programmers trained in imperative style; performance can lag for tasks requiring mutable state. Modern languages (Python, JavaScript, Java 8+) have adopted functional features (lambda, map/filter/reduce) precisely because of these advantages.",
+            "explanation": "The functional paradigm treats computation as the evaluation of mathematical functions. The absence of mutable state eliminates a whole class of bugs (race conditions, unexpected side effects). LISP (1958) is one of the oldest programming languages and remains influential; Scheme is a clean dialect used in computer science education.",
+            "source": "Section 9.3.3, pp. 258–259"
+          }
+        ]
+      }
+    },
+    {
+      "number": 10,
+      "title": "Software Engineering",
+      "questions": {
+        "easy": [
+          {
+            "q": "Software, like many products, passes through a repeating lifecycle. The lifecycle has three phases arranged in a cycle: (1) Development — the software is created (analysis, design, implementation, testing). (2) Use — users run the finished software. (3) Modification — errors are corrected, rules/laws change, or company needs evolve, requiring changes before further use. The Use and Modification phases alternate until the software becomes obsolete (inefficient, language becomes outdated, or requirements change so drastically that major rewriting is needed). Describe each phase of this software lifecycle and explain why the Modification phase often consumes more total resources over a software product's lifetime than the initial Development phase.",
+            "bloom": "Remember",
+            "answer": "Development phase: the software is built from scratch through analysis (understanding requirements), design (planning the structure), implementation (writing code), and testing (verifying correctness). Use phase: end users run the software to accomplish tasks; bugs and gaps in requirements surface. Modification phase: developers correct errors found during use, adapt the software to changed regulations or business rules, or add new features. Modification typically consumes more resources than initial development because: (a) the original developers may no longer be available; (b) poorly documented code is hard to understand and change; (c) changes in one module can break others (regression); (d) software must often be maintained for decades, accumulating many change cycles.",
+            "explanation": "The lifecycle model emphasises that software development is not a one-time event. Studies consistently show that 60–80% of total software cost is spent in the maintenance/modification phase. This motivates the software engineering emphasis on documentation, modularity, and testability during the initial development phase.",
+            "source": "Section 10.1, pp. 274–275"
+          },
+          {
+            "q": "The waterfall model is a software development process in which the four development phases flow in one direction only, like a waterfall: Analysis → Design → Implementation → Testing. Each phase must be fully completed before the next begins. For example, the entire system analysis must finish before any design begins, and the entire design must finish before any implementation begins. Only after the full system is implemented does testing begin. Describe the waterfall model, identify one advantage and one disadvantage, and explain in which type of project the waterfall model is most appropriate.",
+            "bloom": "Remember",
+            "answer": "The waterfall model executes the four phases sequentially: Analysis (what the system must do) → Design (how it will be structured) → Implementation (writing the code) → Testing (verifying the complete system). Advantage: each phase produces a complete, reviewable deliverable before the next begins, so the design team has exact requirements and the testing team tests a finished system. Disadvantage: if a problem is found late (e.g., a design flaw discovered during testing), the entire process must be revisited, which is costly. The waterfall model is most appropriate for projects with stable, well-understood requirements that are unlikely to change, such as safety-critical embedded systems (aircraft software, medical devices) where upfront specification is mandatory.",
+            "explanation": "The waterfall model's linear structure provides discipline and traceability but is inflexible to changing requirements. It dominated software development from the 1970s to the 1990s. Its main weakness—the inability to incorporate customer feedback mid-project—led to the development of iterative models such as the incremental model.",
+            "source": "Section 10.1.1, pp. 275–276"
+          },
+          {
+            "q": "List the four phases of the waterfall model in order and describe the deliverable produced by each phase.",
+            "bloom": "Remember",
+            "answer": "The three types of software documentation are: (1) User documentation — guides end users in how to use the software step-by-step (user manual/tutorial); should address both novice and expert users; is also a marketing tool. (2) System documentation — defines the software itself for developers who will maintain or modify it; covers all four development phases (analysis findings, design documents, code comments, test results); enables the software to be maintained by people other than the original developers. (3) Technical documentation — describes installation, configuration, and servicing of the software system; includes installation guides for servers/clients and service guides for maintenance and updates.",
+            "explanation": "Good documentation is essential for software longevity. Without system documentation, a new developer cannot understand or modify the software. Without user documentation, users cannot exploit the software's features. Technical documentation ensures the system can be deployed and maintained in new environments. All three types are needed throughout the software lifecycle.",
+            "source": "Section 10.6, pp. 286–288"
+          }
+        ],
+        "medium": [
+          {
+            "q": "The incremental development model delivers software in a series of increments. Each increment is a complete mini-development cycle with its own Analysis (A), Design (D), Implementation (I), and Testing (T) phases, adding a slice of new functionality to the previous increment. The model looks like this:\n\n  Increment 1: A → D → I → T  [delivers a simplified but working version of the whole system]\n  Increment 2: A → D → I → T  [adds more details and features]\n  ...\n  Increment n: A → D → I → T  [completes all required functionality]\n\nNew functionality is not added to the next increment until the current system works properly. Apply this incremental model to the scenario of developing a library catalogue application. Identify at least three increments, describe what is delivered at each stage, and explain why this approach is superior to the waterfall model for this type of project.",
+            "bloom": "Apply",
+            "answer": "Increment 1: Deliver a working system that allows searching for books by title and displaying basic information (title, author, ISBN). Increment 2: Add borrowing and returning functionality; update the database to track checked-out status. Increment 3: Add user accounts, reservation queue, and overdue notifications. Advantages over waterfall: (a) users see and use a working system early, providing feedback that shapes later increments; (b) errors introduced in each increment are isolated—developers know the problem is in the new functionality; (c) delivery of early increments provides business value while development continues; (d) requirements can evolve between increments. This is superior to waterfall for projects with evolving or uncertain requirements.",
+            "explanation": "The incremental model is a middle ground between the rigid waterfall and fully agile approaches. Each increment is a vertical slice through the system. Early delivery of a working (if limited) product enables user feedback, reducing the risk of building the wrong thing. The isolation of new functionality per increment simplifies debugging.",
+            "source": "Section 10.1.1, pp. 275–276"
+          },
+          {
+            "q": "Compare procedure-oriented analysis (data flow diagrams) and object-oriented analysis (use case and class diagrams) for the design phase.",
+            "bloom": "Analyze",
+            "answer": "Procedure-oriented analysis (structured analysis): used when implementation will use a procedural language (C, Pascal); models the system as processes that transform data; uses Data Flow Diagrams (DFDs) showing data sources, processes, data stores, and data flows; also uses entity-relationship diagrams and state diagrams. Object-oriented analysis: used when implementation will use an OOP language (C++, Java); models the system as interacting objects with attributes and behaviours; uses UML class diagrams, use-case diagrams, and sequence diagrams. The key difference is the fundamental unit of decomposition: procedures/functions vs. objects/classes. OO analysis tends to produce more reusable and maintainable designs for large, complex systems.",
+            "explanation": "The choice of analysis approach is driven by the intended implementation language. Procedure-oriented analysis decomposes the problem into what the system does (processes); OO analysis decomposes it into what entities exist and how they interact. Mismatching the analysis approach to the implementation paradigm creates translation difficulties.",
+            "source": "Section 10.2, pp. 276–280"
+          },
+          {
+            "q": "Compare glass-box (white-box) and black-box testing. Which can detect unreachable code paths, and which is better for verifying requirements?",
+            "bloom": "Analyze",
+            "answer": "Glass-box testing (white-box testing): the tester knows the internal structure of the software; goals include executing every independent code path, testing every branch of every decision construct, exercising every loop, and testing every data structure; performed by the software engineers or a dedicated test team who have access to source code. Black-box testing: the tester treats the software as a black box—only inputs and outputs are known, not the internal structure; tests whether the software behaves correctly according to its specification; methods include exhaustive testing (all possible inputs—usually impractical), random testing, and boundary value analysis (testing edge values and just beyond). Both approaches are complementary: glass-box finds logic errors in the code; black-box finds requirement gaps.",
+            "explanation": "Neither testing method alone is sufficient. Glass-box testing verifies internal correctness but may miss cases where the specification itself was wrong. Black-box testing validates external behaviour but cannot guarantee coverage of all code paths. Professional testing combines both approaches to maximise defect detection.",
+            "source": "Section 10.5, pp. 283–285"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Evaluate the waterfall model for a large government defense project vs. Agile for a startup mobile app. What project characteristics drive each methodology choice?",
+            "bloom": "Evaluate",
+            "answer": "Waterfall model strengths: clear phase boundaries, complete documentation at each phase, full-system testing possible, works well for stable requirements. Weaknesses: inflexible to requirement changes; late error discovery is costly; no working software until the end. Incremental model strengths: early delivery of working software, customer feedback between increments, errors isolated to new functionality, adaptable to evolving requirements. Weaknesses: requires good architectural planning upfront to avoid integration problems; more management overhead. For a safety-critical avionics system with fixed, certified requirements: waterfall is preferable because all requirements must be formally specified and verified before any code is written (regulatory mandates), and the entire system must be tested as a whole. For a commercial web application with evolving user needs: incremental is superior because requirements will change, early user feedback is essential, and delivering features progressively provides business value.",
+            "explanation": "The choice of development model is driven by the stability of requirements, the cost of late changes, regulatory environment, and the need for early feedback. Safety-critical systems often mandate waterfall-like processes for traceability and certification. Commercial software increasingly uses incremental/agile approaches for competitive responsiveness.",
+            "source": "Section 10.1.1, pp. 275–276"
+          },
+          {
+            "q": "Design a complete testing plan for an ATM system, specifying glass-box tests, black-box tests, and integration tests, and justify why each category is needed.",
+            "bloom": "Create",
+            "answer": "Software quality is divided into three broad measures: (1) Operability — how well the system performs its basic function; metrics include accuracy (mean time between failures, bugs per KLOC), reliability (consistent correct operation), efficiency (resource usage), security (resistance to attacks), timeliness, and usability. (2) Maintainability — how easily the system can be corrected and changed; metrics include changeability, correctability, flexibility, and testability. (3) Transferability — how well the system can be moved or reused; metrics include reusability, interoperability, and portability. For the implementation phase specifically, the most critical quality factor is that code be readable (clear naming, comments), modular (small, single-purpose units with loose coupling and high cohesion), and testable (isolated units that can be verified independently).",
+            "explanation": "Quality cannot be added after the fact—it must be designed and coded in from the start. The three-category framework (operability/maintainability/transferability) provides a comprehensive checklist. Maintainability metrics are particularly important because, as the lifecycle model shows, modification consumes the majority of software costs.",
+            "source": "Section 10.4.2, pp. 281–283"
+          },
+          {
+            "q": "A project has 20 developers. Compare a monolithic team vs. modular decomposition into 4 teams. Explain how Conway's Law influences the resulting software architecture.",
+            "bloom": "Evaluate",
+            "answer": "Library catalogue development plan:\n\nAnalysis phase: identify requirements — search books by title/author/ISBN, track availability, manage user accounts, handle reservations. Use data flow diagrams showing: User → Search process → Book database; User → Borrow process → Loan database.\n\nDesign phase: procedure-oriented design: define modules (searchBooks, borrowBook, returnBook, manageUsers, generateReports); draw structure chart. Define data structures: Book record (ISBN, title, author, available), Loan record (userID, ISBN, dueDate).\n\nImplementation phase: code each module; use C or Python; ensure readability (clear variable names, comments per function); apply modularity (each function does one thing).\n\nTesting phase: glass-box testing of each module (test all branches in searchBooks, including no-results case); black-box testing from user perspective (boundary values: empty search, exact match, partial match).\n\nDocumentation: user guide (how to search and borrow), system documentation (DFDs, module descriptions, test results), technical documentation (installation guide).",
+            "explanation": "A systematic plan forces developers to think through all phases before coding. The plan reveals dependencies (design cannot proceed without complete analysis) and resource needs. Following the plan faithfully reduces the risk of delivering a system that does not meet requirements or cannot be maintained.",
+            "source": "Sections 10.1–10.6, pp. 274–289"
+          },
+          {
+            "q": "Construct a risk management plan for a safety-critical hospital patient monitoring system. Identify three technical risks and a mitigation strategy for each.",
+            "bloom": "Create",
+            "answer": "Object-oriented analysis for a university course-registration system:\n\nClasses identified:\n  - Student: attributes (studentID, name, enrolledCourses); methods (enroll(), drop(), viewSchedule())\n  - Course: attributes (courseID, title, credits, capacity, roster); methods (addStudent(), removeStudent(), isFull())\n  - Professor: attributes (profID, name, department, taughtCourses); methods (gradeCourse(), viewRoster())\n  - Registration: attributes (regID, student, course, date, status); methods (confirm(), cancel())\n\nRelationships:\n  - Student enrolls-in many Courses (many-to-many through Registration)\n  - Professor teaches many Courses (one-to-many)\n  - Course has one Professor (many-to-one)\n\nOO design: Registration acts as an association class capturing the enrolment relationship with its own attributes. Inheritance could add GraduateStudent (specialises Student with thesisAdvisor). Polymorphism: a Person base class for Student and Professor with a common getInfo() method.",
+            "explanation": "OO analysis identifies the real-world entities (objects) in the problem domain and models their attributes and relationships before writing any code. Using UML-style class diagrams during analysis ensures the design reflects the actual structure of the problem, making the transition to an OOP implementation (Java/C++) straightforward.",
+            "source": "Section 10.2.2, pp. 278–280"
+          }
+        ]
+      }
+    }
+  ]
+}

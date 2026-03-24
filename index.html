@@ -4,7 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Study Reference Portal — Personal Academic Cheatsheets</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d1117">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;600;700&family=IBM+Plex+Sans+Condensed:wght@700&display=swap" rel="stylesheet">
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('./sw.js').catch(function(){});}</script>
+<script src="search-index.js"></script>
 <style>
   :root {
     --bg:#0d1117;--surface:#161b22;--surface2:#1c2330;--border:#30363d;
@@ -453,75 +457,75 @@
 
   var CHAPTERS = [
     // COA — Computer Organization & Architecture
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH01',name:'Basic Concepts',url:'CEA/COA/CH01-Basic-Concepts-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH02',name:'Performance Issues',url:'CEA/COA/CH02-Performance-Issues-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH03',name:'Computer Function & Interconnection',url:'CEA/COA/CH03-Computer-Function-Interconnection-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH04',name:'Cache Memory',url:'CEA/COA/CH04-Cache-Memory-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH05',name:'Internal Memory',url:'CEA/COA/CH05-Internal-Memory-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH06',name:'External Memory',url:'CEA/COA/CH06-External-Memory-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH07',name:'Input / Output',url:'CEA/COA/CH07-Input-Output-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH08',name:'OS Support',url:'CEA/COA/CH08-OS-Support-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH09',name:'Number Systems',url:'CEA/COA/CH09-Number-Systems-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH10',name:'Computer Arithmetic',url:'CEA/COA/CH10-Computer-Arithmetic-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH11',name:'Digital Logic',url:'CEA/COA/CH11-Digital-Logic-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH12',name:'Instruction Sets: Characteristics',url:'CEA/COA/CH12-Instruction-Sets-Characteristics-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH13',name:'Addressing Modes',url:'CEA/COA/CH13-Addressing-Modes-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH14',name:'Processor Structure & Function',url:'CEA/COA/CH14-Processor-Structure-Function-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH15',name:'RISC',url:'CEA/COA/CH15-RISC-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH16',name:'ILP & Superscalar',url:'CEA/COA/CH16-ILP-Superscalar-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH17',name:'Parallel Processing',url:'CEA/COA/CH17-Parallel-Processing-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH18',name:'Multicore',url:'CEA/COA/CH18-Multicore-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH19',name:'GPGPU',url:'CEA/COA/CH19-GPGPU-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH20',name:'Control Unit Operation',url:'CEA/COA/CH20-Control-Unit-Operation-CheatSheet.html'},
-    {code:'COA',subject:'Computer Organization & Architecture',num:'CH21',name:'Microprogrammed Control',url:'CEA/COA/CH21-Microprogrammed-Control-CheatSheet.html'},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH01',name:'Basic Concepts',url:'CEA/COA/CH01-Basic-Concepts-CheatSheet.html',tags:['architecture','organization','structure','function','history','evolution','vacuum tubes','transistors','VLSI','ENIAC']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH02',name:'Performance Issues',url:'CEA/COA/CH02-Performance-Issues-CheatSheet.html',tags:['performance','clock','CPI','MIPS','Amdahl','benchmark','throughput','latency','speedup']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH03',name:'Computer Function & Interconnection',url:'CEA/COA/CH03-Computer-Function-Interconnection-CheatSheet.html',tags:['bus','interrupt','fetch','execute','cycle','PCIe','DMA','interconnect','system bus']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH04',name:'Cache Memory',url:'CEA/COA/CH04-Cache-Memory-CheatSheet.html',tags:['cache','hit','miss','locality','direct-mapped','associative','set-associative','LRU','write-back','write-through','hierarchy']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH05',name:'Internal Memory',url:'CEA/COA/CH05-Internal-Memory-CheatSheet.html',tags:['SRAM','DRAM','SDRAM','DDR','RAM','ROM','flash','ECC','Hamming','error correction']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH06',name:'External Memory',url:'CEA/COA/CH06-External-Memory-CheatSheet.html',tags:['disk','HDD','RAID','SSD','optical','CD','DVD','Blu-ray','storage','magnetic','sector']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH07',name:'Input / Output',url:'CEA/COA/CH07-Input-Output-CheatSheet.html',tags:['IO','interrupt','DMA','polling','USB','programmed','peripheral','channels','FireWire']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH08',name:'OS Support',url:'CEA/COA/CH08-OS-Support-CheatSheet.html',tags:['OS','process','thread','scheduling','virtual memory','paging','segmentation','operating system']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH09',name:'Number Systems',url:'CEA/COA/CH09-Number-Systems-CheatSheet.html',tags:['binary','hex','hexadecimal','octal','BCD','IEEE 754','floating point','twos complement','signed','unsigned']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH10',name:'Computer Arithmetic',url:'CEA/COA/CH10-Computer-Arithmetic-CheatSheet.html',tags:['arithmetic','addition','subtraction','multiplication','Booth','division','overflow','ALU','floating point']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH11',name:'Digital Logic',url:'CEA/COA/CH11-Digital-Logic-CheatSheet.html',tags:['boolean','logic','AND','OR','NOT','XOR','gates','flip-flop','register','counter','adder','MUX','decoder','circuit']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH12',name:'Instruction Sets: Characteristics',url:'CEA/COA/CH12-Instruction-Sets-Characteristics-CheatSheet.html',tags:['instruction','opcode','operand','CISC','format','data transfer','zero-address','three-address','ISA']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH13',name:'Addressing Modes',url:'CEA/COA/CH13-Addressing-Modes-CheatSheet.html',tags:['addressing','immediate','direct','indirect','register','displacement','stack','relative','modes']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH14',name:'Processor Structure & Function',url:'CEA/COA/CH14-Processor-Structure-Function-CheatSheet.html',tags:['CPU','processor','pipeline','fetch','decode','execute','hazard','branch prediction','register','ALU']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH15',name:'RISC',url:'CEA/COA/CH15-RISC-CheatSheet.html',tags:['RISC','CISC','ARM','register windows','delayed branch','reduced instruction']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH16',name:'ILP & Superscalar',url:'CEA/COA/CH16-ILP-Superscalar-CheatSheet.html',tags:['superscalar','ILP','out-of-order','Tomasulo','register renaming','VLIW','speculative execution','parallelism']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH17',name:'Parallel Processing',url:'CEA/COA/CH17-Parallel-Processing-CheatSheet.html',tags:['parallel','Flynn','SIMD','MIMD','SMP','cache coherence','NUMA','cluster','symmetric multiprocessor']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH18',name:'Multicore',url:'CEA/COA/CH18-Multicore-CheatSheet.html',tags:['multicore','SMT','hyperthreading','shared cache','ARM','x86','multithreading','multiprocessor']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH19',name:'GPGPU',url:'CEA/COA/CH19-GPGPU-CheatSheet.html',tags:['GPU','GPGPU','CUDA','SIMT','shader','streaming multiprocessor','graphics','parallel']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH20',name:'Control Unit Operation',url:'CEA/COA/CH20-Control-Unit-Operation-CheatSheet.html',tags:['control unit','hardwired','micro-operations','datapath','timing','signals','decode']},
+    {code:'COA',subject:'Computer Organization & Architecture',num:'CH21',name:'Microprogrammed Control',url:'CEA/COA/CH21-Microprogrammed-Control-CheatSheet.html',tags:['microprogrammed','microinstruction','control memory','horizontal','vertical','emulation','microcode']},
     // FCS — Foundations of Computer Science
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH01',name:'Introduction',url:'CSI/CH/CH01-Introduction-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH02',name:'Number Systems',url:'CSI/CH/CH02-Number-Systems-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH03',name:'Data Storage',url:'CSI/CH/CH03-Data-Storage-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH04',name:'Operations on Data',url:'CSI/CH/CH04-Operations-on-Data-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH05',name:'Computer Organization',url:'CSI/CH/CH05-Computer-Organization-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH06',name:'Computer Networks',url:'CSI/CH/CH06-Computer-Networks-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH07',name:'Operating Systems',url:'CSI/CH/CH07-Operating-Systems-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH08',name:'Algorithms',url:'CSI/CH/CH08-Algorithms-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH09',name:'Programming Languages',url:'CSI/CH/CH09-Programming-Languages-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH10',name:'Software Engineering',url:'CSI/CH/CH10-Software-Engineering-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH11',name:'Data Structures',url:'CSI/CH/CH11-Data-Structures-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH12',name:'Abstract Data Types',url:'CSI/CH/CH12-Abstract-Data-Types-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH13',name:'File Structure',url:'CSI/CH/CH13-File-Structure-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH14',name:'Databases',url:'CSI/CH/CH14-Databases-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH15',name:'Data Compression',url:'CSI/CH/CH15-Data-Compression-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH16',name:'Security',url:'CSI/CH/CH16-Security-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH17',name:'Theory of Computation',url:'CSI/CH/CH17-Theory-of-Computation-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH18',name:'Artificial Intelligence',url:'CSI/CH/CH18-Artificial-Intelligence-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH19',name:'Social Media',url:'CSI/CH/CH19-Social-Media-CheatSheet.html'},
-    {code:'FCS',subject:'Foundations of Computer Science',num:'CH20',name:'Social & Ethical Issues',url:'CSI/CH/CH20-Social-Ethical-Issues-CheatSheet.html'},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH01',name:'Introduction',url:'CSI/CH/CH01-Introduction-CheatSheet.html',tags:['Turing','Von Neumann','overview','history','generations','discipline','computer science']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH02',name:'Number Systems',url:'CSI/CH/CH02-Number-Systems-CheatSheet.html',tags:['binary','decimal','hex','octal','base conversion','non-positional','number systems']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH03',name:'Data Storage',url:'CSI/CH/CH03-Data-Storage-CheatSheet.html',tags:['bits','bytes','ASCII','Unicode','image','audio','video','sign-magnitude','twos complement','IEEE 754']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH04',name:'Operations on Data',url:'CSI/CH/CH04-Operations-on-Data-CheatSheet.html',tags:['AND','OR','NOT','shift','arithmetic','logic','operations']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH05',name:'Computer Organization',url:'CSI/CH/CH05-Computer-Organization-CheatSheet.html',tags:['CPU','memory','ALU','program counter','Von Neumann','bus','hardware','organization']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH06',name:'Computer Networks',url:'CSI/CH/CH06-Computer-Networks-CheatSheet.html',tags:['TCP','IP','OSI','LAN','WAN','internet','router','switch','protocol','packet','network']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH07',name:'Operating Systems',url:'CSI/CH/CH07-Operating-Systems-CheatSheet.html',tags:['kernel','process','thread','multitasking','file system','scheduler','memory management','OS']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH08',name:'Algorithms',url:'CSI/CH/CH08-Algorithms-CheatSheet.html',tags:['sort','search','Big-O','complexity','recursion','iteration','algorithm','pseudocode']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH09',name:'Programming Languages',url:'CSI/CH/CH09-Programming-Languages-CheatSheet.html',tags:['language','compiler','interpreter','OOP','syntax','semantics','paradigm','Python','Java']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH10',name:'Software Engineering',url:'CSI/CH/CH10-Software-Engineering-CheatSheet.html',tags:['SDLC','agile','waterfall','testing','debugging','design patterns','development','engineering']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH11',name:'Data Structures',url:'CSI/CH/CH11-Data-Structures-CheatSheet.html',tags:['array','linked list','stack','queue','tree','graph','structure','data']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH12',name:'Abstract Data Types',url:'CSI/CH/CH12-Abstract-Data-Types-CheatSheet.html',tags:['ADT','abstract','stack','queue','list','set','map','tree','operations']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH13',name:'File Structure',url:'CSI/CH/CH13-File-Structure-CheatSheet.html',tags:['file','sequential','indexed','hashed','B-tree','collision','directory','structure']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH14',name:'Databases',url:'CSI/CH/CH14-Databases-CheatSheet.html',tags:['SQL','relational','ER diagram','normalization','1NF','2NF','3NF','DBMS','query','database']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH15',name:'Data Compression',url:'CSI/CH/CH15-Data-Compression-CheatSheet.html',tags:['Huffman','LZW','run-length','entropy','lossless','lossy','JPEG','MP3','compression']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH16',name:'Security',url:'CSI/CH/CH16-Security-CheatSheet.html',tags:['encryption','RSA','DES','AES','hash','firewall','authentication','PKI','digital signature','cryptography']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH17',name:'Theory of Computation',url:'CSI/CH/CH17-Theory-of-Computation-CheatSheet.html',tags:['Turing machine','automata','regular language','grammar','halting problem','NP','complexity']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH18',name:'Artificial Intelligence',url:'CSI/CH/CH18-Artificial-Intelligence-CheatSheet.html',tags:['machine learning','neural network','expert system','heuristic','search','AI','artificial intelligence']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH19',name:'Social Media',url:'CSI/CH/CH19-Social-Media-CheatSheet.html',tags:['Facebook','Twitter','social graph','platform','algorithmic feed','web','communication']},
+    {code:'FCS',subject:'Foundations of Computer Science',num:'CH20',name:'Social & Ethical Issues',url:'CSI/CH/CH20-Social-Ethical-Issues-CheatSheet.html',tags:['ethics','privacy','copyright','patent','intellectual property','crime','hacker','ACM','policy']},
     // ALG — Linear Algebra
-    {code:'ALG',subject:'Linear Algebra',num:'CH01',name:'Systems of Linear Equations',url:'MAE/ALG/CH01-Systems-Linear-Equations-CheatSheet.html'},
-    {code:'ALG',subject:'Linear Algebra',num:'CH02',name:'Matrix Algebra',url:'MAE/ALG/CH02-Matrix-Algebra-CheatSheet.html'},
-    {code:'ALG',subject:'Linear Algebra',num:'CH03',name:'Determinants & Diagonalization',url:'MAE/ALG/CH03-Determinants-Diagonalization-CheatSheet.html'},
-    {code:'ALG',subject:'Linear Algebra',num:'CH04',name:'Vector Geometry',url:'MAE/ALG/CH04-Vector-Geometry-CheatSheet.html'},
-    {code:'ALG',subject:'Linear Algebra',num:'CH05',name:'Vector Space Rⁿ',url:'MAE/ALG/CH05-Vector-Space-Rn-CheatSheet.html'},
-    {code:'ALG',subject:'Linear Algebra',num:'CH06',name:'Abstract Vector Spaces',url:'MAE/ALG/CH06-Abstract-Vector-Spaces-CheatSheet.html'},
-    {code:'ALG',subject:'Linear Algebra',num:'CH07',name:'Linear Transformations',url:'MAE/ALG/CH07-Linear-Transformations-CheatSheet.html'},
-    {code:'ALG',subject:'Linear Algebra',num:'CH08',name:'Orthogonality',url:'MAE/ALG/CH08-Orthogonality-CheatSheet.html'},
-    {code:'ALG',subject:'Linear Algebra',num:'CH09',name:'Change of Basis',url:'MAE/ALG/CH09-Change-of-Basis-CheatSheet.html'},
-    {code:'ALG',subject:'Linear Algebra',num:'CH10',name:'Inner Product Spaces',url:'MAE/ALG/CH10-Inner-Product-Spaces-CheatSheet.html'},
-    {code:'ALG',subject:'Linear Algebra',num:'CH11',name:'Canonical Forms',url:'MAE/ALG/CH11-Canonical-Forms-CheatSheet.html'},
+    {code:'ALG',subject:'Linear Algebra',num:'CH01',name:'Systems of Linear Equations',url:'MAE/ALG/CH01-Systems-Linear-Equations-CheatSheet.html',tags:['linear equations','system','matrix','Gaussian','row echelon','rank','consistent','homogeneous']},
+    {code:'ALG',subject:'Linear Algebra',num:'CH02',name:'Matrix Algebra',url:'MAE/ALG/CH02-Matrix-Algebra-CheatSheet.html',tags:['matrix','multiplication','inverse','transpose','determinant','algebra','operations']},
+    {code:'ALG',subject:'Linear Algebra',num:'CH03',name:'Determinants & Diagonalization',url:'MAE/ALG/CH03-Determinants-Diagonalization-CheatSheet.html',tags:['determinant','eigenvalue','eigenvector','diagonalization','characteristic polynomial']},
+    {code:'ALG',subject:'Linear Algebra',num:'CH04',name:'Vector Geometry',url:'MAE/ALG/CH04-Vector-Geometry-CheatSheet.html',tags:['vector','dot product','cross product','projection','angle','geometry','norm']},
+    {code:'ALG',subject:'Linear Algebra',num:'CH05',name:'Vector Space Rⁿ',url:'MAE/ALG/CH05-Vector-Space-Rn-CheatSheet.html',tags:['subspace','span','basis','dimension','linear independence','Rn','null space','column space']},
+    {code:'ALG',subject:'Linear Algebra',num:'CH06',name:'Abstract Vector Spaces',url:'MAE/ALG/CH06-Abstract-Vector-Spaces-CheatSheet.html',tags:['abstract','axioms','polynomial','function space','vector space']},
+    {code:'ALG',subject:'Linear Algebra',num:'CH07',name:'Linear Transformations',url:'MAE/ALG/CH07-Linear-Transformations-CheatSheet.html',tags:['linear map','kernel','image','rank-nullity','matrix representation','isomorphism','transformation']},
+    {code:'ALG',subject:'Linear Algebra',num:'CH08',name:'Orthogonality',url:'MAE/ALG/CH08-Orthogonality-CheatSheet.html',tags:['orthogonal','Gram-Schmidt','least squares','QR','projection','orthonormal']},
+    {code:'ALG',subject:'Linear Algebra',num:'CH09',name:'Change of Basis',url:'MAE/ALG/CH09-Change-of-Basis-CheatSheet.html',tags:['basis change','similarity','transition matrix','coordinate vector','matrix representation']},
+    {code:'ALG',subject:'Linear Algebra',num:'CH10',name:'Inner Product Spaces',url:'MAE/ALG/CH10-Inner-Product-Spaces-CheatSheet.html',tags:['inner product','norm','Cauchy-Schwarz','orthonormal','Fourier','symmetric']},
+    {code:'ALG',subject:'Linear Algebra',num:'CH11',name:'Canonical Forms',url:'MAE/ALG/CH11-Canonical-Forms-CheatSheet.html',tags:['Jordan','canonical','nilpotent','minimal polynomial','rational form','invariant','spectral']},
     // CAL1 — Calculus 1
-    {code:'CAL1',subject:'Calculus 1',num:'CH01',name:'Functions & Graphs',url:'MAE/CAL1/CH01-Functions-Graphs-CheatSheet.html'},
-    {code:'CAL1',subject:'Calculus 1',num:'CH02',name:'Limits',url:'MAE/CAL1/CH02-Limits-CheatSheet.html'},
-    {code:'CAL1',subject:'Calculus 1',num:'CH03',name:'Derivatives',url:'MAE/CAL1/CH03-Derivatives-CheatSheet.html'},
-    {code:'CAL1',subject:'Calculus 1',num:'CH04',name:'Applications of Derivatives',url:'MAE/CAL1/CH04-Applications-Derivatives-CheatSheet.html'},
-    {code:'CAL1',subject:'Calculus 1',num:'CH05',name:'Integration',url:'MAE/CAL1/CH05-Integration-CheatSheet.html'},
-    {code:'CAL1',subject:'Calculus 1',num:'CH06',name:'Applications of Integration',url:'MAE/CAL1/CH06-Applications-Integration-CheatSheet.html'},
+    {code:'CAL1',subject:'Calculus 1',num:'CH01',name:'Functions & Graphs',url:'MAE/CAL1/CH01-Functions-Graphs-CheatSheet.html',tags:['function','graph','domain','range','trigonometric','exponential','logarithm']},
+    {code:'CAL1',subject:'Calculus 1',num:'CH02',name:'Limits',url:'MAE/CAL1/CH02-Limits-CheatSheet.html',tags:['limit','continuity','epsilon-delta','squeeze theorem','infinity','L\'Hopital']},
+    {code:'CAL1',subject:'Calculus 1',num:'CH03',name:'Derivatives',url:'MAE/CAL1/CH03-Derivatives-CheatSheet.html',tags:['derivative','differentiation','chain rule','product rule','quotient rule','implicit','tangent']},
+    {code:'CAL1',subject:'Calculus 1',num:'CH04',name:'Applications of Derivatives',url:'MAE/CAL1/CH04-Applications-Derivatives-CheatSheet.html',tags:['mean value','critical point','inflection','concavity','optimization','related rates','extrema']},
+    {code:'CAL1',subject:'Calculus 1',num:'CH05',name:'Integration',url:'MAE/CAL1/CH05-Integration-CheatSheet.html',tags:['integral','antiderivative','Riemann','Fundamental Theorem','substitution','definite','indefinite']},
+    {code:'CAL1',subject:'Calculus 1',num:'CH06',name:'Applications of Integration',url:'MAE/CAL1/CH06-Applications-Integration-CheatSheet.html',tags:['area','volume','arc length','surface','revolution','work','average value','application']},
     // CAL2 — Calculus 2
-    {code:'CAL2',subject:'Calculus 2',num:'CH01',name:'Integration',url:'MAE/CAL2/CH01-Integration-CheatSheet.html'},
-    {code:'CAL2',subject:'Calculus 2',num:'CH02',name:'Applications of Integration',url:'MAE/CAL2/CH02-Applications-Integration-CheatSheet.html'},
-    {code:'CAL2',subject:'Calculus 2',num:'CH03',name:'Techniques of Integration',url:'MAE/CAL2/CH03-Techniques-Integration-CheatSheet.html'},
-    {code:'CAL2',subject:'Calculus 2',num:'CH04',name:'Differential Equations',url:'MAE/CAL2/CH04-Differential-Equations-CheatSheet.html'},
-    {code:'CAL2',subject:'Calculus 2',num:'CH05',name:'Sequences & Series',url:'MAE/CAL2/CH05-Sequences-Series-CheatSheet.html'},
-    {code:'CAL2',subject:'Calculus 2',num:'CH06',name:'Power Series',url:'MAE/CAL2/CH06-Power-Series-CheatSheet.html'},
-    {code:'CAL2',subject:'Calculus 2',num:'CH07',name:'Parametric Equations & Polar Coordinates',url:'MAE/CAL2/CH07-Parametric-Polar-CheatSheet.html'},
+    {code:'CAL2',subject:'Calculus 2',num:'CH01',name:'Integration',url:'MAE/CAL2/CH01-Integration-CheatSheet.html',tags:['integration','techniques','substitution','partial fraction','advanced']},
+    {code:'CAL2',subject:'Calculus 2',num:'CH02',name:'Applications of Integration',url:'MAE/CAL2/CH02-Applications-Integration-CheatSheet.html',tags:['area','volume','arc length','surface','work','application']},
+    {code:'CAL2',subject:'Calculus 2',num:'CH03',name:'Techniques of Integration',url:'MAE/CAL2/CH03-Techniques-Integration-CheatSheet.html',tags:['integration by parts','trig substitution','partial fraction','improper','techniques']},
+    {code:'CAL2',subject:'Calculus 2',num:'CH04',name:'Differential Equations',url:'MAE/CAL2/CH04-Differential-Equations-CheatSheet.html',tags:['ODE','separable','first-order','linear','slope field','initial value','differential equations']},
+    {code:'CAL2',subject:'Calculus 2',num:'CH05',name:'Sequences & Series',url:'MAE/CAL2/CH05-Sequences-Series-CheatSheet.html',tags:['sequence','series','convergence','divergence','ratio test','root test','comparison','alternating']},
+    {code:'CAL2',subject:'Calculus 2',num:'CH06',name:'Power Series',url:'MAE/CAL2/CH06-Power-Series-CheatSheet.html',tags:['power series','Taylor','Maclaurin','radius of convergence','interval','representation']},
+    {code:'CAL2',subject:'Calculus 2',num:'CH07',name:'Parametric Equations & Polar Coordinates',url:'MAE/CAL2/CH07-Parametric-Polar-CheatSheet.html',tags:['parametric','polar','coordinates','curve','area','arc length','conic']},
   ];
 
   var MAX_CHAPTER_RESULTS = 8;
@@ -558,8 +562,9 @@
     if(!q){ chapterResults.style.display='none'; return; }
 
     var matches = CHAPTERS.filter(function(ch){
-      var haystack = (ch.code+' '+ch.subject+' '+ch.num+' '+ch.name).toLowerCase();
-      return haystack.includes(q);
+      var haystack = (ch.code+' '+ch.subject+' '+ch.num+' '+ch.name+' '+(ch.tags||[]).join(' ')).toLowerCase();
+      var content = (window.CHAPTER_CONTENT && window.CHAPTER_CONTENT[ch.url] || '').toLowerCase();
+      return haystack.includes(q) || content.includes(q);
     });
 
     if(!matches.length){ chapterResults.style.display='none'; return; }

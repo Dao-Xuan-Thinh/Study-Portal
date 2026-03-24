@@ -1,0 +1,414 @@
+{
+  "chapters": [
+    {
+      "number": 16,
+      "title": "Security",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define the three goals of information security (CIA triad) and give one example threat to each.",
+            "bloom": "Remember",
+            "answer": "Confidentiality: only authorized parties can access data. Threat: eavesdropping, data breach. Integrity: data can only be modified by authorized parties and changes are detectable. Threat: man-in-the-middle attack modifying messages. Availability: authorized users can access the system when needed. Threat: Denial-of-Service (DoS) attack.",
+            "explanation": "The CIA triad is the foundational framework for all security design. Every security control addresses at least one of these three goals. Encryption protects confidentiality. Digital signatures protect integrity. Redundancy and failover protect availability. A complete security posture addresses all three simultaneously.",
+            "source": "Section 16.1, pp. 432–433"
+          },
+          {
+            "q": "Define symmetric-key encryption and asymmetric-key (public-key) encryption. What is the key distribution advantage of asymmetric encryption?",
+            "bloom": "Understand",
+            "answer": "Symmetric: same key used for both encryption and decryption (e.g., AES). Both parties must securely share the secret key in advance. Asymmetric: two mathematically linked keys — public key (anyone can encrypt) and private key (only owner can decrypt). Advantage: public key can be freely distributed — no secret channel needed to share it.",
+            "explanation": "Symmetric encryption is fast (AES encrypts gigabytes per second) but requires a secure key exchange channel — a chicken-and-egg problem. Asymmetric encryption (RSA, ECC) solves key distribution: you publish your public key openly. The cost: asymmetric is 1000× slower. In practice, TLS uses asymmetric encryption only to exchange a symmetric session key, then uses symmetric for bulk data.",
+            "source": "Section 16.2, pp. 433–440"
+          },
+          {
+            "q": "Define a digital signature. What two security properties does it provide that a handwritten signature cannot?",
+            "bloom": "Understand",
+            "answer": "A digital signature is a cryptographic value created by encrypting a document's hash with the sender's private key. Properties: (1) Authentication — verifies the identity of the signer (only the private key owner could create it). (2) Non-repudiation — the signer cannot later deny signing (private key is unique to them). Bonus: integrity — any modification to the document invalidates the signature.",
+            "explanation": "A handwritten signature can be forged (no mathematical link to document content). A digital signature is mathematically bound to the exact bits of the document — changing even one bit produces a completely different hash, invalidating the signature. Digital signatures underpin TLS certificates, code signing, and email authentication (S/MIME, DKIM).",
+            "source": "Section 16.3, pp. 440–445"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Trace the RSA encryption process: given p=5, q=11 (n=55, e=3, d=27), encrypt message M=8 and decrypt the result.",
+            "bloom": "Apply",
+            "answer": "Encryption: C = M^e mod n = 8³ mod 55 = 512 mod 55 = 512 − 9×55 = 512 − 495 = 17. Decryption: M = C^d mod n = 17²⁷ mod 55. Using fast exponentiation: 17²⁷ mod 55 = 8. Original message recovered.",
+            "explanation": "RSA's security relies on the difficulty of factoring n=p×q when p and q are large primes. Given only n (public), factoring it to find p and q is computationally infeasible for large keys (2048+ bits). The key pair property: encrypting with e and decrypting with d (or vice versa) are mathematical inverses. Real RSA uses 2048-bit or 4096-bit primes — this toy example uses tiny primes for illustration.",
+            "source": "Section 16.2.2, pp. 436–440"
+          },
+          {
+            "q": "Describe how a man-in-the-middle (MITM) attack works in a key exchange, and explain how digital certificates prevent it.",
+            "bloom": "Analyze",
+            "answer": "MITM attack: Alice and Bob try to exchange public keys. Eve intercepts, substitutes her own keys — Eve shares one key with Alice and another with Bob. All communication passes through Eve, who can decrypt, read, and re-encrypt. Prevention via certificates: Alice gets Bob's public key in a certificate signed by a trusted Certificate Authority (CA). Eve cannot forge the CA's signature, so Alice can verify the key truly belongs to Bob.",
+            "explanation": "Without certificate authorities, public key infrastructure is vulnerable to MITM. CAs form a chain of trust: root CAs (embedded in browsers/OS) sign intermediate CAs, which sign website certificates. Your browser verifies the certificate chain before establishing a TLS connection. Certificate pinning (used by mobile apps) further prevents MITM by hardcoding expected certificates.",
+            "source": "Section 16.3, pp. 440–445"
+          },
+          {
+            "q": "Compare firewall packet filtering and application-layer proxy firewalls. What types of attacks can each detect?",
+            "bloom": "Analyze",
+            "answer": "Packet filter: examines IP headers and TCP/UDP ports; blocks based on source/destination IP and port rules; cannot inspect content. Detects: port scans, unauthorized services, IP spoofing. Application proxy: operates at layer 7, inspects full application content (HTTP, FTP); can detect malicious payloads, SQL injection in web traffic, protocol violations. Proxy is more secure but slower (deep inspection overhead).",
+            "explanation": "Packet filters are stateless (or stateful with connection tracking) but cannot see inside encrypted or application-layer attacks. Application proxies terminate connections and re-establish them, acting as intermediaries — they can decrypt, inspect, and re-encrypt TLS traffic (TLS inspection). Modern next-gen firewalls (NGFWs) combine both approaches with IDS/IPS, application awareness, and threat intelligence feeds.",
+            "source": "Section 16.4, pp. 445–452"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Evaluate why hashing a password before storing it is insufficient for security if a simple hash (like SHA-256) is used without salting. Describe how rainbow table attacks work and how salting defeats them.",
+            "bloom": "Evaluate",
+            "answer": "Simple hash: SHA-256('password123') is always the same value. Attacker precomputes a rainbow table (hash → plaintext for millions of common passwords). If two users have the same password, their hashes match — revealing both with one lookup. Salting: add a unique random string (salt) before hashing: SHA-256(salt + 'password123'). Each user has a unique salt, so identical passwords produce different hashes. Precomputed tables are useless since each salt requires recomputing the entire table.",
+            "explanation": "Rainbow tables (compressed lookup tables) enable sub-second password cracking for unsalted hashes. Salting forces the attacker to crack each password independently, multiplying the cost by the number of users. Modern best practice: use bcrypt, scrypt, or Argon2 — slow-by-design hashing functions that take 100ms per hash, making brute force require years even with GPUs. PBKDF2 with 100,000+ iterations is NIST-recommended.",
+            "source": "Section 16.2, pp. 433–440"
+          },
+          {
+            "q": "Design a layered security architecture for a web application handling medical records. Specify security controls at the network, OS, application, and data layers.",
+            "bloom": "Create",
+            "answer": "Network: TLS 1.3 for all traffic, WAF (web application firewall) for SQL injection/XSS, network segmentation (database on private subnet). OS: minimal attack surface (disable unused services), OS hardening, patch management, intrusion detection (AIDE/Tripwire). Application: input validation, parameterized queries (prevents SQL injection), authentication with MFA, session tokens (short expiry, HTTPS-only cookies). Data: AES-256 encryption at rest, column-level encryption for SSN/DOB, audit logging of all access.",
+            "explanation": "Defense in depth: security at every layer means an attacker must defeat multiple independent controls. Each layer addresses different attack vectors: network layer stops network-level attacks; application layer stops logic/injection attacks; data layer protects against privileged insider threats. HIPAA requires this layered approach for medical records. Audit logs satisfy regulatory requirements and enable forensic investigation.",
+            "source": "Section 16.4–16.5, pp. 445–455"
+          },
+          {
+            "q": "Explain how the Diffie-Hellman key exchange allows two parties to establish a shared secret over a public channel without transmitting the secret. Why is it secure despite the exchange being observable?",
+            "bloom": "Evaluate",
+            "answer": "Setup: public parameters g=2, p=23. Alice picks secret a=6, sends A=g^a mod p = 64 mod 23 = 18. Bob picks secret b=15, sends B=g^b mod p = 2^15 mod 23 = 19. Shared secret: Alice computes B^a mod p = 19^6 mod 23 = 2; Bob computes A^b mod p = 18^15 mod 23 = 2. Same result without ever transmitting 2, a, or b. Security: an attacker sees g, p, A, B but must solve the discrete logarithm problem (find a from g^a mod p) — computationally infeasible for large p.",
+            "explanation": "The discrete logarithm problem: given g^a mod p, find a. For large primes p (2048+ bits), no polynomial-time classical algorithm is known. Elliptic Curve DH (ECDH) achieves equivalent security with much smaller key sizes (256-bit ECDH ≈ 3072-bit DH). DH is the basis of the TLS handshake and provides forward secrecy — compromising the server's private key does not decrypt past sessions.",
+            "source": "Section 16.2, pp. 433–440"
+          },
+          {
+            "q": "Evaluate three common web application vulnerabilities (SQL injection, XSS, CSRF) — describe each attack and the specific defense that prevents it.",
+            "bloom": "Evaluate",
+            "answer": "SQL Injection: attacker inputs 'OR 1=1-- into a login field; if concatenated into SQL, bypasses authentication. Defense: parameterized queries / prepared statements (input is never interpreted as SQL). XSS (Cross-Site Scripting): attacker injects malicious JavaScript into a page; it executes in victims' browsers stealing cookies. Defense: output encoding (HTML-escape all user content before rendering). CSRF: attacker's page makes authenticated requests to a target site using victim's cookies. Defense: CSRF tokens (random value in forms, verified server-side).",
+            "explanation": "These three are consistently in the OWASP Top 10 most critical web vulnerabilities. SQL injection and XSS both stem from insufficient input/output handling. CSRF exploits the browser's automatic cookie sending. Parameterized queries fundamentally prevent SQL injection by separating code from data. Content Security Policy (CSP) headers provide defense-in-depth against XSS by restricting script sources.",
+            "source": "Section 16.4–16.5, pp. 445–455"
+          }
+        ]
+      }
+    },
+    {
+      "number": 17,
+      "title": "Theory of Computation",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define a formal language in the context of theory of computation. Give an example of a language and its alphabet.",
+            "bloom": "Remember",
+            "answer": "A formal language is a set of strings over a given alphabet (set of symbols) that follow specific rules. Example: language of all binary strings with even number of 1s, over alphabet {0,1}. Another example: language of all valid C programs over the ASCII alphabet.",
+            "explanation": "Formal language theory provides the mathematical foundation for compilers, regular expressions, and computability. The alphabet is the set of valid symbols; the language is the set of valid strings formed from those symbols. Studying which languages can be recognized by which computational models reveals fundamental limits of computation.",
+            "source": "Section 17.1, pp. 472–474"
+          },
+          {
+            "q": "What is a Finite Automaton (FA)? Define its five components and the concept of acceptance.",
+            "bloom": "Remember",
+            "answer": "A finite automaton is a simple computational model that recognizes regular languages. Five components: (1) Q — finite set of states; (2) Σ — input alphabet; (3) δ — transition function (state × symbol → state); (4) q₀ — start state; (5) F — set of accept states. Acceptance: FA accepts a string if processing all its characters ends in an accept state.",
+            "explanation": "FAs model systems with finite memory — they remember only which state they are in, not a full history. Despite simplicity, FAs recognize all regular languages (patterns describable by regular expressions). They are the theoretical basis for lexical analyzers (the first phase of a compiler) and pattern matching engines.",
+            "source": "Section 17.2, pp. 474–478"
+          },
+          {
+            "q": "State the Church-Turing thesis and explain its significance for what computers can and cannot compute.",
+            "bloom": "Understand",
+            "answer": "The Church-Turing thesis: any function that can be computed by any effective algorithm can be computed by a Turing machine. Significance: it defines the boundary of computability — problems solvable by Turing machines are solvable by any computer; problems not solvable by Turing machines (undecidable problems) cannot be solved by any computer, regardless of speed or memory.",
+            "explanation": "The thesis is not a proven theorem (it cannot be, since 'effective algorithm' is informal) but is universally accepted. It means modern computers are exactly as powerful as a simple Turing machine in terms of what they can compute — not how fast. Problems like the halting problem are undecidable regardless of hardware. This places absolute limits on what software can do.",
+            "source": "Section 17.4, pp. 482–486"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Design a finite automaton that accepts all binary strings containing the substring '101'. Define the states, transitions, and acceptance condition.",
+            "bloom": "Apply",
+            "answer": "States: q0 (start, haven't seen '1' yet), q1 (seen '1'), q2 (seen '10'), q3 (seen '101' — accept state, absorbing). Transitions: q0 on 0→q0, on 1→q1. q1 on 0→q2, on 1→q1. q2 on 0→q0, on 1→q3. q3 on 0→q3, on 1→q3. Accept state: q3. Accepts any string containing '101' as a substring.",
+            "explanation": "Each state tracks 'progress toward seeing 101'. The absorbing accept state q3 ensures any string that ever contains '101' is accepted regardless of what follows. This pattern — tracking longest prefix of the target that is a suffix of the input seen so far — is the basis of the KMP string search algorithm and regular expression matching.",
+            "source": "Section 17.2, pp. 474–478"
+          },
+          {
+            "q": "Explain the difference between deterministic (DFA) and non-deterministic (NFA) finite automata. Show a simple NFA and describe why every NFA has an equivalent DFA.",
+            "bloom": "Analyze",
+            "answer": "DFA: exactly one transition per state per input symbol — always deterministic. NFA: may have zero, one, or multiple transitions per symbol, and may have ε (empty string) transitions. NFA for 'ends in 01': state 0 →0→1, →1→0 (loops), state 1 →1→2, state 2 accept. Equivalence: every NFA can be converted to a DFA using the subset construction — DFA states correspond to sets of NFA states. The DFA may have exponentially more states but is always constructible.",
+            "explanation": "NFAs are easier to design (can 'guess' multiple paths simultaneously) but DFAs are easier to implement (one unambiguous transition per symbol). The subset construction proves they recognize identical languages. This equivalence is fundamental: it means non-determinism adds no computational power to finite automata (unlike for polynomial-time computation, where P vs. NP is unsolved).",
+            "source": "Section 17.2, pp. 474–478"
+          },
+          {
+            "q": "Compare the Chomsky language hierarchy: regular, context-free, context-sensitive, and recursively enumerable languages. What computational model recognizes each?",
+            "bloom": "Analyze",
+            "answer": "Regular: recognized by finite automata; describable by regular expressions. Example: identifiers, email patterns. Context-free: recognized by pushdown automata (FA + stack); basis of programming language grammars. Example: balanced parentheses, arithmetic expressions. Context-sensitive: recognized by linear bounded automata. Recursively enumerable: recognized by Turing machines; most general. Not all languages are in any class — some are undecidable.",
+            "explanation": "The hierarchy reflects increasing computational power and memory: FA has no memory; PDA has a stack (LIFO memory); LBA has bounded RAM; TM has unbounded RAM. Most programming language syntax is context-free (parseable with PDAs). Type checking and semantic analysis require more power. The hierarchy explains why some problems require more powerful models — regex cannot count arbitrarily nested structures.",
+            "source": "Section 17.3, pp. 478–482"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Prove that the language of balanced parentheses (e.g., '(())', '((()))') is context-free but not regular.",
+            "bloom": "Evaluate",
+            "answer": "Context-free: PDA grammar S → (S) | SS | ε recognizes it. PDA: push '(' for each open; pop for each ')'; accept if stack empty at end. Not regular: use the pumping lemma for regular languages. Assume regular with pumping length p. String s = (^p)^p is in the language. Pumping lemma says some middle portion of the first p '(' can be pumped. Pumping up adds extra '(' without matching ')' → not in language → contradiction. Therefore not regular.",
+            "explanation": "The pumping lemma is the standard technique for proving a language is not regular. Regular languages cannot count — they have no memory beyond their finite states. Balanced parentheses require counting the number of unmatched open parens, which requires unbounded memory. This is why programming languages (which need balanced braces) require CFG parsers, not simple regex.",
+            "source": "Section 17.3, pp. 478–482"
+          },
+          {
+            "q": "Explain P, NP, NP-complete, and NP-hard complexity classes. Give an example problem in each class and explain why P=NP being false matters for cryptography.",
+            "bloom": "Evaluate",
+            "answer": "P: problems solvable in polynomial time (e.g., sorting, shortest path). NP: problems where a proposed solution can be verified in polynomial time (e.g., SAT, traveling salesman). NP-complete: in NP and every NP problem reduces to it in polynomial time (e.g., 3-SAT, subset sum). NP-hard: at least as hard as NP-complete but may not be in NP (e.g., halting problem). If P=NP: every NP problem becomes easy to solve, breaking RSA/AES encryption (key search becomes polynomial).",
+            "explanation": "Cryptography's security rests on assumed hard problems (factoring, discrete logarithm). If P=NP, these become polynomially solvable — all current public-key cryptography breaks. Conversely, P≠NP (widely believed but unproven — the Millennium Prize Problem) means cryptographically hard problems remain hard. This is the most important open problem in computer science.",
+            "source": "Section 17.4, pp. 482–486"
+          },
+          {
+            "q": "Design a Turing machine that computes the function f(n) = n+1 for unary numbers (a unary number n is represented as n consecutive 1s). Specify states, transitions, and trace execution for n=3 (input: '111').",
+            "bloom": "Create",
+            "answer": "TM: states {q0, q_accept}. Alphabet: {1, B (blank)}. Transitions: q0 on 1 → write 1, move right, stay q0 (scan to end of input). q0 on B → write 1, move left, go to q_accept (add one more 1 at end). Trace for input '111': read 1→move right, read 1→move right, read 1→move right, read B→write 1, halt. Tape: '1111'. Output: 4 ones = n+1=4. Correct.",
+            "explanation": "Turing machines manipulate symbols on an infinite tape via simple read/write/move rules. Despite extreme simplicity, they can compute anything computable. This TM scans to the blank after the last 1, writes a new 1, then halts. The Church-Turing thesis says any algorithm can be implemented this way. Turing's insight was that these simple machines are universal — with the right program, one TM can simulate any other.",
+            "source": "Section 17.4, pp. 482–486"
+          },
+          {
+            "q": "Evaluate the practical implications of NP-completeness for a software engineer tasked with scheduling n tasks with time windows and resource constraints (a variant of NP-complete bin packing). What strategies can be used when exact solutions are infeasible?",
+            "bloom": "Evaluate",
+            "answer": "NP-completeness means no known polynomial-time algorithm — exact solution requires exponential time for large n (infeasible beyond n≈50). Practical strategies: (1) Approximation algorithms — find a solution within a provable ratio of optimal (e.g., greedy bin-packing is within 2× optimal). (2) Heuristics — genetic algorithms, simulated annealing find good solutions quickly without optimality guarantee. (3) Branch and bound — exact but prunes search space; practical for moderate n. (4) Exploit problem structure — if tasks have special properties (all same size), the problem may reduce to polynomial.",
+            "explanation": "NP-completeness means 'hard in the worst case' not 'always hard'. Real-world instances often have structure that makes them easier. Integer linear programming solvers (CPLEX, Gurobi) handle industrial scheduling problems with thousands of variables using branch-and-bound with cuts. Understanding NP-completeness helps set expectations: for a new optimization problem, first check if it reduces from a known NP-complete problem.",
+            "source": "Section 17.4, pp. 482–486"
+          }
+        ]
+      }
+    },
+    {
+      "number": 18,
+      "title": "Artificial Intelligence",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define artificial intelligence and distinguish between weak AI and strong AI.",
+            "bloom": "Remember",
+            "answer": "Artificial Intelligence (AI) is the simulation of human intelligence by computer systems. Weak AI (narrow AI): systems designed and trained for a specific task (e.g., chess engines, image classifiers, voice assistants) — they do not understand or generalize beyond their domain. Strong AI (general AI): hypothetical systems with human-level general intelligence capable of understanding, learning, and reasoning across any domain.",
+            "explanation": "All current AI systems are weak AI — AlphaGo plays Go brilliantly but cannot play checkers or hold a conversation. Strong AI remains a research goal. The distinction matters because weak AI is here now (ChatGPT, self-driving cars, medical diagnosis AI) while strong AI raises deeper philosophical questions about consciousness and machine sentience.",
+            "source": "Section 18.1, pp. 494–495"
+          },
+          {
+            "q": "Define a knowledge base in AI systems. What two types of information does it typically contain?",
+            "bloom": "Remember",
+            "answer": "A knowledge base is a structured repository of information used by an AI system for reasoning. It typically contains: (1) Facts — specific true statements about the world (e.g., 'Socrates is a man'). (2) Rules — general inference rules (e.g., 'If X is a man, then X is mortal'). The inference engine applies rules to facts to derive new conclusions.",
+            "explanation": "Knowledge bases are the foundation of expert systems (AI that mimics a human expert's decision-making). Medical diagnosis systems, legal reasoning tools, and configuration advisors use knowledge bases. The challenge is knowledge acquisition — populating the knowledge base accurately and completely is expensive and error-prone (the 'knowledge acquisition bottleneck').",
+            "source": "Section 18.2, pp. 495–499"
+          },
+          {
+            "q": "Describe the two main search strategies used in AI problem solving: breadth-first search and depth-first search. What is the key difference in how each explores the search space?",
+            "bloom": "Understand",
+            "answer": "Breadth-first search (BFS): explores all nodes at depth d before any node at depth d+1 — guaranteed to find the shortest path. Uses a queue. Depth-first search (DFS): explores one branch as deep as possible before backtracking — uses less memory but not guaranteed shortest path. Uses a stack (or recursion).",
+            "explanation": "BFS is optimal (finds shortest solution) but uses O(b^d) memory (b=branching factor, d=depth). DFS uses O(d) memory but may explore irrelevant deep branches. A* search combines both: uses a heuristic to estimate remaining cost, exploring promising branches first. A* is the standard for pathfinding in games, maps, and robotics.",
+            "source": "Section 18.3, pp. 499–503"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Explain how a decision tree classifies data. Trace a decision tree with rules (income > 50K? → if yes: approve; if no: credit score > 700? → if yes: approve; if no: reject) on three customers: (A: income=60K, credit=650), (B: income=40K, credit=720), (C: income=40K, credit=680).",
+            "bloom": "Apply",
+            "answer": "Customer A: income=60K > 50K → Yes → Approve. Customer B: income=40K > 50K → No → credit=720 > 700 → Yes → Approve. Customer C: income=40K > 50K → No → credit=680 > 700 → No → Reject.",
+            "explanation": "Decision trees classify by following a series of binary tests from root to leaf. They are interpretable (humans can understand why a decision was made) — important for regulated domains like credit, medicine, and law. The tree is learned from labeled training data using algorithms like ID3 or CART, which select the most informative splits (maximizing information gain or Gini reduction).",
+            "source": "Section 18.4, pp. 503–508"
+          },
+          {
+            "q": "Describe the perceptron model of a neural network neuron. Given inputs x1=1, x2=0, weights w1=0.6, w2=0.4, bias b=−0.5, and step activation function (output 1 if sum>0), compute the output.",
+            "bloom": "Apply",
+            "answer": "Weighted sum = w1×x1 + w2×x2 + b = 0.6×1 + 0.4×0 + (−0.5) = 0.6 + 0 − 0.5 = 0.1. Since 0.1 > 0, activation function outputs 1. The neuron fires.",
+            "explanation": "A perceptron computes a weighted sum of its inputs plus a bias, then applies an activation function. The weights control which inputs matter most; the bias shifts the activation threshold. A single perceptron can only learn linearly separable functions (e.g., AND, OR but not XOR). Multi-layer networks (deep learning) stack perceptrons to learn complex non-linear functions.",
+            "source": "Section 18.5, pp. 508–514"
+          },
+          {
+            "q": "Compare supervised, unsupervised, and reinforcement learning. Give a real-world application example for each.",
+            "bloom": "Analyze",
+            "answer": "Supervised: learns from labeled examples (input → known output); trains a model to predict labels for new inputs. Application: spam classifier (emails labeled spam/not-spam). Unsupervised: finds patterns in unlabeled data; no predefined output. Application: customer segmentation (group similar customers without predefined categories). Reinforcement: agent learns by trial and error, receiving rewards/penalties. Application: game-playing AI (AlphaGo, game controllers), robot locomotion.",
+            "explanation": "Supervised learning is the most mature and widely deployed. Unsupervised learning (clustering, dimensionality reduction) is used for data exploration. Reinforcement learning is powerful for sequential decision problems but requires a simulatable environment. Modern large language models use a combination: self-supervised pretraining (predict next token) + supervised fine-tuning + RL from human feedback (RLHF).",
+            "source": "Section 18.4–18.5, pp. 503–514"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Evaluate the limitations of rule-based expert systems compared to machine learning systems for medical diagnosis. Why did expert systems fall out of favor in the 1990s?",
+            "bloom": "Evaluate",
+            "answer": "Expert systems limitations: (1) Knowledge acquisition bottleneck — encoding a doctor's implicit knowledge into explicit rules is slow and incomplete. (2) Brittleness — fail outside their narrow domain; cannot handle unexpected inputs. (3) No learning — rules are static, cannot improve from new cases. (4) Combinatorial explosion — thousands of rules with interactions are hard to maintain. ML systems learn from data, scale to complex patterns, and improve with more data — advantages in medicine where large patient datasets are available.",
+            "explanation": "Expert systems (MYCIN, DENDRAL) had early success in narrow domains but the 'AI winter' of the 1990s followed as their limitations became clear. Modern AI in medicine uses deep learning on imaging (radiology AI detects tumors from X-rays better than radiologists on some tasks) and ML on electronic health records. However, ML's black-box nature creates its own problems for medical regulation and accountability.",
+            "source": "Section 18.2, pp. 495–499"
+          },
+          {
+            "q": "Describe how the minimax algorithm works for game tree search and explain how alpha-beta pruning improves its efficiency. For a 2-level tree with branching factor 3, how many nodes does each evaluate?",
+            "bloom": "Evaluate",
+            "answer": "Minimax: alternates between MAX player (maximizes score) and MIN player (minimizes score). Evaluates all leaf nodes and propagates values up: MAX picks maximum of children; MIN picks minimum. Full tree (depth 2, branching 3): 1 + 3 + 9 = 13 nodes. Alpha-beta pruning: maintains alpha (MAX's best) and beta (MIN's best) bounds; prunes branches that cannot affect the outcome. Best case (sorted moves): reduces from O(b^d) to O(b^(d/2)) — for 3^2=9 leaf nodes, prunes to roughly 5. Effective branching factor is sqrt(3)≈1.7 instead of 3.",
+            "explanation": "Alpha-beta is the optimization that made chess programs competitive — it doubles the searchable depth. Deep Blue (1997, beat Kasparov) used alpha-beta with massive hardware optimization. Modern engines (Stockfish, AlphaZero) add neural network evaluation functions that guide search more efficiently. The key insight: if we have found a good enough move, we never need to evaluate branches that are provably worse.",
+            "source": "Section 18.3, pp. 499–503"
+          },
+          {
+            "q": "Explain how a neural network learns using backpropagation and gradient descent. Describe what a loss function measures and how weights are updated.",
+            "bloom": "Evaluate",
+            "answer": "Loss function: measures prediction error (e.g., MSE = mean squared error between predicted and actual values). Forward pass: compute predictions. Backpropagation: compute gradient of loss with respect to every weight using the chain rule (propagate error gradients from output back through layers). Gradient descent: update each weight: w = w − learning_rate × ∂Loss/∂w. Repeat for many examples (epochs) until loss converges to minimum.",
+            "explanation": "Backpropagation (Rumelhart et al., 1986) made training deep networks practical by efficiently computing all gradients in one backward pass. The learning rate controls step size — too large and training oscillates; too small and convergence is slow. SGD (stochastic gradient descent) updates weights after each mini-batch, not the full dataset, enabling scalability. Modern optimizers (Adam, RMSProp) adapt learning rates per-weight for faster convergence.",
+            "source": "Section 18.5, pp. 508–514"
+          },
+          {
+            "q": "Design an AI system for automatically grading short-answer exam questions. Specify which AI techniques you would use for each component and justify the choices.",
+            "bloom": "Create",
+            "answer": "Components: (1) Natural language processing — tokenize and parse student answers (BERT or similar transformer for semantic understanding). (2) Semantic similarity — compare student answer to reference answer using sentence embeddings (cosine similarity > threshold = correct). (3) Keyword extraction — identify required key concepts using TF-IDF or attention weights. (4) Grade calibration — train on human-graded examples using supervised learning (regression/classification). (5) Confidence scoring — flag low-confidence grades for human review. Justify: transformers capture semantic meaning beyond keyword matching; supervised learning from human grades ensures alignment with instructor expectations.",
+            "explanation": "This is an active research area (automated short-answer grading, ASAG). Pure keyword matching fails (student may express the same idea in different words). Transformers like BERT create contextual embeddings that capture meaning — two sentences expressing the same concept have similar embedding vectors. The hybrid approach (AI grades + human review for uncertain cases) is the practical deployment model, combining AI efficiency with human accuracy.",
+            "source": "Section 18.4–18.5, pp. 503–514"
+          }
+        ]
+      }
+    },
+    {
+      "number": 19,
+      "title": "Multimedia",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define multimedia and list the five main types of media it encompasses.",
+            "bloom": "Remember",
+            "answer": "Multimedia is the combined use of multiple forms of media to convey information. The five types: (1) Text — written words, symbols. (2) Images — still pictures, graphics. (3) Audio — sound, music, speech. (4) Video — moving images (sequence of frames). (5) Animation — computer-generated moving images.",
+            "explanation": "Multimedia combines these media types in a single presentation or application. The key challenge is the large file sizes: a 1-minute uncompressed 1080p video is ~12 GB. This drives the need for compression algorithms (JPEG for images, MP3 for audio, H.264/H.265 for video) discussed in Chapter 15.",
+            "source": "Section 19.1, pp. 528–529"
+          },
+          {
+            "q": "How is audio digitized? Define sampling rate and bit depth, and explain what determines audio quality.",
+            "bloom": "Understand",
+            "answer": "Audio digitization: measure (sample) the analog sound wave amplitude at regular time intervals and store each sample as a binary number. Sampling rate: number of samples per second (Hz). Higher rate = higher frequency range captured. Bit depth: number of bits per sample. Higher bit depth = more precise amplitude values. Quality example: CD audio uses 44,100 Hz and 16-bit samples.",
+            "explanation": "The Nyquist theorem states the sampling rate must be at least 2× the highest frequency to avoid aliasing. Human hearing tops out at ~20 kHz, so 44,100 Hz sampling captures all audible frequencies with margin. 16-bit depth gives 65,536 possible amplitude values — sufficient for human hearing's dynamic range. Higher rates (96 kHz/24-bit) are used in professional audio for editing headroom.",
+            "source": "Section 19.2, pp. 529–532"
+          },
+          {
+            "q": "Explain the difference between vector graphics and raster (bitmap) graphics, and give one advantage of each.",
+            "bloom": "Understand",
+            "answer": "Raster (bitmap): image stored as a grid of pixels with color values (JPEG, PNG). Advantage: photorealistic detail, easy to capture from cameras. Disadvantage: loses quality when scaled up (pixelation). Vector graphics: image stored as mathematical descriptions of shapes and curves (SVG, AI). Advantage: scales to any size without quality loss. Disadvantage: not suitable for photographic images.",
+            "explanation": "Raster images have fixed resolution — enlarging a 100×100 photo to 400×400 creates blur. Vector images (logos, icons, fonts) are described as 'a circle at center (50,50) with radius 30' — rendering at any resolution produces crisp results. Print design uses vector for scalable assets; photography uses raster. Web fonts (WOFF2) use vector outlines for sharp text at any font size.",
+            "source": "Section 19.3, pp. 532–536"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Calculate the uncompressed file size of a 3-minute stereo CD-quality audio file (44,100 Hz sampling rate, 16-bit depth, 2 channels) and explain why MP3 compression is necessary.",
+            "bloom": "Apply",
+            "answer": "Size = sampling_rate × bit_depth × channels × duration = 44,100 × 16 × 2 × (3 × 60) = 44,100 × 16 × 2 × 180 = 254,016,000 bits = 31,752,000 bytes ≈ 30.3 MB per 3-minute song. At 128 kbps MP3: 128,000 × 180 = 23,040,000 bits = 2.76 MB. MP3 reduces the file by ~11×. A 10,000-song library would be 300 GB uncompressed but only 27 GB as MP3.",
+            "explanation": "Uncompressed PCM audio (WAV/AIFF) is standard in professional audio production because every editing operation preserves full quality. MP3's psychoacoustic compression is irreversible — editing compressed audio degrades quality further. Streaming services (Spotify, Apple Music) use compressed formats (256 kbps AAC) to reduce bandwidth costs while maintaining transparent quality.",
+            "source": "Section 19.2, pp. 529–532"
+          },
+          {
+            "q": "Explain how video is represented digitally as a sequence of frames. Calculate the uncompressed data rate for 1080p video at 30 fps with 24-bit color.",
+            "bloom": "Apply",
+            "answer": "1080p frame: 1920 × 1080 pixels. Each pixel: 24 bits (8 bits per R, G, B channel). Frame size: 1920 × 1080 × 24 = 49,766,400 bits = 6.22 MB. At 30 fps: 6.22 × 30 = 186.6 MB/second = 1.49 Gbps. A 2-hour movie uncompressed would be 186.6 × 7200 ≈ 1.3 TB. H.264 compression reduces this to ~5 GB (260× compression ratio).",
+            "explanation": "These numbers explain why video compression (H.264, H.265, AV1) is essential — streaming uncompressed 1080p would require a 1.5 Gbps connection. H.264 achieves massive compression by exploiting temporal redundancy (frames change little between them — store only the differences, called inter-frame prediction) and spatial redundancy (DCT compression within each frame). 4K (3840×2160) requires 4× more data per frame.",
+            "source": "Section 19.4, pp. 536–540"
+          },
+          {
+            "q": "Compare lossy and lossless image compression by analyzing JPEG vs. PNG for two types of images: a photograph of a forest and a computer-generated icon with flat colors.",
+            "bloom": "Analyze",
+            "answer": "Forest photograph: JPEG superior — natural images have smooth gradients; JPEG's DCT compression achieves 10:1 ratio with imperceptible quality loss. PNG would produce a much larger file with no quality benefit. Computer icon with flat colors: PNG superior — flat areas compress extremely well with PNG's lossless LZW compression; JPEG would introduce visible block artifacts on sharp edges and solid colors. File sizes: icon might be 10 KB as PNG but 25 KB as JPEG due to artifacts.",
+            "explanation": "JPEG is optimized for natural photographic content with gradual tonal transitions. Its DCT + quantization creates 8×8 block artifacts that are invisible in photos (natural textures mask them) but very visible on sharp edges and solid colors. PNG uses lossless compression perfect for graphics with limited colors and hard edges. Web best practice: photographs as JPEG; logos, icons, screenshots as PNG.",
+            "source": "Section 19.3, pp. 532–536"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Evaluate the trade-offs in video codec selection (H.264, H.265, AV1) for a streaming service serving users with 1 Mbps, 5 Mbps, and 50 Mbps connections. Consider quality, compression efficiency, and computational cost.",
+            "bloom": "Evaluate",
+            "answer": "H.264: widely supported (all devices), good quality, lowest encoding/decoding CPU cost. H.265: ~40-50% better compression than H.264 at same quality (half the bitrate for same resolution), but higher CPU cost and licensing fees. AV1: similar or better compression than H.265, royalty-free, but 5-10× higher encoding time. For 1 Mbps (mobile): H.265 or AV1 maximizes quality at low bitrate. For 50 Mbps (4K): H.264 sufficient. For a streaming service: offer adaptive bitrate streaming, multiple codecs per content piece.",
+            "explanation": "Adaptive bitrate streaming (ABM, used by Netflix, YouTube) encodes each video at multiple bitrates and codecs. The player automatically switches based on available bandwidth. Netflix encodes each title in ~120 variants (multiple codecs × multiple resolutions × multiple bitrates). AV1 adoption grew rapidly after VP9 fragmentation — it is now supported by Chrome, Firefox, and recent hardware decoders. H.265 remains dominant for broadcast and professional workflows.",
+            "source": "Section 19.4, pp. 536–540"
+          },
+          {
+            "q": "Design a multimedia content management system for a news website storing text articles, images, audio clips, and video. Specify storage formats, compression strategies, and delivery optimizations for each media type.",
+            "bloom": "Create",
+            "answer": "Text: store as UTF-8 in database; serve as gzip-compressed HTML/JSON (95%+ text compression). Images: store originals as TIFF/RAW; serve WEBP (30% smaller than JPEG) with JPEG fallback; use responsive images (different sizes for different screen widths). Audio: store as FLAC (lossless); serve 128 kbps MP3 or AAC for streaming; offer download in original. Video: encode to H.264 (wide compatibility) and AV1 (mobile); adaptive bitrate streaming via HLS/DASH; CDN delivery. CDN: cache all static assets at edge nodes near users.",
+            "explanation": "Modern media delivery separates storage (high-quality originals) from delivery (compressed, format-adapted versions). A CDN (Content Delivery Network) reduces latency by serving content from servers physically near users. Responsive images serve smaller files to small screens — unnecessary to send a 4K image to a mobile phone. WebP and AV1 are newer formats with better compression but require fallbacks for older browsers.",
+            "source": "Section 19.1–19.4, pp. 528–540"
+          },
+          {
+            "q": "Analyze the impact of the Nyquist-Shannon sampling theorem on audio quality. If a recording system samples at 8,000 Hz (telephone quality), what frequencies can be captured, and why does speech remain intelligible?",
+            "bloom": "Evaluate",
+            "answer": "Nyquist theorem: maximum capturable frequency = sampling_rate / 2 = 8,000 / 2 = 4,000 Hz. Telephone audio captures only 300–3,400 Hz. Human speech intelligibility: consonant sounds are primarily in 1–4 kHz range; fundamental pitch and vowels are 80–1000 Hz. Both are within the 4 kHz limit. Missing: high-frequency sibilants (s, sh, f sounds above 4 kHz) — telephone speech sounds 'tinny'. Music is unintelligible at 8 kHz because instruments span 20 Hz–20 kHz.",
+            "explanation": "The telephone system was specifically designed around speech intelligibility, not fidelity — cutting off at 4 kHz reduces bandwidth enough for many simultaneous calls on a copper wire. Modern VoIP uses wideband codecs (HD Voice: 16 kHz sampling = 8 kHz frequencies) to include more consonant detail. The Nyquist theorem's anti-aliasing requirement explains why sampling below 2× the signal frequency causes distortion (aliasing artifacts).",
+            "source": "Section 19.2, pp. 529–532"
+          },
+          {
+            "q": "Compare the challenges of storing and transmitting multimedia data in 1990 vs. today. What advances in hardware, compression, and networking made modern multimedia applications possible?",
+            "bloom": "Evaluate",
+            "answer": "1990: a 1-minute CD-quality audio file = ~10 MB (vs. 1990s hard drives of 40–100 MB total); a JPEG photo = 500 KB (vs. 14.4 kbps modems needing 5 minutes to download one photo); streaming video was impossible (1 Mbps required for lowest quality). Today: 1 TB SSDs store 100,000 songs; 1 Gbps fiber enables 4K streaming; H.265 compresses video 200× vs. raw; GPU video encoding enables real-time 8K encoding.",
+            "explanation": "Four enabling advances: (1) Storage: HDD capacity doubled every 18 months (Kryder's Law) — from MBs to TBs. (2) Compression: JPEG (1992), MP3 (1993), H.264 (2003) made practical file sizes. (3) Networking: broadband replaced modems; fiber and 5G enable Gbps mobile speeds. (4) Hardware: CPUs/GPUs fast enough for real-time HD video encoding. YouTube (2005) and Netflix streaming (2007) only became possible because all four advances converged simultaneously.",
+            "source": "Section 19.1–19.4, pp. 528–540"
+          }
+        ]
+      }
+    },
+    {
+      "number": 20,
+      "title": "Distributed Systems",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define a distributed system and describe two advantages it provides over a centralized system.",
+            "bloom": "Remember",
+            "answer": "A distributed system is a collection of independent computers that appear to users as a single coherent system. Two advantages: (1) Fault tolerance — no single point of failure; if one node fails, others continue serving requests. (2) Scalability — add more nodes to increase capacity (horizontal scaling) instead of replacing the entire server.",
+            "explanation": "The internet, cloud computing (AWS, Azure, GCP), and peer-to-peer networks are all distributed systems. The appearance of a single system hides the complexity of coordinating multiple machines. The distributed nature introduces new challenges: network partitions, clock synchronization, and consistency across nodes — problems that don't exist in centralized systems.",
+            "source": "Section 20.1, pp. 546–548"
+          },
+          {
+            "q": "Define client-server architecture and peer-to-peer (P2P) architecture. Give one application example of each.",
+            "bloom": "Understand",
+            "answer": "Client-server: clients request services; dedicated servers provide them. Roles are fixed. Example: web browsing (browser=client, web server=server). Peer-to-peer: all nodes are equal, acting as both clients and servers simultaneously. Example: BitTorrent file sharing (each peer downloads and uploads simultaneously).",
+            "explanation": "Client-server is centralized — easy to manage and secure but the server is a bottleneck and single point of failure. P2P is decentralized — highly resilient and scalable (more peers = more capacity) but harder to manage, secure, and maintain consistency. Hybrid models (WhatsApp: P2P for messages, central servers for key management) combine the advantages.",
+            "source": "Section 20.2, pp. 548–551"
+          },
+          {
+            "q": "Define replication in distributed systems and explain why it improves both availability and fault tolerance.",
+            "bloom": "Understand",
+            "answer": "Replication: maintaining copies of data on multiple nodes. Availability: if one node is unavailable (maintenance, upgrade), other replicas continue serving requests — no downtime. Fault tolerance: if one node fails catastrophically (hardware failure, fire), no data is lost — other replicas are intact.",
+            "explanation": "Without replication, a single failed hard drive loses all data permanently. With 3-way replication (standard in HDFS, Cassandra), two nodes can fail simultaneously without data loss. The cost: 3× storage requirement and the complexity of keeping replicas consistent. The CAP theorem formalizes the trade-off between consistency and availability in replicated systems.",
+            "source": "Section 20.3, pp. 551–555"
+          }
+        ],
+        "medium": [
+          {
+            "q": "State the CAP theorem and explain why a distributed system experiencing a network partition must choose between consistency and availability.",
+            "bloom": "Apply",
+            "answer": "CAP theorem: a distributed system can guarantee at most two of: Consistency (all nodes see the same data simultaneously), Availability (every request receives a response), Partition tolerance (system continues despite network failures splitting nodes into isolated groups). Network partitions are inevitable in real distributed systems. During a partition: choosing Consistency means refusing requests on nodes that cannot confirm the latest data — sacrificing availability. Choosing Availability means serving possibly stale data — sacrificing consistency.",
+            "explanation": "Partition tolerance is non-negotiable in real networks — networks do fail. So the real choice is CP (consistent but sometimes unavailable, e.g., HBase, ZooKeeper) or AP (available but eventually consistent, e.g., Cassandra, DynamoDB). This is why distributed databases make different consistency guarantees: eventual consistency (AP) vs. strong consistency (CP). The right choice depends on whether your application can tolerate stale reads.",
+            "source": "Section 20.3, pp. 551–555"
+          },
+          {
+            "q": "Explain the MapReduce programming model. Describe what the Map and Reduce functions do, and trace MapReduce for counting word frequencies in a document collection.",
+            "bloom": "Apply",
+            "answer": "Map function: takes a document, outputs key-value pairs (word, 1) for each word. Reduce function: takes a key and list of values, outputs the aggregated result (word, sum_of_1s). Example: Map('the cat sat') → [(the,1),(cat,1),(sat,1)]. Shuffle: group by key across all map outputs → [(the,[1,1,1,...]),(cat,[1,1]),...]. Reduce(the,[1,1,1]) → (the,3). Final output: each word with its total count.",
+            "explanation": "MapReduce (Google, 2004) enabled processing petabytes of data across thousands of commodity servers. The framework handles all distribution, failure recovery, and load balancing — the programmer only writes Map and Reduce functions. This abstraction made large-scale data processing accessible. Hadoop implemented open-source MapReduce; modern replacements (Spark) keep the same model but add in-memory processing for 100× speedups.",
+            "source": "Section 20.4, pp. 555–560"
+          },
+          {
+            "q": "Describe the two-phase commit (2PC) protocol for distributed transactions. What happens in phase 1 (prepare) and phase 2 (commit), and what is the blocking failure mode?",
+            "bloom": "Analyze",
+            "answer": "Phase 1 (Prepare): coordinator sends 'Prepare' to all participants. Each participant locks resources, writes prepare record to disk, responds 'Yes' (ready) or 'No' (abort). Phase 2 (Commit): if all replied Yes → coordinator sends 'Commit' to all; each commits and releases locks. If any No → coordinator sends 'Abort' to all. Blocking failure: if coordinator crashes after phase 1 but before phase 2, participants holding locks are blocked indefinitely — they cannot commit or abort without the coordinator.",
+            "explanation": "2PC ensures all-or-nothing atomicity across multiple databases. The blocking failure is its critical weakness: a coordinator crash leaves participants locked, potentially blocking the entire system. 3PC adds a pre-commit phase to reduce blocking. Modern systems (Google Spanner, CockroachDB) use Paxos/Raft consensus algorithms instead, which can elect a new coordinator and proceed without blocking.",
+            "source": "Section 20.3, pp. 551–555"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Explain the Paxos consensus algorithm: what problem does it solve, and describe the three phases (Prepare, Promise, Accept). Why is consensus harder to achieve in distributed systems than in a single machine?",
+            "bloom": "Evaluate",
+            "answer": "Paxos solves: how do n distributed nodes agree on a single value despite node failures and message delays? Phase 1 (Prepare): a proposer sends 'Prepare(n)' with a proposal number n. Phase 2 (Promise): acceptors respond with the highest-numbered value they have accepted (if any) — promise not to accept lower-numbered proposals. Phase 3 (Accept): proposer sends 'Accept(n, value)' with the value (or the highest promised value if any). Acceptors accept if they haven't promised to a higher number. Majority agreement = consensus. Single machine: shared memory, synchronous — agreement is trivial. Distributed: messages can be delayed, lost, or reordered; nodes can crash at any moment — requiring mathematical proofs of safety.",
+            "explanation": "Paxos was proven correct by Lamport (1989, published 1998) but is notoriously difficult to understand and implement. Raft (Ongaro, 2014) is a more understandable equivalent used in etcd (Kubernetes), CockroachDB, and TiKV. The FLP impossibility theorem (Fischer, Lynch, Paterson, 1985) proves consensus is impossible in a purely asynchronous system with even one failure — Paxos/Raft achieve consensus by adding timing assumptions.",
+            "source": "Section 20.3, pp. 551–555"
+          },
+          {
+            "q": "Evaluate the trade-offs between strong consistency and eventual consistency in a distributed key-value store. When is each appropriate for a social media application?",
+            "bloom": "Evaluate",
+            "answer": "Strong consistency: all reads see the most recent write. Cost: higher latency (must coordinate across replicas before returning), lower availability during partitions. Use case: user account balance, privacy settings — users must see their own changes immediately. Eventual consistency: reads may return stale data; all replicas converge eventually. Benefit: lower latency, higher availability. Use case: like counts, view counters — seeing a count that is 1 second stale is acceptable.",
+            "explanation": "Twitter's tweet feed can tolerate eventual consistency (a tweet appearing 1 second late is fine). A privacy setting (block user) must be strongly consistent (the blocked user must be prevented immediately). Most large-scale systems use a mix: strong consistency for critical data (authentication, payments, permissions) and eventual consistency for high-volume read-heavy data (content feeds, analytics). Amazon Dynamo's paper (2007) popularized tunable consistency with quorum reads/writes.",
+            "source": "Section 20.3, pp. 551–555"
+          },
+          {
+            "q": "Design a fault-tolerant distributed file storage system that survives the simultaneous failure of any 2 nodes out of 5 total nodes, maintaining 100% data availability. Specify replication strategy and what happens during a node failure.",
+            "bloom": "Create",
+            "answer": "Replication factor: 3 (each file block on 3 of 5 nodes). With any 2 failures, at least 1 copy of every block survives (3 copies − 2 failures = 1 minimum). Placement: spread replicas across different racks/datacenters (rack-aware placement — 2 nodes in same rack, 1 in different rack). Failure handling: monitor heartbeats every 3 seconds; after 3 missed heartbeats declare node dead; immediately re-replicate all blocks that now have only 1 copy to restore replication factor 3. Client reads: try nearest replica first; on failure, try next replica automatically.",
+            "explanation": "This is essentially HDFS (Hadoop Distributed File System) design. Replication factor 3 is the industry standard for balancing fault tolerance against storage overhead (3× storage cost). Rack-aware placement protects against rack-level power failures — if an entire rack loses power, one copy is on a different rack. The namenode (metadata server) is itself the availability bottleneck — HDFS HA adds a standby namenode with automatic failover.",
+            "source": "Section 20.3, pp. 551–555"
+          },
+          {
+            "q": "The CAP theorem states you can only have 2 of 3 properties. Evaluate whether modern systems like Google Spanner (which claims both consistency and availability) violate or reconcile the CAP theorem.",
+            "bloom": "Evaluate",
+            "answer": "Spanner claims 'externally consistent' (strong consistency) + '5 nines availability' (99.999%). This appears to violate CAP. Resolution: Spanner achieves this by (1) making partitions extremely rare using redundant global network (no public internet), and (2) using atomic clocks + GPS (TrueTime API) to bound clock uncertainty globally. When partitions do occur, Spanner does choose consistency over availability — it refuses requests rather than serve stale data. The '5 nines availability' is measured over the network's actual reliability, where partitions last microseconds, not seconds.",
+            "explanation": "The CAP theorem describes a trade-off during partitions. Spanner reduces partition probability to near-zero via private fiber networks with multiple redundant paths, making the trade-off academic in practice. TrueTime GPS clocks enable globally consistent timestamps without distributed coordination, dramatically reducing coordination overhead. This shows CAP is not a hard law but a framework — the real constraint is latency: PACELC (extension of CAP) adds: even without partitions, there is a trade-off between latency and consistency.",
+            "source": "Section 20.3, pp. 551–555"
+          }
+        ]
+      }
+    }
+  ]
+}

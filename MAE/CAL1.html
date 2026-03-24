@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -163,7 +163,20 @@
     font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);
   }
   .footer-inner a{color:var(--text-muted);text-decoration:none;transition:color .15s;}
-  .footer-inner a:hover{color:var(--accent);}
+  /* ── Search bar ── */
+  .search-wrap{padding:0 40px;background:var(--surface);border-bottom:1px solid var(--border);}
+  .search-box{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:8px;padding:10px 0;}
+  .search-prompt{color:var(--accent);font-family:'IBM Plex Mono',monospace;font-size:13px;flex-shrink:0;}
+  .search-label{color:var(--text-dim);font-family:'IBM Plex Mono',monospace;font-size:11px;flex-shrink:0;margin-right:4px;}
+  .search-input{flex:1;background:none;border:none;outline:none;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text);caret-color:var(--accent);}
+  .search-input::placeholder{color:var(--text-dim);}
+  .search-clear{background:none;border:none;cursor:pointer;color:var(--text-dim);font-size:16px;padding:0 2px;display:none;line-height:1;transition:color .15s;}
+  .search-clear:hover{color:var(--text-muted);}
+  .search-count{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-dim);white-space:nowrap;}
+  .no-results{text-align:center;padding:32px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--text-dim);display:none;}
+  .chapter-card.hidden{display:none;}
+  .part.hidden{display:none;}
+  .search-highlight{background:rgba(227,179,65,0.25);color:#e3b341;border-radius:2px;padding:0 1px;}
 </style>
 </head>
 <body>
@@ -181,6 +194,18 @@
     </div>
   </div>
 </header>
+
+<!-- ── Search ── -->
+<div class="search-wrap">
+  <div class="search-box">
+    <span class="search-prompt">❯</span>
+    <span class="search-label">search</span>
+    <input class="search-input" id="searchInput" type="search" placeholder="filter chapters, parts, topics…" autocomplete="off" spellcheck="false">
+    <span class="search-count" id="searchCount"></span>
+    <button class="search-clear" id="searchClear" title="Clear">✕</button>
+  </div>
+</div>
+<div class="no-results" id="noResults">No chapters match "<span id="noResultsQuery"></span>"</div>
 
 <!-- ═══ MAIN ═══ -->
 <main class="main">
@@ -297,5 +322,46 @@
   </div>
 </footer>
 
+<script src="../nav.js"></script>
+<script src="../bookmarks.js"></script>
+<script>
+(function(){
+  var input=document.getElementById('searchInput');
+  var clearBtn=document.getElementById('searchClear');
+  var countEl=document.getElementById('searchCount');
+  var noResults=document.getElementById('noResults');
+  var noResultsQuery=document.getElementById('noResultsQuery');
+  var cards=Array.from(document.querySelectorAll('.chapter-card'));
+  var parts=Array.from(document.querySelectorAll('.part'));
+  var origCardHTML=cards.map(function(c){return c.querySelector('.card-inner').innerHTML;});
+  function doSearch(){
+    var q=input.value.trim();
+    clearBtn.style.display=q?'':'none';
+    if(!q){
+      cards.forEach(function(c,i){c.querySelector('.card-inner').innerHTML=origCardHTML[i];c.classList.remove('hidden');});
+      parts.forEach(function(p){p.classList.remove('hidden');});
+      countEl.textContent='';noResults.style.display='none';return;
+    }
+    var re=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi');
+    var matched=0;
+    cards.forEach(function(c,i){
+      var text=c.querySelector('.card-inner').textContent;
+      var partEl=c.closest('.part');
+      var partText=(partEl.querySelector('.part-title')||{textContent:''}).textContent+' '+(partEl.querySelector('.part-label')||{textContent:''}).textContent;
+      if(re.test(text)||re.test(partText)){
+        c.classList.remove('hidden');
+        c.querySelector('.card-inner').innerHTML=origCardHTML[i].replace(re,'<mark class="search-highlight">$1</mark>');
+        matched++;
+      }else{c.classList.add('hidden');c.querySelector('.card-inner').innerHTML=origCardHTML[i];}
+    });
+    parts.forEach(function(p){var v=p.querySelectorAll('.chapter-card:not(.hidden)').length;p.classList.toggle('hidden',v===0);});
+    countEl.textContent=matched+' result'+(matched!==1?'s':'');
+    noResults.style.display=matched===0?'':'none';
+    if(matched===0)noResultsQuery.textContent=q;
+  }
+  input.addEventListener('input',doSearch);
+  clearBtn.addEventListener('click',function(){input.value='';doSearch();input.focus();});
+})();
+</script>
 </body>
 </html>

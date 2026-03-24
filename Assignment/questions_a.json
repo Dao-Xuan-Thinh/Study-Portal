@@ -1,0 +1,414 @@
+{
+  "chapters": [
+    {
+      "number": 1,
+      "title": "Introduction",
+      "questions": {
+        "easy": [
+          {
+            "q": "What extra element does the Turing model add to a simple data-processor, and why does it make the machine general-purpose?",
+            "bloom": "Remember",
+            "answer": "The Turing model adds a program to a simple input→output data processor. Without a program, the machine is hardwired for one specific task. With a changeable program, the same hardware can sort, add, search, or do any computable task — making it general-purpose.",
+            "explanation": "A data-processor takes input, transforms it, and produces output, but only for one fixed operation. The Turing model's key insight is that the program itself is just another input, so swapping programs changes what the machine does without changing the hardware. This abstraction is the theoretical foundation for all modern computers.",
+            "source": "Section 1.1, pp. 22–23"
+          },
+          {
+            "q": "Explain the stored-program concept introduced by von Neumann. How does it differ from earlier hardwired computers?",
+            "bloom": "Understand",
+            "answer": "Earlier computers had programs hardwired as physical circuits — changing tasks required rewiring the machine. The stored-program concept (von Neumann) stores both instructions and data as binary bit patterns in the same memory, so programs can be loaded and changed like data without any hardware modification.",
+            "explanation": "Before stored-program computers (e.g., ENIAC), each new computation required rewiring plug boards. The von Neumann insight — that instructions are just binary data — allowed programs to be stored in memory, loaded dynamically, and even modified by other programs. This made computers vastly more flexible and is the basis of all modern programming.",
+            "source": "Section 1.2, pp. 24–25"
+          },
+          {
+            "q": "List and briefly describe the four subsystems of the von Neumann model.",
+            "bloom": "Understand",
+            "answer": "Memory stores both programs and data as binary patterns. The ALU performs arithmetic and logical operations on data. The control unit fetches, decodes, and executes instructions, directing all other subsystems. The I/O subsystem communicates with the outside world (keyboard/display/disk).",
+            "explanation": "These four subsystems work together in the fetch-decode-execute cycle: the control unit fetches the next instruction from memory, decodes its meaning, then directs the ALU or I/O to execute it. The separation of concerns — memory stores, ALU computes, CU controls, I/O communicates — remains the architecture of virtually every computer built since 1945.",
+            "source": "Section 1.2, pp. 25–26"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Applying different programs to the same input {3,12,8,22} produces different outputs (sorted list, sum 45, minimum 3). What does this demonstrate about the Turing model?",
+            "bloom": "Apply",
+            "answer": "The program determines the operation. The same input {3,12,8,22} produces three different outputs depending on which program is applied: the sorting program reorders elements, the addition program sums them (45), the find-smallest program returns 3. The program is the variable element that makes the machine general-purpose.",
+            "explanation": "This example illustrates that hardware alone does not determine output — the program does. This is the core insight of the Turing model: computation is a combination of data AND program. Changing the program on the same machine produces entirely different results, which is why a single laptop can run a word processor, a game, and a database.",
+            "source": "Section 1.1, pp. 22–23"
+          },
+          {
+            "q": "Compare first-generation vacuum-tube computers (1950s) to the mechanical computing machines that preceded 1930.",
+            "bloom": "Analyze",
+            "answer": "Period 1 (before 1930): purely mechanical machines like Babbage's Analytical Engine — no electronics, limited to specific calculations. Period 3 (1950-present, first generation): vacuum tube electronic computers (ENIAC, IAS) — electronic but bulky, hot, unreliable, room-sized. The key difference is speed (electronic vs mechanical) and programmability.",
+            "explanation": "Mechanical computers used gears and levers and were extremely slow. First-generation electronic computers used vacuum tubes, which were thousands of times faster but power-hungry and prone to failure (one tube burning out could crash the whole system). The shift from mechanical to electronic represents perhaps the biggest leap in computing history.",
+            "source": "Section 1.4, pp. 29–31"
+          },
+          {
+            "q": "Compare the Turing model and the von Neumann model in terms of purpose and abstraction level.",
+            "bloom": "Analyze",
+            "answer": "The Turing model is abstract and mathematical — it defines what can be computed (computability theory) regardless of physical implementation. The von Neumann model is a concrete engineering blueprint specifying four physical subsystems. Turing answers 'what is computable?'; von Neumann answers 'how do we build it?'",
+            "explanation": "Every modern computer is a physical realization of the von Neumann model, but all are theoretically bounded by Turing's computability limits — there are problems no computer can solve regardless of speed or memory. Together, these models define both the capabilities and the limits of computation. Turing's model also implies that any computer can simulate any other computer (universal machine).",
+            "source": "Sections 1.1–1.2, pp. 22–26"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Evaluate the advantages of the von Neumann sequential fetch-decode-execute model and explain the bottleneck it creates.",
+            "bloom": "Evaluate",
+            "answer": "Advantages of sequential execution: simple programming model (instructions execute predictably one at a time), easy debugging, straightforward hardware design. Disadvantages: the von Neumann bottleneck — the CPU and memory share a single bus, so the CPU sits idle while waiting for memory transfers, limiting performance. Modern solutions include caches, pipelining, and multiple cores.",
+            "explanation": "Sequential execution means the programmer can reason about state at each step, making programs easier to write and verify. However, the single data bus between CPU and memory creates a throughput ceiling — the CPU can process data far faster than memory can supply it. This mismatch, called the von Neumann bottleneck, is a fundamental limitation that architects have addressed for decades with hierarchical memory systems and parallelism.",
+            "source": "Section 1.2, pp. 24–26"
+          },
+          {
+            "q": "Map Babbage's Analytical Engine components (mill, store, operator, output) to the four von Neumann subsystems.",
+            "bloom": "Evaluate",
+            "answer": "Babbage's Mill maps to the ALU (performs arithmetic operations). The Store maps to Memory (holds data and intermediate results). The Operator maps to the Control Unit (sequences and directs operations). The Output device maps to the I/O subsystem (communicates results to the user).",
+            "explanation": "Babbage designed the Analytical Engine in the 1820s–1840s, over a century before von Neumann. All four functional components he identified remain essential in every modern computer. This shows that the architectural insight predates electronics — the challenge was always implementation technology, not conceptual design. Babbage is often called the 'father of the computer' for this reason.",
+            "source": "Sections 1.2, 1.4, pp. 24–30"
+          },
+          {
+            "q": "Distinguish between the systems and application areas of computer science and give two examples of each.",
+            "bloom": "Create",
+            "answer": "Systems areas (architecture, OS, networking, security, algorithms, PLs, software engineering) deal with building and managing computing infrastructure. Application areas (databases, AI, graphics, simulation, bioinformatics) use computers to solve problems in other domains. Systems areas focus on how computers work; application areas focus on what computers do.",
+            "explanation": "This division reflects different skill sets and research questions. A systems programmer optimizes a compiler or OS kernel; an application programmer builds a recommendation engine or medical imaging tool. However, the boundary is blurry — building a fast AI system requires deep systems knowledge, and OS designers need to understand application workloads. Most computing careers require some knowledge of both.",
+            "source": "Section 1.5, pp. 31–32"
+          },
+          {
+            "q": "Specify the minimum set of components a general-purpose computing device must have and justify each component's necessity.",
+            "bloom": "Create",
+            "answer": "Minimum components: Memory (to store program and data), ALU (to perform computations), Control Unit (to sequence instructions), and I/O (to receive input and produce output). This exactly matches the von Neumann model's four subsystems — which is precisely why the model has endured for 80+ years.",
+            "explanation": "You cannot remove any of these four. Without memory, you cannot store a program. Without ALU, you cannot compute. Without CU, you cannot sequence operations. Without I/O, the machine is isolated and useless. The von Neumann model represents the minimal sufficient architecture for a general-purpose programmable computer, which is why it remains the template for everything from microcontrollers to supercomputers.",
+            "source": "Section 1.2, pp. 24–26"
+          }
+        ]
+      }
+    },
+    {
+      "number": 2,
+      "title": "Number Systems",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define a positional number system and list the four positional systems covered in the textbook (decimal, binary, octal, hexadecimal).",
+            "bloom": "Remember",
+            "answer": "In a positional number system, each digit's value depends on both the digit symbol and its position (place value). The four systems are: decimal (base 10, symbols 0–9), binary (base 2, symbols 0–1), octal (base 8, symbols 0–7), and hexadecimal (base 16, symbols 0–9 and A–F).",
+            "explanation": "Position matters because each place represents a power of the base: in decimal 345 means 3×100 + 4×10 + 5×1. This contrasts with nonpositional systems like Roman numerals where V always means 5 regardless of position. Positional systems make arithmetic mechanical and scalable — the same algorithm works for numbers of any size.",
+            "source": "Section 2.2, pp. 36–38"
+          },
+          {
+            "q": "Why is hexadecimal preferred over binary for representing data outside the computer? What is the relationship between one hex digit and binary bits?",
+            "bloom": "Understand",
+            "answer": "One hexadecimal digit represents exactly 4 binary bits (since 16 = 2⁴), making hex 4× more compact than binary. For example, the 8-bit value 11110000 is simply F0 in hex. Outside the computer, hex is used because it is much shorter than binary while still mapping directly to bit patterns.",
+            "explanation": "Binary is how computers store data, but writing 64-bit addresses in binary (64 digits) is error-prone for humans. Hex collapses every 4 bits into one symbol, so a 64-bit address needs only 16 hex digits. This is why memory addresses, color codes (#FF5733), and machine code are commonly written in hexadecimal.",
+            "source": "Section 2.2, pp. 47–49"
+          },
+          {
+            "q": "State the formula for the maximum value of a K-digit unsigned binary integer and compute it for K = 8.",
+            "bloom": "Understand",
+            "answer": "The maximum value for a K-digit unsigned binary integer is Nmax = 2^K − 1. For K = 8: 2^8 − 1 = 256 − 1 = 255.",
+            "explanation": "With K binary digits, there are 2^K possible patterns (from 00…0 to 11…1). The smallest is 0 and the largest is when all bits are 1, which equals 2^K − 1. For K=8, values range from 0 to 255, giving 256 distinct values. This formula is fundamental to understanding integer overflow and choosing appropriate data types.",
+            "source": "Section 2.2, pp. 36–37"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Convert (2AE)₁₆ to decimal using the place-value method. Show each step.",
+            "bloom": "Apply",
+            "answer": "(2AE)₁₆ = 2×16² + A(10)×16¹ + E(14)×16⁰ = 2×256 + 10×16 + 14×1 = 512 + 160 + 14 = 686₁₀.",
+            "explanation": "Hexadecimal-to-decimal conversion uses the standard positional formula: multiply each digit by its base power and sum. The letters A–F represent 10–15. This process generalizes to any base: the rightmost digit is multiplied by base⁰=1, next by base¹, and so on. Mastering this conversion is essential for reading memory addresses and machine code.",
+            "source": "Section 2.2, pp. 40–42"
+          },
+          {
+            "q": "The number 686 is (2AE)₁₆ in hex (3 digits) and (1256)₈ in octal (4 digits). Analyze why hex is more compact than octal.",
+            "bloom": "Analyze",
+            "answer": "Hexadecimal (base 16) represents the same value in 3 digits vs octal's 4 digits because each hex digit encodes 4 bits while each octal digit encodes only 3 bits. A byte (8 bits) = exactly 2 hex digits vs 2.67 octal digits, making hex align perfectly with byte boundaries.",
+            "explanation": "Compactness matters when representing memory addresses or data. Since modern computers are byte-addressed and use powers-of-2 word sizes, hexadecimal's 4-bit grouping maps perfectly to these structures. Octal was historically used for 12-bit/24-bit machines (PDP series). Today hex has essentially replaced octal as the human-readable binary shorthand.",
+            "source": "Section 2.2, pp. 47–49"
+          },
+          {
+            "q": "Using x = ⌈K × (log b₁ / log b₂)⌉, calculate the minimum binary digits needed to represent any 6-digit decimal number.",
+            "bloom": "Apply",
+            "answer": "x = ⌈6 × (log 10 / log 2)⌉ = ⌈6 × 3.3219⌉ = ⌈19.93⌉ = 20 binary digits are needed to store any 6-digit decimal number.",
+            "explanation": "This formula converts the number of digits needed between bases using logarithms. Since log₂(10) ≈ 3.322, each decimal digit requires about 3.322 binary digits. The ceiling function ensures we round up — you can't have a fractional bit. This is why 16-bit integers (65,535 max) cover up to 5 decimal digits, and 32-bit integers cover up to 10 decimal digits.",
+            "source": "Section 2.2, pp. 36–38"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Evaluate why the Roman numeral nonpositional system is impractical for arithmetic compared to positional systems.",
+            "bloom": "Evaluate",
+            "answer": "Roman numerals are limited: no zero, no simple way to represent fractions, arithmetic requires special subtractive rules (IV=4, IX=9), and numbers grow unwieldy (e.g., 1999 = MCMXCIX). Positional systems have a zero, represent any magnitude compactly, and enable mechanical arithmetic algorithms. Roman numerals are why manual arithmetic was laborious before Hindu-Arabic numerals spread to Europe.",
+            "explanation": "The lack of positional value means multiplication in Roman numerals has no simple algorithm — you must memorize special rules. The Hindu-Arabic positional system (base 10 with zero) enabled the development of algebra and calculus, which in turn enabled science and engineering. Binary's positional nature is what makes digital arithmetic implementable as simple electronic circuits.",
+            "source": "Section 2.3, pp. 51–52"
+          },
+          {
+            "q": "Some decimal fractions (e.g., 0.3) have no finite binary representation. Explain why and describe the practical consequence in computing.",
+            "bloom": "Evaluate",
+            "answer": "Fractions like 0.1₁₀ have no finite binary representation (0.1 = 0.0001100110011...₂, repeating). Computers store only a finite number of bits, so the fraction is truncated, introducing a small rounding error. Repeated arithmetic with such values accumulates error, causing results like 0.1 + 0.2 ≠ 0.3 in most programming languages.",
+            "explanation": "This is analogous to 1/3 in decimal — no finite decimal can represent it exactly. Binary has the same problem with many simple decimal fractions. This is why financial software avoids floating-point and uses fixed-point or decimal arithmetic instead. IEEE 754 standardizes how floating-point numbers are stored and how rounding works, but it cannot eliminate the fundamental limitation.",
+            "source": "Section 2.2, pp. 43–46"
+          },
+          {
+            "q": "Convert 137₁₀ to base-5 (quinary) using repeated division. Show all steps and verify your result.",
+            "bloom": "Create",
+            "answer": "137 ÷ 5 = 27 remainder 2; 27 ÷ 5 = 5 remainder 2; 5 ÷ 5 = 1 remainder 0; 1 ÷ 5 = 0 remainder 1. Reading remainders bottom-to-top: 137₁₀ = (1022)₅. Verify: 1×125 + 0×25 + 2×5 + 2×1 = 125+0+10+2 = 137 ✓.",
+            "explanation": "The repeated division algorithm works for any base: divide by the base, record the remainder, repeat with the quotient until it reaches zero. Reading remainders in reverse gives the digits from most significant to least significant. The same process converts decimal to binary, octal, or hexadecimal by changing the divisor. Verification by expanding the result confirms correctness.",
+            "source": "Section 2.2, pp. 38–40"
+          },
+          {
+            "q": "A company needs unique binary codes for 900 employees. Find the minimum number of bits required and the number of unused bit patterns.",
+            "bloom": "Create",
+            "answer": "2⁹ = 512 < 900, so 9 bits are insufficient. 2¹⁰ = 1024 ≥ 900, so 10 bits are needed. With 10 bits there are 1024 possible patterns; 1024 − 900 = 124 patterns remain unused.",
+            "explanation": "The minimum number of bits n is the smallest integer satisfying 2ⁿ ≥ N, which is n = ⌈log₂ N⌉. For N=900: ⌈log₂ 900⌉ = ⌈9.81⌉ = 10. The unused patterns are 'wasted' bit combinations that don't correspond to any employee — this inefficiency is unavoidable when N is not a power of 2. This reasoning underlies the design of routing tables, character encodings, and ID systems.",
+            "source": "Section 2.2, pp. 36–37"
+          }
+        ]
+      }
+    },
+    {
+      "number": 3,
+      "title": "Data Storage",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define bit, byte, and word. Why is the bit considered the smallest unit of data?",
+            "bloom": "Remember",
+            "answer": "A bit is the smallest unit of data, representing a single binary digit (0 or 1). A byte is 8 bits and is the basic addressable unit of memory. A word is the natural data unit of a CPU — typically 16, 32, or 64 bits depending on architecture. A bit is the smallest unit because digital electronics have exactly two stable states (on/off, high/low voltage).",
+            "explanation": "All digital data — numbers, text, images, audio, video — is ultimately stored as sequences of bits. The byte emerged as a standard grouping because 8 bits can represent 256 distinct values, sufficient for encoding a character (ASCII uses 7 bits). Word size affects CPU performance: a 64-bit CPU can process 64 bits in one operation, making it faster for large numbers than a 32-bit CPU.",
+            "source": "Section 3.1, pp. 60–61"
+          },
+          {
+            "q": "How many bits does ASCII use, how many symbols can it represent, and how does Unicode extend this?",
+            "bloom": "Understand",
+            "answer": "ASCII uses 7 bits per character, representing 2⁷ = 128 symbols (letters, digits, punctuation, control codes). Unicode extends this to 32 bits, supporting 2³² ≈ 4 billion symbols — enough for every character in every human language plus emoji and special symbols.",
+            "explanation": "ASCII was designed for English and covers only basic Latin characters. As computing became global, ASCII was insufficient for Chinese, Arabic, Hindi, and hundreds of other scripts. Unicode solves this with a universal character set; the UTF-8 encoding (a variable-length implementation) uses 1–4 bytes per character and is backward-compatible with ASCII. Today UTF-8 is the dominant encoding on the internet.",
+            "source": "Section 3.3, pp. 80–81"
+          },
+          {
+            "q": "Explain two's complement representation of negative integers and state the value range for 8-bit two's complement.",
+            "bloom": "Understand",
+            "answer": "To store a negative integer in two's complement: invert all bits of the positive value (one's complement), then add 1. For an 8-bit two's complement integer, the range is −128 to +127 (−2^7 to 2^7−1).",
+            "explanation": "Two's complement is the universal method for representing signed integers in hardware because addition and subtraction use the same circuit regardless of sign — no special case for negative numbers needed. The most significant bit acts as the sign bit (1 = negative). The asymmetric range (−128 to +127 for 8 bits) arises because zero is counted with the positives.",
+            "source": "Section 3.2.1, pp. 64–67"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Store −25 in an 8-bit two's complement format. Show all steps.",
+            "bloom": "Apply",
+            "answer": "+25 = 00011001₂. One's complement (flip all bits) = 11100110. Add 1: 11100110 + 00000001 = 11100111. Therefore −25 in 8-bit two's complement = 11100111.",
+            "explanation": "Verification: 11100111 + 00011001 = 100000000, and ignoring the 9th bit overflow gives 00000000 = 0 ✓. The two's complement works because the value wraps around the 8-bit number circle. This method is used in all modern CPUs — the ALU performs subtraction by negating the second operand (two's complement) and adding.",
+            "source": "Section 3.2.1, pp. 64–67"
+          },
+          {
+            "q": "Compare raster (bitmap) and vector graphics in terms of storage method, scalability, and best use cases.",
+            "bloom": "Analyze",
+            "answer": "Raster (bitmap) graphics store an image as a grid of pixels, each with a color value. They are resolution-dependent — enlarging them causes pixelation. Good for photographs and complex images. Vector graphics store geometric descriptions (lines, curves, formulas). They are resolution-independent — scalable to any size without loss of quality. Good for logos and diagrams.",
+            "explanation": "A raster image at 100×100 pixels has exactly 10,000 pixels — zoom in and you see the grid. A vector image of a circle stores the center, radius, and color — it can be rendered at any size with perfect sharpness. JPG and PNG are raster formats; SVG and PDF are vector formats. The choice depends on the content: photos suit raster, diagrams suit vector.",
+            "source": "Section 3.5.1–3.5.2, pp. 83–85"
+          },
+          {
+            "q": "An audio signal is sampled at 40,000 samples/sec with 16 bits/sample. Calculate the bit rate and the compression ratio if MP3 stores it at 128 kbps.",
+            "bloom": "Apply",
+            "answer": "Bit rate R = samples/sec × bits/sample = 40,000 × 16 = 640,000 bps = 640 kbps. At MP3's 128 kbps, the compression ratio is 640 ÷ 128 = 5:1. MP3 achieves this via lossy compression — it discards audio information the human ear cannot detect.",
+            "explanation": "The Nyquist theorem requires sampling at twice the highest frequency — for human hearing (up to ~20 kHz), 40,000 samples/sec is sufficient. MP3 exploits psychoacoustics: sounds masked by louder nearby frequencies, sounds outside the audible range, and temporal masking are removed. The result sounds nearly identical to the original at reasonable bitrates but is 5–10× smaller.",
+            "source": "Section 3.4.1, pp. 81–83"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Sign-and-magnitude has two representations of zero; two's complement has one. Evaluate the practical hardware implications of each.",
+            "bloom": "Evaluate",
+            "answer": "Sign-and-magnitude has two zeros (+0 = 00000000, −0 = 10000000) requiring special-case hardware to handle equality and arithmetic. Two's complement has exactly one zero (00000000), and standard addition works correctly for both positive and negative numbers without any special cases. This simplicity is why all modern CPUs use two's complement exclusively.",
+            "explanation": "Hardware simplicity directly translates to speed and cost. A sign-and-magnitude adder needs to check the sign bits and choose between add/subtract operations. A two's complement adder just adds — the carry automatically handles sign. The 'bonus' negative value (−128 in 8 bits) arises naturally from the wrapping arithmetic. The only special case remaining is overflow detection.",
+            "source": "Section 3.2.1, pp. 62–67"
+          },
+          {
+            "q": "MP3 achieves ~5.5:1 compression on 44,100 samples/sec × 16-bit audio. Explain the perceptual technique used and the quality tradeoff.",
+            "bloom": "Evaluate",
+            "answer": "Raw MP3 bit rate = 44,100 × 16 = 705,600 bps. At 128 kbps, compression ratio ≈ 5.5:1. This lossy compression works by exploiting auditory masking: when a loud tone plays, nearby quieter frequencies are inaudible ('masked') and can be discarded. The tradeoff is irreversible data loss — the original PCM audio cannot be recovered from the MP3.",
+            "explanation": "The perceptual coding model in MP3 analyzes each audio frame's frequency spectrum and discards components below the masking threshold. At 128 kbps most listeners cannot distinguish MP3 from the original; at 64 kbps, artifacts become noticeable (metallic reverb on cymbals, pre-echo). This illustrates that 'lossless' vs 'lossy' is a fundamental design choice with quality vs. size tradeoffs.",
+            "source": "Section 3.4.2, pp. 82–83"
+          },
+          {
+            "q": "A 1920×1080 True-Color (24 bits/pixel) image is captured at 30 fps. Calculate the uncompressed storage per frame and per second.",
+            "bloom": "Create",
+            "answer": "Uncompressed size: 1920 × 1080 × 24 bits = 49,766,400 bits = 6,220,800 bytes ≈ 5.93 MB per frame. At 30 fps: 5.93 × 30 ≈ 177.9 MB/second of uncompressed video. JPEG compression at ~10:1 ratio reduces each frame to ≈ 0.59 MB (about 600 KB).",
+            "explanation": "These numbers explain why video compression is essential — uncompressed 1080p video at 30 fps would require nearly 178 MB/s of storage bandwidth, or over 600 GB per hour. H.264 video compression achieves 50:1 to 200:1 ratios for typical content by exploiting both spatial redundancy (JPEG-style within a frame) and temporal redundancy (most pixels don't change between frames).",
+            "source": "Section 3.5.1, pp. 83–85"
+          },
+          {
+            "q": "Construct the 32-bit IEEE 754 single-precision representation of −6.75. Show all conversion steps.",
+            "bloom": "Create",
+            "answer": "−6.75: sign bit = 1 (negative). |−6.75| = 6.75 = 110.11₂ = 1.1011 × 2². Exponent = 2 + 127 = 129 = 10000001₂. Mantissa (fraction part after leading 1): 10110000000000000000000. Full 32-bit: 1 10000001 10110000000000000000000.",
+            "explanation": "IEEE 754 single precision uses 1 sign bit, 8 exponent bits (biased by 127), and 23 mantissa bits (the leading 1 is implicit). The bias of 127 allows representing both positive and negative exponents without a sign bit in the exponent field. This format can represent values from ~1.2×10⁻³⁸ to ~3.4×10³⁸. Double precision (64-bit) uses 11 exponent bits and 52 mantissa bits for greater range and precision.",
+            "source": "Section 3.2.3, pp. 72–79"
+          }
+        ]
+      }
+    },
+    {
+      "number": 4,
+      "title": "Operations on Data",
+      "questions": {
+        "easy": [
+          {
+            "q": "List the four basic logic operations (NOT, AND, OR, XOR). Which is unary and which are binary?",
+            "bloom": "Remember",
+            "answer": "The four logic operations are NOT (unary — takes one input, flips it), AND (binary — output is 1 only if BOTH inputs are 1), OR (binary — output is 1 if AT LEAST ONE input is 1), XOR (binary — output is 1 if EXACTLY ONE input is 1, not both).",
+            "explanation": "NOT is the only unary operator because it acts on a single bit or bit pattern. AND, OR, and XOR are binary operators taking two operands. These four operations are the foundation of all digital logic: every arithmetic operation in a CPU ultimately reduces to combinations of these gates. XOR is particularly useful in cryptography and error detection because it is its own inverse (A XOR B XOR B = A).",
+            "source": "Section 4.1, pp. 94–98"
+          },
+          {
+            "q": "Distinguish between a logical shift and an arithmetic shift. When must arithmetic shift be used?",
+            "bloom": "Understand",
+            "answer": "A logical shift moves all bits left or right by n positions and fills the vacated positions with 0s. An arithmetic right shift preserves the sign bit (MSB) instead of filling with 0 — it copies the sign bit into the new positions. Arithmetic shift must be used for signed numbers because a logical right shift of a negative number would incorrectly make it positive.",
+            "explanation": "Right-shifting a number by 1 divides it by 2 — but only if the sign is preserved for negative numbers. For example, −8 = 11111000 in 8-bit two's complement; arithmetic right shift by 1 gives 11111100 = −4 (correct: −8÷2). Logical right shift gives 01111100 = +124 (wrong). This is why compilers use arithmetic right shift for signed integer division by powers of 2.",
+            "source": "Section 4.2, pp. 99–101"
+          },
+          {
+            "q": "Explain how an AND mask with 00000111 clears the five leftmost bits of an 8-bit pattern.",
+            "bloom": "Understand",
+            "answer": "To unset (clear) specific bits using AND: create a mask where 0s are placed in the positions you want to clear and 1s everywhere else. ANDing any bit with 0 gives 0 (clears it); ANDing any bit with 1 preserves it. Mask 00000111 clears the five leftmost bits of an 8-bit pattern, leaving only the 3 rightmost bits.",
+            "explanation": "Bit masking with AND is used in low-level programming to extract or clear specific fields within a byte or word. For example, a status register might pack multiple flags into one byte; masking isolates individual flags. The OR operation can similarly set specific bits (mask has 1s where you want to set), and XOR can toggle bits (mask has 1s where you want to flip).",
+            "source": "Section 4.1.2, pp. 96–97"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Perform XOR and OR on 10011001 and 00101110. Compare the results and explain where they differ.",
+            "bloom": "Apply",
+            "answer": "10011001 XOR 00101110: compare bit by bit (XOR = 1 when bits differ). Result = 10110111. The OR of the same two inputs = 10111111. The difference: position 3 from the right (both inputs have 1 there) — XOR gives 0 (both same), OR gives 1 (at least one is 1). XOR detects difference; OR detects presence.",
+            "explanation": "XOR produces 1 only when inputs differ, making it ideal for detecting changes or differences. This property makes XOR fundamental in checksums (parity bits), cryptographic ciphers (XOR with key), and error detection (CRC). OR produces 1 when either input is 1, making it useful for setting bits or combining flags. The behavioral difference at '11' inputs distinguishes them.",
+            "source": "Section 4.1.3, pp. 97–98"
+          },
+          {
+            "q": "Verify that XOR = [x AND (NOT y)] OR [(NOT x) AND y] using a complete truth table for all four input combinations.",
+            "bloom": "Analyze",
+            "answer": "Truth table verification — all four input combinations: (0,0): [0 AND 1] OR [1 AND 0] = 0 OR 0 = 0 ✓; (0,1): [0 AND 0] OR [1 AND 1] = 0 OR 1 = 1 ✓; (1,0): [1 AND 1] OR [0 AND 0] = 1 OR 0 = 1 ✓; (1,1): [1 AND 0] OR [0 AND 1] = 0 OR 0 = 0 ✓. The equivalence holds for all cases.",
+            "explanation": "This truth table proof shows that XOR can be constructed entirely from NOT, AND, and OR gates — it is not a 'primitive' operation but a derived one. In digital circuit design, this matters because you can build XOR from NAND gates (which are the primitive building blocks of real chips). Proving logical equivalences is the foundation of digital circuit simplification and optimization.",
+            "source": "Section 4.1.3, pp. 97–98"
+          },
+          {
+            "q": "Using 8-bit two's complement, perform 19 − 23. Show the negation of 23 and the binary addition.",
+            "bloom": "Apply",
+            "answer": "19₁₀ = 00010011₂. −23: 23=00010111, flip=11101000, +1=11101001 (two's complement of 23). Add: 00010011 + 11101001 = 11111100. 11111100 in two's complement: flip=00000011, +1=00000100=4, so result = −4. Therefore 19 − 23 = −4 ✓.",
+            "explanation": "Subtraction in two's complement is performed as addition of the negated subtrahend: A − B = A + (−B). The CPU doesn't need a separate subtraction circuit — it negates the second operand and adds. The result 11111100 has its MSB = 1, confirming it's negative. This elegance is why two's complement was adopted universally: one adder handles both addition and subtraction.",
+            "source": "Section 4.3, pp. 102–105"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Explain when overflow occurs in two's complement addition and describe how hardware detects it.",
+            "bloom": "Evaluate",
+            "answer": "Overflow occurs when both operands have the same sign but the result has a different sign. Detection method: overflow = Cₙ XOR Cₙ₋₁, where Cₙ is the carry out of the MSB and Cₙ₋₁ is the carry into the MSB. If these two carries differ, overflow has occurred. Hardware adders include an overflow flag (OF) computed this way.",
+            "explanation": "The intuition: adding two positives should give a positive; if the result is negative, the sum overflowed the positive range. Similarly, adding two negatives that yields a positive overflowed the negative range. The carry-XOR rule is a bitwise way to detect this: a discrepancy between the last two carries means the sign bit was corrupted by arithmetic. Modern CPUs set processor status flags (N, V, C, Z) after every arithmetic operation.",
+            "source": "Section 4.3, pp. 104–105"
+          },
+          {
+            "q": "Perform a logical right shift and an arithmetic right shift by 1 on 11110000 (= −16). Compare results and explain the difference.",
+            "bloom": "Evaluate",
+            "answer": "11110000 = −16 in two's complement. Logical right shift by 1: fill MSB with 0 → 01111000 = +120 (WRONG for signed interpretation). Arithmetic right shift by 1: copy sign bit (1) → 11111000 = −8 (CORRECT: −16÷2 = −8). Logical shift treats the number as unsigned; arithmetic shift treats it as signed.",
+            "explanation": "This example clearly shows why instruction sets have two different right-shift instructions (e.g., SHR vs SAR in x86). A compiler automatically chooses arithmetic right shift when dividing a signed variable by a power of 2 — it's a single-cycle operation vs. a multi-cycle division. Using the wrong shift type is a classic bug in low-level programming, producing wildly wrong values for negative inputs.",
+            "source": "Section 4.2, pp. 99–101"
+          },
+          {
+            "q": "Design a sequence of bitwise operations to extract bits 4–5 from an 8-bit value as a 2-bit result.",
+            "bloom": "Create",
+            "answer": "Step 1: AND with mask 00110000 to isolate bits 4 and 5 (zero out all other bits). Step 2: Logical right-shift the result by 4 positions to move bits 4–5 into positions 1–0. The 2-bit value at positions 1–0 is the extracted field. Example: 11010110 → AND 00110000 = 00010000 → shift right 4 = 00000001 (extracted value = 1).",
+            "explanation": "This two-step mask-then-shift pattern is the standard technique for extracting bit fields in low-level programming. It is used constantly in OS code (reading CPU flags, parsing network packet headers, accessing hardware registers). The mask selects the field; the shift normalizes it to start at bit 0. The inverse (set a field) uses shift-left then OR with a cleared-field mask.",
+            "source": "Section 4.1.2, pp. 96–97"
+          },
+          {
+            "q": "Describe the four steps of IEEE 754 floating-point addition using 34.75 + 23.125 as the example.",
+            "bloom": "Create",
+            "answer": "34.75 = 1.000101 × 2⁵ (exponent=132). 23.125 = 1.0111001 × 2⁴ (exponent=131). Align: shift 23.125 right by 1 → 0.10111001 × 2⁵. Add mantissas: 1.00010100 + 0.10111001 = 1.10101101. Result: 1.10101101 × 2⁵ = 57.875. Check: 34.75 + 23.125 = 57.875 ✓.",
+            "explanation": "Floating-point addition has four steps: (1) compare exponents, (2) align mantissas by shifting the smaller, (3) add mantissas, (4) normalize result. The alignment step is the key difference from integer addition and is why floating-point operations are slower. Precision loss can occur if the exponent difference is large enough to shift significant bits off the end of the mantissa — a phenomenon called catastrophic cancellation.",
+            "source": "Section 3.2.3 / 4.3, pp. 72–79, 102–105"
+          }
+        ]
+      }
+    },
+    {
+      "number": 5,
+      "title": "Computer Organization",
+      "questions": {
+        "easy": [
+          {
+            "q": "List the three main subsystems of a computer and name the three components within the CPU.",
+            "bloom": "Remember",
+            "answer": "The three subsystems are: CPU (containing ALU, control unit, and registers), main memory, and the I/O subsystem. The ALU performs arithmetic and logic operations. The control unit fetches, decodes, and coordinates instruction execution. Registers are small, fast internal storage within the CPU.",
+            "explanation": "These three subsystems are interconnected by buses: the data bus (transfers data), address bus (specifies memory location), and control bus (carries control signals). The CPU is the 'brain' that processes information; main memory stores the program and data currently in use; I/O connects the computer to the outside world. Everything a computer does reduces to moving data between these three subsystems.",
+            "source": "Sections 5.1–5.2, pp. 112–114"
+          },
+          {
+            "q": "Distinguish between RAM and ROM. Name three ROM variants and their erasure method.",
+            "bloom": "Understand",
+            "answer": "RAM (Random Access Memory) is volatile — contents are lost when power is removed. It is used for storing running programs and data. ROM (Read-Only Memory) is non-volatile — contents persist without power. ROM variants: PROM (programmable once), EPROM (erasable with UV light, reprogrammable), EEPROM (electrically erasable, used for firmware updates).",
+            "explanation": "RAM's volatility means the OS must load programs from disk into RAM before execution. ROM's non-volatility makes it ideal for firmware (BIOS/UEFI) that must be available at power-on. EEPROM is the basis for flash memory (USB drives, SSDs) which is electrically erasable in large blocks, enabling rewritable non-volatile storage. The RAM/ROM distinction is fundamental to computer memory hierarchy design.",
+            "source": "Section 5.3, pp. 114–117"
+          },
+          {
+            "q": "Describe the three phases of the machine cycle (fetch, decode, execute).",
+            "bloom": "Understand",
+            "answer": "Fetch: the control unit reads the instruction at the address stored in the Program Counter (PC), copies it to the Instruction Register (IR), then increments PC. Decode: the control unit interprets the opcode in IR to determine the operation. Execute: the control unit signals the appropriate subsystem (ALU, memory, I/O) to perform the operation.",
+            "explanation": "The fetch-decode-execute cycle repeats continuously as long as the computer is running — billions of times per second on a modern CPU. The PC automatically advances to the next instruction after each fetch, enabling sequential execution. Branch instructions modify the PC directly to implement loops and conditionals. This simple three-phase cycle, unchanged since the 1940s, underlies all CPU operation.",
+            "source": "Section 5.6.1, pp. 129–133"
+          }
+        ],
+        "medium": [
+          {
+            "q": "A computer has 32 MB of byte-addressed memory. How many address bits are needed? Generalize the rule.",
+            "bloom": "Apply",
+            "answer": "32 MB = 2²⁵ bytes, so 25 address bits are needed to uniquely address every byte. For a 64 MB (2²⁶) computer: 26 address bits. General rule: for 2ⁿ bytes of memory, n address bits are required.",
+            "explanation": "The address bus width determines the maximum addressable memory. A 32-bit address bus can address 2³² bytes = 4 GB — this is why 32-bit OSes were limited to 4 GB RAM. 64-bit CPUs have 64-bit virtual address spaces (though physical address space is typically limited to 48 or 52 bits). This address space limitation is one of the main reasons the industry transitioned from 32-bit to 64-bit computing.",
+            "source": "Section 5.3, pp. 114–117"
+          },
+          {
+            "q": "Compare SRAM and DRAM in terms of technology, speed, cost, refresh requirement, and typical use.",
+            "bloom": "Analyze",
+            "answer": "SRAM (Static RAM): uses flip-flop circuits, fast (1–10 ns access), expensive, does not need refresh, retains data as long as power is on. Used for CPU cache. DRAM (Dynamic RAM): uses capacitors, slower (50–100 ns), cheaper, must be refreshed every few milliseconds (capacitors leak), used for main memory.",
+            "explanation": "The SRAM/DRAM trade-off is fundamental to memory hierarchy design. SRAM's flip-flop requires 6 transistors per cell; DRAM requires only 1 transistor + 1 capacitor — making DRAM much denser and cheaper. The speed gap means placing a small amount of fast SRAM between the CPU and large DRAM (cache hierarchy) provides near-SRAM performance at near-DRAM cost for typical workloads.",
+            "source": "Section 5.3.1, pp. 115–116"
+          },
+          {
+            "q": "Distinguish between isolated I/O and memory-mapped I/O addressing. Give the advantage of each.",
+            "bloom": "Analyze",
+            "answer": "Isolated I/O: separate instructions for memory access (LOAD/STORE) and I/O access (IN/OUT). I/O ports have their own address space, distinct from memory. Memory-mapped I/O: I/O device registers are assigned memory addresses; standard LOAD/STORE instructions access both memory and I/O. Memory-mapped simplifies programming (one instruction set) but uses part of the memory address space.",
+            "explanation": "x86 processors support both: IN/OUT instructions for isolated I/O and memory-mapped I/O for modern devices. ARM processors use exclusively memory-mapped I/O. Memory-mapped I/O is more common in modern systems because device drivers can use regular pointer dereferences in C/C++ to access hardware registers, simplifying driver code. The kernel maps device registers into virtual memory at boot time.",
+            "source": "Section 5.4.2, pp. 121–123"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Compare programmed I/O, interrupt-driven I/O, and DMA. For which scenario is each most appropriate?",
+            "bloom": "Evaluate",
+            "answer": "Programmed I/O: CPU continuously polls the device status register, wasting CPU cycles on waiting. Interrupt-driven I/O: device signals the CPU via interrupt when ready; CPU does other work in between, improving efficiency. DMA (Direct Memory Access): a dedicated DMA controller transfers data directly between device and memory without CPU involvement — CPU only sets up and is notified at completion. DMA is best for bulk transfers.",
+            "explanation": "The efficiency improvement from polling to interrupt to DMA reflects the evolution of I/O architecture. Polling wastes up to 99.9% of CPU cycles waiting for slow devices. Interrupts recover most of those cycles. DMA removes the CPU from the data path entirely for block transfers — the CPU sets up a DMA transfer (source, destination, byte count) and is interrupted only when complete. Modern systems use DMA for disk, network, GPU, and audio I/O.",
+            "source": "Section 5.4.3, pp. 123–128"
+          },
+          {
+            "q": "Explain the 80–20 rule (locality of reference) and how cache memory exploits it to improve performance.",
+            "bloom": "Evaluate",
+            "answer": "The 80–20 rule (locality of reference): 80% of memory accesses target just 20% of the data (the recently and frequently used portion). Cache exploits this by keeping that 20% in fast SRAM. On a cache hit, data is accessed at SRAM speed (1–10 ns); on a miss, it's fetched from DRAM (50–100 ns) and placed in cache for future use. Cache effectiveness degrades for irregular access patterns.",
+            "explanation": "Locality of reference has two forms: temporal (recently accessed data will be accessed again soon) and spatial (nearby data will be accessed soon). Cache exploits both: temporal by keeping recently accessed lines, spatial by fetching entire cache lines (64 bytes typically) on a miss. The memory hierarchy — registers → L1 cache → L2 cache → L3 cache → DRAM → SSD → HDD — exploits this principle at every level.",
+            "source": "Section 5.3.2, pp. 116–117"
+          },
+          {
+            "q": "Write a 4-instruction program for the textbook's simple computer (keyboard=FE, monitor=FF) that reads two integers and outputs their sum.",
+            "bloom": "Create",
+            "answer": "Using the simple computer model (keyboard=FE, monitor=FF, ADD=opcode 1, LOAD=opcode 3, STORE=opcode 6): (1) LOAD R1, FE — read first integer from keyboard; (2) LOAD R2, FE — read second integer from keyboard; (3) ADD R3, R1, R2 — compute sum; (4) STORE R3, FF — output sum to monitor.",
+            "explanation": "This 4-instruction program demonstrates the fetch-decode-execute cycle on the simple computer model. I/O is memory-mapped: reading address FE returns a keyboard value, writing to FF sends to the monitor. The program uses three registers to hold operands and result. Real programs are longer but follow the same pattern — load inputs, compute, store outputs. This is the essence of the stored-program model in action.",
+            "source": "Section 5.8, pp. 137–146"
+          },
+          {
+            "q": "Design a 4-stage pipeline and identify the three types of hazards that can reduce its throughput. Propose a solution for each.",
+            "bloom": "Create",
+            "answer": "A 4-stage pipeline (Fetch/Decode/Execute/WriteBack) improves throughput to 1 instruction per clock cycle (after the initial 4-cycle fill). Hazards: data hazard (instruction needs result of prior instruction still in pipeline — solved by forwarding or stalling), control hazard (branch changes PC — solved by branch prediction), structural hazard (two instructions need same resource — solved by duplicating resources or stalling).",
+            "explanation": "Without pipelining, each instruction takes 4 cycles (all 4 stages sequentially). With pipelining, 4 instructions overlap — while instruction 1 is in WriteBack, instruction 4 is in Fetch. Ideal speedup = number of stages, but hazards reduce actual speedup. The branch prediction hit rate critically affects performance: a mispredicted branch flushes the pipeline and costs 4+ cycles. Modern CPUs have 14–20 stages and sophisticated prediction to minimize this penalty.",
+            "source": "Section 5.7, pp. 133–137"
+          }
+        ]
+      }
+    }
+  ]
+}

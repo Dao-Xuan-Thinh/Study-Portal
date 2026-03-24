@@ -1,14 +1,20 @@
-## Plan ##
+## TODO LIST
+- Bookmark system: star/unstar chapters, persisted in localStorage — starred chapters has it own section on top 
+- Improve Search bar - can how search for keywords in a chapter instead of just the name of the chapters
+- PWA / offline support: service worker + manifest so the site works offline (great for exam cramming with no wifi)
+- Navigation Bar (Right now there isnt one and navigating within the website is quite difficult)
+
+
+----------------------------------
+## Finished ##
+
+
 -  Create cheat sheet sets for CAL1, CAL2,(If too big then dont do CAL1 and CAL2 yet only do ALGEBRA) ALGEBRA, each having it's own folder inside MAE (Stick closely and in detail with the pdf book's material which is in /Source Books/)
     | Put every css into its own .css file for better reusablity and smaller html size (What can be reusable put in the file what cannot and is unique to that .html page stay in the html file) (JS too if use JS)
 -  Also try giving cheat sheets of MAE a new design to fit the theme.
 -  Chapter search bar: a live filter on CEA/COA.html that searches chapter titles + part names as you type
 -  The search bar in the index.html is off, change it so its central and be easier on the eyes (also make it tooks like a terminal for cool points)
 -  After all that you are free to look around and write what you want to do or report down any bugs you found around the code base
-
-
-----------------------------------
-## Finished ##
 
 ### DONE - MAE Cheatsheet Sets (ALG, CAL1, CAL2)
 - MAE/ALG/ — 11 chapters (Nicholson Linear Algebra, CH01–CH11), ~381 KB, 137 cards

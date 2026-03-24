@@ -1,0 +1,269 @@
+{
+ "chapters": [
+  {
+   "number": 1,
+   "title": "Introduction",
+   "text_excerpt": "The phrase computer science has a very broad meaning today. However, in this book, we \ndefine the phrase as ‘issues related to the computer’. This introductory chapter first tries \nto find out what a computer is, then investigates other issues directly related to comput-\ners. We look first at the Turing model as a mathematical and philosophical definition of \ncomputation. We then show how today’s computers are based on the von Neumann \nmodel. The chapter ends with a brief history of this culture-changing device . . . the \ncomputer.\nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDefine the Turing model of a computer.\n❑\n❑\nDefine the von Neumann model of a computer.\n❑\n❑\nDescribe the three components of a computer: hardware, data, and software.\n❑\n❑\nList topics related to computer hardware.\n❑\n❑\nList topics related to data.\n❑\n❑\nList topics related to software.\n❑\n❑\nGive a short history of computers.\nCHAPTER\t 1\nIntroduction\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n2\n﻿Introduction\n1.1  TURING MODEL\nThe idea of a universal computational device was first described by Alan Turing in 1936. \nHe proposed that all computation could be performed by a special kind of a machine, now \ncalled a Turing machine. Although Turing presented a mathematical description of such a \nmachine, he was more interested in the philosophical definition of computation than in \nbuilding the actual machine. He based the model on the actions that people perform \nwhen involved in computation. He abstracted these actions into a model for a computa-\ntional machine that has really changed the world.\n1.1.1  Data processors\nBefore discussing the Turing model, let us define a computer as a data processor. Using \nthis definition, a computer acts as a black box that accepts input data, processes the data, \nand creates output data (Figure 1.1). Although this model can define the functionality of \na computer today, it is too general. In this model, a pocket calculator is also a computer \n(which it is, in a literal sense).\nFigure 1.1  A single-purpose computing machine\nInput data\nOutput data\nComputer\nAnother problem with this model is that it does not specify the type of processing, or \nwhether more than one type of processing is possible. In other words, it is not clear how \nmany types or sets of operations a machine based on this model can perform. Is it a \n­specific-purpose machine or a general-purpose machine?\nThis model could represent a specific-purpose computer (or processor) that is de-\nsigned to do a single job, such as controlling the temperature of a building or controlling \nthe fuel usage in a car. However, computers, as the term is used today, are general-purpose \nmachines. They can do many different types of tasks. This implies that we need to change \nthis model into the Turing model to be able to reflect the actual computers of today.\n1.1.2  Programmable data processors\nThe Turing model is a better model for a general-purpose computer. This model adds an \nextra element to the specific computing machine: the program. A program is a set of \ninstructions that tells the computer what to do with data. Figure 1.2 shows the Turing \nmodel.\nIn the Turing model, the output data depends on the combination of two factors: the \ninput data and the program. With the same input data, we can generate different output \nif we change the program. Similarly, with the same program, we can generate different \nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n1.1  Turing Model\n3\noutputs if we change the input data. Finally, if the input data and the program remain the \nsame, the output should be the same. Let us look at three cases.\nSame program, different input data \nFigure 1.3 shows the same sorting program with different input data. Although the \nprogram is the same, the outputs are different, because different input data is processed. \nFigure 1.3  The same program, different data\n14, 6, 8, 12\nInput data\n6, 8, 12, 14\nOutput data\nComputer\n3, 12, 8, 22\nInput data\n3, 8, 12, 22\nOutput data\nComputer\nSort\nProgram\nSort\nProgram\nSame input data, different programs\nFigure 1.4 shows the same input data with different programs. Each program makes the \ncomputer perform different operations on the input data. The first program sorts the data, \nthe second adds the data, and the third finds the smallest number.\nFigure 1.2  A computer based on the Turing model: programmable data processor\nInput data\nOutput data\nComputer\nProgram\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights re",
+   "questions": {
+    "easy": [
+     {
+      "q": "Define the Turing model of a computer. What extra element does it add to a simple data-processor model, and why does that element make the machine general-purpose rather than specific-purpose?",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Explain the stored-program concept introduced by the von Neumann model. How does storing both programs and data in memory as binary patterns differ from the approach used by earlier computers such as ENIAC, which were programmed by manipulating switches or rewiring?",
+      "bloom": "Understand"
+     },
+     {
+      "q": "List and briefly describe the four subsystems of a computer according to the von Neumann model: memory, arithmetic logic unit (ALU), control unit, and input/output. What role does each subsystem play?",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "In the Turing model, applying a sorting program to the input {3, 12, 8, 22} yields {3, 8, 12, 22}, applying an addition program to the same input yields 45, and applying a find-smallest program yields 3. Using these three examples from the textbook, explain how the Turing model demonstrates that a single machine can perform multiple tasks simply by changing the program.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "The textbook divides computer history into three periods: mechanical machines (before 1930), birth of electronic computers (1930–1950), and computer generations (1950–present). Compare the first generation (vacuum tubes, roughly 1950–1959) with the second generation (transistors, roughly 1959–1965). What specific technological change drove the transition, and how did it affect computer size, cost, and programming (e.g., the introduction of FORTRAN and COBOL)?",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Compare the Turing model and the von Neumann model. The Turing model provides a mathematical/philosophical definition of computation, while the von Neumann model specifies a practical architecture with four subsystems. Analyze what each model contributes that the other does not, and explain why both are important to computer science.",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "The von Neumann model requires sequential execution of instructions via the fetch-decode-execute cycle. Evaluate the advantages of this sequential approach for simplicity and programmability, and discuss its limitations for performance. Why do modern computers sometimes deviate from strict sequential execution, and what techniques (such as pipelining, discussed in Chapter 5) address the von Neumann bottleneck?",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Charles Babbage's Analytical Engine (1823) had four components: a mill (for computation), a store (for holding data), an operator (for control), and output. Evaluate how each of these maps to the von Neumann model's four subsystems (ALU, memory, control unit, I/O). Was Babbage's design conceptually equivalent to a modern stored-program computer? Justify your assessment.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "The textbook states that computer science is divided into systems areas (computer architecture, networking, security, operating systems, algorithms, programming languages, software engineering) and applications areas (databases, artificial intelligence). Construct a detailed classification of at least six subdisciplines into these two categories and for each explain why it belongs in that category.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Suppose you must design a minimal general-purpose computing device from scratch, guided by the Turing and von Neumann models. Specify the minimum set of components your device must have (memory, ALU, control unit, I/O, and stored program), justify why each is necessary by referencing the models, and describe how the fetch-decode-execute cycle would operate on your device.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 2,
+   "title": "Number Systems",
+   "text_excerpt": "This chapter is a prelude to Chapters 3 and 4. In Chapter 3 we will show how data is \nstored inside the computer. In Chapter 4 we will show how logic and arithmetic opera-\ntions are performed on data. This chapter is a preparation for understanding the contents \nof Chapters 3 and 4. Readers who know about number systems can skip this chapter and \nmove on to Chapter 3 without loss of continuity. Note that the number systems discussed \nin this chapter are ‘paper and pencil representations’: we show how these numbers are \nstored in a computer in Chapter 3. \nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nUnderstand the concept of number systems.\n❑\n❑\nDistinguish between nonpositional and positional number systems.\n❑\n❑\nDescribe the decimal system (base 10).\n❑\n❑\nDescribe the binary system (base 2).\n❑\n❑\nDescribe the hexadecimal system (base 16).\n❑\n❑\nDescribe the octal system (base 8).\n❑\n❑\nConvert a number in binary, octal, or hexadecimal to a number in the decimal system.\n❑\n❑\nConvert a number in the decimal system to a number in binary, octal, or ­hexadecimal.\n❑\n❑\nConvert a number in binary to octal and vice versa.\n❑\n❑\nConvert a number in binary to hexadecimal and vice versa.\n❑\n❑\nFind the number of digits needed in each system to represent a particular value. \nCHAPTER\t 2\nNumber Systems\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n16\n﻿Number Systems\n2.1  INTRODUCTION\nA number system (or numeral system) defines how a number can be represented using \n­distinct symbols. A number can be represented differently in different systems. For exam-\nple, the two numbers (2A)16 and (52)8 both refer to the same quantity, (42)10, but their \nrepresentations are different. This is the same as using the words cheval (French) and \nequus (Latin) to refer to the same entity, a horse. \nAs we use symbols (characters) to create words in a language, we use symbols (digits) \nto represent numbers. However, we know that the number of symbols (characters) in any \nlanguage is limited. We need to repeat characters and combine them to create words. It is \nthe same for numbers: we have a limited number of symbols (digits) to represent num-\nbers, which means that the digits need to be repeated. \nSeveral number systems have been used in the past and can be categorized into two \ngroups: positional and nonpositional systems. Our main goal is to discuss the positional \nnumber systems, but we also give examples of nonpositional systems. \n2.2  POSITIONAL NUMBER SYSTEMS\nIn a positional number system, the position a symbol occupies in the number determines \nthe value it represents. In this system, a number represented as: \n6 (SK21 … S2 S1 S0. S21 S22 … S2L )b\nhas the value of: \nn 5 6\nSK21 3 bK21 1… 1 S1 3 b1 1 S0 3 b0\n1  S21 3 b21 1 S22 3 b22 1 … 1 S2L 3 b2L\nin which S is the set of symbols, b is the base (or radix), which is equal to the total num-\nber of the symbols in the set S, and SK and SL are symbols in the whole and fraction parts \nof the number. Note that we have used an expression that can be extended from the right \nor from the left. In other words, the power of b can be 0 to K 2 1 in one direction and \n21 to 2L in the other direction. The terms with non negative powers of b are related to \nthe integral part of the number, while the terms with negative power of b are related to \nthe fractional part of the number. The 6 sign shows that the number can be either posi-\ntive or negative. We will study several positional number systems in this chapter.\n2.2.1  The decimal system (base 10) \nThe first positional number system we discuss in this chapter is the decimal system. The \nword decimal is derived from the Latin root decem (ten). In this system the base b 5 10 \nand we use ten symbols to represent a number. The set of symbols is S 5 {0, 1, 2, 3, 4, 5, \n6, 7, 8, 9}. As we know, the symbols in this system are often referred to as decimal digits \nor just digits. In this chapter, we use 6 to show that a number can be positive or negative, \nbut remember that these signs are not stored in computers—computers handle the sign \ndifferently, as we discuss in Chapter 3. \nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n2.2  Positional Number Systems\n17\nComputers store positive and negative numbers differently. \nIn the decimal system, a number is written as:\n6 (SK21 … S2 S1 S0. S21 S22 … S2L )10\nbut for simplicity, we often drop the parentheses, the base, and the plus sign (if the num-\nber is positive). For example, we write the number 1(552.23)10 as 552.23—the base and \nplus signs are implicit. \nIntegers\nAn integer (an integral number with no fractional part) in the decimal system is familiar \nto all of us—we use integers in our daily life. In fact, we have used them so much that they \nare intuitive. We represent an integer as 6 SK–1 … S1 S0. The value is calculated as:\nN 5 ±\nSK21 3 10K21 1 SK22 3 10K22 1 … 1 S2 3 102 1 S1 3 101 1 S0 3 100",
+   "questions": {
+    "easy": [
+     {
+      "q": "Define a positional number system and list the four positional systems discussed in the textbook: decimal (base 10, symbols 0–9), binary (base 2, symbols 0–1), octal (base 8, symbols 0–7), and hexadecimal (base 16, symbols 0–9 and A–F). What determines the value of a digit in a positional system?",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Explain why the hexadecimal number system is preferred over binary for representing data outside the computer. According to the textbook, what is the relationship between one hexadecimal digit and binary bits that makes conversion straightforward?",
+      "bloom": "Understand"
+     },
+     {
+      "q": "What is the maximum value that can be represented by a K-digit unsigned integer in binary? State the formula (Nmax = 2^K − 1) and compute the maximum value when K = 8.",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Convert the hexadecimal number (2AE)₁₆ to its decimal equivalent. Show each step using the place-value method: 2 × 16² + A(10) × 16¹ + E(14) × 16⁰. Verify that your result is 686.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "The textbook shows that the decimal number 686 can be represented as (2AE)₁₆ in hexadecimal (3 digits) and (1256)₈ in octal (4 digits). Analyze why hexadecimal representation is more compact than octal for the same value, and explain the relationship between each system's base and the number of binary bits each digit encodes (4 bits vs. 3 bits).",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Using the formula x = ⌈K × (log b₁ / log b₂)⌉ from the textbook, calculate the minimum number of binary digits required to store decimal integers with a maximum of six digits (K=6, b₁=10, b₂=2). Verify that the largest 6-digit decimal number (999,999) fits within your calculated bit width but NOT within one fewer bit.",
+      "bloom": "Apply"
+     }
+    ],
+    "hard": [
+     {
+      "q": "The Roman numeral system is a nonpositional number system where a symbol's value is mostly fixed regardless of position, with special subtractive rules (e.g., IV = 4, IX = 9). Evaluate why this system is unsuitable for use in computers compared to positional systems. Consider issues such as ambiguity, difficulty of arithmetic operations, the lack of a zero symbol, and the impossibility of efficient hardware implementation.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "When converting a fractional decimal number to binary using the repeated multiplication-by-2 method, some fractions (e.g., 0.3 in decimal) produce an infinite repeating binary expansion and cannot be represented exactly. Evaluate the implications of this limitation for computer arithmetic precision and explain how the finite storage of floating-point representation (discussed in Chapter 3) addresses or fails to fully resolve this problem.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a positional number system with base 5 (quinary) using the symbol set S = {0, 1, 2, 3, 4}. Convert the decimal number 137 to this quinary system by showing each step of the repeated-division method. Verify your result by converting it back to decimal using place values (powers of 5).",
+      "bloom": "Create"
+     },
+     {
+      "q": "A company needs to assign a unique binary code to each of its 900 employees. Determine the minimum number of bits needed (using the relationship 2^n ≥ 900), calculate how many bit patterns remain unassigned, and justify whether the company should increase the number of bits if it hires 300 additional employees. Explain your reasoning with specific calculations.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 3,
+   "title": "Data Storage",
+   "text_excerpt": "As discussed in Chapter 1, a computer is a programmable data processing machine. Before \nwe can talk about processing data, we need to understand the nature of data. In this \n­chapter we discuss different data types and how they are stored inside a computer. \nIn Chapter 4, we show how data is manipulated inside a computer. \nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nList five different data types used in a computer.\n❑\n❑\nDescribe how different data is stored inside the computer as bit patterns.\n❑\n❑\nDescribe how integers are stored in a computer using unsigned format. \n❑\n❑\nDescribe how integers are stored in a computer using sign-and-magnitude format.\n❑\n❑\nDescribe how integers are stored in two’s complement format.\n❑\n❑\nDescribe how reals are stored in a computer using floating-point format.\n❑\n❑\nDescribe how text is stored in a computer using one of the various encoding systems.\n❑\n❑\nDescribe how audio is stored in a computer using sampling, quantization, and encoding. \n❑\n❑\nDescribe how images are stored in a computer using raster and vector graphics \nschemes. \n❑\n❑\nDescribe how video is stored in a computer as a representation of images changing \nin time. \nCHAPTER\t 3\nData Storage\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n40\nData Storage\n3.1  DATA TYPES\nData today come in different forms including numbers, text, audio, images, and video (Figure 3.1). \nPeople need to be able to process many different types of data: \n❑\n❑\nAn engineering program uses a computer mainly to process numbers: to do arithme-\ntic, to solve algebraic or trigonometric equations, to find the roots of a differential \nequation, and so on. \n❑\n❑\nA word processing program, on the other hand, uses a computer mainly to process \ntext: justify, move, delete, and so on.\n❑\n❑\nA computer also handles audio data. We can play music on a computer and can record \nsound as data. \n❑\n❑\nAn image processing program uses a computer to manipulate images: create, shrink, \nexpand, rotate, and so on. \n❑\n❑\nFinally, a computer can be used not only to show movies, but also to create the special \neffects seen in movies.\nThe computer industry uses the term ‘multimedia’ to define information  \nthat contains numbers, text, audio, images, and video.\n3.1.1  Data inside the computer\nAll data types are transformed into a uniform representation when they are stored in a \ncomputer and transformed back to their original form when retrieved. This universal \nrepresentation is called a bit pattern, as discussed shortly. \nBits\nA bit (binary digit)  is the smallest unit of data that can be stored in a computer and has \na value of 0 or 1. A bit represents the state of a device that can take one of two states. \nFor example, a switch can be on or off. A convention can be established to represent the \n‘on’ state as 1 and the ‘off’ state as 0, or vice versa. In this way, a switch can store one bit \nof information. Today, computers use various two-state devices to store data.\nBit patterns\nTo represent different types of data, we use a bit pattern, a sequence, or as it is \nsometimes called, a string of bits. Figure 3.2 shows a bit pattern made up of sixteen bits. \nFigure 3.1  Different types of data\nData\nText\nNumbers\nAudio\nVideo\nImages\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n3.1  Data Types\n41\nIt is a combination of sixteen 0s and 1s. This means that if we need to store a bit pattern \nmade of sixteen bits, we need sixteen electronic switches. If we need to store 1000 bit \npatterns, each sixteen bits long, we need 16 000 switches, and so on. By tradition a bit \npattern with eight bits is called a byte. Sometimes the term word is used to refer to a \nlonger bit pattern.\nAs Figure 3.3 shows, a piece of data belonging to different data types can be stored as the \nsame pattern in the memory. \nIf we are using a text editor (a word processor), the character A typed on the keyboard can \nbe stored as the 8-bit pattern 01000001. The same 8-bit pattern can represent the number \n65 if we are using a mathematical routine. Moreover, the same pattern can represent part \nof an image, part of a song, or part of a scene in a film. The computer’s memory stores all \nof them without recognizing what type of data they represent. \n3.1.2  Data compression\nTo occupy less memory space, data is normally compressed before being stored in the \ncomputer. Data compression is a very broad and involved subject, so we have dedicated \nthe whole of Chapter 15 to this subject.\nData compression is discussed in Chapter 15.\nFigure 3.2  A bit pattern\n0 0 0\n0\n0\n1\n1\n1\n1 1 1 1 1 0 1\n1\nFigure 3.3  Storage of different data types\nPart of\na song\nMusic recorder\n11...11111\nProgram\nPart of\na ﬁlm\nVideo recorder\n01...11000\nProgram\nMemory\nPart of\nan image\nImage recorder\n01 ... 001\nProgram\nMemory\nA number\nMath routine\n01000001\nProgram\n65\nMemory\nA character\ntyped on a\nkeyboard\nText editor\n01000001\nProgram\n“A”\nMe",
+   "questions": {
+    "easy": [
+     {
+      "q": "Define the terms bit, byte, and word as used in the textbook. How many bits make up one byte, and why is the bit considered the smallest unit of data in a computer?",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Describe how the ASCII code represents text characters. How many bits does ASCII use per symbol, how many symbols can it represent (2⁷ = 128), and how does Unicode extend this capability using 32 bits (up to 2³² = 4,294,967,296 symbols)?",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Explain how a negative integer is stored using two's complement representation. What is the range of values that can be stored in an 8-bit two's complement integer (−128 to +127)?",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Store the decimal number −25 in an 8-bit memory location using two's complement representation. Show all steps: convert +25 to binary (00011001), apply one's complement by flipping all bits (11100110), then add 1 to obtain the two's complement result (11100111).",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Compare and contrast raster (bitmap) graphics and vector graphics as described in the textbook. Raster graphics store pixel data with a given resolution and color depth, while vector graphics represent images as mathematical formulas for geometric shapes. In what scenarios is each method more appropriate, and what are the trade-offs in terms of scalability, storage size, and image quality?",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "An audio signal is sampled at 40,000 samples per second with 16 bits per sample. Calculate the bit rate (R = S × B = 40,000 × 16 = 640,000 bits per second = 640 kbps). If we switch to the MP3 standard rate of 44,100 samples per second at 16 bits per sample, what is the new raw bit rate before compression?",
+      "bloom": "Apply"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Sign-and-magnitude representation has two representations for zero (+0 = 00000000 and −0 = 10000000 in 8 bits), while two's complement has only one (00000000). Evaluate the practical consequences of having two zeros—specifically how it complicates addition/subtraction hardware and comparison operations—and explain why two's complement became the universal standard for signed integer storage in modern computers.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "The MP3 standard uses 44,100 samples per second and 16 bits per sample, yielding a raw bit rate of 705,600 bps before lossy compression discards information undetectable by the human ear. Evaluate the trade-offs between increasing the sampling rate and bit depth (e.g., 96,000 samples/sec at 24 bits) versus the resulting increase in storage and bandwidth requirements. Under what circumstances would the higher quality justify the additional cost?",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "You are designing a digital imaging system. The resolution is 1920 × 1080 pixels using True-Color encoding (24 bits per pixel: 8 bits each for R, G, B). Calculate the uncompressed storage required for a single frame. Then calculate the storage for 30 frames per second of video over 2 hours. Propose at least two strategies to reduce this storage requirement while maintaining acceptable visual quality.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Construct the 32-bit IEEE 754 single-precision floating-point representation of the decimal number −6.75. Show all steps: convert 6.75 to binary (110.11), normalize to 1.1011 × 2², determine the sign bit (1 for negative), compute the biased exponent (2 + 127 = 129 = 10000001₂), and write the 23-bit mantissa (10110000000000000000000). Present the complete 32-bit result.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 4,
+   "title": "Operations on Data",
+   "text_excerpt": "In Chapter 3 we showed how to store different types of data in a computer. In this chap-\nter, we show how to operate on data stored in a computer. Operations on data can be \ndivided into three broad categories: logic operations, shift operations, and arithmetic \noperations. \nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nList the three categories of operations performed on data.\n❑\n❑\nPerform unary and binary logic operations on bit patterns.\n❑\n❑\nDistinguish between logic shift operations and arithmetic shift operations. \n❑\n❑\nPerform logic shift operations on bit patterns.\n❑\n❑\nPerform arithmetic shift operations on integers stored in two’s complement format.\n❑\n❑\nPerform addition and subtraction on integers when they are stored in two’s \n­complement format.\n❑\n❑\nPerform addition and subtraction on integers when they are stored in sign-and-­\nmagnitude format.\n❑\n❑\nPerform addition and subtraction operations on reals when they are stored in \n­floating-point format. \n❑\n❑\nUnderstand some applications of logical and shift operations such as setting, ­unsetting, \nand flipping specific bits. \nCHAPTER\t 4\nOperations on Data\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n74\nOperations on Data\n4.1  LOGIC OPERATIONS\nIn Chapter 3 we discussed the fact that data inside a computer is stored as patterns of bits. \nLogic operations refer to those operations that apply the same basic operation on individ-\nual bits of a pattern, or on two corresponding bits in two patterns. This means that we can \ndefine logic operations at the bit level and at the pattern level. A logic operation at the \npattern level is n logic operations, of the same type, at the bit level where n is the number \nof bits in the pattern. \n4.1.1  Logic operations at bit level\nA bit can take one of the two values: 0 or 1. If we interpret 0 as the value false and \n1 as the value true, we can apply the operations defined in Boolean algebra to \nmanipulate bits. Boolean algebra, named in honor of George Boole, belongs to a \nspecial field of mathematics called logic. Boolean algebra and its application to \nbuilding logic circuits in computers are briefly discussed in Appendix E. In this \nsection, we show briefly four bit-level operations that are used to manipulate bits: \nNOT, AND, OR, and XOR. \nBoolean algebra and logic circuits are discussed in Appendix E.\nFigure 4.1 shows the symbols for these four bit-level operators and their truth \ntables. A truth table defines the values of output for each possible input or inputs. \nNote that the output of each operator is always one bit, but the input can be one \nor two bits. \nFigure 4.1  Logic operations at the bit level\nAND\nOR\nXOR\n0\n1\n0\n1\n0\n0\n1\n1\n0\n1\n1\n1\nOR   y\ny\nx\nx\n0\n1\n0\n1\n0\n0\n1\n1\n0\n0\n0\n1\nx  AND  y\ny\nx\n0\n1\n0\n1\n0\n0\n1\n1\n0\n1\n1\n0\nXOR\ny\ny\nx\nx\nNOT\nx\n0\n1\n1\n0\nNOT\nx\nAND  y\nx\ny\nx\nx  \ny\nXOR\ny\nx\nOR   y\nx\ny\nx\nNOT\nx\nx\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n4.1  Logic Operations\n75\nNOT\nThe NOT operator is a unary operator: it takes only one input. The output bit is the \ncomplement of the input. If the input is 0, the output is 1, if the input is 1, the output is \n0. In other words, the NOT operator flips its input. The truth table of the NOT operator \nhas only two rows because the single input can be either 0 or 1: two possibilities. \nAND\nThe AND operator is a binary operator: it takes two inputs. The output bit is 1 if both \ninputs are 1s and the output is 0 in the other three cases. The truth table of the AND \noperator has four rows because, with two inputs, there are four possible input combinations.\nA property \nOne interesting point about the AND operator is that if a bit in one input is 0, we do not \nhave to check the corresponding bit in the other input: we can quickly conclude that the \nresult is 0. We use this property when we discuss the application of this operator in \nrelation to a bit pattern: \nFor x = 0 or 1    x AND 0 → 0    and    0 AND x → 0 \nOR\nThe OR operator is a also a binary operator: it takes two inputs. The output bit is 0 if both \ninputs are 0s and the output is 1 in the other three cases. The truth table of the OR \noperator has also four rows. The OR operator is sometimes called the inclusive-or operator \nbecause the output is 1 not only when one of the inputs is 1, but also when both inputs \nare 1s. This is in contrast to the operator we introduce next.\nA property\nOne interesting point about the OR operator is that if a bit in one input is 1, we do not \nhave to check the corresponding bit in the other input: we can quickly conclude that the \nresult is 1. We use this property when we discuss the application of this operator in \nrelation to a bit pattern: \nFor x = 0 or 1    x OR 1 → 1    and    1 OR x → 1\nXOR\nThe XOR operator (pronounced ‘exclusive-or’) is also a binary operator like the OR \noperator, with only one difference: the output is 0 if both inputs are 1s. We can look at this \no",
+   "questions": {
+    "easy": [
+     {
+      "q": "List the four basic logic operations discussed in Chapter 4 (NOT, AND, OR, XOR). Which of these is a unary operator (takes one input), and which are binary operators (take two inputs)?",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Explain the difference between a logical shift operation and an arithmetic shift operation as described in the textbook. Why must arithmetic shift (which preserves the sign bit) be used instead of logical shift when dividing signed two's complement numbers by powers of two?",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Describe how the AND operator with a mask can unset (force to 0) specific bits in a bit pattern. According to the textbook, the mask 00000111 clears the five leftmost bits of an 8-bit pattern. Explain why this works by referencing the AND property: x AND 0 = 0.",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Perform the XOR operation on the 8-bit patterns 10011001 and 00101110. Show the resulting bit pattern (10110111). Then compare this result with the OR of the same two inputs (10111111) and explain specifically which bit positions differ and why (XOR outputs 0 when both inputs are 1, unlike OR).",
+      "bloom": "Apply"
+     },
+     {
+      "q": "The textbook states that XOR can be expressed as: x XOR y = [x AND (NOT y)] OR [(NOT x) AND y]. Verify this equivalence by constructing complete truth tables for both expressions across all four input combinations of x and y, and confirm the outputs match for every case.",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Using 8-bit two's complement representation, perform the subtraction 19 − 23. Convert 19 to binary (00010011), convert −23 to two's complement (11101001), add the two binary numbers, and convert the 8-bit result back to decimal. Verify the answer is −4.",
+      "bloom": "Apply"
+     }
+    ],
+    "hard": [
+     {
+      "q": "The textbook states that overflow in two's complement arithmetic occurs when adding two positive numbers yields a negative result or adding two negative numbers yields a positive result. Evaluate why overflow can NEVER occur when adding one positive and one negative integer in two's complement. Provide a rigorous justification based on the range of possible sums relative to the representable range.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Consider the 8-bit two's complement number 11110000 (representing −16). Perform a logical right shift by 1 (result: 01111000 = +120) and an arithmetic right shift by 1 (result: 11111000 = −8). Evaluate why the logical shift produces a mathematically incorrect result for signed division by 2, while the arithmetic shift (which copies the sign bit into the vacated position) produces the correct result (−16 ÷ 2 = −8).",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a sequence of bitwise operations that extracts bits 4 and 5 (counting from the right, starting at bit 0) from an 8-bit unsigned integer and produces their 2-bit value. Specify each step and mask. For example, given input 10110100, show how your operations isolate bits 5 and 4 (which are 11₂ = 3₁₀) using AND with mask 00110000 followed by a right shift of 4 positions.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Describe the complete algorithm for adding two floating-point numbers in IEEE 754 format, using the example of 34.75 + 23.125 from the textbook. Include: (1) converting both numbers to normalized binary scientific notation, (2) aligning exponents by right-shifting the mantissa of the number with the smaller exponent, (3) adding the aligned mantissas, (4) renormalizing the result, and (5) expressing the final result. Discuss challenges such as precision loss during mantissa shifting.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 5,
+   "title": "Computer Organization",
+   "text_excerpt": "In this chapter we discuss the organization of a stand-alone computer. We explain how \nevery computer is made up of three subsystems. We also show how a simple, hypothetical \ncomputer can run a simple program to perform primitive arithmetic or logic operations. \nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nList the three subsystems of a computer.\n❑\n❑\nDescribe the role of the central processing unit (CPU) in a computer.\n❑\n❑\nDescribe the fetch–decode–execute phases of a cycle in a typical computer. \n❑\n❑\nDescribe the main memory and its addressing space.\n❑\n❑\nDistinguish between main memory and cache memory. \n❑\n❑\nDefine the input/output subsystem.\n❑\n❑\nUnderstand the interconnection of subsystems and list different bus systems.\n❑\n❑\nDescribe different methods of input/output addressing.\n❑\n❑\nDistinguish the two major trends in the design of computer architecture.\n❑\n❑\nUnderstand how computer throughput can be improved using pipelining.\n❑\n❑\nUnderstand how parallel processing can improve the throughput of computers. \nCHAPTER\t 5\nComputer Organization\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n92\nComputer Organization\n5.1  INTRODUCTION\nWe can divide the parts that make up a computer into three broad categories or subsys-\ntems: the central processing unit (CPU), the main memory, and the input/output subsys-\ntem. The next three sections discuss these subsystems and how they are connected to \nmake a standalone computer. Figure 5.1 shows the three subsystems of a standalone \ncomputer. \n5.2  CENTRAL PROCESSING UNIT\nThe central processing unit (CPU) performs operations on data. In most architectures it \nhas three parts: an arithmetic logic unit (ALU), a control unit, and a set of registers, \n(­Figure 5.2).\nFigure 5.1  Computer hardware (subsystems)\nInput / output subsystem\nCentral Processing Unit\n(CPU)\nMemory\nFigure 5.2  Central processing unit (CPU)\nALU\nControl Unit\nRegisters\nR: Register\nPC: Program Counter\nIR: Instruction Register\nCentral Processing Unit (CPU)\nR0\nR1\nR2\nRn\nPC\nIR\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n5.2  Central Processing Unit\n93\n5.2.1  The arithmetic logic unit (ALU)\nThe arithmetic logic unit (ALU) performs logic, shift, and arithmetic operations on data. \nLogic operations\nWe discussed several logic operations, such as NOT, AND, OR, and XOR, in Chapter 4. \nThese operations treat the input data as bit patterns and the result of the operation is also \na bit pattern. \nShift operations\nWe discussed two groups of shift operations on data in Chapter 4: logical shift operations \nand arithmetic shift operations. Logical shift operations are used to shift bit patterns to the \nleft or right, while arithmetic operations are applied to integers. Their main purpose is to \ndivide or multiply integers by two. \nArithmetic operation\nWe discussed some arithmetic operations on integers and reals on Chapter 4. We men-\ntioned that some operations can be implemented more efficiently in hardware. \n5.2.2  Registers\nRegisters are fast stand-alone storage locations that hold data temporarily. Multiple \n­registers are needed to facilitate the operation of the CPU. Some of these registers are \nshown in Figure 5.2. \nData registers\nIn the past computers had only a few data registers to hold the input data and the result \nof the operations. Today, computers use dozens of registers inside the CPU to speed up \ntheir operations, because complex operations are done using hardware instead of software. \nThese require several registers to hold the intermediate results. Data registers are named \nR1 to Rn in Figure 5.2. \nInstruction registers\nToday computers store not only data, but also programs, in their memory. The CPU is \nresponsible for fetching instructions one by one from memory, storing them in the instruc-\ntion register (IR in Figure 5.2), decoding them, and executing them. We will discuss this \nissue later in the chapter. \nProgram counter\nAnother common register in the CPU is the program counter (PC in Figure 5.2). The \nprogram counter keeps track of the instruction currently being executed. After execution \nof the instruction, the counter is incremented to point to the address of the next instruc-\ntion in memory.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n94\nComputer Organization\n5.2.3  The control unit\nThe third part of any CPU is the control unit. The co",
+   "questions": {
+    "easy": [
+     {
+      "q": "List the three main subsystems of a computer as described in the textbook (CPU, main memory, and I/O subsystem). Within the CPU, name its three parts: the arithmetic logic unit (ALU), the control unit, and the set of registers (including data registers R1–Rn, instruction register IR, and program counter PC).",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Explain the difference between RAM and ROM as described in the textbook. Why is RAM called volatile (information is lost when power is off)? List the ROM variants mentioned (PROM, EPROM, EEPROM) and give an example of what is typically stored in ROM, such as the boot program.",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Describe the three phases of the machine cycle: fetch (control unit copies next instruction from memory address in PC into IR, then increments PC), decode (control unit interprets the instruction in IR), and execute (ALU or I/O unit performs the required operation). What is the role of the program counter in this cycle?",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "A computer has 32 MB (megabytes) of memory with a word size of 1 byte. Since 32 MB = 2²⁵ bytes, calculate how many bits are needed to address any single byte (log₂ 2²⁵ = 25 bits). Then solve: a computer with 128 MB of memory where each word is 8 bytes—how many address bits are needed to address each word?",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Compare and contrast SRAM and DRAM technologies as described in the textbook. SRAM uses flip-flop gates (fast, expensive, no refresh), DRAM uses capacitors (slower, cheaper, needs periodic refresh). Analyze why SRAM is used for cache memory (speed-critical, small size acceptable) while DRAM is used for main memory (large capacity needed, cost-sensitive).",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Distinguish between isolated I/O and memory-mapped I/O addressing. In isolated I/O, separate instructions (e.g., 'Read 101' vs. 'Input 101') address memory and I/O. In memory-mapped I/O, I/O registers occupy part of the memory address space (e.g., addresses 64000+). Analyze the advantages of memory-mapped I/O (fewer instruction types) and its disadvantage (reduced memory address space).",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "The textbook describes three I/O synchronization methods: programmed I/O (CPU continuously polls device status—wastes CPU time), interrupt-driven I/O (device sends interrupt when ready—CPU does other work meanwhile), and DMA (dedicated controller transfers data directly to/from memory without CPU involvement for each byte). Evaluate the efficiency and CPU utilization of each method and justify which is most suitable for high-speed bulk data transfer between a disk and memory.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "The memory hierarchy places registers at the top (fastest, most costly, smallest) and main memory at the bottom (slowest, cheapest, largest), with cache in between. The textbook states the 80–20 rule: 80% of accesses target only 20% of data. Evaluate how cache memory exploits temporal and spatial locality to achieve near-register speed for most accesses. What happens to system performance when a program exhibits poor locality (e.g., random access patterns that cause frequent cache misses)?",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Using the simple computer model from the textbook (16 registers R0–R15, memory addresses 00–FD, keyboard at FE, monitor at FF, 16-bit instructions), write a program that reads two integers from the keyboard (using LOAD Rx FE), adds them (ADDI Rd Rs1 Rs2), and displays the result on the monitor (STORE FF Rs). List each instruction with its 4-digit hexadecimal encoding. For example, LOAD R0 from address FE would be encoded as 10FE.",
+      "bloom": "Create"
+     },
+     {
+      "q": "The textbook discusses pipelining as a technique to improve throughput by overlapping fetch, decode, and execute phases of consecutive instructions. Design a 4-stage pipeline (fetch, decode, execute, writeback) and draw a timing diagram showing how 4 instructions overlap across clock cycles. Explain how pipelining improves throughput compared to sequential execution. Identify and explain at least two pipeline hazards (data hazard: an instruction needs the result of a previous instruction not yet written back; branch hazard: a conditional jump makes fetched instructions invalid) and describe strategies to mitigate each.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  }
+ ]
+}

@@ -1,0 +1,269 @@
+{
+ "chapters": [
+  {
+   "number": 16,
+   "title": "Security",
+   "text_excerpt": "The topic of security is very broad and involves some specific areas of mathematics such \nas number theory. In this chapter, we try to give a very simple introduction to this topic \nto prepare the background for more study.\nObjectives\nAfter studying this chapter, the student should be able to: \n❑\n❑\nDefine security goals: confidentiality, integrity, and availability.\n❑\n❑\nShow how confidentiality can be achieved using symmetric-key and asymmetric-key \ncipher.\n❑\n❑\nDiscuss other aspects of security: message integrity, message authentication, digital \nsignature, entity authentication, and key management.\n❑\n❑\nDiscuss the use of firewalls to protect a system from harmful messages. \nCHAPTER\t 16\nSecurity\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nSecurity\n412\n16.1  INTRODUCTION\nWe are living in the information age. We need to keep information about every aspect of \nour lives. In other words, information is an asset that has a value like any other asset. As \nan asset, information needs to be secured from attacks. To be secure, information needs to \nbe hidden from unauthorized access (confidentiality), protected from unauthorized change \n(integrity), and available to an authorized entity when it is needed (availability). \nDuring the last three decades, computer networks have created a revolution in the \nuse of information. Information is now distributed. Authorized people can send and re-\ntrieve information from a distance using computer networks. Although the three \nabove-mentioned requirements—confidentiality, integrity, and availability—have not \nchanged, they now have some new dimensions. Not only should information be confiden-\ntial when it is stored; there should also be a way to maintain its confidentiality when it is \ntransmitted from one computer to another.\nIn this section, we first discuss the three major goals of information security. We then \nsee how attacks can threaten these three goals. We then discuss the security services in \nrelation to these security goals. Finally, we define two techniques to implement the secu-\nrity goals and prevent attacks.\n16.1.1  Security goals\nLet us first discuss the three security goals: confidentiality, integrity, and availability.\nConfidentiality\nConfidentiality is probably the most common aspect of information security. We need to \nprotect our confidential information. An organization needs to guard against those malicious \nactions that endanger the confidentiality of its information. Confidentiality not only applies \nto the storage of information, it also applies to the transmission of information. When we \nsend a piece of information to be stored in a remote computer or when we retrieve a piece \nof information from a remote computer, we need to conceal it during transmission. \nIntegrity\nInformation needs to be changed constantly. In a bank, when a customer deposits or with-\ndraws money, the balance of their account needs to be changed. Integrity means that \nchanges need to be done only by authorized entities and through authorized mechanisms. \nIntegrity violation is not necessarily the result of a malicious act; an interruption in the \nsystem, such as a power surge, may also create unwanted changes in some information.\nAvailability\nThe third component of information security is availability. The information created and \nstored by an organization needs to be available to authorized entities. Information is use-\nless if it is not available. Information needs to be constantly changed, which means it must \nbe accessible to authorized entities. The unavailability of information is just as harmful for \nan organization as the lack of confidentiality or integrity. Imagine what would happen to \na bank if the customers could not access their accounts for transactions.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n16.1  Introduction\n413\n16.1.2  Attacks\nOur three goals of security—confidentiality, integrity, and availability—can be threatened by \nsecurity attacks. Although the literature uses different approaches to categorizing the attacks, we \ndivide them into three groups related to the security goals. Figure 16.1 shows the taxonomy. \nFigure 16.1  Taxonomy of attacks with relation to security goals\nSecurity Attacks\nThreat to\nconﬁdentiality\nThreat to integrity\nSnooping\nTrafﬁc\nanalysis\nMasquerading\nReplaying\nRepudiation\nModiﬁcation\nDenial of\nservice\nThreat to\navailability\nAttacks threatening confidentiality\nIn general, two types of attacks threaten the confidentiality of information: snooping and \ntraffic analysis.\nSnooping\nSnooping refers to unauthorized access to or interception of data. For example, a file \ntransferred through the Internet may contain confidential information. An unauthorized \nentity may intercept the transmission and use the contents for their own benefit. To pre-\nvent snooping, the data can be made nonintelligible to the intercepter by using encipher-\nment t",
+   "questions": {
+    "easy": [
+     {
+      "q": "Define the three security goals introduced in Chapter 16 (the CIA triad) and briefly describe what each goal protects against.",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Describe the difference between a substitution cipher and a transposition cipher, and give one example of each as discussed in the chapter.",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Explain what a Denial of Service (DoS) attack is and identify which security goal it threatens according to the taxonomy of attacks in Figure 16.1.",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Using the additive (Caesar) cipher with key = 15, encrypt the plaintext message 'hello' step by step using the modulo-26 encoding scheme from Figure 16.4 (a=0, b=1, ..., z=25). Show each character’s numeric value, the addition modulo 26, and the resulting ciphertext character.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Compare symmetric-key and asymmetric-key cryptography in terms of the number of keys required for a community of 1,000,000 users. Using the formula n(n−1)/2 for symmetric-key and n for asymmetric-key, calculate and compare the results. What does this imply about scalability?",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "In the RSA cryptosystem example from the chapter: Bob selects p=7, q=11, computes n=77, φ(n)=60, and chooses e=13, d=37. Verify that e×d mod 60 = 1. Then, given Alice’s plaintext P=5, calculate C = 5^13 mod 77 and confirm that Bob can recover P = C^37 mod 77 = 5. What does this demonstrate about RSA correctness?",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate the one-time pad cipher: the chapter states it is 'perfect' and unbreakable, yet impractical. Explain the exclusive-OR-based encryption mechanism, why it is information-theoretically secure, and identify the fundamental operational challenge that prevents widespread adoption.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Evaluate why a digital signature requires an asymmetric-key (public-key) system and cannot be implemented with symmetric-key cryptography alone. The chapter gives three reasons: address each, and explain the roles of Alice’s private key (signing) and public key (verification) in the process shown in Figure 16.14.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a complete message authentication system using a MAC (Message Authentication Code) as described in the chapter. Specify: (a) what Alice sends over the insecure channel, (b) how Bob verifies integrity and authenticity using the hash function h(K+M), (c) why Eve cannot forge a valid MAC even if she intercepts the message, and (d) how MAC differs from a digital signature.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Construct an argument critiquing the claim: 'Asymmetric-key cryptography eliminates the need for symmetric-key cryptography.' Using the chapter’s discussion of performance trade-offs and the complementary roles of both systems, explain why each is still necessary in modern security architectures and give a concrete use case for each.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 17,
+   "title": "Theory of Computation",
+   "text_excerpt": "In Chapters 1 through 16, we considered a computer as a problem-solving machine. In \nthis chapter, we answer some questions such as: which problems can be solved by a \n­computer? Is one language superior to another? Before running a program, can it be deter-\nmined whether the program will halt (terminate) or run forever? How long does it take \nto solve a problem using a particular language? To answer these questions, we turn to a \ndiscipline called the theory of computation.\nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDescribe a programming language we call Simple Language and define its basic \n­statements.\n❑\n❑\nWrite macros in Simple Language using the combination of simple statements. \n❑\n❑\nDescribe the components of a Turing machine as a computation model.\n❑\n❑\nShow how simple statements in Simple Language can be simulated using a Turing \n­machine. \n❑\n❑\nUnderstand the Church–Turing thesis and its implication.\n❑\n❑\nDefine the Gödel number and its application. \n❑\n❑\nUnderstand the concept of the halting problem and how it can be proved that this \nproblem is unsolvable.\n❑\n❑\nDistinguish between solvable and unsolvable problems.\n❑\n❑\nDistinguish between polynomial and nonpolynomial solvable problems. \nCHAPTER\t 17\nTheory of Computation\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nTheory of Computation\n452\n17.1  SIMPLE LANGUAGE\nWe can define a computer language with only three statements: the increment statement, \nthe decrement statement, and the loop statement (Figure 17.1). In this language, the only \ndata type we use is nonnegative integers. There is no need for any other data type, because \nthe goal of the chapter is merely to demonstrate some ideas in computation theory. The \nlanguage uses only a few symbols such as ‘{’ and ‘}’.\nFigure 17.1  Statements in Simple Language\nStatements in\nSimple Language\nIncrement\nDecrement\nLoop\n17.1.1  Increment statement\nThe increment statement adds 1 to a variable. The format is shown in Algorithm 17.1. \nAlgorithm 17.1  The increment statement\nincr (X)\n17.1.2  Decrement statement\nThe decrement statement subtracts 1 from a variable. The format is shown in Algorithm 17.2. \nAlgorithm 17.2  The decrement statement\ndecr (X)\n17.1.3  Loop statement\nThe loop statement repeats an action (or a series of actions) while the value of the variable \nis not 0. The format is shown in Algorithm 17.3. \nAlgorithm 17.3  The loop statement\nwhile (X)\n{\n  decr (X)\n  Body of the loop\n}\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n17.1  Simple Language\n453\n17.1.4  The power of the simple language\nIt can be shown that this simple programming language with only three statements is as \npowerful—although not necessarily as efficient—as any sophisticated language in use \ntoday, such as C. To do so, we show how we can simulate several statements found in some \npopular languages. \nMacros in Simple Language\nWe call each simulation a macro and use it in other simulations without the need to \nrepeat code. A macro (short for macroinstruction) is an instruction in a high-level language \nthat is equivalent to a specific set of one or more ordinary instructions in the same \nlanguage.\nFirst macro: X ← 0\nAlgorithm 17.4 shows how to use the statements in Simple Language to assign 0 to a \nvariable X. It is sometimes called clearing a variable.  \nAlgorithm 17.4  Macro X ← 0\nwhile (X)\n{\n  decr (X)\n}\nSecond macro: X ← n\nAlgorithm 17.5 shows how to use the statements in Simple Language to assign a positive \ninteger n to a variable X. First clear the variable X, then increment X n times. \nAlgorithm 17.5  Macro X ← n\nX ← 0\nincr (X)\nincr (X)\n…\nincr (X)\n// The statement incr (X) is repeated n times.\nThird macro: Y ← X\nAlgorithm 17.6 simulates the macro Y ← X in Simple Language. Note that we can use an \nextra line of code to restore the value of X. \nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nTheory of Computation\n454\nAlgorithm 17.6  Macro Y ← X\nY ← 0\nwhile (X)\n{\n  decr (X)\n  incr (Y)\n}\nFourth macro: Y ← Y 1 X\nAlgorithm 17.7 simulates the macro Y ← Y 1 X in Simple Language. Again, we can use \nmore code lines to restore the value of X to its original value. \nAlgorithm 17.7  Macro Y ← Y + X\nwhile (X)\n{\n  decr (X)\n  incr (Y)\n}\nFifth macro: Y ← Y × X\nAlgorithm 17.8 simulates the macro Y ← Y × X in Simple Language. We can use the \naddition macro because integer multip",
+   "questions": {
+    "easy": [
+     {
+      "q": "List the three basic statements in Simple Language as defined in Chapter 17 and write the exact syntactic form (Algorithm 17.1, 17.2, 17.3) for each.",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Describe the three physical components of a Turing machine (tape, read/write head, and controller) and explain the role each plays in computation.",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Explain the Church–Turing thesis in your own words. Why is it called a 'thesis' rather than a 'theorem', and what are the two arguments the book offers in its support?",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Trace the execution of the Simple Language macro Y ← Y + X (Algorithm 17.7) when X=2 and Y=3. Show the value of Y after each iteration of the while loop and state the final result. Then explain how the multiplication macro Y ← Y × X (Algorithm 17.8) uses this addition macro to compute Y=3, X=4.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Using the Gödel numbering table (Table 17.2), find the Gödel number for the Simple Language program 'incr X' (as in Example 17.5). Then interpret the Gödel number 3058 as a Simple Language program (as in Example 17.6). What does the existence of a unique integer for every program imply about the countability of programs?",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Analyze the three-step proof by contradiction for the unsolvability of the halting problem. Identify: (a) what the hypothetical 'Test' program does, (b) how 'Strange' is constructed from Test, and (c) what logical contradiction arises when Strange is fed its own Gödel number as input. Why does this contradiction prove Test cannot exist?",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate the significance of the Church–Turing thesis for the theory of computation. If the thesis holds, what does it imply about (a) the equivalence of different programming languages in terms of computational power, and (b) the relationship between Simple Language and modern languages like C or Java?",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Construct the Simple Language macro for Y ← Y^X (Algorithm 17.9) using the multiplication macro. Trace the macro step-by-step for Y=2, X=3: show the value of Y and X after each iteration of the while loop and verify the final result is Y=8.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Evaluate the taxonomy of computational problems (Figure 17.15): unsolvable, solvable-polynomial (P), and solvable-nonpolynomial (NP). Explain what it means for a problem to be polynomial versus nonpolynomial, and justify why proving the halting problem is unsolvable was a landmark result in computer science.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "The book states that 'the unsolvability of the halting problem has proved that many other programs are also unsolvable, because if they are solvable, then the halting problem is solvable.' Design an argument (by reduction) showing that a hypothetical program that determines whether any arbitrary program contains an infinite loop is also unsolvable, using the logic of the halting problem proof.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 18,
+   "title": "Artificial Intelligence",
+   "text_excerpt": "In this chapter of the book, we offer an introduction to artificial intelligence (AI). The first \nsection is a brief history and an attempt to define artificial intelligence. Knowledge repre-\nsentation, a broad and well-developed area in AI, is discussed in the next section. We then \nintroduce expert systems, systems that can replace human expertise when it is needed but \nnot available. We then discuss how artificial intelligence can be used to simulate the nor-\nmal (mundane) behavior of human beings in two areas: image processing and language \nanalysis. We then show how expert systems and mundane systems can solve problems \nusing different searching method. Finally, we discuss how neural networks can simulate the \nprocess of learning in an intelligent agent. \nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDefine and give a brief history of artificial intelligence.\n❑\n❑\nDescribe how knowledge is represented in an intelligent agent. \n❑\n❑\nShow how expert systems can be used when a human expert is not available.\n❑\n❑\nShow how an artificial agent can be used to simulate mundane tasks performed by \n­human beings. \n❑\n❑\nShow how expert systems and mundane systems can use different search techniques \nto solve problems. \n❑\n❑\nShow how the learning process in humans can be simulated, to some extent, using \n­neural networks that create the electronic version of a neuron called a perceptron. \nCHAPTER\t  18\nArtificial Intelligence\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nArtificial Intelligence\n474\n18.1  INTRODUCTION\nIn this section we first try to define the term artificial intelligence (AI) informally and give \na brief history of it. We also define an intelligent agent and its two broad categories. Finally, \nwe mention two programming languages that are commonly used in artificial intelligence. \n18.1.1  What is artificial intelligence?\nAlthough there is no universally agreed definition of artificial intelligence, we accept the \nfollowing definition that matches the topics covered in this chapter: \nArtificial intelligence is the study of programmed systems  \nthat can simulate, to some extent, human activities  \nsuch as perceiving, thinking, learning, and acting.\n18.1.2  A brief history of artificial intelligence\nAlthough artificial intelligence as an independent field of study is relatively new, it has \nsome roots in the past. We can say that it started 2400 years ago when the Greek philos-\nopher Aristotle invented the concept of logical reasoning. The effort to finalize the lan-\nguage of logic continued with Leibniz and Newton. George Boole developed Boolean \nalgebra in the nineteenth century (Appendix E) that laid the foundation of computer \ncircuits. However, the main idea of a thinking machine came from Alan Turing, who pro-\nposed the Turing test. The term ‘artificial intelligence’ was first coined by John McCarthy \nin 1956. \n18.1.3  The Turing test\nIn 1950, Alan Turing proposed the Turing Test, which provides a definition of intelligence \nin a machine. The test simply compares the intelligent behavior of a human being with \nthat of a computer. An interrogator asks a set of questions that are forwarded to both a \ncomputer and a human being. The interrogator receives two sets of responses, but does \nnot know which set comes from the human and which set from the computer. After care-\nful examination of the two sets, if the interrogator cannot definitely tell which set has \ncome from the computer and which from the human, the computer has passed the Turing \ntest for intelligent behavior. \n18.1.4  Intelligent agents\nAn intelligent agent is a system that perceives its environment, learns from it, and inter-\nacts with it intelligently. Intelligent agents can be divided into two broad categories: soft-\nware agents and physical agents. \nSoftware agents\nA software agent is a set of programs that are designed to do particular tasks. For example, \nsome intelligent systems can be used to organize electronic mail (email). This type of \nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n18.2  Knowledge Representation\n475\nagent can check the contents of received emails and classify them into different categories \n(junk, less important, important, very important, and so on). Another example of software \nagents is a search engine used to search the World Wide Web and find sites that can pro-\nvide information about a requested subject. \nPhysical agents\nA physical agent (robot) is a programmable system that can be used to perform a variety \nof tasks. Simple robots can be used in manufacturing to do routine jobs such as assem-\nbling, welding, or painting. Some organizations use mobile robots that do delivery jobs \nsuch as distributing mail or correspondence to different rooms. There are mobile robots \nthat are used underwater for prospecting for oil. \nA humanoid robot is an autonomous mobile robot that is supposed ",
+   "questions": {
+    "easy": [
+     {
+      "q": "Identify the two programming languages specifically designed for artificial intelligence discussed in Chapter 18. What does each acronym stand for and what is the primary characteristic that makes each suitable for AI?",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Describe the Turing Test as proposed by Alan Turing in 1950. What is the test's criterion for deciding whether a machine exhibits intelligent behavior, and who coined the term 'artificial intelligence' and in what year?",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Describe the four methods of knowledge representation discussed in Chapter 18: semantic networks, frames, predicate logic, and rule-based systems. For each, identify the primary data structure or formalism used.",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Analyze the difference between forward chaining and backward chaining in a rule-based inference engine (Figures 18.5 and 18.6). In which situation is each strategy more efficient? Apply backward chaining to prove the conclusion 'Socrates is mortal' given the rules and facts from Example 18.5 in the chapter.",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Using propositional logic as defined in Chapter 18, determine whether the argument {R → C, C} ⊢ R (Example 18.3) is valid by constructing its truth table. Identify the specific counterexample row that invalidates it, and contrast this with the valid argument {H ∨ O, ¬H} ⊢ O (Example 18.2).",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Compare breadth-first search and depth-first search applied to the maze problem in Figures 18.15–18.18. For the given tree, how many nodes are visited in breadth-first vs. depth-first (right-to-left) search before reaching the target node T? Explain why depth-first is more efficient in this case.",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate the seven-component architecture of an expert system (Figure 18.7). Identify which four components form the 'expert system shell' and explain why separating the shell from the knowledge base and fact database is important for software reusability and portability across different domains.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Construct a semantic network (directed graph) representing the following knowledge from the chapter: Roxy is a female dog and an instance of Dog; Ringo is a male dog and an instance of Dog; Dog is a subclass of Mammal; Mammal is a subclass of Animal; Animal has a Head. Using the inheritance relation defined in the chapter, list all attributes that Roxy inherits from the Dog, Mammal, and Animal classes.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Critique the three challenges of extracting knowledge from a human expert for building an expert system as identified in Section 18.3.1. For each challenge (heuristic knowledge, difficulty of expression, interview fatigue), explain what makes it difficult and suggest a specific mitigation strategy a knowledge engineer might employ.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a natural language understanding pipeline for an AI agent using the four steps described in Chapter 18: speech recognition, syntactic analysis, semantic analysis, and pragmatic analysis. Apply each step to the sentence 'Can you pass the salt?', explaining what each step produces as output and how pragmatic analysis resolves the ambiguity between a capability question and a polite request.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 19,
+   "title": "Introduction to Social Media",
+   "text_excerpt": "In this chapter, we briefly touch on social media as one of the applications of computer \nscience. Our goal is not to show how to use social media; many students know and use \nsocial media in their daily lives. Our goal is primarily to show the concepts behind social \nmedia and how these websites are designed for this purpose. We will discuss only two, \nFacebook and Twitter, each as an example of a particular social media type.\nObjectives\nAfter studying this chapter, the student should be able to\n❑\n❑\nDefine the friendship relationship in Facebook.\n❑\n❑\nDefine the two-way relationship between friends in Facebook.\n❑\n❑\nUnderstand the communication channels in Facebook.\n❑\n❑\nKnow how to become a member and how to terminate membership in Facebook.\n❑\n❑\nKnow how to log in and log out of Facebook.\n❑\n❑\nKnow how to find friends in Facebook.\n❑\n❑\nKnow how to communicate with friends in Facebook.\n❑\n❑\nDefine the following relationship in Twitter.\n❑\n❑\nDefine the one-way relationship between members and followers in Twitter.\n❑\n❑\nUnderstand the communication channels in Twitter.\n❑\n❑\nKnow how to become a member and how to terminate membership in Twitter.\n❑\n❑\nKnow how to log in and log out of Twitter.\n❑\n❑\nKnow how to follow other members in Twitter.\n❑\n❑\nKnow how to communicate with followers in Twitter.\nCHAPTER\t 19\nIntroduction to  \nSocial Media\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nIntroduction to Social Media\n508\n19.1  INTRODUCTION\nIn the last century, when computer science started as a discipline, we could never have \nimagined that it would become a part of our daily life in such a short period of time. \nOne of the areas in which computer science has helped all citizens is with the advent of \nsocial media. Today most people around the world are, to a greater or lesser extent, \ninvolved with one or more types of social media, which can be considered a computer \nscience application. Social media is in fact the result of using several computer science \ndisciplines including operating systems, computer programming, computer networks, and \ndatabases.\nSocial media platforms are websites on a large scale, designed to let people exchange \ntheir ideas, opinions and experiences. Some are designed primary for exchanging messag-\nes or pictures; some are designed to let job seekers find employers, and employers find \nemployees.\nA discussion of all types of social media would take a book by itself. In this chapter, \ntherefore, we look at only two of them: Facebook and Twitter. We have chosen these two \nbecause the concepts behind Facebook or Twitter are duplicated, more or less, in several \nother sites.\n19.2  FACEBOOK\nFacebook is a social media that allows families and friends around the world to keep in \ntouch with each other and share thoughts, pictures, comments, and so on.\nFacebook allows members to share thoughts, pictures and comments.\n19.2.1  General idea\nBefore explaining how to use Facebook, let us consider the general ideas behind it.\nFriendship\nIn Facebook, sharing is done only between friends. Friendship is a one-to-one reciprocal \nrelationship. If John is a friend of Lucie, Lucie is also a friend of John. However, the rela-\ntionship does not propagate; if John is a friend of Lucie and Lucie is a friend of Ann, it \ndoes not necessarily mean that John is a friend of Ann. To be so, John or Ann needs to \nrequest friendship from the other.\nIn Facebook, a friend of a friend is not necessarily a friend.\nAlthough there are billions of members in Facebook, we will assume for the purposes of \nthis discussion that it has only eight members (Ml to M8), as shown in Figure 19.1.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n19.2  Facebook\n509\nFigure 19.1  A Facebook site with only eight members\nM1\nM2\nM3\nM4\nMember\nFacebook\nM5\nM6\nM7\nM8\nNow assume that the following requests for friendship are made and are all accepted \nby the other members:\n1.\t Ml requests friendship from M2.\n2.\t M2 requests friendship from M5.\n3.\t M3 requests friendship from M2.\n4.\t M4 requests friendship from M7.\n5.\t M6 requests friendship from M3.\n6.\t M7 requests friendship from M6.\n7.\t M8 requests friendship from M2.\nFigure 19.2 shows the friendship relationships between the eight members.\nFigure 19.2  Relationship between members after friendship requests accepted\nM1\nM2\nM3\nM4\nMember\nFriendship\nFacebook\nM5\nM6\nM7\nM8\nNote that Facebook holds the information about each member, but adds a link \n­between two friends after the friendship has been requested and approved.\nCommunication\nAlthough friendship between members is a two-way relationship, we can think of com-\nmunication as a one-way (one-to-many) relationship: one member posts something, and \nall their friends can see it, as shown in Figure 19.3:\na.\t What is posted by Ml can be seen by M2.\nb.\tWhat is posted by M2 can be seen by Ml, M3, M5, and M8.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copi",
+   "questions": {
+    "easy": [
+     {
+      "q": "Define the friendship relationship in Facebook as described in Chapter 19. Is the relationship reciprocal? Is it transitive? Provide the exact rule from the chapter about whether a friend of a friend is automatically a friend.",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Describe the two main web pages used most often in Facebook and explain the primary purpose of each according to Section 19.2.2.",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Explain the key structural difference between Facebook's friendship model and Twitter's following model. In Facebook, what type of relationship governs who can see a post? In Twitter, what type of relationship governs who receives tweets?",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Using the eight-member Facebook example from Figure 19.2 (with the seven accepted friendship requests listed in Section 19.2.1), determine: (a) which members can see a post by M6, and (b) which members can see a post by M2. Show your reasoning by tracing the friendship graph.",
+      "bloom": "Apply"
+     },
+     {
+      "q": "Analyze the communication pattern in Figure 19.3. Although Facebook friendship is a symmetric (two-way) relationship, explain why the chapter describes communication as a 'one-to-many' or 'one-way' relationship. How many members can directly see what M2 posts, and what does this asymmetry imply about information propagation?",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Compare and contrast the Facebook friendship graph and the Twitter following graph from the perspective of graph theory. Facebook friendship is an undirected graph; Twitter following is a directed graph. Analyze what happens in each model if user M4 wants to see content from M2 without M2 wanting to see M4's content.",
+      "bloom": "Analyze"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate how social media platforms like Facebook rely on multiple computer science disciplines: operating systems, computer programming, computer networks, and databases. For each discipline, provide a specific function it serves within the platform, and justify which you consider most foundational to the core friendship-and-sharing functionality.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a graph-based data structure to represent the Facebook friendship network described in Chapter 19. Compare the use of an adjacency matrix vs. an adjacency list for storing the eight-member friendship graph. Calculate the space used by each representation and analyze the time complexity of determining all members who can see a given post.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Critique the non-transitivity rule of Facebook friendship described in the chapter: 'A friend of a friend is not necessarily a friend.' Evaluate the social and privacy implications of this design decision. How would the network's communication reach change if transitivity were enforced, using the eight-member example to support your argument?",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Construct a scenario using the eight-member Facebook network (M1–M8) from Chapter 19 to demonstrate a case where information posted by M1 could indirectly reach M7 through a chain of friends, if transitivity were allowed. Does the current non-transitive Facebook model described in the chapter allow this? Design an alternative 'extended visibility' rule and evaluate its privacy trade-offs.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  },
+  {
+   "number": 20,
+   "title": "Social and Ethical Issues",
+   "text_excerpt": "In this chapter, we briefly focus on social and ethical issues related to the use of computers \nand to the Internet as a network of computers.\nObjectives\nAfter studying this chapter, the student should be able to:\n❑\n❑\nDefine three ethical principles related to the use of computers.\n❑\n❑\nDistinguish between physical and intellectual property and list some types of intel-\nlectual property.\n❑\n❑\nDefine privacy as related to the use of computers.\n❑\n❑\nGive the definition of a computer crime and discuss types of attacks, motivation for \nattacks, and how to protect against attacks.\n❑\n❑\nDefine hackers and the damage done by them.\nCHAPTER\t 20\nSocial and Ethical Issues\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\nSocial and Ethical Issues\n526\n20.1  ETHICAL PRINCIPLES\nOne of the ways to evaluate our responsibility towards the rest of the world when using a \ncomputer is to base our decisions on ethics. Ethics is a very complex subject that would \ntake several books to describe in detail. In this chapter, we discuss only three principles \nthat can be related to our goal, shown in Figure 20.1.\nFigure 20.1  Three main principles of ethics\nEthical \nPrinciples\nMoral Rules\nUtilization\nSocial Contract\n20.1.1  Moral rules\nThe first ethical principle states that when we make an ethical decision, we need to con-\nsider if the decision is made in accordance with a universally accepted principle of moral-\nity. For example, if we want to illegally access a computer to get some information, we \nneed to ask ourselves if this act is moral. We know that most people in the world do not \nconsider such actions to be moral, which means that we would be ignoring the first prin-\nciple of ethics if we acted in this way.\nThe first principle of ethics says that we should avoid doing anything  \nif it is against universal morality.\n20.1.2  Utilization\nThe second theory of ethics is related to the consequences of the act. An act is ethical if it \nresults in consequences which are useful for society. If a person accesses a bank’s com-\nputer and erases customer records, is this act useful for society? Since this action may \ndamage the financial status of the bank’s customer, it is detrimental to society. It does not \nbring about a good result. It is not ethical.\nThe second principle of ethics says that an act is ethical if it  \nbrings about a good result.\n20.1.3  Social contract\nThe social contract theory says that an act is ethical when a majority of people in society \nagrees with it. If someone breaks into somebody else’s house and commits a robbery, does \nthis act receive the approval of a majority of society? Since the answer is negative, this act \nis not ethical.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).\nEditorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.\nCopyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202\n20.2  Intellectual Property\n527\nThe third principle of ethics says an act is ethical if a majority  \nof people in society agree with it.\n20.2  INTELLECTUAL PROPERTY\nMost ethical issues in the past were related to physical property. Physical property has \nbeen defined and physical property rights have been recognized by society throughout \nhistory. If a person has a physical object, such as a computer, the rights to this property are \ngranted to the owner. It has been proved that ignoring physical property rights may affect \nthe three ethical principles discussed above.\nModern societies have gone further and have recognized the right to intellectual \nproperty. For example, an author should be given the right to benefit from his/her written \nbook. An artist should be given the right to benefit from his/her artwork. However, there \nare some differences between the two types of property:\n1.\t A physical property cannot be copied; it needs to be manufactured or built. If we \nneed another computer, we need to physically build it. On the other hand, intellectu-\nal property can be copied. We can make a copy of a book without rewriting it.\n2.\t Copying intellectual property still leaves the owner with the original. Stealing a com-\nputer deprives the owner of its use.\n3.\t The owner of intellectual property is only one person (or a group); many people can \nhave the same physical property.\n20.2.1  Types of intellectual property\nModern societies have recognized several types of intellectual property: trademarks, trade \nsecrets, patents, and copyright.\nTrademarks\nA trademark identifies a company’s product or service. A trademark is an intellectual \nproperty right granted by the government for a limited term, but which can be renewed. \nA trademark is considered intellectual property in that the corresponding product cannot \nlegally be copied by other companies or individuals.\nTrade secrets\nA trade secret is the information about a product that is kept secret by the owner. For \nexample, a company can create a product but keep the formula secret. A programmer can \ncreate a piece of software, but keep the program code secret. People can use the product \nor the softw",
+   "questions": {
+    "easy": [
+     {
+      "q": "List and briefly define the three ethical principles discussed in Chapter 20 (Figure 20.1): moral rules, utilization, and social contract. State the exact principle each one describes as given in the chapter.",
+      "bloom": "Remember"
+     },
+     {
+      "q": "Identify the four types of intellectual property recognized by modern societies as described in Section 20.2.1 (trademarks, trade secrets, patents, and copyrights) and state one key distinguishing feature of each.",
+      "bloom": "Understand"
+     },
+     {
+      "q": "Define a computer crime as used in Chapter 20 and list the six categories of things an attack may involve. Then identify the two main types of computer attacks and give one example of each.",
+      "bloom": "Understand"
+     }
+    ],
+    "medium": [
+     {
+      "q": "Compare and contrast viruses, worms, and Trojan horses as described in Section 20.4.1. For each: (a) identify whether it requires a host program to propagate, (b) describe its primary method of spreading or harm, and (c) explain which type would be used to covertly steal passwords.",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Analyze the three differences between physical property and intellectual property described in Section 20.2. Then apply these differences to evaluate: (a) why software piracy is considered a crime even though the original owner still has the software, and (b) why a trade secret does not need to be registered to be legally protected.",
+      "bloom": "Analyze"
+     },
+     {
+      "q": "Apply the three ethical principles from Chapter 20 (moral rules, utilization, and social contract) to evaluate the act of a software engineer secretly copying proprietary source code from their employer to use in a personal side project. Does each principle support or condemn this action? Justify your answer.",
+      "bloom": "Apply"
+     }
+    ],
+    "hard": [
+     {
+      "q": "Evaluate the difference between a patent and a copyright as forms of intellectual property protection, using the definitions from Section 20.2.1. Under which form would a new software algorithm be protected, and which would protect the actual program code? Explain why the answer may differ and what characteristics (novelty, usefulness, capability of being built) are required for patent protection.",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Design a comprehensive, multi-layered attack protection strategy for a financial institution using all three protection strategies mentioned in Chapter 20 (physical protection, protective software, anti-virus software). For each layer, specify a concrete implementation measure, explain what type of attack it mitigates, and justify why no single layer alone is sufficient.",
+      "bloom": "Create"
+     },
+     {
+      "q": "Critique the statement: 'Hacking that causes no harm should not be a crime.' Using Chapter 20’s definition of a hacker (unauthorized access to copy secret information), the concept of privacy (Section 20.3), and the six privacy codes of ethics, evaluate whether harmless unauthorized access still constitutes an ethical and legal violation. Consider both the historical and modern definitions of 'hacker.'",
+      "bloom": "Evaluate"
+     },
+     {
+      "q": "Construct a balanced argument addressing the tension between an individual’s right to privacy and the societal need to collect personal data (Section 20.3). Use the six privacy codes of ethics from the chapter as a framework, evaluate how each code attempts to balance the conflict, and propose an additional code that you believe would strengthen privacy protection in the context of modern social media data collection.",
+      "bloom": "Create"
+     }
+    ]
+   }
+  }
+ ]
+}

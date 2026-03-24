@@ -1,0 +1,414 @@
+{
+  "chapters": [
+    {
+      "number": 11,
+      "title": "Data Structures",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define a data structure and explain the difference between a linear and a non-linear data structure. Give one example of each.",
+            "bloom": "Remember",
+            "answer": "A data structure is a way of organizing and storing data so it can be accessed and modified efficiently. Linear: elements arranged in a sequence where each element has one predecessor and one successor (e.g., array, linked list). Non-linear: elements arranged in a hierarchy or network where an element may have multiple predecessors or successors (e.g., tree, graph).",
+            "explanation": "The choice of data structure fundamentally affects algorithm performance. A linear scan of an array takes O(n); a binary search tree finds in O(log n). The right data structure for a problem depends on the operations needed: frequent random access → array; frequent insertion/deletion → linked list; hierarchical data → tree.",
+            "source": "Section 11.1, pp. 312–313"
+          },
+          {
+            "q": "Describe a stack data structure: what are its two primary operations and what ordering principle does it follow?",
+            "bloom": "Understand",
+            "answer": "A stack is a Last-In, First-Out (LIFO) data structure. Primary operations: push (add an element to the top) and pop (remove and return the top element). The most recently pushed element is always the first to be removed.",
+            "explanation": "LIFO makes stacks ideal for problems requiring backtracking or reversing order: browser back button (most recent page first), undo operations, function call stack (most recently called function returns first). The function call stack is literally a stack — each function call pushes a frame; each return pops one.",
+            "source": "Section 11.2, pp. 314–317"
+          },
+          {
+            "q": "Define a queue and describe the two operations that maintain its ordering principle.",
+            "bloom": "Remember",
+            "answer": "A queue is a First-In, First-Out (FIFO) data structure. Operations: enqueue (add to the rear) and dequeue (remove from the front). The element that has been waiting longest is always served first.",
+            "explanation": "FIFO models fair waiting: OS process scheduling queues, printer job queues, and network packet queues all use FIFO to ensure fairness. The first request received is the first processed. A priority queue modifies this by letting higher-priority items skip ahead, used in OS scheduling and Dijkstra's shortest path algorithm.",
+            "source": "Section 11.3, pp. 317–320"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Compare a singly linked list and an array in terms of time complexity for: (a) random access by index, (b) insertion at the beginning, and (c) search for a value.",
+            "bloom": "Analyze",
+            "answer": "(a) Random access: Array O(1) (direct index calculation), Linked list O(n) (must traverse from head). (b) Insertion at beginning: Array O(n) (must shift all elements), Linked list O(1) (update head pointer). (c) Search: Both O(n) (must scan sequentially for unsorted data).",
+            "explanation": "Arrays are superior for random access due to contiguous memory layout (address = base + index × size). Linked lists are superior for insertion/deletion because only pointer updates are needed — no shifting. The choice depends on usage patterns: mostly read → array; mostly insert/delete → linked list. Dynamic arrays (Python list, Java ArrayList) amortize resizing cost to O(1) average.",
+            "source": "Section 11.1–11.4, pp. 312–325"
+          },
+          {
+            "q": "Explain how a stack is used to evaluate a postfix expression. Trace the evaluation of '3 4 + 5 *' step by step.",
+            "bloom": "Apply",
+            "answer": "Algorithm: scan tokens left to right. If operand: push. If operator: pop two operands, apply operator, push result. Trace: push 3 → [3]. Push 4 → [3,4]. '+': pop 4 and 3, compute 7, push → [7]. Push 5 → [7,5]. '*': pop 5 and 7, compute 35, push → [35]. Result: 35.",
+            "explanation": "Postfix (Reverse Polish) notation eliminates the need for parentheses and operator precedence rules. Compilers convert infix expressions (3+4)*5 to postfix for evaluation. The stack naturally handles operator precedence by evaluating in correct order. This is why stacks are fundamental to expression parsing and compilation.",
+            "source": "Section 11.2, pp. 314–317"
+          },
+          {
+            "q": "Describe a binary search tree (BST) and explain the ordering property that makes search efficient. Trace inserting values [5, 3, 7, 1, 4] in order.",
+            "bloom": "Apply",
+            "answer": "BST property: for every node, all values in left subtree < node value < all values in right subtree. Insert 5 (root). Insert 3: 3<5, goes left of 5. Insert 7: 7>5, goes right of 5. Insert 1: 1<5→left, 1<3→left of 3. Insert 4: 4<5→left, 4>3→right of 3. Result: balanced tree with 5 at root.",
+            "explanation": "The BST ordering property enables O(log n) search on average: at each node, compare and eliminate half the tree. However, inserting sorted data (e.g., 1,2,3,4,5) creates a degenerate linear chain → O(n) search. Self-balancing BSTs (AVL, Red-Black trees) prevent this by rebalancing after insertions, guaranteeing O(log n) always.",
+            "source": "Section 11.5, pp. 325–330"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Compare a hash table and a BST for a dictionary application needing insert, delete, and lookup. Evaluate time complexity, memory use, and the impact of hash collisions.",
+            "bloom": "Evaluate",
+            "answer": "Hash table: O(1) average insert/delete/lookup; O(n) worst case with many collisions; memory use depends on load factor; does not support ordered traversal. BST: O(log n) average insert/delete/lookup; O(n) worst case (unbalanced); supports in-order traversal (sorted output). For pure dictionary (no ordering), hash table is faster; if sorted output or range queries needed, BST wins.",
+            "explanation": "Hash collisions degrade performance: chaining (linked list per bucket) gives O(n/k) per operation where k=number of buckets; open addressing probes for next free slot. A good hash function and low load factor (keep <0.7) minimize collisions. Python dicts use hash tables; Java TreeMap uses Red-Black trees for sorted access.",
+            "source": "Section 11.4–11.5, pp. 320–330"
+          },
+          {
+            "q": "Explain graph representation using adjacency matrices and adjacency lists. Compare memory usage and time complexity for: (a) checking if edge (u,v) exists, and (b) finding all neighbors of vertex u.",
+            "bloom": "Evaluate",
+            "answer": "Adjacency matrix: V×V boolean matrix; O(V²) memory; (a) edge check O(1) — direct cell lookup; (b) neighbors O(V) — scan entire row. Adjacency list: list of lists; O(V+E) memory; (a) edge check O(degree(u)); (b) neighbors O(degree(u)). For sparse graphs (E << V²), lists save memory; for dense graphs, matrix is comparable.",
+            "explanation": "Most real-world graphs are sparse — roads, social networks, internet topology all have E << V². Adjacency lists are preferred for sparse graphs (e.g., social network with 1M users, few friends each: matrix needs 10¹² entries; list needs only actual edges). Matrix is faster for dense graphs or when edge existence is frequently checked.",
+            "source": "Section 11.6, pp. 330–335"
+          },
+          {
+            "q": "Evaluate when a doubly linked list is preferable to a singly linked list and when an array is preferable to both. Give a concrete application for each.",
+            "bloom": "Evaluate",
+            "answer": "Doubly linked list preferable over singly: when backward traversal or deletion of a node (given pointer to it, not previous) is needed — O(1) vs. O(n) for singly. Application: browser history (forward and back navigation), LRU cache (remove from middle in O(1)). Array preferable over both: when random access by index is frequent — O(1) vs O(n). Application: image pixel buffer, matrix operations.",
+            "explanation": "Doubly linked lists use 50% more memory per node (extra previous pointer) but enable O(1) operations that singly linked lists do O(n). Arrays waste memory if size is unpredictable but give cache-friendly sequential access (prefetcher benefits from contiguous memory). Dynamic arrays (vector/ArrayList) combine array's random access with automatic resizing.",
+            "source": "Section 11.4, pp. 320–325"
+          },
+          {
+            "q": "Design a data structure for an undo/redo system in a text editor that supports O(1) undo, O(1) redo, and discards redo history when new text is typed.",
+            "bloom": "Create",
+            "answer": "Use two stacks: undo_stack and redo_stack. Type text: push state to undo_stack, clear redo_stack. Undo: pop from undo_stack, push to redo_stack, restore previous state. Redo: pop from redo_stack, push to undo_stack, restore state. Discarding redo on new input: simply clear redo_stack when typing. All three operations are O(1) stack push/pop.",
+            "explanation": "Two stacks naturally model undo/redo: undo_stack is the history of past states; redo_stack is the history of undone states. Clearing redo on new input matches user expectation (you can't redo after new actions). This pattern also applies to git's commit/reset model. Memory optimization: store state deltas (diffs) rather than full states to reduce memory use.",
+            "source": "Section 11.2, pp. 314–317"
+          }
+        ]
+      }
+    },
+    {
+      "number": 12,
+      "title": "Abstract Data Types and Data Structures",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define an Abstract Data Type (ADT). How does it differ from a data structure?",
+            "bloom": "Remember",
+            "answer": "An ADT defines what data is stored and what operations can be performed on it, without specifying how they are implemented. A data structure is a concrete implementation of an ADT. Example: a List ADT specifies insert/delete/search operations; it can be implemented as an array or a linked list.",
+            "explanation": "The ADT defines the interface (contract); the data structure provides the implementation. This separation allows swapping implementations without changing code that uses the ADT — e.g., switching from an array-based list to a linked-list-based list without changing the calling code. This is the principle of information hiding and forms the basis of interfaces in Java and abstract classes in C++.",
+            "source": "Section 12.1, pp. 338–340"
+          },
+          {
+            "q": "Define the Stack ADT with its five operations: createStack, push, pop, peek, and isEmpty, and describe what each does.",
+            "bloom": "Remember",
+            "answer": "createStack: creates an empty stack. push(item): adds item to the top. pop: removes and returns the top item (error if empty). peek: returns the top item without removing it. isEmpty: returns true if the stack has no elements.",
+            "explanation": "These five operations completely define the stack's behavior from the user's perspective. The implementation (array-based or linked-list-based) is hidden. Array-based stacks have O(1) operations but fixed size; linked-list-based are dynamic but use more memory per element. The ADT contract remains identical regardless of implementation.",
+            "source": "Section 12.2, pp. 340–345"
+          },
+          {
+            "q": "Define the Queue ADT and list its four operations: createQueue, enqueue, dequeue, and isEmpty.",
+            "bloom": "Remember",
+            "answer": "createQueue: creates an empty queue. enqueue(item): adds item to the rear. dequeue: removes and returns the front item (error if empty). isEmpty: returns true if the queue has no elements. The Queue follows FIFO (First-In, First-Out) ordering.",
+            "explanation": "The Queue ADT enforces fairness through FIFO. It is used wherever order of arrival matters: OS ready queues, print spoolers, BFS graph traversal, and network packet buffers. A circular array implementation achieves O(1) enqueue and dequeue without wasting memory by wrapping the front and rear pointers.",
+            "source": "Section 12.3, pp. 345–350"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Implement the Stack ADT using an array. Show what happens when you push [A, B, C], then pop twice, then peek.",
+            "bloom": "Apply",
+            "answer": "Initialize: top = -1, array = []. Push A: array=[A], top=0. Push B: array=[A,B], top=1. Push C: array=[A,B,C], top=2. Pop: returns C, top=1. Pop: returns B, top=0. Peek: returns A (top element), top stays 0. Stack now: [A].",
+            "explanation": "Array-based stacks use a top index to track the current top element. Push increments top and stores the value; pop retrieves the value and decrements top. The array's fixed size means pushing beyond capacity requires either an error or dynamic resizing. Dynamic resizing (doubling array size) achieves amortized O(1) push.",
+            "source": "Section 12.2, pp. 340–345"
+          },
+          {
+            "q": "Describe how a circular array implements the Queue ADT efficiently. How does it avoid the O(n) shift problem of a naive array queue?",
+            "bloom": "Analyze",
+            "answer": "Naive array queue: dequeue shifts all remaining elements left → O(n). Circular array: maintain two indices, front and rear, that wrap around using modulo arithmetic (rear = (rear+1) % capacity). Enqueue: place at rear, advance rear. Dequeue: return from front, advance front. Both operations O(1), no shifting needed.",
+            "explanation": "The circular buffer 'reuses' freed slots at the front as the queue grows from the rear. The queue is empty when front==rear; full when (rear+1) % capacity == front. This technique is used in ring buffers for audio streaming, network packet buffers, and producer-consumer pipelines where fixed-size buffering with O(1) operations is required.",
+            "source": "Section 12.3, pp. 345–350"
+          },
+          {
+            "q": "The General Linear List ADT supports insertion/deletion at any position. Compare implementing it with an array vs. a linked list for a list that is frequently modified at random positions.",
+            "bloom": "Analyze",
+            "answer": "Array: insertion/deletion at position i requires shifting O(n−i) elements; access by index is O(1). Linked list: insertion/deletion at a given pointer is O(1) — only pointer updates needed; access by index requires O(n) traversal to reach position i. For frequent random-position modifications, linked list is better (O(1) modification once position found); for frequent index access, array is better.",
+            "explanation": "The linked list's O(1) modification advantage only applies if you already have a pointer to the position. Finding the position first costs O(n) either way. In practice, if you need to frequently insert near the beginning or middle and don't need index access, linked list wins. Java's LinkedList implements this; ArrayList uses a dynamic array.",
+            "source": "Section 12.4, pp. 350–355"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Design a Deque (double-ended queue) ADT with operations addFront, addRear, removeFront, removeRear, and isEmpty. Justify using a doubly linked list as the implementation and analyze time complexity.",
+            "bloom": "Create",
+            "answer": "Deque: addFront (add to front), addRear (add to rear), removeFront (remove from front), removeRear (remove from rear), isEmpty. Doubly linked list implementation: maintain head and tail pointers. addFront/removeFront: O(1) — update head pointer. addRear/removeRear: O(1) — update tail pointer. A singly linked list would make removeRear O(n) (need previous node). Array is less suitable due to O(n) shifts.",
+            "explanation": "A deque combines the functionality of both stack (add/remove from one end) and queue (FIFO). The doubly linked list's bidirectional pointers allow O(1) operations at both ends, which is the deque's defining requirement. Use cases: sliding window algorithms, undo/redo with both forward and backward history, and palindrome checking.",
+            "source": "Section 12.4, pp. 350–355"
+          },
+          {
+            "q": "Compare array-based and linked-list-based implementations of the Stack ADT on memory efficiency, time complexity, and maximum capacity. Which is preferable for a system-level call stack?",
+            "bloom": "Evaluate",
+            "answer": "Array-based: O(1) push/pop, fixed maximum size (stack overflow if exceeded), contiguous memory (cache-friendly), wastes memory if underutilized. Linked-list-based: O(1) push/pop, dynamic size (limited only by heap), extra memory per node for pointer (overhead for small data). For system call stacks: array-based is preferred — fixed size prevents runaway recursion from consuming all memory, cache-friendly access, and simple implementation.",
+            "explanation": "OS call stacks are array-based with a fixed size limit (typically 8 MB on Linux). This intentionally causes stack overflow errors rather than letting infinite recursion consume all available memory. The cache-friendly sequential access of arrays also matters for performance in the hot path of function calls. Dynamic stacks in high-level languages (JVM, Python) use linked structures for flexibility.",
+            "source": "Section 12.2, pp. 340–345"
+          },
+          {
+            "q": "Explain why the List ADT's interface (insert, delete, search) can be satisfied by both an array and a linked list, but their non-functional characteristics differ. When would you choose each for a large-scale database index?",
+            "bloom": "Evaluate",
+            "answer": "Both satisfy the functional interface (same operations, same results). Differ in: time complexity (array O(1) access vs. O(n) for linked list), memory layout (array contiguous vs. linked list scattered — major cache performance difference), dynamic resizing (array expensive, linked list cheap). For a database index: B-tree (array-based nodes, linked list for leaf traversal) combines O(log n) search with O(n) sorted scan — neither pure array nor linked list.",
+            "explanation": "Database indexes (B-trees, B+ trees) are precisely engineered to exploit the best of both worlds: fixed-size array nodes for cache efficiency and fast search within a node, plus sibling pointers (linked list) for sequential scan of all keys. This is why the ADT/implementation distinction matters in real systems — the interface hides implementation details that dramatically affect performance.",
+            "source": "Section 12.1–12.4, pp. 338–355"
+          },
+          {
+            "q": "Design a Priority Queue ADT supporting insert, removeMin, and peekMin. Compare implementing it with a sorted array, unsorted array, and binary heap, and justify which is best for a task scheduler.",
+            "bloom": "Create",
+            "answer": "Sorted array: insert O(n) (maintain order), removeMin O(1), peekMin O(1). Unsorted array: insert O(1), removeMin O(n) (scan all), peekMin O(n). Binary heap: insert O(log n), removeMin O(log n), peekMin O(1). For a task scheduler with frequent both insertions and removals, binary heap is optimal — O(log n) for both, O(1) peek.",
+            "explanation": "A binary heap is a complete binary tree stored in an array where each node is smaller than its children (min-heap). The root is always the minimum, enabling O(1) peek. Insert adds to end and 'bubbles up'; removeMin replaces root with last element and 'sinks down'. OS schedulers, Dijkstra's algorithm, and A* pathfinding all use priority queues implemented as heaps.",
+            "source": "Section 12.4, pp. 350–355"
+          }
+        ]
+      }
+    },
+    {
+      "number": 13,
+      "title": "File Structure",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define a file in the context of computer science and distinguish between a text file and a binary file.",
+            "bloom": "Remember",
+            "answer": "A file is a named collection of related data stored on secondary storage (disk). Text file: stores data as ASCII/Unicode characters, human-readable in any text editor (e.g., .txt, .csv, .py). Binary file: stores data in a format specific to the program that created it, not directly human-readable (e.g., .exe, .jpg, .mp3).",
+            "explanation": "Text files are portable across systems and easy to inspect/edit. Binary files are more compact and faster to process but require the specific program or knowledge of the format to interpret. For example, a Python .py file is text; the compiled .pyc bytecode is binary. Database files are binary for efficiency.",
+            "source": "Section 13.1, pp. 370–372"
+          },
+          {
+            "q": "Define sequential access and random access file organization, and give one application suited to each.",
+            "bloom": "Understand",
+            "answer": "Sequential access: records are read/written in order from beginning to end; cannot skip to an arbitrary record without reading preceding ones. Application: log files, tape backup. Random access (direct access): any record can be read/written directly by its position without reading preceding records. Application: database records, indexed file lookup.",
+            "explanation": "Sequential access maps naturally to tape storage (physical medium). Random access is enabled by disk storage (seek to any track/sector). Most modern applications use random access files or databases for efficient lookups. Sequential access is still used for streaming data (video, audio) and log files where sequential reading is the primary use case.",
+            "source": "Section 13.2, pp. 372–375"
+          },
+          {
+            "q": "What is an index in file structures? Describe the two parts of an index entry.",
+            "bloom": "Remember",
+            "answer": "An index is a separate, smaller file that maps key values to the disk locations (addresses) of corresponding records in the main data file. Each index entry contains: (1) the key value (e.g., student ID) and (2) the address (offset) of the corresponding record in the data file.",
+            "explanation": "An index works like a book's index — instead of reading the entire book (scanning all records), you look up the key in the small index to find the page number (disk location). This enables O(log n) search (binary search on sorted index) instead of O(n) sequential scan. Database tables typically have multiple indexes on different columns.",
+            "source": "Section 13.3, pp. 375–378"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Describe the indexed file organization. Trace how a lookup for student ID '103' works when the index contains entries for IDs 101, 102, 103, 104.",
+            "bloom": "Apply",
+            "answer": "Index file (sorted by key): [101→address 0, 102→address 80, 103→address 160, 104→address 240]. Lookup: binary search index for key 103 → found at index position 2, address 160. Read record at byte offset 160 in data file → retrieve student record for ID 103. Two disk accesses: one index read + one data read.",
+            "explanation": "Indexed files separate the search structure (small, fast) from the data (large, sequential). The index is small enough to binary search efficiently. Modern databases use B-trees as the index structure instead of a simple sorted array, enabling O(log n) search with O(log n) insert/delete (sorted arrays have O(n) insert). The data file itself can be ordered or unordered.",
+            "source": "Section 13.3, pp. 375–378"
+          },
+          {
+            "q": "Compare sequential, indexed, and hashed file organizations in terms of search time, insertion cost, and suitability for range queries.",
+            "bloom": "Analyze",
+            "answer": "Sequential: search O(n), insert O(1) at end or O(n) to maintain order; good for range queries (records are adjacent). Indexed (sorted): search O(log n), insert O(log n) in index + O(1) for record; excellent for range queries (binary search then sequential scan). Hashed: search O(1) average, insert O(1); range queries require full scan (no ordering). Hash is fastest for exact key lookup but useless for ranges.",
+            "explanation": "The choice depends on access patterns. Transaction processing (bank account lookup by exact ID) uses hashing. Reporting (all students with GPA 3.5–4.0) requires sequential or indexed files. Databases maintain multiple index types on the same table: a B-tree index for range queries and a hash index for exact lookups.",
+            "source": "Section 13.2–13.4, pp. 372–380"
+          },
+          {
+            "q": "Explain how hashing is used for direct file access. Describe the linear probing collision resolution technique and its worst-case behavior.",
+            "bloom": "Apply",
+            "answer": "Hashing: key → hash function → bucket address → direct disk access. Collision (two keys hash to same address): linear probing steps through successive addresses (addr+1, addr+2, ...) until an empty slot is found. Worst case: all keys hash to same address → sequential scan of entire file → O(n). Performance degrades as load factor (occupancy) increases.",
+            "explanation": "Hashed files achieve near O(1) access but require a good hash function and low load factor (< 0.7). Linear probing suffers from primary clustering — filled slots form long chains. Quadratic probing and double hashing reduce clustering. In file systems, hash-based directories (HFS+, ext4) use similar techniques for fast directory entry lookup.",
+            "source": "Section 13.4, pp. 378–382"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Evaluate the trade-offs between sequential and indexed file organization for a student grade database that runs daily batch grade reports and real-time individual grade lookups.",
+            "bloom": "Evaluate",
+            "answer": "Batch reports (all students, sorted): sequential file — read entire file in one pass, no index overhead, O(n) but optimal for full scans. Real-time individual lookups (find student 103456): indexed file — O(log n) binary search on index, fast single-record access. Optimal: maintain indexed file (for lookups) + generate sequential extract nightly (for batch). Or use a database with both B-tree and sequential scan support.",
+            "explanation": "Database systems solve this with query optimizers that choose sequential scan for full-table queries and index scan for selective queries. The crossover point is typically around 5–10% selectivity: if you need more than ~10% of records, sequential scan is faster than index. Maintaining an index has overhead (update cost) that is only justified when lookups are frequent.",
+            "source": "Section 13.2–13.3, pp. 372–378"
+          },
+          {
+            "q": "Design a file structure for a library catalog system supporting: lookup by ISBN (exact), search by author (range of names), and listing all books by genre. Justify the index structure for each query type.",
+            "bloom": "Create",
+            "answer": "Primary file: records stored by ISBN order (clustered). Index 1 (ISBN): hash index → O(1) exact lookup. Index 2 (author): B-tree index on author name → O(log n) search + O(k) sequential scan for range (A–C authors). Index 3 (genre): B-tree or bitmap index on genre → efficient multi-value filtering. Main file: fixed-length records for fast offset calculation.",
+            "explanation": "Multiple indexes on different columns are standard in database design. Hash indexes for unique-key exact lookup (ISBN). B-tree indexes for range queries and sorted output (author names). Bitmap indexes for low-cardinality columns (genre has ~20 values — a bitmap compactly represents which records match). This is how PostgreSQL, MySQL, and Oracle handle multi-column query patterns.",
+            "source": "Section 13.3–13.4, pp. 375–382"
+          },
+          {
+            "q": "Explain how a B-tree index differs from a simple sorted index file, and evaluate why B-trees are the standard index structure in relational databases.",
+            "bloom": "Evaluate",
+            "answer": "Sorted index file: one key per entry, binary search gives O(log n) search but O(n) insert (must shift entries). B-tree: balanced tree of nodes each holding multiple keys; maintains balance on every insert/delete; O(log n) search, O(log n) insert, O(log n) delete. B-trees are block-oriented (each node = one disk block, often 4–16 KB), minimizing disk I/O.",
+            "explanation": "The critical insight of B-trees is that disk I/O is 10,000× slower than RAM access — minimizing disk reads is paramount. A B-tree node holds hundreds of keys per block; a 3-level B-tree can index 100M records with only 3 disk reads. Sorted index files degrade to O(n) on insert. B+ trees (variant) keep all data in leaf nodes, linked in order for efficient range scans — used by every major RDBMS.",
+            "source": "Section 13.3, pp. 375–378"
+          },
+          {
+            "q": "A log file is append-only and grows indefinitely. Design a file management strategy to efficiently support: append new records, find records by timestamp, and archive records older than 30 days.",
+            "bloom": "Create",
+            "answer": "Structure: main log file (append-only, sequential, sorted by timestamp naturally). Index: B-tree on timestamp for O(log n) lookup. Append: O(1) — write to end of file, O(log n) index update. Find by timestamp: binary search on index or B-tree lookup → O(log n). Archival: background job nightly — read records with timestamp < (today − 30 days), write to archive file, delete from main file and update index.",
+            "explanation": "Log files are a fundamental building block in distributed systems (Kafka, write-ahead logs in databases). The append-only nature makes them fast and crash-safe (no overwrites means no corruption risk). Log-structured merge trees (LSM trees, used in Cassandra, LevelDB) extend this: write only to memory + append-only log, periodically merge and compact. Archival prevents unbounded growth while preserving historical data.",
+            "source": "Section 13.1–13.4, pp. 370–382"
+          }
+        ]
+      }
+    },
+    {
+      "number": 14,
+      "title": "Databases",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define a database and a Database Management System (DBMS). What is the key advantage of a DBMS over storing data in individual files?",
+            "bloom": "Remember",
+            "answer": "A database is an organized collection of related data. A DBMS is software that creates, manages, and provides access to databases (e.g., Oracle, MySQL, PostgreSQL). Key advantage: the DBMS eliminates data redundancy, ensures data integrity and consistency, provides concurrent multi-user access, and offers data independence (programs are independent of data storage format).",
+            "explanation": "Before DBMSes, each application maintained its own files — customer data might be stored separately in the sales, billing, and shipping departments, leading to inconsistency. A DBMS centralizes data with a single authoritative source, enforces constraints (e.g., no student can have a GPA > 4.0), and handles concurrent access without data corruption.",
+            "source": "Section 14.1, pp. 390–392"
+          },
+          {
+            "q": "Define the three levels of the ANSI/SPARC database architecture: external, conceptual, and internal views.",
+            "bloom": "Understand",
+            "answer": "External view: what individual users or applications see (a subset of the full database). Conceptual view: the complete logical structure of the entire database (all tables, relationships, constraints) — the DBA's view. Internal view: how data is physically stored on disk (file organization, indexes, storage details) — hidden from users.",
+            "explanation": "The three-level architecture provides data independence: the conceptual level can be restructured without changing user applications (external independence), and storage can be reorganized without changing the logical schema (physical independence). This separation allows the DBA to optimize storage without breaking application code.",
+            "source": "Section 14.2, pp. 392–394"
+          },
+          {
+            "q": "In the relational model, define: relation (table), tuple (row), attribute (column), and domain.",
+            "bloom": "Remember",
+            "answer": "Relation (table): a named two-dimensional structure organizing data. Tuple (row): one record — a single instance of the entity (e.g., one student's data). Attribute (column): a named property of the entity (e.g., studentID, name, GPA). Domain: the set of allowed values for an attribute (e.g., GPA domain: 0.0–4.0).",
+            "explanation": "The relational model (Codd, 1970) represents all data as tables. Relations in SQL are tables; tuples are rows; attributes are columns. The domain constraint is enforced by data types and CHECK constraints in SQL. Every tuple in a relation must be unique (primary key constraint), and no two rows can be identical.",
+            "source": "Section 14.3, pp. 394–398"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Write a SQL query to find the names and GPAs of all students in the Computer Science department with GPA above 3.5, ordered by GPA descending.",
+            "bloom": "Apply",
+            "answer": "SELECT name, gpa FROM students WHERE department = 'Computer Science' AND gpa > 3.5 ORDER BY gpa DESC;",
+            "explanation": "SQL SELECT retrieves columns; WHERE filters rows (both conditions must hold — AND); ORDER BY sorts results. The query executes: filter all CS students with GPA > 3.5, then sort the matching rows by GPA highest-first. This is a simple single-table query; most real queries involve JOINs across multiple related tables.",
+            "source": "Section 14.4, pp. 398–405"
+          },
+          {
+            "q": "Explain the three database anomalies (insertion, deletion, update) that arise from poor normalization, using a Student-Course table as an example.",
+            "bloom": "Analyze",
+            "answer": "Using table StudentCourse(studentID, studentName, courseID, courseName, grade): Insertion anomaly: cannot add a new course without enrolling a student (courseID depends on studentID). Deletion anomaly: deleting last student enrolled in a course also deletes course information. Update anomaly: changing a course name requires updating every row containing that course — inconsistency if some rows are missed.",
+            "explanation": "These anomalies arise from storing facts about multiple entities in one table. Normalization (1NF → 2NF → 3NF) decomposes tables to eliminate anomalies. 1NF removes repeating groups; 2NF removes partial dependencies; 3NF removes transitive dependencies. The result: Student table + Course table + Enrollment table — each fact stored exactly once.",
+            "source": "Section 14.5, pp. 405–409"
+          },
+          {
+            "q": "Explain what a JOIN operation does in SQL and write a query to display each student's name with the course name for all their enrolled courses, using tables Students(id, name) and Enrollments(studentID, courseName).",
+            "bloom": "Apply",
+            "answer": "JOIN combines rows from two or more tables based on a related column. Query: SELECT Students.name, Enrollments.courseName FROM Students JOIN Enrollments ON Students.id = Enrollments.studentID; This returns one row per enrollment with the student name and course name combined from both tables.",
+            "explanation": "JOINs are the relational model's mechanism for reconstructing data that was split across tables during normalization. INNER JOIN returns only rows with matches in both tables. LEFT JOIN returns all students even those with no enrollments. Without JOINs, you would need separate queries and manual data combination — the DBMS performs this efficiently using indexes.",
+            "source": "Section 14.4, pp. 398–405"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Explain the ACID properties of database transactions (Atomicity, Consistency, Isolation, Durability) and describe what failure each property prevents in a bank transfer.",
+            "bloom": "Evaluate",
+            "answer": "Bank transfer: debit account A by $100, credit account B by $100. Atomicity: both operations succeed or neither does — prevents $100 disappearing if the system crashes between debit and credit. Consistency: database moves from one valid state to another — total money remains constant. Isolation: concurrent transfers see each other's committed results only — prevents double spending. Durability: committed transactions survive crashes — the credit persists even if power fails immediately after commit.",
+            "explanation": "ACID properties are implemented through write-ahead logging (WAL) for atomicity/durability, constraint checking for consistency, and lock-based or MVCC concurrency control for isolation. Without ACID: ATM withdrawals could succeed while deposits fail (atomicity), two simultaneous withdrawals could each see the full balance (isolation), and power failure could lose committed transactions (durability).",
+            "source": "Section 14.6, pp. 409–415"
+          },
+          {
+            "q": "Normalize the unnormalized table Orders(orderID, customerName, customerCity, productID, productName, quantity) to 3NF. Show each normal form step.",
+            "bloom": "Evaluate",
+            "answer": "1NF: already satisfied (atomic values, no repeating groups). 2NF: identify functional dependencies: orderID+productID → quantity (full); orderID → customerName, customerCity (partial on orderID only); productID → productName (partial on productID only). Remove partials: Order(orderID, customerName, customerCity), Product(productID, productName), OrderLine(orderID, productID, quantity). 3NF: in Order table, is there customerCity → customerName? No — check transitive: orderID → customerName, orderID → customerCity, but customerCity → customerName only if city determines customer (unlikely). 3NF achieved.",
+            "explanation": "2NF requires every non-key attribute to depend on the whole primary key (not just part). 3NF requires no transitive dependencies (A → B → C where A is key). The result is three tables that each store exactly one type of fact: orders, products, and order lines. This eliminates all three anomalies. Every additional fact (customer address) would go in a separate Customer table in practice.",
+            "source": "Section 14.5, pp. 405–409"
+          },
+          {
+            "q": "Compare relational databases (SQL) and NoSQL databases (document stores like MongoDB). Justify when each is appropriate for: a financial system, a social media post feed, and a product catalog.",
+            "bloom": "Evaluate",
+            "answer": "Financial system: SQL — ACID transactions mandatory, strict schema enforces data integrity, complex JOINs for reports. Social media feed: NoSQL (document/wide-column) — flexible schema for varying post types (text/video/poll), horizontal scaling for billions of posts, eventual consistency acceptable. Product catalog: depends — SQL if complex queries needed; NoSQL document if varied product attributes (a book has ISBN; a TV has resolution — hard to normalize).",
+            "explanation": "SQL databases excel at complex queries, strict consistency, and well-defined schemas. NoSQL sacrifices consistency (eventually consistent) and complex queries for scalability and schema flexibility. The CAP theorem shows distributed systems must trade off between Consistency, Availability, and Partition tolerance — SQL chooses C; many NoSQL choose A+P. Modern 'NewSQL' databases (CockroachDB, Spanner) attempt both.",
+            "source": "Section 14.3–14.6, pp. 394–415"
+          },
+          {
+            "q": "Design a relational database schema for a university course registration system. Define tables, primary keys, foreign keys, and at least two integrity constraints.",
+            "bloom": "Create",
+            "answer": "Student(studentID PK, name, email, major, gpa CHECK(gpa>=0 AND gpa<=4.0)). Department(deptID PK, name, building). Course(courseID PK, title, credits, deptID FK → Department). Section(sectionID PK, courseID FK, instructorID FK, semester, room, capacity). Enrollment(studentID FK, sectionID FK, grade, PRIMARY KEY(studentID, sectionID)). Constraints: Enrollment.grade CHECK(grade IN ('A','B','C','D','F','W','I')), Section.capacity > 0.",
+            "explanation": "Each table stores facts about one entity type. Foreign keys enforce referential integrity (cannot enroll in a non-existent section). Composite primary key on Enrollment prevents duplicate enrollment. The CHECK constraints enforce domain rules. This schema supports: find all courses a student is in (JOIN Student+Enrollment+Section+Course), find all students in a section (JOIN Enrollment+Student), and compute GPA (aggregate grades).",
+            "source": "Section 14.3–14.5, pp. 394–409"
+          }
+        ]
+      }
+    },
+    {
+      "number": 15,
+      "title": "Data Compression",
+      "questions": {
+        "easy": [
+          {
+            "q": "Define data compression and distinguish between lossless and lossy compression with one example of each.",
+            "bloom": "Remember",
+            "answer": "Data compression reduces file size by encoding data more efficiently. Lossless: original data can be perfectly reconstructed (e.g., ZIP, PNG — used for text and programs). Lossy: some data is permanently discarded for greater compression (e.g., JPEG, MP3 — used for images, audio, video).",
+            "explanation": "Lossless is required for text, programs, and databases — even one changed bit can make a program crash. Lossy is acceptable for media where human perception cannot detect small quality losses. JPEG discards high-frequency image details; MP3 removes sounds outside human hearing range. The trade-off is compression ratio vs. quality.",
+            "source": "Section 15.1, pp. 412–413"
+          },
+          {
+            "q": "Explain how Run-Length Encoding (RLE) compresses data. Apply RLE to the string 'AAABBBBBCCDDDDDD'.",
+            "bloom": "Understand",
+            "answer": "RLE replaces consecutive repeated characters with a count followed by the character. 'AAABBBBBCCDDDDDD' → '3A5B2C6D'. Original: 16 characters; compressed: 8 characters. RLE is effective when long runs of repeated data exist.",
+            "explanation": "RLE is simple and fast but only effective for data with long runs. It is used in old fax machines, early video game graphics (solid color backgrounds), and TIFF/BMP image compression. For typical text files (few runs), RLE can actually increase file size. Lossy video encoding uses RLE on frames that haven't changed between frames.",
+            "source": "Section 15.2, pp. 413–415"
+          },
+          {
+            "q": "What is the basic principle of Huffman coding? Why does it assign shorter codes to more frequent symbols?",
+            "bloom": "Understand",
+            "answer": "Huffman coding assigns variable-length binary codes to symbols based on frequency: more frequent symbols get shorter codes, less frequent symbols get longer codes. This minimizes total bits needed to represent the data, because frequent symbols contribute fewer bits overall.",
+            "explanation": "In ASCII, every character uses 8 bits regardless of frequency. In a typical English text where 'e' appears 12.7% of the time and 'z' appears 0.07%, it is wasteful to give them equal code length. Huffman coding can represent 'e' with 3 bits and 'z' with 12 bits, reducing total file size by 40–60% for typical text. The decompressor uses the same Huffman tree to decode.",
+            "source": "Section 15.3, pp. 415–420"
+          }
+        ],
+        "medium": [
+          {
+            "q": "Build the Huffman tree for symbols with frequencies: A=5, B=9, C=12, D=13, E=16, F=45. List the code assigned to each symbol.",
+            "bloom": "Apply",
+            "answer": "Build min-heap: A=5, B=9. Merge: AB=14. C=12, D=13 → merge: CD=25. AB=14, E=16 → merge: ABE=30. ABE=30, CD=25 → merge: ABCDE=55. ABCDE=55, F=45 → root=100. Codes (left=0, right=1): F=0 (1 bit), C=100, D=101, A=1100, B=1101, E=111. Higher frequency = shorter code.",
+            "explanation": "The Huffman algorithm always merges the two lowest-frequency nodes. The resulting tree gives F (highest frequency=45) the shortest code (1 bit) and A,B (lowest) the longest codes. This is mathematically optimal — no prefix-free code can achieve lower average bits per symbol. Used in DEFLATE (ZIP, gzip, PNG) combined with LZ77 dictionary compression.",
+            "source": "Section 15.3, pp. 415–420"
+          },
+          {
+            "q": "Explain how JPEG achieves compression. Describe the three main steps: DCT transformation, quantization, and entropy coding.",
+            "bloom": "Analyze",
+            "answer": "Step 1 — DCT: divide image into 8×8 pixel blocks; apply Discrete Cosine Transform to convert pixel values into frequency coefficients (low-frequency = overall tone; high-frequency = fine details). Step 2 — Quantization (lossy): divide each coefficient by a quantization factor (larger factor = more lossy) and round to integer, discarding high-frequency details. Step 3 — Entropy coding: apply Huffman or arithmetic coding to the quantized coefficients (lossless compression of the already-lossy data).",
+            "explanation": "JPEG exploits human vision: we are more sensitive to low-frequency content (overall brightness/color) than high-frequency details (sharp edges, fine textures). Quantization of high-frequency DCT coefficients causes the characteristic JPEG 'blocking' artifact at high compression. Quality settings control quantization strength: quality 95 is near-lossless; quality 20 is highly compressed but noticeably degraded.",
+            "source": "Section 15.4, pp. 420–424"
+          },
+          {
+            "q": "Compare the compression ratios and appropriate use cases for RLE, Huffman coding, and LZW. Which would you choose for compressing: (a) a black-and-white fax, (b) an English text file, (c) a bilingual dictionary?",
+            "bloom": "Analyze",
+            "answer": "(a) Black-and-white fax: RLE — long runs of white/black pixels give excellent compression ratios (10:1 to 50:1 for documents). (b) English text: Huffman coding — exploits character frequency distribution (e appears much more than z) for ~50% compression. (c) Bilingual dictionary: LZW — exploits repeated word and phrase patterns across many similar entries. LZW builds a dictionary of repeated patterns on the fly.",
+            "explanation": "RLE needs data with physical runs of identical values. Huffman needs skewed frequency distributions. LZW (used in GIF, TIFF, early ZIP) builds a dictionary of repeated substrings encountered during compression, making it effective for text with many repeated words or structured data. DEFLATE (modern ZIP) combines LZ77 (dictionary) with Huffman for optimal general-purpose compression.",
+            "source": "Section 15.2–15.5, pp. 413–427"
+          }
+        ],
+        "hard": [
+          {
+            "q": "Prove that Huffman coding is optimal for symbol-by-symbol prefix-free codes by explaining why merging the two lowest-frequency nodes at each step minimizes the weighted path length.",
+            "bloom": "Evaluate",
+            "answer": "Weighted path length = sum(frequency × code_length) = total bits in compressed output. Greedy proof: the two symbols with lowest frequencies will have the longest codes (deepest in tree). Merging them first assigns them equal-length codes at maximum depth. If a higher-frequency symbol were placed deeper, it would increase the weighted path length. Exchange argument: swapping a high-frequency symbol with a deeper low-frequency symbol always reduces total bits. Therefore, the greedy Huffman construction is optimal.",
+            "explanation": "This is a greedy algorithm correctness proof by exchange argument. Huffman's algorithm is provably optimal for prefix-free (no codeword is a prefix of another) symbol-by-symbol codes. It cannot be beaten without using multi-symbol coding (arithmetic coding), which approaches the theoretical entropy limit. Entropy H = -sum(p_i × log2(p_i)) is the minimum average bits per symbol.",
+            "source": "Section 15.3, pp. 415–420"
+          },
+          {
+            "q": "Evaluate why lossy compression is acceptable for audio (MP3) and images (JPEG) but unacceptable for executable programs. Use the concept of perceptual coding to explain MP3's approach.",
+            "bloom": "Evaluate",
+            "answer": "Executables: one flipped bit can change an instruction opcode, causing a crash, incorrect result, or security vulnerability — lossless is mandatory. Audio/images: human perception has limited resolution — we cannot detect small energy differences below the auditory masking threshold (MP3) or high-frequency image details (JPEG). MP3 perceptual coding: uses a psychoacoustic model to identify sounds the ear cannot hear (sounds below the masking threshold of louder simultaneous sounds) and discards them. Result: 90% size reduction with imperceptible quality loss at 128 kbps.",
+            "explanation": "Perceptual coding exploits the difference between signal and perceived signal. Auditory masking: a loud sound at one frequency makes nearby frequencies inaudible simultaneously (frequency masking) and briefly afterward (temporal masking). MP3 removes these masked components. JPEG exploits that humans are less sensitive to color detail (chroma) than brightness (luma) — JPEG downsamples color by 2× before DCT.",
+            "source": "Section 15.1, 15.4, pp. 412–424"
+          },
+          {
+            "q": "Design a compression pipeline for a database backup system that must achieve maximum compression with guaranteed lossless restoration. Specify which compression algorithms to apply in sequence and justify each choice.",
+            "bloom": "Create",
+            "answer": "Step 1: Delta encoding — store differences between successive records rather than full records (most database records change incrementally — high redundancy between versions). Step 2: LZ77/LZ78 dictionary compression — replace repeated substrings (SQL keywords, column names, common values) with short pointers to a dictionary. Step 3: Huffman/arithmetic coding — entropy-encode the LZ77 output (frequent tokens get short codes). Result: DEFLATE compression (ZIP/gzip), achieving typically 5:1 to 20:1 on structured database output.",
+            "explanation": "This is exactly how pg_dump + gzip works and why Postgres backups compress well. Delta encoding exploits temporal redundancy (consecutive database states differ minimally). LZ77 exploits spatial redundancy (repeated SQL structure and data values). Huffman exploits symbol frequency skew. Combining all three approaches the Shannon entropy limit. Modern alternatives: zstd achieves higher ratios and faster speeds than gzip with the same lossless guarantee.",
+            "source": "Section 15.2–15.5, pp. 413–427"
+          },
+          {
+            "q": "The theoretical limit of lossless compression is the Shannon entropy. For a source with 4 symbols (A=0.5, B=0.25, C=0.125, D=0.125), calculate the entropy and compare to the Huffman code length.",
+            "bloom": "Evaluate",
+            "answer": "Entropy H = -(0.5×log2(0.5) + 0.25×log2(0.25) + 0.125×log2(0.125) + 0.125×log2(0.125)) = -(0.5×(-1) + 0.25×(-2) + 0.125×(-3) + 0.125×(-3)) = 0.5+0.5+0.375+0.375 = 1.75 bits/symbol. Huffman: A=0 (1 bit), B=10 (2 bits), C=110 (3 bits), D=111 (3 bits). Average = 0.5×1+0.25×2+0.125×3+0.125×3 = 0.5+0.5+0.375+0.375 = 1.75 bits/symbol. Huffman achieves exactly the entropy limit for this source.",
+            "explanation": "Shannon entropy is the theoretical minimum average bits per symbol for any lossless code. Huffman achieves the entropy limit when all symbol probabilities are negative powers of 2 (as in this example: 0.5=2⁻¹, 0.25=2⁻², 0.125=2⁻³). For other distributions, arithmetic coding gets arbitrarily close to entropy. This demonstrates the theoretical basis of why Huffman is optimal.",
+            "source": "Section 15.3, pp. 415–420"
+          }
+        ]
+      }
+    }
+  ]
+}

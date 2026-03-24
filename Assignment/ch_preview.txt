@@ -1,0 +1,250 @@
+=== CH1 ===
+The phrase computer science has a very broad meaning today. However, in this book, we 
+define the phrase as ‘issues related to the computer’. This introductory chapter first tries 
+to find out what a computer is, then investigates other issues directly related to comput-
+ers. We look first at the Turing model as a mathematical and philosophical definition of 
+computation. We then show how today’s computers are based on the von Neumann 
+model. The chapter ends with a brief history of this culture-changing device . . . the 
+computer.
+Objectives
+After studying this chapter, the student should be able to:
+❑
+❑
+Define the Turing model of a computer.
+❑
+❑
+Define the von Neumann model of a computer.
+❑
+❑
+Describe the three components of a computer: hardware, data, and software.
+❑
+❑
+List topics related to computer hardware.
+❑
+❑
+List topics related to data.
+❑
+❑
+List topics related to software.
+❑
+❑
+Give a short history of computers.
+CHAPTER	 1
+Introduction
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2
+﻿Introduction
+1.1  TURING MODEL
+The idea of a universal computational device was first described by Alan Turing in 1936. 
+He proposed that all computation could be performed by a special kind of a machine, now 
+called a Turing machine. Although Turing presented a mathematical description of such a 
+machine, he was more interested in the philosophical definition of computation than in 
+building the actual machine. He based the model on the ac
+
+=== CH2 ===
+This chapter is a prelude to Chapters 3 and 4. In Chapter 3 we will show how data is 
+stored inside the computer. In Chapter 4 we will show how logic and arithmetic opera-
+tions are performed on data. This chapter is a preparation for understanding the contents 
+of Chapters 3 and 4. Readers who know about number systems can skip this chapter and 
+move on to Chapter 3 without loss of continuity. Note that the number systems discussed 
+in this chapter are ‘paper and pencil representations’: we show how these numbers are 
+stored in a computer in Chapter 3. 
+Objectives
+After studying this chapter, the student should be able to:
+❑
+❑
+Understand the concept of number systems.
+❑
+❑
+Distinguish between nonpositional and positional number systems.
+❑
+❑
+Describe the decimal system (base 10).
+❑
+❑
+Describe the binary system (base 2).
+❑
+❑
+Describe the hexadecimal system (base 16).
+❑
+❑
+Describe the octal system (base 8).
+❑
+❑
+Convert a number in binary, octal, or hexadecimal to a number in the decimal system.
+❑
+❑
+Convert a number in the decimal system to a number in binary, octal, or ­hexadecimal.
+❑
+❑
+Convert a number in binary to octal and vice versa.
+❑
+❑
+Convert a number in binary to hexadecimal and vice versa.
+❑
+❑
+Find the number of digits needed in each system to represent a particular value. 
+CHAPTER	 2
+Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+16
+﻿Number Systems
+2.1  INTRODUCTION
+A number system (or numeral system) defin
+
+=== CH3 ===
+As discussed in Chapter 1, a computer is a programmable data processing machine. Before 
+we can talk about processing data, we need to understand the nature of data. In this 
+­chapter we discuss different data types and how they are stored inside a computer. 
+In Chapter 4, we show how data is manipulated inside a computer. 
+Objectives
+After studying this chapter, the student should be able to:
+❑
+❑
+List five different data types used in a computer.
+❑
+❑
+Describe how different data is stored inside the computer as bit patterns.
+❑
+❑
+Describe how integers are stored in a computer using unsigned format. 
+❑
+❑
+Describe how integers are stored in a computer using sign-and-magnitude format.
+❑
+❑
+Describe how integers are stored in two’s complement format.
+❑
+❑
+Describe how reals are stored in a computer using floating-point format.
+❑
+❑
+Describe how text is stored in a computer using one of the various encoding systems.
+❑
+❑
+Describe how audio is stored in a computer using sampling, quantization, and encoding. 
+❑
+❑
+Describe how images are stored in a computer using raster and vector graphics 
+schemes. 
+❑
+❑
+Describe how video is stored in a computer as a representation of images changing 
+in time. 
+CHAPTER	 3
+Data Storage
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+40
+Data Storage
+3.1  DATA TYPES
+Data today come in different forms including numbers, text, audio, images, and video (Figure 3.1). 
+People need to be able to process many differe
+
+=== CH4 ===
+In Chapter 3 we showed how to store different types of data in a computer. In this chap-
+ter, we show how to operate on data stored in a computer. Operations on data can be 
+divided into three broad categories: logic operations, shift operations, and arithmetic 
+operations. 
+Objectives
+After studying this chapter, the student should be able to:
+❑
+❑
+List the three categories of operations performed on data.
+❑
+❑
+Perform unary and binary logic operations on bit patterns.
+❑
+❑
+Distinguish between logic shift operations and arithmetic shift operations. 
+❑
+❑
+Perform logic shift operations on bit patterns.
+❑
+❑
+Perform arithmetic shift operations on integers stored in two’s complement format.
+❑
+❑
+Perform addition and subtraction on integers when they are stored in two’s 
+­complement format.
+❑
+❑
+Perform addition and subtraction on integers when they are stored in sign-and-­
+magnitude format.
+❑
+❑
+Perform addition and subtraction operations on reals when they are stored in 
+­floating-point format. 
+❑
+❑
+Understand some applications of logical and shift operations such as setting, ­unsetting, 
+and flipping specific bits. 
+CHAPTER	 4
+Operations on Data
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+74
+Operations on Data
+4.1  LOGIC OPERATIONS
+In Chapter 3 we discussed the fact that data inside a computer is stored as patterns of bits. 
+Logic operations refer to those operations that apply the same basic operation on individ-
+ual bits of a patte
+
+=== CH5 ===
+In this chapter we discuss the organization of a stand-alone computer. We explain how 
+every computer is made up of three subsystems. We also show how a simple, hypothetical 
+computer can run a simple program to perform primitive arithmetic or logic operations. 
+Objectives
+After studying this chapter, the student should be able to:
+❑
+❑
+List the three subsystems of a computer.
+❑
+❑
+Describe the role of the central processing unit (CPU) in a computer.
+❑
+❑
+Describe the fetch–decode–execute phases of a cycle in a typical computer. 
+❑
+❑
+Describe the main memory and its addressing space.
+❑
+❑
+Distinguish between main memory and cache memory. 
+❑
+❑
+Define the input/output subsystem.
+❑
+❑
+Understand the interconnection of subsystems and list different bus systems.
+❑
+❑
+Describe different methods of input/output addressing.
+❑
+❑
+Distinguish the two major trends in the design of computer architecture.
+❑
+❑
+Understand how computer throughput can be improved using pipelining.
+❑
+❑
+Understand how parallel processing can improve the throughput of computers. 
+CHAPTER	 5
+Computer Organization
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+92
+Computer Organization
+5.1  INTRODUCTION
+We can divide the parts that make up a computer into three broad categories or subsys-
+tems: the central processing unit (CPU), the main memory, and the input/output subsys-
+tem. The next three sections discuss these subsystems and how they are connected to 
+make a standalone
+

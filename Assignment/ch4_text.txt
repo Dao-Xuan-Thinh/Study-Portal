@@ -1,0 +1,1253 @@
+In Chapter 3 we showed how to store different types of data in a computer. In this chap-
+ter, we show how to operate on data stored in a computer. Operations on data can be 
+divided into three broad categories: logic operations, shift operations, and arithmetic 
+operations. 
+Objectives
+After studying this chapter, the student should be able to:
+❑
+❑
+List the three categories of operations performed on data.
+❑
+❑
+Perform unary and binary logic operations on bit patterns.
+❑
+❑
+Distinguish between logic shift operations and arithmetic shift operations. 
+❑
+❑
+Perform logic shift operations on bit patterns.
+❑
+❑
+Perform arithmetic shift operations on integers stored in two’s complement format.
+❑
+❑
+Perform addition and subtraction on integers when they are stored in two’s 
+­complement format.
+❑
+❑
+Perform addition and subtraction on integers when they are stored in sign-and-­
+magnitude format.
+❑
+❑
+Perform addition and subtraction operations on reals when they are stored in 
+­floating-point format. 
+❑
+❑
+Understand some applications of logical and shift operations such as setting, ­unsetting, 
+and flipping specific bits. 
+CHAPTER	 4
+Operations on Data
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+74
+Operations on Data
+4.1  LOGIC OPERATIONS
+In Chapter 3 we discussed the fact that data inside a computer is stored as patterns of bits. 
+Logic operations refer to those operations that apply the same basic operation on individ-
+ual bits of a pattern, or on two corresponding bits in two patterns. This means that we can 
+define logic operations at the bit level and at the pattern level. A logic operation at the 
+pattern level is n logic operations, of the same type, at the bit level where n is the number 
+of bits in the pattern. 
+4.1.1  Logic operations at bit level
+A bit can take one of the two values: 0 or 1. If we interpret 0 as the value false and 
+1 as the value true, we can apply the operations defined in Boolean algebra to 
+manipulate bits. Boolean algebra, named in honor of George Boole, belongs to a 
+special field of mathematics called logic. Boolean algebra and its application to 
+building logic circuits in computers are briefly discussed in Appendix E. In this 
+section, we show briefly four bit-level operations that are used to manipulate bits: 
+NOT, AND, OR, and XOR. 
+Boolean algebra and logic circuits are discussed in Appendix E.
+Figure 4.1 shows the symbols for these four bit-level operators and their truth 
+tables. A truth table defines the values of output for each possible input or inputs. 
+Note that the output of each operator is always one bit, but the input can be one 
+or two bits. 
+Figure 4.1  Logic operations at the bit level
+AND
+OR
+XOR
+0
+1
+0
+1
+0
+0
+1
+1
+0
+1
+1
+1
+OR   y
+y
+x
+x
+0
+1
+0
+1
+0
+0
+1
+1
+0
+0
+0
+1
+x  AND  y
+y
+x
+0
+1
+0
+1
+0
+0
+1
+1
+0
+1
+1
+0
+XOR
+y
+y
+x
+x
+NOT
+x
+0
+1
+1
+0
+NOT
+x
+AND  y
+x
+y
+x
+x  
+y
+XOR
+y
+x
+OR   y
+x
+y
+x
+NOT
+x
+x
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+4.1  Logic Operations
+75
+NOT
+The NOT operator is a unary operator: it takes only one input. The output bit is the 
+complement of the input. If the input is 0, the output is 1, if the input is 1, the output is 
+0. In other words, the NOT operator flips its input. The truth table of the NOT operator 
+has only two rows because the single input can be either 0 or 1: two possibilities. 
+AND
+The AND operator is a binary operator: it takes two inputs. The output bit is 1 if both 
+inputs are 1s and the output is 0 in the other three cases. The truth table of the AND 
+operator has four rows because, with two inputs, there are four possible input combinations.
+A property 
+One interesting point about the AND operator is that if a bit in one input is 0, we do not 
+have to check the corresponding bit in the other input: we can quickly conclude that the 
+result is 0. We use this property when we discuss the application of this operator in 
+relation to a bit pattern: 
+For x = 0 or 1    x AND 0 → 0    and    0 AND x → 0 
+OR
+The OR operator is a also a binary operator: it takes two inputs. The output bit is 0 if both 
+inputs are 0s and the output is 1 in the other three cases. The truth table of the OR 
+operator has also four rows. The OR operator is sometimes called the inclusive-or operator 
+because the output is 1 not only when one of the inputs is 1, but also when both inputs 
+are 1s. This is in contrast to the operator we introduce next.
+A property
+One interesting point about the OR operator is that if a bit in one input is 1, we do not 
+have to check the corresponding bit in the other input: we can quickly conclude that the 
+result is 1. We use this property when we discuss the application of this operator in 
+relation to a bit pattern: 
+For x = 0 or 1    x OR 1 → 1    and    1 OR x → 1
+XOR
+The XOR operator (pronounced ‘exclusive-or’) is also a binary operator like the OR 
+operator, with only one difference: the output is 0 if both inputs are 1s. We can look at this 
+operator in another way: the output is 0 when both inputs are the same, and the output 
+is 1 when the inputs are different. 
+Example 4.1
+In English we use the conjunction ‘or’ sometimes to mean an inclusive-or, and sometimes 
+to mean an exclusive-or. 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+76
+Operations on Data
+a.	 The sentence ‘I wish to have a car or a house’ uses ‘or’ in the inclusive sense—I wish a 
+car, a house, or both.
+b.	The sentence ‘Today is either Monday or Tuesday’ uses ‘or’ in the exclusive sense—­
+today is either Monday or Tuesday, but it cannot be both. 
+Example 4.2
+The XOR operator is not actually a new operator. We can always simulate it using the 
+other three operators. The following two expressions are equivalent: 
+x XOR y  ↔  [x AND (NOT y)] OR [(NOT x) AND y]
+ 
+The equivalence can be proved if we make the truth table for both. 
+A property
+A property of XOR is that if a bit in one input is 1, the result is the complement of the 
+corresponding bit in the other input. We use this property when we discuss the applica-
+tion of this operator in relation to a bit pattern: 
+For x = 0 or 1    1 XOR x → NOT x    and    x XOR 1 → NOT x
+4.1.2  Logic operations at pattern level
+The same four operators (NOT, AND, OR, and XOR) can be applied to an n-bit pattern. 
+The effect is the same as applying each operator to each individual bit for NOT and to 
+each corresponding pair of bits for other three operators. Figure 4.2 shows these four 
+operators with input and output patterns. 
+Figure 4.2  Logic operators applied to bit patterns
+n bits
+n bits
+n bits
+AND
+n bits
+n bits
+NOT
+n bits
+n bits
+n bits
+OR
+n bits
+n bits
+n bits
+XOR
+Example 4.3
+Use the NOT operator on the bit pattern 10011000.
+Solution
+The solution is shown below. Note that the NOT operator changes every 0 to 1 and every 1 to 0:
+NOT
+1 
+0
+0 
+1 
+1
+0 
+0
+0 
+Input
+0
+1
+1
+0
+0
+1
+1
+1
+Output	
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+4.1  Logic Operations
+77
+Example 4.4
+Use the AND operator on the bit patterns 10011000 and 00101010.
+Solution
+The solution is shown below. Note that only one bit in the output is 1, where both 
+corresponding inputs are 1s: 
+1 
+0
+0 
+1 
+1
+0 
+0
+0 
+Input 1
+AND
+0 
+0
+1 
+0 
+1
+0 
+1
+0 
+Input 2
+0
+0
+0
+0
+1
+0
+0
+0
+Output	
+Example 4.5
+Use the OR operator on the bit patterns 10011001 and 00101110.
+Solution
+The solution is shown below. Note that only one bit in the output is 0, where both 
+corresponding inputs are 0s: 
+1 
+0
+0 
+1 
+1
+0 
+0
+1 
+Input 1
+OR
+0 
+0
+1 
+0 
+1
+1 
+1
+0 
+Input 2
+1
+0
+1
+1
+1
+1
+1
+1
+Output	
+Example 4.6
+Use the XOR operator on the bit patterns 10011001 and 00101110.
+Solution
+The solution is shown below. Compare the output in this example with the one in 
+Example 4.5. The only difference is that when the two inputs are 1s, the result is 0 (the 
+effect of exclusion): 
+1 
+0
+0 
+1 
+1
+0 
+0
+1 
+Input 1
+XOR
+0 
+0
+1 
+0 
+1
+1 
+1
+0 
+Input 2
+1
+0
+1
+1
+0
+1
+1
+1
+Output	
+Applications
+Four logic operations can be used to modify a bit pattern. 
+Complementing
+The only application of the NOT operator is to complement the whole pattern. Applying 
+this operator to a pattern changes every 0 to 1 and every 1 to 0. This is sometimes referred 
+to as a one’s complement operation. Example 4.3 shows the effect of complementing. 
+Unsetting specific bits
+One of the applications of the AND operator is to unset (force to 0) specific bits in a bit 
+pattern. The second input in this case is called a mask. The 0-bits in the mask unset the 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+78
+Operations on Data
+corresponding bits in the first input: the 1-bits in the mask leave the corresponding bits in 
+the first input unchanged. This is due to the property we mentioned for the AND operator: 
+if one of the inputs is 0, the output is 0 no matter what the other input is. Unsetting the 
+bits in a pattern can have many applications. For example, if an image is using only one bit 
+per pixel (a black and white image), then we can make a specific pixel black using a mask 
+and the AND operator. 
+Example 4.7
+Use a mask to unset (clear) the five leftmost bits of a pattern. Test the mask with the 
+pattern 10100110. 
+Solution
+The mask is 00000111. The result of applying the mask is:
+1 
+0
+1 
+0 
+0
+1 
+1
+0 
+Input 
+AND
+0 
+0
+0 
+0 
+0
+1 
+1
+1 
+Mask
+0
+0
+0
+0
+0
+1
+1
+0
+Output	
+Note that the three rightmost bits remain unchanged, while the five leftmost bits are 
+unset (changed to 0) no matter what their previous values. 
+Setting specific bits
+One of the applications of the OR operator is to set (force to 1) specific bits in a bit pattern. 
+Again we can use a mask, but a different one. The 1-bits in the mask set the corresponding 
+bits in the first input, and the 0-bits in the mask leave the corresponding bits in the first 
+input unchanged. This is due to the property we mentioned for the OR operator: if one of 
+the inputs is 1, the output is 1 no matter what the other input is. Setting the bits in a pattern 
+has many applications. For example, if an image is using only one bit per pixel (a black and 
+white image), then we can make a specific pixel white using a mask and the OR operator.
+Example 4.8
+Use a mask to set the five leftmost bits of a pattern. Test the mask with the pattern 
+10100110. 
+Solution
+The mask is 11111000. The result of applying the mask is:
+1 
+0
+1 
+0 
+0
+1 
+1
+0 
+Input 
+OR
+1 
+1
+1 
+1 
+1
+0 
+0
+0 
+Mask
+1
+1
+1
+1
+1
+1
+1
+0
+Output	
+Flipping specific bits
+One of the applications of the XOR operator is to flip (complement) specific bits in a bit 
+pattern. Again we can use a mask, but a different one. The 1-bits in the mask flip the 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+4.2  Shift Operations
+79
+corresponding bits in the first input, and the 0-bits in the mask leave the corresponding 
+bits in the first input unchanged. This is due to the property we mentioned for the XOR 
+operator: if one of the inputs is 1, the output is the complement of the corresponding bit. 
+Note the difference between the NOT operator and the XOR operator. The NOT operator 
+complements all the bits in the input, while the XOR operator complements only the 
+specific bits in the first input as defined by the mask. 
+Example 4.9
+Use a mask to flip the five leftmost bits of a pattern. Test the mask with the pattern 
+10100110. 
+Solution
+The mask is 11111000. The result of applying the mask is:
+1 
+0
+1 
+0 
+0
+1 
+1
+0 
+Input 1
+XOR
+1 
+1
+1 
+1 
+1
+0 
+0
+0 
+Mask
+0
+1
+0
+1
+1
+1
+1
+0
+Output	
+4.2  SHIFT OPERATIONS
+Shift operations move the bits in a pattern, changing the positions of the bits. They can 
+move bits to the left or to the right. We can divide shift operations into two categories: 
+logical shift operations and arithmetic shift operations. 
+4.2.1  Logical shift operations
+A logical shift operation is applied to a pattern that does not represent a signed number. 
+The reason is that these shift operation may change the sign of the number that is defined 
+by the leftmost bit in the pattern. We distinguish two types of logical shift operations, as 
+described below. 
+Simple shift
+A simple right shift operation shifts each bit one position to the right. In an n-bit pattern, the 
+rightmost bit is lost and a 0 fills the leftmost bit. A simple left shift operation shifts each bit 
+one position to the left. In an n-bit pattern, the leftmost bit is lost and a 0 fills the rightmost 
+bit. Figure 4.3 shows the simple right shift and simple left shift operations for an 8-bit pattern. 
+Figure 4.3  Simple shift operations
+a. Simple right shift
+Lost
+0
+b. Simple left shift
+Lost
+0
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+80
+Operations on Data
+Example 4.10
+Use a simple left shift operation on the bit pattern 10011000.
+Solution
+The solution is shown below. The leftmost bit (white in the black background) is lost and 
+a 0 is inserted as the rightmost bit (the bit in color):
+←
+1
+0
+0 
+1 
+1
+0 
+0
+0 
+Original
+0
+0 
+1
+1
+0
+0
+0
+0
+After shift 
+Circular shift
+A circular shift operation (or rotate operation) shifts bits, but no bit is lost or 
+added. A circular right shift (or right rotate) shifts each bit one position to the right. 
+The rightmost bit is circulated and becomes the leftmost bit. A circular left shift 
+(or left rotate) shifts each bit one position to the left. The leftmost bit circulates and 
+become the rightmost bit. Figure 4.4 shows the circular shift left and circular shift 
+right operation. 
+Figure 4.4  Circular shift operations
+a. Circular right shift
+b. Circular left shift 
+Example 4.11
+Use a circular left shift operation on the bit pattern 10011000.
+Solution
+The solution is shown below. The leftmost bit (the white bit in the black background) is 
+circulated and becomes the rightmost bit:
+Original
+1
+0
+0 
+1 
+1
+0 
+0
+0 
+Circular
+After shift
+0
+0 
+1
+1
+0
+0
+0
+1
+Example 4.12
+Combining logic operations and logical shift operations gives us some tools for manipu-
+lating bit patterns. Assume that we have a pattern and we need to use the third bit (from 
+the right) of this pattern in a decision-making process. We want to know if this particular 
+bit is 0 or 1. The following shows how we can find out:
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+4.2  Shift Operations
+81
+h 
+g
+f 
+e 
+d
+c
+b
+a 
+Original
+0 
+h
+g 
+f 
+e
+d 
+c
+b 
+One right shift
+0 
+0
+h 
+g 
+f
+e 
+d
+c
+Two right shifts
+AND
+0
+0
+0
+0
+0
+0
+0
+1
+Mask 
+0 
+0
+0 
+0 
+0
+0 
+0
+c
+Result
+We shift the pattern two bits to the right so that the target bit moves to the rightmost 
+position. The result is then ANDed with a mask which has one 1 at the rightmost position. 
+The result is a pattern with seven 0s and the target bit at the rightmost position. We can 
+then test the result: if it is an unsigned integer 1, the target bit was 1, whereas if the result 
+is an unsigned integer 0, the target bit was 0. 
+Arithmetic shift operations
+Arithmetic shift operations assume that the bit pattern is a signed integer in two’s 
+complement format. Arithmetic right shift is used to divide an integer by two, while 
+arithmetic left shift is used to multiply an integer by two (discussed later). These operations 
+should not change the sign (leftmost) bit. An arithmetic right shift retains the sign bit, but 
+also copies it into the next right bit, so that the sign is preserved. An arithmetic left shift 
+discards the sign bit and accepts the bit to the left of the sign bit as the sign. If the new 
+sign bit is the same as the previous one, the operation is successful, otherwise an overflow 
+or underflow has occurred and the result is not valid. Figure 4.5 shows these two operations. 
+Figure 4.5  Arithmetic shift operations
+a. Arithmetic right shift
+Lost
+b. Arithmetic left shift
+0
+Example 4.13
+Use an arithmetic right shift operation on the bit pattern 10011001. The pattern is an 
+integer in two’s complement format.
+Solution
+The solution is shown below. The leftmost bit is retained and also copied to its right 
+neighbor bit (the white bit over the black background). The bit in color is lost: 
+Arithmetic Right
+1
+0
+0 
+1 
+1
+0 
+0
+1 
+Original
+1
+1
+0
+0
+1
+1
+0
+0
+After shift 
+The original number was –103 and the new number is –52, which is the result of dividing 
+–103 by 2 truncated to the smaller integer.    
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+82
+Operations on Data
+Example 4.14
+Use an arithmetic left shift operation on the bit pattern 11011001. The pattern is an 
+integer in two’s complement format.
+Solution
+The solution is shown below. The leftmost bit (shown in color) is lost and a 0 (shown as 
+white in the black background) is inserted as the rightmost bit:
+Arithmetic Left
+1
+1
+0 
+1 
+1
+0 
+0
+1 
+Original
+1
+0
+1
+1
+0
+0
+1
+0
+After shift 
+The original number was –39 and the new number is –78. The original number is 
+multiplied by two. The operation is valid because no underflow occurred.   
+Example 4.15
+Use an arithmetic left shift operation on the bit pattern 01111111. The pattern is an 
+integer in two’s complement format.
+Solution
+The solution is shown below. The leftmost bit (in color) is lost and a 0 (white in the black 
+background) is inserted as the rightmost bit: 
+Arithmetic Left
+0
+1
+1 
+1 
+1
+1 
+1
+1 
+Original
+1
+1
+1
+1
+1
+1
+1
+0
+After shift 
+The original number was 127 and the new number is –2. Here the result is not valid 
+because an overflow has occurred. The expected answer 127 × 2 = 254 cannot be repre-
+sented by an 8-bit pattern. 
+4.3  ARITHMETIC OPERATIONS
+Arithmetic operations involve adding, subtracting, multiplying, and dividing. We can 
+apply these operations to integers and floating-point numbers. 
+4.3.1  Arithmetic operations on integers
+All arithmetic operations such as addition, subtraction, multiplication, and division can be 
+applied to integers. Although multiplication (division) of integers can be implemented using 
+repeated addition (subtraction), the procedure is not efficient. There are more efficient pro-
+cedures for multiplication and division, such as Booth procedures, but these are beyond the 
+scope of this book. For this reason, we only discuss addition and subtraction of integers here. 
+Addition and subtraction for two’s complement integers
+We first discuss addition and subtraction for integers in two’s complement representation, 
+because it is more common. As we discussed in Chapter 3, integers are normally stored in 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+4.3  Arithmetic Operations
+83
+two’s complement format. One of the advantages of two’s complement representation is 
+that there is no difference between addition and subtraction. When the subtraction 
+operation is encountered, the computer simply changes it to an addition operation, but 
+makes two’s complement of the second number. In other words:
+A − B ↔ A + (B + 1)  where ((B + 1)) means the two’s complement of B
+This means that we only need to discuss addition. Adding numbers in two’s comple-
+ment is like adding the numbers in decimal: we add column by column, and if there is 
+a carry, it is added to the next column. However, the carry produced from the last col-
+umn is discarded. 
+We should remember that we add integers column by column. In each column, we 
+have either two bits to add if there is no carry from the previous column, or three bits to 
+add if there is a carry from the previous column. 
+Now we can show the procedure for addition or subtraction of two integers in two’s 
+complement format (Figure 4.6). Note that we use the notation (X + 1) to mean two’s com-
+plement of X. This notation is very common in literature because X denotes the one’s comple-
+ment of X. If we add 1 to the one’s complement of an integer, we get its two’s complement. 
+Figure 4.6  Addition and subtraction of integers in two’s complement format
+(
+)
+1
++
+X 
++ B
+A
+R
+[Subtract]
+[Add]
+Stop
+Start
+ : Two’s complement of X 
+R = A  
+B  
++
+–
++ 1
+B
+(
+)
+B
+The procedure is as follows:
+1.	 If the operation is subtraction, we take the two’s complement of the second integer. 
+Otherwise, we move to the next step.
+2.	 We add the two integers. 
+Example 4.16
+Two integers A and B are stored in two’s complement format. Show how B is added to A: 
+A = (00010001)2  B = (00010110)2
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+84
+Operations on Data
+Solution
+The operation is adding. A  is added to B and the result is stored in R: 
+1
+Carry
+0 
+0 
+0 
+1 
+0 
+0 
+0 
+1 
+A
++
+0 
+0 
+0 
+1 
+0 
+1 
+1 
+0 
+B
+0
+0
+1
+0
+0
+1
+1
+1
+R
+We check the result in decimal: (+17) + (+22) = (+39).
+Example 4.17
+Two integers A and B are stored in two’s complement format. Show how B is added to A:
+A = (00011000)2  B = (11101111)2
+Solution
+The operation is adding. A  is added to B and the result is stored in R. Note that the last 
+carry is discarded because the size of the memory is only 8 bits:  
+1
+1
+1
+1
+1
+Carry
+0 
+0 
+0 
+1 
+1 
+0 
+0 
+0 
+A
++
+1 
+1 
+1 
+0
+1 
+1 
+1 
+1 
+B
+0
+0
+0
+0
+0
+1
+1
+1
+R
+Checking the result in decimal, (+24) + (–17) = (+7).
+Example 4.18
+Two integers A and B are stored in two’s complement format. Show how B is subtracted 
+from A: 
+A = (00011000)2  B = (11101111)2
+Solution
+The operation is subtracting. A is added to (B + 1) and the result is stored in R:
+1
+Carry
+0 
+0 
+0 
+1 
+1 
+0 
+0 
+0 
+A
++
+0 
+0 
+0
+1
+0 
+0 
+0 
+1 
+(B + 1)
+0
+0
+1
+0
+1
+0
+0
+1
+R
+Checking the result in decimal, (+24) – (–17) = (+41).
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+4.3  Arithmetic Operations
+85
+Example 4.19
+Two integers A and B are stored in two’s complement format. Show how B is subtracted from A: 
+A = (11011101)2  B = (00010100)2
+Solution
+The operation is subtracting. A is added to (B + 1) and the result is stored in R: 
+1
+1
+1
+1
+1
+1
+Carry
+1 
+1 
+0 
+1 
+1 
+1 
+0 
+1 
+A
++
+1 
+1 
+1
+0
+1 
+1 
+0 
+0 
+(B + 1)
+1
+1
+0
+0
+1
+0
+0
+1
+R
+Checking the result in decimal, (–35) – (+20) = (–55). Note that the last carry is discarded.
+Example 4.20
+Two integers A and B are stored in two’s complement format. Show how B is added to A:
+A = (01111111)2  B = (00000011)2
+Solution
+The operation is adding. A is added to B and the result is stored in R: 
+1
+1
+1
+1
+1
+1
+1
+Carry
+0 
+1 
+1 
+1 
+1 
+1 
+1 
+1 
+A
++
+0 
+0 
+0
+0
+0 
+0 
+1
+1 
+B
+1
+0
+0
+0
+0
+0
+1
+0
+R
+We expect the result to be 127 + 3 = 130, but the answer is −126. The error is due to 
+overflow, because the expected answer (+130) is not in the range −128 to +127. 
+When we do arithmetic operations on numbers in a computer, we should remember that 
+each number and the result should be in the range defined by the bit allocation. 
+Addition or subtraction for sign-and-magnitude integers 
+Addition or subtraction for integers in sign-and-magnitude representation looks very 
+complex. We have four different combinations of signs (two signs, each of two values) for 
+addition, and four different conditions for subtraction. This means that we need to consider 
+eight different situations. For those interested readers, we describe these in more detail in 
+Appendix I.  
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+86
+Operations on Data
+4.3.2  Arithmetic operations on reals
+All arithmetic operations such as addition, subtraction, multiplication, and division can be 
+applied to reals stored in floating-point format. Multiplication of two reals involves 
+multiplication of two integers in sign-and-magnitude representation. Division of two reals 
+involves division of two integers in sign-and-magnitude representations. Since we did not 
+discuss the multiplication or division of integers in sign-and-magnitude representation, we 
+will not discuss the multiplication and division of reals, and only show addition and 
+subtractions for reals in Appendix J. 
+4.4  END-CHAPTER MATERIALS
+4.4.1  Recommended Reading
+For more details about the subjects discussed in this chapter, the following books are 
+recommended: 
+❑
+❑
+Mano, M. Computer System Architecture, Upper Saddle River, NJ: Prentice-Hall, 
+1993
+❑
+❑
+Null, L. and Lobur, J. Computer Organization and Architecture, Sudbury, MA: Jones 
+and Bartlett, 2003
+❑
+❑
+Stalling, W. Computer Organization and Architecture, Upper Saddle River, NJ: 
+­Prentice-Hall, 2000
+4.4.2  Key terms
+This chapter has introduced the following key terms, which are listed here with the pages 
+on which they first occur:
+AND operation 75
+mask 77
+arithmetic operation 82
+NOT operation 75
+arithmetic shift operation 81
+OR operation 75
+Boolean algebra 74
+truth table 74
+circular shift operation 80
+XOR operation 75
+logical shift operation 78
+4.4.3  Summary
+❑
+❑
+Operations on data can be divided into three broad categories: logic operations, shift 
+operations, and arithmetic operations. Logic operations refer to those operations that 
+apply the same basic operation to individual bits of a pattern or to two corresponding 
+bits in two patterns. Shift operations move the bits in the pattern. Arithmetic opera-
+tions involve adding, subtracting, multiplying, and dividing. 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+4.5  Practice Set
+87
+❑
+❑
+The four logic operators discussed in this chapter (NOT, AND, OR, and XOR) can be 
+used at the bit level or the pattern level. The NOT operator is a unary operator, while 
+the AND, OR, and XOR operators are binary operators. 
+❑
+❑
+The only application of the NOT operator is to complement the whole pattern. One 
+of the applications of the AND operator is to unset (force to 0) specific bits in a bit 
+pattern. One of the applications of the OR operator is to set (force to 1) specific bits 
+in a bit pattern. One of the applications of the XOR operator is to flip (complement) 
+specific bits in a bit pattern. 
+❑
+❑
+Shift operations move the bits in the pattern: they change the positions of the bits. 
+We can divide shift operations into two categories: logical shift operations and arith-
+metic shift operations. A logical shift operation is applied to a pattern that does not 
+represent a signed number. Arithmetic shift operations assume that the bit pattern is 
+a signed integer in two’s complement format.    
+❑
+❑
+All arithmetic operations such as addition, subtraction, multiplication, and division can 
+be applied to integers. Integers are normally stored in two’s complement format. One 
+of the advantages of two’s complement representation is that there is no difference 
+between addition and subtraction. When the subtraction operation is encountered, the 
+computer simply changes it to an addition operation, but forms the two’s complement 
+of the second number. Addition and subtraction for integers in sign-and-magnitude 
+representation looks very complex. We have eight situations to consider. 
+❑
+❑
+All arithmetic operations such as addition, subtraction, multiplication, and division 
+can be applied to reals stored in floating-point format. Addition and subtraction of 
+real numbers stored in floating-point numbers is reduced to addition and subtraction 
+of two integers stored in sign-and-magnitude after the alignment of decimal points. 
+4.5  PRACTICE SET
+4.5.1  Quizzes
+A set of interactive quizzes for this chapter can be found on the book’s website. It is 
+strongly recommended that the student takes the quizzes to check his/her understanding 
+of the materials before continuing with the practice set. 
+4.5.2  Review questions
+Q4-1.	
+What is the difference between an arithmetic operation and a logical operation?
+Q4-2.	
+What happens to the carry from the leftmost column in the addition of integers 
+in two’s complement format?
+Q4-3.	
+Can n, the bit allocation, equal 1? Why, or why not?
+Q4-4.	
+Define the term overflow.
+Q4-5.	
+In the addition of floating-point numbers, how do we adjust the representation of 
+numbers with different exponents?
+Q4-6.	
+What is the difference between a unary operation and a binary operation?
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+88
+Operations on Data
+Q4-7.	
+Name the logical binary operations.
+Q4-8.	
+What is a truth table?
+Q4-9.	
+What does the NOT operator do?
+Q4-10.	 When is the result of an AND operator true?
+Q4-11.	 When is the result of an OR operator true?
+Q4-12.	 When is the result of an XOR operator true?
+Q4-13.	 Mention an important property of the AND operator discussed in this chapter.
+Q4-14.	 Mention an important property of the OR operator discussed in this chapter.
+Q4-15.	 Mention an important property of the XOR operator discussed in this chapter.
+Q4-16.	 What binary operation can be used to set bits? What bit pattern should the mask 
+have?
+Q4-17.	 What binary operation can be used to unset bits? What bit pattern should the 
+mask have?
+Q4-18.	 What binary operation can be used to flip bits? What bit pattern should the mask 
+have?
+Q4-19.	 What is the difference between simple and arithmetic shifts?
+4.5.3  Problems
+P4-1.	
+Show the result of the following operations:
+a.	 NOT (99)16
+b.	NOT (FF)16
+c.	 NOT (00)16
+d.	NOT (01)16
+P4-2.	
+Show the result of the following operations:
+a.	 (99)16 AND (99)16
+b.	(99)16 AND (00)16
+c.	 (99)16 AND (FF)16
+d.	(FF)16 AND (FF)16
+P4-3.	
+Show the result of the following operations:
+a.	 (99)16 OR (99)16
+b.	(99)16 OR (00)16
+c.	 (99)16 OR (FF)16
+d.	(FF)16 OR (FF)16
+P4-4.	
+Show the result of the following operations:
+a.	 NOT [(99)16 OR (99)16)]
+b.	(99)16 OR [NOT (00)16]
+c.	 [(99)16 AND (33)16)] OR [(00)16 AND (FF)16]
+d.	(99)16 OR (33)16 AND [(00)16 OR (FF)16]
+P4-5.	
+We need to unset (force to 0) the four leftmost bits of a pattern. Show the mask 
+and the operation.
+P4-6.	
+We need to set (force to 1) the four rightmost bits of a pattern. Show the mask 
+and the operation.
+P4-7.	
+We need to flip the three rightmost and the two leftmost bits of a pattern. Show 
+the mask and the operation.
+P4-8.	
+We need to unset the three leftmost bits and set the two rightmost bits of a 
+­pattern. Show the masks and operations. 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+4.5  Practice Set
+89
+P4-9.	
+Use the shift operation to divide an integer by 4. 
+P4-10.	 Use the shift operation to multiply an integer by 8.
+P4-11.	 Use a combination of logical and shift operations to extract the fourth and fifth 
+bits from the left of an unsigned integer. 
+P4-12.	 Using an 8-bit allocation, first convert each of the following integers to two’s 
+complement, do the operation, and then convert the result to decimal.
+a.	 19 + 23
+b.	19 − 23
+c.	 −19 + 23
+d.	−19 − 23
+P4-13.	 Using a 16-bit allocation, first convert each of the following numbers to two’s 
+complement, do the operation, and then convert the result to decimal.
+a.	 161 + 1023
+b.	161 − 1023
+c.	 −161 + 1023
+d.	−161 − 1023
+P4-14.	 Which of the following operations creates an overflow if the numbers and the 
+result are represented in 8-bit two’s complement representation?
+a.	 11000010 + 00111111
+b.	00000010 + 00111111
+c.	 11000010 + 11111111
+d.	00000010 + 11111111 
+P4-15.	 Without actually doing the calculation, can we tell which of the following cre-
+ates an overflow if the numbers and the result are in 8-bit two’s complement 
+representation?
+a.	 32 + 105 
+b.	32 − 105
+c.	 −32 + 105 
+d.	−32 − 105 
+P4-16.	 Show the result of the following operations assuming that the numbers are stored in 
+16-bit two’s complement representation. Show the result in hexadecimal notation.
+a.	 (012A)16 + (0E27)16
+b.	(712A)16 + (9E00)16 
+c.	 (8011)16 + (0001)16
+d.	(E12A)16 + (9E27)16
+P4-17.	 Using an 8-bit allocation, first convert each of the following numbers to 
+sign-and-magnitude representation, do the operation, and then convert the result 
+to decimal.
+a.	 19 + 23
+b.	19 − 23
+c.	 −19 + 23
+d.	−19 − 23
+P4-18.	 Show the result of the following floating-point operations using IEEE_127—see 
+Chapter 3.
+a.	 34.75 + 23.125
+b.	−12.625 + 451.00
+c.	 33.1875 − 0.4375
+d.	−344.3125 − 123.5625
+P4-19.	 In which of the following situations does an overflow never occur? Justify the 
+answer. 
+a.	 Adding two positive integers.
+b.	Adding one positive integer to a negative integer.
+c.	 Subtracting one positive integer from a negative integer.
+d.	Subtracting two negative integers.
+P4-20.	 What is the result of adding an integer to its one’s complement?
+P4-21.	 What is the result of adding an integer to its two’s complement?
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202

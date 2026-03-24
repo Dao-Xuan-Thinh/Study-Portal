@@ -1,0 +1,1724 @@
+This chapter is a prelude to Chapters 3 and 4. In Chapter 3 we will show how data is 
+stored inside the computer. In Chapter 4 we will show how logic and arithmetic opera-
+tions are performed on data. This chapter is a preparation for understanding the contents 
+of Chapters 3 and 4. Readers who know about number systems can skip this chapter and 
+move on to Chapter 3 without loss of continuity. Note that the number systems discussed 
+in this chapter are ‘paper and pencil representations’: we show how these numbers are 
+stored in a computer in Chapter 3. 
+Objectives
+After studying this chapter, the student should be able to:
+❑
+❑
+Understand the concept of number systems.
+❑
+❑
+Distinguish between nonpositional and positional number systems.
+❑
+❑
+Describe the decimal system (base 10).
+❑
+❑
+Describe the binary system (base 2).
+❑
+❑
+Describe the hexadecimal system (base 16).
+❑
+❑
+Describe the octal system (base 8).
+❑
+❑
+Convert a number in binary, octal, or hexadecimal to a number in the decimal system.
+❑
+❑
+Convert a number in the decimal system to a number in binary, octal, or ­hexadecimal.
+❑
+❑
+Convert a number in binary to octal and vice versa.
+❑
+❑
+Convert a number in binary to hexadecimal and vice versa.
+❑
+❑
+Find the number of digits needed in each system to represent a particular value. 
+CHAPTER	 2
+Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+16
+﻿Number Systems
+2.1  INTRODUCTION
+A number system (or numeral system) defines how a number can be represented using 
+­distinct symbols. A number can be represented differently in different systems. For exam-
+ple, the two numbers (2A)16 and (52)8 both refer to the same quantity, (42)10, but their 
+representations are different. This is the same as using the words cheval (French) and 
+equus (Latin) to refer to the same entity, a horse. 
+As we use symbols (characters) to create words in a language, we use symbols (digits) 
+to represent numbers. However, we know that the number of symbols (characters) in any 
+language is limited. We need to repeat characters and combine them to create words. It is 
+the same for numbers: we have a limited number of symbols (digits) to represent num-
+bers, which means that the digits need to be repeated. 
+Several number systems have been used in the past and can be categorized into two 
+groups: positional and nonpositional systems. Our main goal is to discuss the positional 
+number systems, but we also give examples of nonpositional systems. 
+2.2  POSITIONAL NUMBER SYSTEMS
+In a positional number system, the position a symbol occupies in the number determines 
+the value it represents. In this system, a number represented as: 
+6 (SK21 … S2 S1 S0. S21 S22 … S2L )b
+has the value of: 
+n 5 6
+SK21 3 bK21 1… 1 S1 3 b1 1 S0 3 b0
+1  S21 3 b21 1 S22 3 b22 1 … 1 S2L 3 b2L
+in which S is the set of symbols, b is the base (or radix), which is equal to the total num-
+ber of the symbols in the set S, and SK and SL are symbols in the whole and fraction parts 
+of the number. Note that we have used an expression that can be extended from the right 
+or from the left. In other words, the power of b can be 0 to K 2 1 in one direction and 
+21 to 2L in the other direction. The terms with non negative powers of b are related to 
+the integral part of the number, while the terms with negative power of b are related to 
+the fractional part of the number. The 6 sign shows that the number can be either posi-
+tive or negative. We will study several positional number systems in this chapter.
+2.2.1  The decimal system (base 10) 
+The first positional number system we discuss in this chapter is the decimal system. The 
+word decimal is derived from the Latin root decem (ten). In this system the base b 5 10 
+and we use ten symbols to represent a number. The set of symbols is S 5 {0, 1, 2, 3, 4, 5, 
+6, 7, 8, 9}. As we know, the symbols in this system are often referred to as decimal digits 
+or just digits. In this chapter, we use 6 to show that a number can be positive or negative, 
+but remember that these signs are not stored in computers—computers handle the sign 
+differently, as we discuss in Chapter 3. 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2.2  Positional Number Systems
+17
+Computers store positive and negative numbers differently. 
+In the decimal system, a number is written as:
+6 (SK21 … S2 S1 S0. S21 S22 … S2L )10
+but for simplicity, we often drop the parentheses, the base, and the plus sign (if the num-
+ber is positive). For example, we write the number 1(552.23)10 as 552.23—the base and 
+plus signs are implicit. 
+Integers
+An integer (an integral number with no fractional part) in the decimal system is familiar 
+to all of us—we use integers in our daily life. In fact, we have used them so much that they 
+are intuitive. We represent an integer as 6 SK–1 … S1 S0. The value is calculated as:
+N 5 ±
+SK21 3 10K21 1 SK22 3 10K22 1 … 1 S2 3 102 1 S1 3 101 1 S0 3 100
+in which Si is a digit, b 5 10 is the base, and K is the number of digits. 
+Another way to show an integer in a number system is to use place values, which are 
+powers of 10 (100, 101, …, 10K21) for decimal numbers. Figure 2.1 shows an integer in the 
+decimal system using place values.
+Figure 2.1  Place value for an integer in decimal system
+Place values
+Number
+Values
+N =   
++
++
++
++
++
+S2 
+S2 
++ 
+102 
+102
+SK−2 
+SK−2 
++ 
+10K−2 
+10K−2
+SK−1
+SK−1 
++ 
+10K−1 
+10K−1
+S1 
+S1 
++ 
+101 
+101
+S0 
+100 
+S0 
++ 
+100 
++–
++–
+Example 2.1
+The following shows the place values for the integer 1224 in the decimal system: 
+102
+101 
+100
+Place values
+2
+2
+4
+Number
+N
+5
+1
+2 3 102
+1
+2 3 101 
+1
+4 3 100
+Values
+Note that the digit in position 1 has the value 20, but the same digit in position 2 has the 
+value 200. Also note that we normally drop the plus sign, but it is implicit. 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+18
+Example 2.2
+The following shows the place values for the decimal number –7508. We have used 1, 10, 
+100, and 1000 instead of powers of 10: 
+1000
+100
+10
+1
+Place values
+7
+5
+0
+8
+Number
+N
+5
+2
+(7 3 1000
+1
+5 3 100
+1
+0 3 10 
+1
+8 3 1)
+Values
+Maximum value
+Sometimes we need to know the maximum value of a decimal integer that can be repre-
+sented by K digits. The answer is Nmax 5 10K 2 1. For example, if K 5 5, then the maxi-
+mum value is Nmax 5 105 2 1 5 99 999. 
+Reals
+A real (a number with a fractional part) in the decimal system is also familiar. For example, 
+we use this system to show dollars and cents ($23.40). We can represent a real as 6 SK–1 … 
+S1 S0 · S–1 … S–L. The value is calculated as:
+                            
+Integral part 
+Fractional part
+R 5 6 SK21 3 10K21 1 … 1 S1 3 101 1 S0  3 100 1
+S21 3 1021 1 … 1 S2L 3 102L
+in which S1 is a digit, b 5 10 is the base, K is the number of digits in the integral part, and 
+L is the number of digits in the fractional part. The decimal point we use in our 
+representation separates the fractional part from the integral part. 
+Example 2.3
+The following shows the place values for the real number 124.13:
+101
+100
+1021
+1022
+Place values
+2
+4
+·
+1
+3
+Number
+R 5 1
+2 3 10
+1
+4 3 1
+1
+1 3 0.1 
+1
+3 3 0.01
+Values
+2.2.2  The binary system (base 2)
+The second positional number system we discuss in this chapter is the binary sys-
+tem. The word binary is derived from the Latin root bini (or two by two). In this 
+system the base b 5 2 and we use only two symbols, S 5 {0, 1}. The symbols in this 
+system are often referred to as binary digits or bits (binary digit). As we will see in 
+Chapter 3, data and programs are stored in the computer using binary patterns, a 
+string of bits. This is because the computer is made of electronic switches that can 
+have only two states, on and off. The bit 1 represents one of these two states and the 
+bit 0 the other.
+﻿Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2.2  Positional Number Systems
+19
+Integers
+We can represent an integer as 6  (SK–1 … S1 S0)2. The value is calculated as:
+N 5 6 SK21 3 2K21 1 SK22 3 2K22 1 … 1 S2 3 22 1 S1 3 21 1 S0 3 20
+in which Si is a digit, b 5 2 is the base, and K is the number of bits. Another way to show 
+a binary number is to use place values (20, 21, … 2K21). Figure 2.2 shows a number in the 
+binary number system using place values:
+Figure 2.2  Place values in an integer in the binary system
+Place values
+Number
+Values
+N =   
++
++
++
++
++
+S2 
+S2 
++ 
+22 
+22
+SK−2 
+SK−2 
++ 
+2K−2 
+2K−2
+SK−1
+SK−1 
++ 
+2K−1 
+2K−1
+S1 
+S1 
++ 
+21 
+21
+S0 
+20 
+S0 
++ 
+20 
++–
++–
+Example 2.4
+The following shows that the number (11001)2 in binary is the same as 25 in decimal. The 
+subscript 2 shows that the base is 2: 
+24
+23
+22
+21
+20
+Place values
+1
+1
+0
+0
+1
+Number
+N 5
+1 3 24
+1
+1 3 23
+1
+0 3 22
+1
+0 3 21
+1
+1 3 20
+Decimal
+Note that the equivalent decimal number is N 5 16 1 8 1 0 1 0 1 1 5 25.
+Maximum value
+The maximum value of a binary integer with K digits is Nmax 5 2K – 1. For example, if 
+K 5 5, then the maximum value is Nmax 5 25 – 1 5 31. 
+Reals
+A real—a number with an optional fractional part—in the binary system can be made of 
+K bits on the left and L bits on the right, 6 (SK–1 … S1 S0 · S–1 … S–L)2. The value can be 
+calculated as:
+                     
+Integral part 
+·
+Fractional part
+R 5 6
+SK21 3 2K21 3 … 3 S1 3 21 3 S0 3 20 
+1
+ S21 3 221 1 … 1  S2L 3 22L
+in which Si is a bit, b 5 2 is the base, K is the number of bits to the left, and L is the num-
+ber of bits to the right of the decimal point. Note that K starts from 0, but L starts from 
+21. The highest power is K 2 1 and the lowest power is 2L. 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+20
+Example 2.5
+The following shows that the number (101.11)2 in binary is equal to the number 5.75 in 
+decimal:
+22
+21
+20
+221 
+222
+Place values
+1
+0
+1
+·
+1
+1
+Number
+R 5
+1 3 22
+1
+0 3 21
+1
+1 3 20
+1
+1 3 221 
+1
+1 3 222
+Values
+Note that the value in the decimal system is R 5 4 1 0 1 1 1 0.5 1 0.25 5 5.75.
+2.2.3  The hexadecimal system (base 16)
+Although the binary system is used to store data in computers, it is not convenient for 
+representation of numbers outside the computer, as a number in binary notation is much 
+longer than the corresponding number in decimal notation. However, the decimal system 
+does not show what is stored in the computer as binary directly—there is no obvious 
+relationship between the number of bits in binary and the number of decimal digits. 
+Conversion from one to the other is not fast, as we will see shortly.
+To overcome this problem, two positional systems were devised: hexadecimal and 
+­octal. We first discuss the hexadecimal system, which is more common. The word hexadec-
+imal is derived from the Greek root hex (six) and the Latin root decem (ten). To be consis-
+tent with decimal and binary, it should really have been called sexadecimal, from the Latin 
+roots sex and decem. In this system the base b 5 16 and we use 16 symbols to represent a 
+number. The set of symbols is S 5 {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F}. Note that the 
+symbols A, B, C, D, E, F (uppercase or lowercase) are equivalent to 10, 11, 12, 13, 14, and 
+15 respectively. The symbols in this system are often referred to as hexadecimal digits. 
+Integers
+We can represent an integer as 6 SK–1 … S1 S0. The value is calculated as:
+N 5 6 SK21 3 16K21 1 SK22 3 16K22 1 … 1 S2  3 162 1 S1  3 161 1 S0  3 160
+in which Si is a digit, b 5 16 is the base, and K is the number of digits. 
+Another way to show a hexadecimal number is to use place values (160, 161, …, 16K 21). 
+Figure 2.3 shows a number in the hexadecimal number system using place values. 
+Figure 2.3  Place values in an integer in the hexadecimal system
+Place values
+Number
+Values
++
++
++
++
++
+S2 
+S2 
++ 
+162 
+162
+SK−2 
+SK−2 
++ 
+16K−2 
+16K−2
+SK−1
+SK−1 
++ 
+16K−1 
+16K−1
+S1 
+S1 
++ 
+161 
+161
+S0 
+160 
+S0 
++ 
+160 
+N =   
++–
++–
+﻿Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2.2  Positional Number Systems
+21
+Example 2.6
+The following shows that the number (2AE)16 in hexadecimal is equivalent to 686 in 
+decimal: 
+162
+161
+160
+Place values
+2
+A
+E
+Number
+N
+5
+2 3 162
+1
+10 3 161
+1
+14 3 160
+Values
+Note that the value in the decimal system is N 5 512 1 160 1 14 5 686.
+Maximum value
+The maximum value of a hexadecimal integer with K digits is Nmax 5 16K – 1. For example, 
+if K 5 5, then the maximum value is Nmax 5 165 – 1 5 1 048 575.
+Reals
+Although a real number can be also represented in the hexadecimal system, it is not very 
+common. 
+2.2.4  The octal system (base 8)
+The second system that was devised to show the equivalent of the binary system outside 
+the computer is the octal system. The word octal is derived from the Latin root octo 
+(eight). In this system the base b 5 8 and we use eight symbols to represent a number. The 
+set of symbols is S 5 {0, 1, 2, 3, 4, 5, 6, 7}. The symbols in this system are often referred 
+to as octal digits. 
+Integers
+We can represent an integer as 6  SK–1 … S1 S0. The value is calculated as:
+N 5 6 SK21 3 8K21 1 SK22 3 8K22 1 … 1 S2 3 82 1 S1 3 81 1 S0 3 80
+in which Si is a digit, b 5 8 is the base, and K is the number of digits. 
+Another way to show an octal number is to use place values (80, 81, …, 8K21). ­ 
+Figure 2.4 shows a number in the octal number system using place values. 
+Figure 2.4  Place values in an integer in the octal system
+Place values
+Number
+Values
++
++
++
++
++
+S2 
+S2 
++ 
+82 
+82
+SK−2 
+SK−2 
++ 
+8K−2 
+8K−2
+SK−1
+SK−1 
++ 
+8K−1 
+8K−1
+S1 
+S1 
++ 
+81 
+81
+S0 
+80 
+S0 
++ 
+80 
+N =   
++–
++–
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+22
+Example 2.7
+The following shows that the number (1256)8 in octal is the same as 686 in decimal: 
+83
+82
+81
+80
+Place values
+1
+2
+5
+6
+Number
+N 5 1 3 83
+1
+2 3 82
+1
+5 3 81
+1
+6 3 80
+Values
+Note that the decimal number is N 5 512 1 128 1 40 1 6 5 686.
+Maximum Value
+The maximum value of an octal integer with K digits is Nmax 5 8K − 1. For example, if 
+K 5 5, then the maximum value is Nmax 5 85 − 1 5 32767. 
+Reals
+Although a real number can be also represented in the octal system, it is not very common. 
+2.2.5  Summary of the four positional systems
+Table 2.1 shows a summary of the four positional number systems discussed in this 
+chapter.
+Table 2.1  Summary of the four positional number systems
+System
+Base
+Symbols
+Examples
+Decimal
+10
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+2345.56
+Binary
+2
+0, 1
+(1001.11)2
+Octal
+8
+0, 1, 2, 3, 4, 5, 6, 7
+(156.23)8
+Hexadecimal
+16
+0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F
+(A2C.A1)16
+Table 2.2 shows how the number 15 is represented with two digits in decimal, four digits 
+in binary, two digits in octal, and only one digit in hexadecimal. The hexadecimal repre-
+sentation is definitely the shortest. 
+Table 2.2  Comparison of numbers in the four systems
+Decimal
+Binary
+Octal
+Hexadecimal
+0
+0
+0
+0
+1
+1
+1
+1
+2
+10
+2
+2
+3
+11
+3
+3
+4
+100
+4
+4
+﻿Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2.2  Positional Number Systems
+23
+Table 2.2  (Continued)
+Decimal
+Binary
+Octal
+Hexadecimal
+5
+101
+5
+5
+6
+110
+6
+6
+7
+111
+7
+7
+8
+1000
+10
+8
+9
+1001
+11
+9
+10
+1010
+12
+A
+11
+1011
+13
+B
+12
+1100
+14
+C
+13
+1101
+15
+D
+14
+1110
+16
+E
+15
+1111
+17
+F
+2.2.6  Conversion
+We need to know how to convert a number in one system to the equivalent number in another 
+system. Since the decimal system is more familiar than the other systems, we first show how 
+to covert from any base to decimal. Then we show how to convert from decimal to any base. 
+Finally, we show how we can easily convert from binary to hexadecimal or octal and vice versa. 
+Any base to decimal conversion
+This type of conversion is easy and fast. We multiply each digit with its place value in the 
+source system and add the results to get the number in the decimal system. Figure 2.5 
+shows the idea.
+Figure 2.5  Converting other bases to decimal
+Decimal
+Decimal point
+Multiplication 
+Place values
+Binary
+b0
+b−L
+b−1
+b−2
+b1
+bK−1
++ S0 × b0 + S0 × b0
+S−1× b−1 +  S−2× b−2 +
++ S−L × b−L
+S0
+S1
+SK−1
+S−L
+S−1
+S−2
+SK−1 × bK−1 +
+Integral
+Fraction
++
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+24
+Example 2.8
+The following shows how to convert the binary number (110.11)2 to decimal: (110.11)2 
+5 6.75: 
+Binary
+1
+1
+0
+·
+1
+1
+Place values
+22
+21
+20
+221
+222
+Partial results
+4
+1
+2
+1
+0
+1
+0.5
+1
+0.25
+Decimal: 6.75
+Example 2.9
+The following shows how to convert the hexadecimal number (1A.23)16 to decimal:
+Hexadecimal
+1
+A
+·
+2
+3
+Place values
+161
+160
+1621
+1622
+Partial result
+16
+1
+10
+1
+0.125
+1
+0.012
+Decimal: 26.137
+Note that the result in the decimal notation is not exact, because 3 3 1622 5 0.01171875. 
+We have rounded this value to three digits (0.012). In other words, (1A.23)16 ≈ 26.137. 
+When we convert a number in decimal to hexadecimal, we need to specify how many 
+digits we allow to the right of the decimal point.
+Example 2.10
+The following shows how to convert (23.17)8 to decimal:
+Octal
+2
+3
+·
+1
+7
+Place values
+81
+80
+821
+822
+Partial result
+16
+1
+3
+1
+0.125
+1
+0.109
+Decimal: 19.234
+This means that (23.17)8 ≈ 19.234 in decimal. Again, we have rounded up 7 3 
+822 5 0.109375. 
+Decimal to any base
+We can convert a decimal number to its equivalent in any base. We need two procedures, 
+one for the integral part and one for the fractional part. 
+Converting the integral part
+The integral part can be converted using repetitive division.  Figure 2.6 shows the UML 
+diagram for the process. We use UML diagrams through the book. For those readers not 
+familiar with UML diagrams, please see Appendix B. 
+﻿Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2.2  Positional Number Systems
+25
+Figure 2.6  Algorithm to convert the integral part
+[Condition is true]
+Start
+Stop
+Given: 
+source and base 
+Source: integral part of decimal number
+Destination: integral part of converted number
+Condition: quotient is zero
+Base: destination base
+Divide source
+by base 
+Create an
+empty destination 
+Insert remainder
+at the left of 
+destination 
+Quotient becomes
+new source
+Return:
+destination
+We call the integral part of the decimal number the source and the integral part of the 
+converted number the destination. We first create an empty destination. We then repeti-
+tively divide the source to get the quotient and the remainder. The remainder is inserted 
+to the left of the destination. The quotient becomes a new source. Figure 2.7 shows how 
+the destination is made with each repetition.
+Figure 2.7  Converting the integral part
+0
+Q
+Divide by b
+R
+R
+R
+R
+R: Remainders
+S: Source
+Di: Destination digit
+D: Destination
+D
+Q: Quotients
+D0
+D1
+D2
+DK−1 
+S
+ Q
+Q
+We use Figure 2.6 to illustrate the process manually with some examples. 
+Example 2.11
+The following shows how to convert 35 in decimal to binary. We start with the number in 
+decimal, we move to the left while continuously finding the quotients and the remainder 
+of division by 2. The result is 35 5 (100011)2:
+0
+←
+1
+←
+2
+←
+4
+←
+8
+←
+17
+←
+35
+Decimal
+↓
+↓
+↓
+↓
+↓
+↓
+1
+0
+0
+0
+1
+1
+Binary
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+26
+Example 2.12
+The following shows how to convert 126 in decimal to its equivalent in the octal system. 
+We move to the right while continuously finding the quotients and the remainder of 
+division by 8. The result is 126 5 (176)8:
+0
+←
+1
+←
+15
+←
+126
+Decimal
+↓
+↓
+↓
+1
+7
+6
+Octal
+Example 2.13
+The following shows how we convert 126 in decimal to its equivalent in the hexadecimal 
+system. We move to the right while continuously finding the quotients and the remainder 
+of division by 16. The result is 126 5 (7E)16:
+0
+←
+7
+←
+126
+Decimal
+↓
+↓
+7
+E
+Hexadecimal
+Converting the fractional part
+The fractional part can be converted using repetitive multiplication. We call the fractional 
+part of the decimal number the source and the fractional part of the converted number the 
+destination. We first create an empty destination. We then repetitively multiply the source 
+to get the result. The integral part of the result is inserted to the right of the destination, 
+while the fractional part becomes the new source. Figure 2.8 shows the UML diagram for 
+the process. Figure 2.9 shows how the destination is made in each repetition. We use the 
+figure to illustrate the process manually with some examples. 
+Figure 2.8  Algorithm to convert the fractional part
+[Condition is true]
+Start
+Stop
+Given: 
+source and base 
+Source: fraction part of decimal number
+Destination: fraction part of converted number
+Condition: Fraction part is zero or destination
+                  digits are enough
+Multiply source by 
+base to get a result
+Create an
+empty destination 
+Insert integral
+part of result at 
+right of destination 
+Fraction part of
+result becomes
+new source
+Return:
+destination
+﻿Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2.2  Positional Number Systems
+27
+Figure 2.9  Converting the fractional part
+F: Fractional part
+S: Source
+Di: Destination digit
+Note: 
+The fraction may never become zero. 
+Stop when enough digits have been created. 
+D: Destination
+I: Integral part
+Multiply by b
+I
+I
+I
+I
+D
+D−1
+D−2
+D−3
+D−l 
+S
+F
+F
+F
+0
+Example 2.14
+Convert the decimal number 0.625 to binary. 
+Solution
+Since the number 0.625 has no integral part, the example shows how the fractional part 
+is calculated. The base here is 2. Write the decimal number at the left corner. Multiply the 
+number continuously by 2 and record the integral and fractional part of the result. The 
+fractional part moves to the right, and the integral part is recorded under each operation. 
+Stop when the fractional part is 0 or there are enough bits. The result is (0.101)2:
+Decimal
+0.625
+→
+0.25
+→
+0.50
+→
+0.00
+↓
+↓
+↓
+Binary
+·
+1
+0
+1
+Example 2.15
+The following shows how to convert 0.634 to octal using a maximum of four digits. The 
+result is 0.634 5 (0.5044)8. Note that we multiply by 8 (base octal):
+Decimal
+0.634
+→
+0.072
+→
+0.576
+→
+0.608
+→
+0.864
+↓
+↓
+↓
+↓
+Octal
+·
+5
+0
+4
+4
+Example 2.16
+The following shows how to convert 178.6 in decimal to hexadecimal using only one digit 
+to the right of the decimal point. The result is 178.6 5 (B2.9)16 Note that we divide or 
+multiply by 16 (base hexadecimal):
+Decimal
+0
+←
+11
+←
+178
+·
+0.6
+→
+0.6
+↓
+↓
+↓
+Hexadecimal
+B
+2
+·
+9
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+28
+Example 2.17
+An alternative method for converting a small decimal integer (usually less than 256) to 
+binary is to break the number as the sum of numbers that are equivalent to the binary 
+place values: 
+Place values
+27
+26
+25
+24
+23
+22
+21
+20
+Decimal equivalent
+128
+64
+32
+16
+8
+4
+2
+1
+Using this table, we can convert 165 to binary (10100101)2 as shown below: 
+Decimal 165 5 128
+1
+0
+1
+32
+1
+0
+1
+0
+1
+4
+1
+0
+1
+1
+Binary
+1
+0
+1
+0
+0
+1
+0
+1
+Example 2.18
+A similar method can be used to convert a decimal fraction to binary when the denominator 
+is a power of two: 
+Place values
+221
+222
+223
+224
+225
+226
+227
+Decimal equivalent
+1⁄2
+1⁄4
+1⁄8
+1⁄16
+1⁄32
+1⁄64
+1⁄128
+Using this table, we convert 27⁄64 to binary (0.011011)2 as shown below: 
+Decimal 5 27⁄64 
+16⁄64
+1
+8⁄64
+1
+2⁄64
+1
+1⁄64
+ 
+1⁄4
+1
+1⁄8
+1
+1⁄32
+1
+1⁄64
+Align these fractions according to decimal equivalent values. Note that since 1⁄2 and 1⁄16 are 
+missing, we replace them with 0s: 
+Decimal 27⁄64 5 
+0
+1
+1⁄4
+1
+1⁄8
+1
+0
+1
+1⁄32
+1
+1⁄64
+Binary
+0
+1
+1
+0
+1
+1
+Number of digits
+We often need to know the number of digits before converting a number from decimal to 
+other bases. In a positional number system with base b, we can always find the number of 
+digits of an integer using the relation K 5 ⎡logb N⎤, in which ⎡x⎤ means the smallest integer 
+greater than or equal to x (it is also called the ceiling of x), and N is the decimal value of 
+the integer. For example, we can find the required number of bits in the decimal number 
+234 in all four systems as follows:
+a.	 In decimal: Kd 5 ⎡log10 234⎤ 5 ⎡2.37⎤ 5 3, which is obvious.
+b.	In binary: Kb 5 ⎡log2 234⎤ 5 ⎡7.8⎤ 5 8. This is true because 234 5 (11101010)2  
+c.	 In octal: Ko5 ⎡log8 234⎤ 5 ⎡2.62⎤ 5 3. This is true because 234 5 (352)8
+d.	In hexadecimal Kh 5 ⎡log16 234⎤ 5 ⎡1.96⎤ 5 2. This is true because 234 5 (EA)16
+See Appendix G for information on how to calculate logbN if your calculator does not 
+include logs to any base. 
+﻿Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2.2  Positional Number Systems
+29
+Binary–hexadecimal conversion 
+We can easily change a number from binary to hexadecimal and vice versa. The reason is that 
+there is a relationship between the two bases: four bits in binary is one digit in hexadecimal. 
+Figure 2.10 shows how this conversion can be done.
+Figure 2.10  Binary to hexadecimal and hexadecimal to binary
+Hexadecimal
+Bi: Binary digit (bit)
+Hi: Hexadecimal digit
+Binary
+Bm−2Bm−3
+Bm−1
+Bm
+H0
+H1
+Hn
+B0
+B1
+B2
+B3
+B4
+B5
+B6
+B7
+Example 2.19
+Show the hexadecimal equivalent of the binary number (10011100010)2.
+Solution
+We first arrange the binary number in 4-bit patterns: 100 1110 0010. Note that the 
+leftmost pattern can have one to four bits. We then use the equivalent of each pattern 
+shown in Table 2.2 in section 2.2.5 to change the number to hexadecimal: (4E2)16. 
+Example 2.20
+What is the binary equivalent of (24C)16?
+Solution
+Each hexadecimal digit is converted to 4-bit patterns: 2 → 0010, 4 → 0100, and C → 
+1100. The result is (001001001100)2. 
+Binary–octal conversion
+We can easily convert a number from binary to octal and vice versa. The reason is that there is 
+an interesting relationship between the two bases: three bits is one octal digit. Figure 2.11 
+shows how this conversion can be done. 
+Figure 2.11  Binary to octal conversion
+Octal
+Binary
+B0
+B1
+B2
+B3
+B4
+B5
+Bm−2
+Bm−1
+Bm
+O0
+O1
+On
+Bi: Binary digit (bit) Oi: Octal digit
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+30
+Example 2.21
+Show the octal equivalent of the binary number (101110010)2.
+Solution
+Each group of three bits is translated into one octal digit. The equivalent of each 3‑bit 
+group is shown in Table 2.2 in section 2.2.5. The result is (562)8.
+Example 2.22
+What is the binary equivalent of for (24)8?
+Solution
+Write each octal digit as its equivalent bit pattern to get (010100)2. 
+Octal–hexadecimal conversion
+It is not difficult to convert a number in octal to hexadecimal or vice versa. We can use the 
+binary system as the intermediate system. Figure 2.12 shows an example. 
+Figure 2.12  Octal to hexadecimal and hexadecimal to octal conversion
+Hexadecimal
+E
+4
+8
+1
+1
+4
+Binary
+Octal
+0
+0
+0
+0
+0
+0
+0
+1
+1
+1
+1
+1
+6
+The following illustrates the process:
+❑
+❑
+To convert from octal to hexadecimal, we first convert the number in the octal system 
+to binary. We then rearrange the bits in groups of four bits to find the hexadecimal 
+equivalent.
+❑
+❑
+To convert from hexadecimal to octal, we first convert the number in the hexadeci-
+mal system to binary. We then rearrange the bits in groups of three to find the octal 
+­equivalent.
+Number of digits
+In conversion from one base to another, we often need to know the minimum number of 
+digits we need in the destination system if we know the maximum number of digits in the 
+source system. For example, if we know that we use at most six decimal digits in the source 
+system, we want to know the minimum number of binary digits we need in the destination 
+system. In general, assume that we are using K digits in base b1 system. The maximum 
+number we can represent in the source system is b1
+K – 1. The maximum number we can 
+﻿Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2.3  Nonpositional Number Systems
+31
+have in the destination system is b2
+x – 1. Therefore, b2
+x – 1 > b1
+K – 1. This means b2
+x > b1
+K, 
+which means:
+x > K 3 (log b1 / log b2)
+ or
+x 5 ⎡K 3 (log b1 / log b2)⎤
+Example 2.23
+Find the minimum number of binary digits required to store decimal integers with a 
+maximum of six digits. 
+Solution
+K 5 6, b1 5 10, and b2 5 2. Then x 5 ⎡K 3 (log b1 / log b2)⎤ 5 ⎡6 3 (1 / 0.30103)⎤ 5 
+20. The largest six-digit decimal number is 999 999 and the largest 20-bit binary number 
+is 1 048 575. Note that the largest number that can be represented by a 19-bit number is 
+524287, which is smaller than 999 999. We definitely need 20 bits. 
+2.3  NONPOSITIONAL NUMBER SYSTEMS
+Although nonpositional number systems are not used in computers, we give a short review 
+here for comparison with positional number systems. A nonpositional number system still 
+uses a limited number of symbols in which each symbol has a value. However, the position 
+a symbol occupies in the number normally bears no relation to its value—the value of 
+each symbol is fixed. To find the value of a number, we add the value of all symbols 
+present in the representation. In this system, a number is represented as: 
+SK21 … S2 S1 S0 · S21 S22 … S2L 
+and has the value of: 
+Integral part 
+Fractional part
+n 5 ±
+SK21 1 … 1 S1 1 S0
+1
+  S21
+ 1 S22 1 … 1 S2L
+There are some exceptions to the addition rule we just mentioned, as shown in Example 2.24. 
+Example 2.24
+The Roman number system is a good example of a nonpositional number system. This 
+system was invented by the Romans and was used until the sixteenth century in Europe. 
+Roman numerals are still used in sports events, clock dials, and other applications. This 
+number system has a set of symbols S 5 {I, V, X, L, C, D, M}. The values of each symbol 
+are shown in Table 2.3. 
+Table 2.3  Values of symbols in the Roman number system
+Symbol
+I 
+V
+X
+L 
+C
+D 
+M 
+Value
+1
+5
+10 
+50
+100 
+500
+1000
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+32
+To find the value of a number, we need to add the value of symbols subject to specific 
+rules: 
+1.	 When a symbol with a smaller value is placed after a symbol having an equal or larger 
+value, the values are added.
+2.	 When a symbol with a smaller value is placed before a symbol having a larger value, 
+the smaller value is subtracted from the larger one. 
+3.	 A symbol S1 cannot come before another symbol S2 if S1 # 10 3 S2. For example, I or 
+V cannot come before C. 
+4.	 For large numbers a bar is placed above any of the six symbols (all symbols except I) 
+to express multiplication by 1000. For example, V 5 5 000 and M 5 1 000 000.
+5.	 Although Romans used the word nulla (nothing) to convey the concept of zero, the 
+Roman numerals lack a zero digit in their system. 
+The following shows some Roman numbers and their values:
+III
+→
+1 1 1 1 1
+5
+3
+IV
+→
+5 2 1
+5
+4
+VIII
+→
+5 1 1 1 1 1 1
+5
+8
+XVIII
+→
+10 1 5 1 1 1 1 1 1
+5
+18
+XIX
+→
+10 1 (10 21)
+5
+19
+LXXII
+→
+50 1 10 1 10 1 1 1 1
+5
+72
+CI
+→
+100 1 1
+5
+101
+MMVII
+→
+1000 1 1000 1 5 1 1 1 1
+5
+2007
+MDC
+→
+1000 1 500 1 100
+5
+1600
+2.4  END-CHAPTER MATERIALS
+2.4.1  Recommended reading
+For more details about the subjects discussed in this chapter, the following books are 
+recommended: 
+❑
+❑
+Stalling, W. Computer Organization and Architecture, Upper Saddle River, NJ: 
+­Prentice-Hall, 2000
+❑
+❑
+Mano, M. Computer System Architecture, Upper Saddle River, NJ: Prentice-Hall, 1993
+❑
+❑
+Null, L. and Lobur, J. Computer Organization and Architecture, Sudbury, MA: Jones 
+and Bartlett, 2003
+❑
+❑
+Brown, S. and Vranesic, Z. Fundamentals of Digital Logic with Verilog Design, New York: 
+McGraw-Hill, 2003
+﻿Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2.4  End-Chapter Materials
+33
+2.4.2  Key terms
+base 16
+nonpositional number system 31
+binary digit 18
+number system 16
+binary system 18
+octal digit 21
+bit 18
+octal system 21
+decimal digit 16
+place value 17
+decimal system 16
+positional number system 16
+hexadecimal digit 20
+radix 16
+hexadecimal system 20
+real 18
+integer 17
+Roman number system 31
+2.4.3  Summary
+❑
+❑
+A number system (or numeral system) is a system that uses distinct symbols to repre-
+sent a number. In a positional number system, the position a symbol occupies in the 
+number determines the value it represents. Each position has a place value associated 
+with it. A nonpositional number system uses a limited number of symbols in which 
+each symbol has a value. However, the position a symbol occupies in the number 
+normally bears no relation to its value: the value of each symbol is normally fixed. 
+❑
+❑
+In the decimal system, the base b 5 10 and we use ten symbols to represent numbers. 
+The symbols in this system are often referred to as decimal digits or just digits.  In the 
+binary system, the base b 5 2 and we use only two symbols to represent numbers. The 
+symbols in this system are often referred to as binary digits or bits. In a hexadecimal 
+system, the base 5 16 and we use 16 symbols to represent numbers. The symbols in 
+this system are often referred to as hexadecimal digits. In an octal system, the base 
+b 5 8 and we use eight symbols to represent numbers. The symbols in this system 
+are often referred to as octal digits.
+❑
+❑
+We can convert a number in any system to decimal. We multiply each digit with its 
+place value in the source system and add the result to get the number in the decimal 
+system. We can convert a decimal number to its equivalent in any base using two 
+different procedures, one for the integral part and one for the fractional part. The inte-
+gral part needs repeated division and the fraction part needs repeated multiplication. 
+❑
+❑
+Conversion from the binary system to the hexadecimal system and from the hexadec-
+imal system to the binary system is very easy, because four bits in the binary system 
+are represented as one digit in the hexadecimal system.
+❑
+❑
+Conversion from the binary system to the octal system and from the octal system to 
+the binary system is very easy, because three bits in the binary system are represented 
+as one digit in the octal system.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+34
+2.5  PRACTICE SET
+2.5.1  Quizzes
+A set of interactive quizzes for this chapter can be found on the book’s website. It is 
+strongly recommended that the student takes the quizzes to check his/her understanding 
+of the materials before continuing with the practice set.
+2.5.2  Review questions
+Q2-1.	
+Define a number system.
+Q2-2.	
+Distinguish between positional and nonpositional number systems.
+Q2-3.	
+Define the base or radix in a positional number system. What is the relationship 
+between a base and the number of symbols in a positional number system?
+Q2-4.	
+Explain the decimal system. Why is it called decimal? What is the base in this 
+system?
+Q2-5.	
+Explain the binary system. Why is it called binary? What is the base in this system?
+Q2-6.	
+Explain the octal system. Why is it called octal? What is the base in this system?
+Q2-7.	
+Explain the hexadecimal system. Why is it called hexadecimal? What is the base 
+in this system?
+Q2-8.	
+Why is it easy to convert from binary to hexadecimal and vice versa?
+Q2-9.	
+How many bits in the binary system are represented by one digit in the hexadec-
+imal system?
+Q2-10.	 How many bits in the binary system are represented by one digit in the octal 
+system?
+2.5.3  Problems
+P2-1.	
+Convert the following binary numbers to decimal without using a calculator, 
+showing your work:
+a.	 (01101)2
+b.	(1011000)2
+c.	 (011110.01)2
+d.	(111111.111)2
+P2-2.	
+Convert the following hexadecimal numbers to decimal without using a calcula-
+tor, showing your work:
+a.	 (AB2)16
+b.	(123)16
+c.	 (ABB)16
+d.	(35E.E1)16
+P2-3.	
+Convert the following octal numbers to decimal without using a calculator, show-
+ing your work:
+a.	 (237)8
+b.	(2731)8
+c.	 (617.7)8
+d.	(21.11)8
+P2-4.	
+Convert the following decimal numbers to binary without using a calculator, 
+showing your work:
+a.	 1234
+b.	88
+c.	 124.02
+d.	14.56
+﻿Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2.5  Practice Set
+35
+P2-5.	
+Convert the following decimal numbers to octal without using a calculator, show-
+ing your work:
+a.	 1156
+b.	99
+c.	 11.4
+d.	72.8
+P2-6.	
+ Convert the following decimal numbers to hexadecimal without using a calcu-
+lator, showing your work:
+a.	 567
+b.	1411
+c.	 12.13
+d.	16
+P2-7.	
+Convert the following octal numbers to hexadecimal without using a calculator, 
+showing your work:
+a.	 (514)8
+b.	(411)8
+c.	 (13.7)8
+d.	(1256)8
+P2-8.	
+Convert the following hexadecimal numbers to octal without using a calculator, 
+showing your work:
+a.	 (51A)16
+b.	(4E1)16
+c.	 (BB.C)16
+d.	(ABC.D)16
+P2-9.	
+Convert the following binary numbers to octal without using a calculator, show-
+ing your work:
+a.	 (01101)2
+b.	(1011000)2
+c.	 (011110.01)2
+d.	(111111.111)2
+P2-10.	 Convert the following binary numbers to hexadecimal without using a calculator, 
+showing your work:
+a.	 (01101)2
+b.	(1011000)2
+c.	 (011110.01)2
+d.	(111111.111)2
+P2-11.	 Convert the following decimal numbers to binary using the alternative method 
+discussed in Example 2.17, showing your work:
+a.	 121
+b.	78
+c.	 255
+d.	214
+P2-12.	 Change the following decimal numbers into binary using the alternative method 
+discussed in Example 2.18, showing your work:
+a.	 3 5⁄8 
+b.	12 3⁄32
+c.	 4 13⁄64 
+d.	12 5⁄128
+P2-13.	 In a positional number system with base b, the largest integer number that can 
+be represented using K digits is bK − 1. Find the largest number in each of the 
+following systems with six digits: 
+a.	 Binary
+b.	Decimal
+c.	 Hexadecimal
+d.	Octal 
+P2-14.	 Without converting, find the minimum number of digits needed in the destina-
+tion system for each of the following cases: 
+a.	 Five-digit decimal number converted to binary.
+b.	Four-digit decimal converted to octal.
+c.	 Seven-digit decimal converted to hexadecimal.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+36
+P2-15.	 Without converting, find the minimum number of digits needed in the destina-
+tion system for each of the following cases: 
+a.	 5-bit binary number converted to decimal.
+b.	Three-digit octal number converted to decimal.
+c.	 Three-digit hexadecimal converted to decimal. 
+P2-16.	 The following table shows how to rewrite a fraction so the denominator is a 
+power of two (1, 4, 8, 16, and so on). 
+Original
+New
+Original 
+New
+0.5
+1⁄2
+0.25
+1⁄4
+0.125
+1⁄8
+0.0625
+1⁄16
+0.03125
+1⁄32
+0.015625
+1⁄64
+However, sometimes we need a combination of entries to find the appropriate 
+fraction. For example, 0.625 is not in the table, but we know that 0.625 is 0.5 1 
+0.125. This means that 0.625 can be written as 1⁄2 1 1⁄8, or 5⁄8. 
+Change the following decimal fractions to a fraction with a power of 2.
+a.	 0.1875 
+b.	0.640625
+c.	 0.40625 
+d.	0.375
+P2-17.	 Using the results of the previous problem, change the following decimal numbers 
+to binary numbers.
+a.	 7.1875 
+b.	12.640625
+c.	 11.40625 
+d.	0.375
+P2-18.	 Find the maximum value of an integer in each of the following cases:
+a.	 b 5 10, K 5 10
+b.	b 5 2, K 5 12
+c.	 b 5 8, K 5 8
+d.	b 5 16, K 5 7
+P2-19.	 Find the minimum number of required bits to store the following integers:
+a.	 less than 1000
+b.	less than 100 000
+c.	 less than 64
+d.	less than 256
+P2-20.	 A number less than bK can be represented using K digits in base b. Show the num-
+ber of digits needed in each of the following cases. 
+a.	 Integers less than 214 in binary
+b.	Integers less than 108 in decimal
+c.	 Integers less than 813 in octal
+d.	Integers less than 164 in hexadecimal
+P2-21.	 A common base used on the Internet is b 5 256. We need 256 symbols to rep-
+resent a number in this system. Instead of creating this large number of symbols, 
+the designers of this system have used decimal numbers to represent a symbol: 
+0 to 255. In other words, the set of symbols is S 5 {0, 1, 2, 3, …, 255}. A number 
+in this system is always in the format S1.S2.S3.S4 with four symbols and three dots 
+that separate the symbols. The system is used to define Internet addresses (see 
+﻿Number Systems
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+2.5  Practice Set
+37
+Chapter 6). An example of an address in this system is 10.200.14.72, which is 
+equivalent to 10 3 2563 1 200 3 2562 1 14 3 2561 1 72 3 2560 5 180 883 016 
+in decimal. This number system is called dotted decimal notation. Find the decimal 
+value of each of the following Internet addresses:
+a.	 17.234.34.14
+b.	14.56.234.56
+c.	 110.14.56.78
+d.	24.56.13.11
+P2-22.	 Internet addresses described in the previous problem are also represented as pat-
+terns of bits. In this case, 32 bits are used to represent an address, eight bits for 
+each symbol in dotted decimal notation. For example, the address 10.200.14.72 
+can also be represented as 00001010 11001000 00001110 01001000. Show the 
+bit representation of the following Internet addresses:
+a.	 17.234.34.14
+b.	14.56.234.56
+c.	 110.14.56.78
+d.	24.56.13.11
+P2-23.	 Write the decimal equivalent of the following Roman numbers:
+a.	 XV
+b.	XXVII
+c.	 VLIII
+d.	MCLVII
+P2-24.	 Convert the following decimal numbers to Roman numbers:
+a.	 17
+b.	38
+c.	 82
+d.	999
+P2-25.	 Find which of the following Roman numerals are not valid:
+a.	 MMIM
+b.	MIC
+c.	 CVC
+d.	VX
+P2-26.	 Mayan civilization invented a positional vigesimal (base 20) numeral system, called 
+the Mayan numeral system. They use base 20 probably because they used both their 
+fingers and toes for counting. This system has 20 symbols that are constructed from 
+three simpler symbols. The advanced feature of the system is that it has a symbol for 
+zero, which is a shell. The other two symbols are a circle (or a pebble) for one and 
+a horizontal bar (or a stick) for five. To represent a number greater than nineteen, 
+numerals are written vertically. Search the Internet to answer the following: what 
+are the decimal numbers 12, 123, 452, and 1256 in the Mayan numeral system? 
+P2-27.	 The Babylonian civilization is credited with developing the first positional numeral 
+system, called the Babylonian numeral system. They inherited the Sumerian and Akka-
+dian numeral system and developed it into positional sexagesimal system (base 60). 
+This base is still used today for times and angles. For example, one hour is 60 minutes 
+and one minute is 60 seconds: similarly, one degree is 60 minutes and one minute is 
+60 seconds. As a positional system with base b requires b symbols (digits), we expect 
+a positional sexagesimal system to require 60 symbols. However, the Babylonians did 
+not have a symbol for zero, and produced the other 59 symbols by stacking two sym-
+bols, those for one and ten. Search the Internet to answer the following questions:
+a.	 Express the following decimal numbers in Babylonian numerals: 11 291, 3646, 
+3582.
+b.	Mention problems that might arise from not having a symbol for 0. Find how 
+the Babylonian numeral system addresses the problem. 
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part. Due to electronic rights, some third party content may be suppressed from the eBook and/or eChapter(s).
+Editorial review has deemed that any suppressed content does not materially affect the overall learning experience. Cengage Learning reserves the right to remove additional content at any time if subsequent rights restrictions require it.
+Copyright 2018 Cengage Learning. All Rights Reserved. May not be copied, scanned, or duplicated, in whole or in part.  WCN 02-200-202
